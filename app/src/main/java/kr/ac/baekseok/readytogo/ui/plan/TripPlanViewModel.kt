@@ -88,6 +88,9 @@ class TripPlanViewModel(
             MockPlaceRepository()
         },
         itineraryRepository = MockItineraryRepository(),
+        // Mock 식당은 15곳뿐이라 5일 일정(30칸)에서 반드시 소진된다. 테스트 중 화면이 비지 않게
+        // 재사용을 허용한다. 실제 API 경로에서는 같은 집을 두 번 추천하지 않는다.
+        allowRestaurantReuse = !USE_REAL_API,
     )
 
     init {

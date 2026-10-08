@@ -62,6 +62,11 @@ fun PlaceDetailSheet(
             when (item) {
                 is TimelineItem.Visit -> VisitDetail(item)
                 is TimelineItem.Meal -> MealDetail(item)
+                // 추천이 없는 끼니는 상세를 띄우지 않는다. 호출부가 막지만 타입상 분기가 필요하다.
+                is TimelineItem.NoMeal -> Text(
+                    text = "추천할 식당을 찾지 못했습니다.",
+                    style = MaterialTheme.typography.bodyLarge,
+                )
             }
 
             HorizontalDivider(color = Tokens.Palette.Divider)
@@ -203,4 +208,5 @@ private val TimelineItem.mapUrl: String
     get() = when (this) {
         is TimelineItem.Visit -> attraction.mapUrl
         is TimelineItem.Meal -> restaurant.mapUrl
+        is TimelineItem.NoMeal -> ""
     }

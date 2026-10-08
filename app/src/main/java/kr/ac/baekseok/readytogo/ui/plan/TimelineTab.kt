@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.DirectionsBus
 import androidx.compose.material.icons.outlined.DirectionsWalk
+import androidx.compose.material.icons.outlined.HelpOutline
 import androidx.compose.material.icons.outlined.LocalCafe
 import androidx.compose.material.icons.outlined.Place
 import androidx.compose.material3.Icon
@@ -126,7 +127,12 @@ fun TimelineTab(
                     entry = entry,
                     favoriteIds = favoriteIds,
                     cityName = plan.condition.destination?.city.orEmpty(),
-                    onClick = { onItemClick(day.dayNumber, entry.item) },
+                    // 추천이 없는 끼니는 보여줄 상세가 없다. 시트를 띄우지 않는다.
+                    onClick = if (entry.item is TimelineItem.NoMeal) {
+                        null
+                    } else {
+                        { onItemClick(day.dayNumber, entry.item) }
+                    },
                     onToggleFavorite = onToggleFavorite,
                 )
             }
@@ -170,7 +176,7 @@ private fun TimelineRow(
     entry: TimelineEntry,
     favoriteIds: Set<String>,
     cityName: String,
-    onClick: () -> Unit,
+    onClick: (() -> Unit)?,
     onToggleFavorite: (FavoritePlace) -> Unit,
 ) {
     Column {
@@ -184,7 +190,7 @@ private fun TimelineRow(
                 modifier = Modifier
                     .weight(1f)
                     .clip(Tokens.Radius.card)
-                    .clickable(onClick = onClick)
+                    .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
                     .padding(
                         start = Tokens.Space.md,
                         end = Tokens.Space.sm,
@@ -195,14 +201,18 @@ private fun TimelineRow(
                 when (val item = entry.item) {
                     is TimelineItem.Visit -> VisitContent(item)
                     is TimelineItem.Meal -> MealContent(item)
+                    is TimelineItem.NoMeal -> NoMealContent(item)
                 }
             }
 
             // ♥는 줄 전체 클릭과 겹치지 않게 Row의 바깥에 둔다.
-            FavoriteButton(
-                favorite = entry.item.favoriteId in favoriteIds,
-                onToggle = { onToggleFavorite(entry.item.toFavoritePlace(cityName)) },
-            )
+            // 추천이 없는 끼니는 담을 것이 없어 자리만 비워 둔다.
+            entry.item.toFavoritePlace(cityName)?.let { place ->
+                FavoriteButton(
+                    favorite = place.placeId in favoriteIds,
+                    onToggle = { onToggleFavorite(place) },
+                )
+            }
         }
     }
 }
@@ -312,6 +322,32 @@ private fun MealContent(item: TimelineItem.Meal) {
     )
 }
 
+/**
+ * 추천을 못 찾은 끼니.
+ *
+ * 왜 없는지 적는다 — 그냥 "없음"만 두면 앱이 빠뜨린 것으로 보인다.
+ * 반경을 넓혀 다시 찾아도 없었다는 뜻이라, 사용자가 직접 찾아보는 수밖에 없다.
+ */
+@Composable
+private fun NoMealContent(item: TimelineItem.NoMeal) {
+    Text(
+        text = item.meal.label,
+        style = MaterialTheme.typography.labelMedium,
+        color = Tokens.Palette.TextSecondary,
+        fontWeight = FontWeight.Bold,
+    )
+    Text(
+        text = "근처 추천 식당 없음",
+        style = MaterialTheme.typography.titleSmall,
+        color = Tokens.Palette.TextSecondary,
+    )
+    Text(
+        text = "이 동네에서 조건에 맞는 곳을 찾지 못했습니다.",
+        style = MaterialTheme.typography.bodyMedium,
+        color = Tokens.Palette.TextSecondary,
+    )
+}
+
 /** 두 항목 사이의 이동. 세로줄 자리에 아이콘을 맞춰 줄이 끊기지 않게 한다. */
 @Composable
 private fun TravelRow(leg: TravelLeg) {
@@ -348,16 +384,12 @@ private val TimelineItem.icon: ImageVector
     get() = when (this) {
         is TimelineItem.Visit -> Icons.Outlined.Place
         is TimelineItem.Meal -> Icons.Outlined.LocalCafe
+        is TimelineItem.NoMeal -> Icons.Outlined.HelpOutline
     }
 
-/** 즐겨찾기 비교·저장에 쓰는 id. 식당은 지금 보여주는 쪽을 담는다. */
-private val TimelineItem.favoriteId: String
-    get() = when (this) {
-        is TimelineItem.Visit -> attraction.id
-        is TimelineItem.Meal -> restaurant.id
-    }
-
-private fun TimelineItem.toFavoritePlace(cityName: String): FavoritePlace = when (this) {
+private fun TimelineItem.toFavoritePlace(cityName: String): FavoritePlace? = when (this) {
     is TimelineItem.Visit -> attraction.toFavorite(cityName)
     is TimelineItem.Meal -> restaurant.toFavorite(cityName)
+    // 담을 장소가 없다. 호출부가 이 항목에는 하트를 그리지 않는다.
+    is TimelineItem.NoMeal -> null
 }

@@ -14,8 +14,13 @@ import kr.ac.baekseok.readytogo.data.model.Restaurant
  * 화면은 순서대로 그리기만 하고, 무엇이 먼저인지 판단하지 않는다.
  */
 sealed interface TimelineItem {
-    /** 지도·이동시간 계산에 쓰는 좌표. */
-    val location: LatLng
+    /**
+     * 지도·이동시간 계산에 쓰는 좌표.
+     *
+     * null이면 **장소가 아닌 항목**이다([NoMeal]). 이동시간 계산에서 건너뛴다 —
+     * 좌표 없는 항목을 사슬에 끼우면 앞뒤 거리가 0으로 잡혀 이동시간이 사라진다.
+     */
+    val location: LatLng?
 
     /** 삭제·교체를 구분하는 키. 같은 날에 같은 항목이 두 번 들어가지 않는다. */
     val key: String
@@ -54,6 +59,18 @@ sealed interface TimelineItem {
         override val key get() = "meal-${meal.name}"
         override val stayMinutes get() = MEAL_MINUTES
     }
+
+    /**
+     * 추천할 식당을 찾지 못한 끼니.
+     *
+     * 그냥 빼버리면 "아침 다음 저녁"이 되어 점심을 잊은 것처럼 보인다. 자리를 남기고
+     * 왜 비었는지 적어야 사용자가 직접 찾아볼 수 있다.
+     */
+    data class NoMeal(val meal: MealTime) : TimelineItem {
+        override val location: LatLng? get() = null
+        override val key get() = "nomeal-${meal.name}"
+        override val stayMinutes get() = 0
+    }
 }
 
 /** 타임라인의 한 줄 — 항목과, 그 **앞**에 오는 이동. 첫 항목은 이동이 없다. */
@@ -78,8 +95,9 @@ fun DayPlan.toTimeline(
 ): List<TimelineEntry> {
     val visits = attractions.map { TimelineItem.Visit(it) }
 
-    fun mealItem(meal: MealTime): TimelineItem.Meal? {
-        val pair = meals[meal] ?: return null
+    // 추천을 못 찾은 끼니도 자리를 남긴다. 없으면 점심을 잊은 것처럼 보인다.
+    fun mealItem(meal: MealTime): TimelineItem {
+        val pair = meals[meal] ?: return TimelineItem.NoMeal(meal)
         val item = TimelineItem.Meal(meal, pair)
         return item.copy(swapped = item.key in swappedMealKeys)
     }
@@ -88,27 +106,29 @@ fun DayPlan.toTimeline(
     // 점심 먹고 움직이는 쪽이 실제 여행에 가깝다.
     val splitAt = if (visits.size <= 1) 0 else (visits.size + 1) / 2
 
-    val ordered = buildList<TimelineItem> {
-        mealItem(MealTime.BREAKFAST)?.let { add(it) }
+    val ordered = buildList {
+        add(mealItem(MealTime.BREAKFAST))
         addAll(visits.take(splitAt))
-        mealItem(MealTime.LUNCH)?.let { add(it) }
+        add(mealItem(MealTime.LUNCH))
         addAll(visits.drop(splitAt))
-        mealItem(MealTime.DINNER)?.let { add(it) }
+        add(mealItem(MealTime.DINNER))
     }
 
     // 이동 시간은 **지운 항목을 걸러낸 뒤에** 계산해야 한다.
     // 먼저 계산하면 지운 항목까지 거쳐 가는 시간이 남는다.
     val remaining = ordered.filterNot { it.key in deletedKeys }
 
-    return remaining.mapIndexed { index, item ->
-        TimelineEntry(
-            item = item,
-            travelFromPrevious = if (index == 0) {
-                null
-            } else {
-                estimateTravel(remaining[index - 1].location, item.location)
-            },
-        )
+    // 좌표가 없는 항목(추천 못 찾은 끼니)은 건너뛰고 **마지막 좌표**에서 거리를 잰다.
+    // 그러지 않으면 빈 끼니가 끼는 순간 앞뒤 이동시간이 사라진다.
+    var lastLocation: LatLng? = null
+
+    return remaining.map { item ->
+        val from = lastLocation
+        val to = item.location
+        val travel = if (from != null && to != null) estimateTravel(from, to) else null
+        if (to != null) lastLocation = to
+
+        TimelineEntry(item = item, travelFromPrevious = travel)
     }
 }
 

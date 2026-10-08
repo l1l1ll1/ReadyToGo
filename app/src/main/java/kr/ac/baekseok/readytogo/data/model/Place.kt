@@ -103,4 +103,12 @@ data class Attraction(
      * 고른 여행 목적과 맞는지 판단해 점수에 가산점을 주는 데 쓴다.
      */
     val types: List<String> = emptyList(),
+    /**
+     * 지도 앱으로 열 링크. 상세 시트의 "지도에서 열기"가 쓴다.
+     *
+     * Mock 데이터에는 없어서 기본값을 비워 둔다 — 비어 있으면 화면이 버튼을 숨긴다.
+     * 새 필드를 **맨 뒤에** 두는 이유: MockData가 Attraction을 위치 인자로 만들기 때문에
+     * 중간에 끼우면 기존 호출이 전부 어긋난다. 실제로 한 번 겪었다.
+     */
+    val mapUrl: String = "",
 )

@@ -688,7 +688,7 @@ internal fun Attraction.toFavorite(cityName: String) = FavoritePlace(
     kind = FavoriteKind.ATTRACTION,
     location = location,
     cityName = cityName,
-    mapUrl = "",
+    mapUrl = mapUrl,
 )
 
 /**

@@ -43,6 +43,12 @@ object FranchiseFilter {
         listOf("요시노야", "Yoshinoya", "吉野家"),
         listOf("마루가메", "Marugame", "丸亀製麺"),
         listOf("모스버거", "MOS Burger", "モスバーガー"),
+        // 회전초밥·디저트 체인. 실제로 도쿄 추천 결과에 올라와서 추가했다.
+        // "스시로"는 한국어 조사 결합형("스시로 유명한 집")과 글자가 겹친다. 가게 이름에 그런
+        // 표현이 들어갈 일은 드물어 그대로 두지만, 오탐이 보이면 영문·일본어 표기만 남기면 된다.
+        listOf("스시로", "Sushiro", "スシロー"),
+        listOf("쿠라스시", "구라스시", "Kura Sushi", "くら寿司"),
+        listOf("하브스", "HARBS", "ハーブス"),
         listOf("사보텐", "Saboten", "さぼてん"),
 
         // 글로벌
@@ -51,6 +57,8 @@ object FranchiseFilter {
         listOf("타코벨", "Taco Bell"),
         listOf("셰이크쉑", "Shake Shack"),
         listOf("파파존스", "Papa John"),
+        listOf("하드락카페", "하드 락 카페", "Hard Rock Cafe"),
+        listOf("하이디라오", "Haidilao", "海底捞", "海底撈"),
     )
 
     /**

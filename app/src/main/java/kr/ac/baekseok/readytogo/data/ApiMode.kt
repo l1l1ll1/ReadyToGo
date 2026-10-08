@@ -18,4 +18,4 @@ package kr.ac.baekseok.readytogo.data
  * 항공(SerpApi)은 이 값과 무관하게 실패하면 Mock으로 넘어가지만, false일 때는
  * 아예 호출하지 않는다.
  */
-const val USE_REAL_API = true
+const val USE_REAL_API = false

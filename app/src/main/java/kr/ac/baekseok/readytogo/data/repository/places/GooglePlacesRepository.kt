@@ -73,9 +73,10 @@ class GooglePlacesRepository(
                 mealsAsync.await() to breakfastAsync.await()
             }
 
-            val raw = (meals + breakfast).distinctBy { it.id }
-            val eateries = raw.filter { it.isEatery() }
-            val places = eateries
+            val places = (meals + breakfast)
+                .distinctBy { it.id }
+                // 검색 자체를 좁혔지만 그래도 식당 아닌 곳이 섞여 온다. 마지막 그물이다.
+                .filter { it.isEatery() }
                 // 한국에도 있는 프랜차이즈는 해외에서 갈 이유가 없다.
                 .filterNot { place ->
                     FranchiseFilter.isExcluded(
@@ -83,13 +84,6 @@ class GooglePlacesRepository(
                         isEatery = true,
                     )
                 }
-
-            // 확인용 — 어느 단계에서 후보가 깎이는지 보려면 단계마다 세어봐야 한다.
-            // 음식점 단계에서 크게 줄면 검색이 식당 아닌 곳을 받아오고 있다는 뜻이다.
-            android.util.Log.d(
-                "TripPlan",
-                "식당 후보: 원본 ${raw.size} → 음식점 ${eateries.size} → 프랜차이즈 제외 ${places.size}",
-            )
 
             // 실제 가격이 있는 곳을 먼저 환산하고, 그 값으로 이 도시의 등급별 시세를 만든다.
             // 그래야 가격 정보가 없는 곳을 **그 도시 물가 기준**으로 추정할 수 있다.
@@ -99,12 +93,6 @@ class GooglePlacesRepository(
             val result = places.mapNotNull { place ->
                 val price = realPrices[place.id] ?: place.estimatedPrice(marketPrices)
                 place.toRestaurant(price)
-            }
-            if (result.size < places.size) {
-                android.util.Log.d(
-                    "TripPlan",
-                    "  모델 변환에서 ${places.size - result.size}곳 탈락(평점·좌표 누락)",
-                )
             }
             cache.writeRestaurants(cacheKey, result)
             result
@@ -295,6 +283,8 @@ class GooglePlacesRepository(
             address = shortFormattedAddress ?: "",
             // 목적 일치 가산점을 매기려면 이 장소가 어떤 종류인지 알아야 한다.
             types = placeTypes.orEmpty(),
+            // 식당과 같은 필드다. 상세 시트에서 지도 앱으로 넘기는 데 쓴다.
+            mapUrl = googleMapsUri?.toString().orEmpty(),
         )
     }
 

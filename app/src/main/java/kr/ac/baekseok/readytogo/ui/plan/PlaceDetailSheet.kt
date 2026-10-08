@@ -198,9 +198,9 @@ private fun SheetAction(
     }
 }
 
-/** 지도 앱으로 넘길 주소. 관광지는 Places URL을 들고 있지 않아 비어 있을 수 있다. */
+/** 지도 앱으로 넘길 링크. Mock 데이터에는 없어서 비어 있을 수 있고, 그때는 버튼을 숨긴다. */
 private val TimelineItem.mapUrl: String
     get() = when (this) {
-        is TimelineItem.Visit -> ""
+        is TimelineItem.Visit -> attraction.mapUrl
         is TimelineItem.Meal -> restaurant.mapUrl
     }

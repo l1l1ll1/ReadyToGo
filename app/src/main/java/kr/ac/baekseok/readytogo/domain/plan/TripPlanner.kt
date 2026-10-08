@@ -103,8 +103,6 @@ class TripPlanner(
             )
         }
 
-        logSelectionSummary(dailyPlans)
-
         TripPlan(
             condition = condition,
             budget = budget,
@@ -258,44 +256,9 @@ class TripPlanner(
         return reasons.takeIf { it.isNotEmpty() }?.joinToString(", ")
     }
 
-    /**
-     * 확인용 — 여행 전체에서 같은 식당이 두 번 쓰이지 않았는지, 빈 끼니가 없는지 본다.
-     * 화면을 스크롤하며 세는 것으로는 같은 항목을 여러 번 집계하게 되어 판단할 수 없다.
-     */
-    private fun logSelectionSummary(dailyPlans: List<DayPlan>) {
-        val picked = dailyPlans.flatMap { day ->
-            day.meals.values.flatMap { listOfNotNull(it.qualityFirst.item, it.withinBudget?.item) }
-        }
-        val duplicates = picked.groupBy { it.id }.filter { it.value.size > 1 }
-        val expectedMeals = dailyPlans.size * MealTime.entries.size
-        val filledMeals = dailyPlans.sumOf { it.meals.size }
-
-        android.util.Log.d(
-            "TripPlan",
-            "끼니 $filledMeals/$expectedMeals · 식당 ${picked.size}칸 / " +
-                "서로 다른 ${picked.distinctBy { it.id }.size}곳 / 중복 ${duplicates.size}종",
-        )
-        duplicates.forEach { (_, same) ->
-            android.util.Log.d("TripPlan", "중복: ${same.first().name} ${same.size}회")
-        }
-
-        // 숫자만으로는 "식당이 아닌 곳"이 섞인 것을 알 수 없다. 카테고리를 같이 찍어 눈으로 본다.
-        dailyPlans.forEach { day ->
-            day.meals.forEach { (meal, pair) ->
-                val picks = listOfNotNull(pair.qualityFirst.item, pair.withinBudget?.item)
-                    .joinToString(" | ") { "${it.name}(${it.category})" }
-                android.util.Log.d("TripPlan", "${day.dayNumber}일차 ${meal.label}: $picks")
-            }
-        }
-
-        val missing = dailyPlans.flatMap { day ->
-            MealTime.entries.filterNot { it in day.meals.keys }
-                .map { "${day.dayNumber}일차 ${it.label}" }
-        }
-        if (missing.isNotEmpty()) {
-            android.util.Log.d("TripPlan", "빈 끼니: ${missing.joinToString(", ")}")
-        }
-    }
+    // 추천 결과를 전부 찍어 보던 진단 로그(끼니 수·중복·빈 끼니·끼니별 추천 목록)는 지웠다.
+    // 빈 끼니와 "식당 아닌 곳이 섞이는" 문제를 잡는 데 썼고 둘 다 해결됐다.
+    // 남긴 로그는 호출 수와 캐시 적중뿐이다 — 그건 비용에 직접 연결되므로 계속 봐야 한다.
 
     private companion object {
         /**

@@ -167,6 +167,7 @@ private fun Attraction.toJson() = JSONObject().apply {
     put("description", description)
     put("reviewCount", reviewCount)
     put("types", JSONArray().apply { types.forEach { put(it) } })
+    put("mapUrl", mapUrl)
 }
 
 private fun JSONObject.toAttraction() = Attraction(
@@ -181,6 +182,8 @@ private fun JSONObject.toAttraction() = Attraction(
     types = getJSONArray("types").let { array ->
         (0 until array.length()).map { array.getString(it) }
     },
+    // 예전 캐시에는 없던 필드다. optString으로 읽어 캐시를 버리지 않게 한다.
+    mapUrl = optString("mapUrl"),
 )
 
 private fun Lodging.toJson() = JSONObject().apply {

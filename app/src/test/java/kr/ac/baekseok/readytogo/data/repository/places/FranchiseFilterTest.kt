@@ -23,6 +23,20 @@ class FranchiseFilterTest {
         assertTrue(excluded("Burger King Menteng"))
     }
 
+    /**
+     * 실제 도쿄 추천 결과에 올라왔던 이름들. 전부 한국에도 매장이 있어 갈 이유가 없다.
+     * 결과 화면에서 눈으로 발견한 것이므로, 다시 새어 나오지 않게 이름 그대로 넣어 둔다.
+     */
+    @Test
+    fun `도쿄 결과에서 발견한 체인을 걸러낸다`() {
+        assertTrue(excluded("스시로 신주쿠 히가시구치점"))
+        assertTrue(excluded("쿠라스시 니시신주쿠점"))
+        assertTrue(excluded("Kura Sushi Global Flagship Store Harajuku"))
+        assertTrue(excluded("하브스"))
+        assertTrue(excluded("하드 락 카페 도쿄"))
+        assertTrue(excluded("Haidilao Shinjuku Branch"))
+    }
+
     @Test
     fun `현지어 표기로 걸러낸다`() {
         assertTrue(excluded("マクドナルド 新宿店"))

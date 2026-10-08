@@ -72,9 +72,49 @@ fun SummaryHeader(plan: TripPlan) {
                 modifier = Modifier.padding(vertical = Tokens.Space.sm),
             )
             BudgetUsageBar(totalWon = total, plannedWon = planned)
+            TightMealBudgetNotice(plan)
         }
     }
 }
+
+/**
+ * 식당 추천 대부분이 예산을 넘겼을 때 띄우는 안내.
+ *
+ * **왜 필요한가**: 카드마다 "예산 초과"가 빨갛게 붙어 있으면 앱이 추천을 잘못한 것처럼 보인다.
+ * 실제로는 예산이 그 도시 물가에 비해 빠듯한 것이고, 그건 사용자만 고칠 수 있다.
+ * 실측에서 도쿄 7일·3명·450만원이면 1끼 상한이 16,681원인데 현지 식당 대부분이
+ * 17,000원을 넘어 42칸 중 35칸이 초과로 찍혔다.
+ *
+ * 몇 칸이 넘었는지가 아니라 **1끼에 쓸 수 있는 금액**을 알려주는 이유: 숫자를 봐야
+ * 예산을 얼마나 올려야 하는지 가늠할 수 있다.
+ */
+@Composable
+private fun TightMealBudgetNotice(plan: TripPlan) {
+    val mealCap = plan.budget.mealWon ?: return
+
+    val picks = plan.dailyPlans.flatMap { day ->
+        day.meals.values.flatMap { listOfNotNull(it.qualityFirst, it.withinBudget) }
+    }
+    if (picks.isEmpty()) return
+
+    val overRatio = picks.count { it.overBudget }.toDouble() / picks.size
+    if (overRatio <= MEAL_OVER_BUDGET_WARNING_RATIO) return
+
+    Text(
+        text = "이 예산으로는 식비가 1인 1끼 약 ${formatRoughWon(mealCap)}이라 빠듯해요. " +
+            "예산을 올리거나 일정을 줄이면 선택지가 넓어집니다.",
+        style = MaterialTheme.typography.labelMedium,
+        color = Tokens.Palette.TextSecondary,
+        modifier = Modifier.padding(top = Tokens.Space.sm),
+    )
+}
+
+/**
+ * "약 16,700원" — 백원 단위로 끊는다.
+ *
+ * 나눠서 나온 값이라 끝자리에 의미가 없다. 16,681원을 그대로 적으면 정확한 값으로 읽힌다.
+ */
+private fun formatRoughWon(won: Long): String = ((won + 50) / 100 * 100).won()
 
 /**
  * 예산 사용률 바.
@@ -205,3 +245,11 @@ private fun TripPlan.plannedSpendWon(): Long {
 }
 
 private const val HIGHLIGHT_COUNT = 3
+
+/**
+ * 식당 추천 중 이 비율을 넘게 예산을 초과하면 안내를 띄운다.
+ *
+ * 절반으로 잡은 이유: 한두 끼가 넘는 것은 "조금 비싼 집을 골랐다"는 뜻이고 그건 선택지의 역할이다.
+ * 절반을 넘기면 예산 자체가 그 도시 물가와 맞지 않는다는 신호다.
+ */
+private const val MEAL_OVER_BUDGET_WARNING_RATIO = 0.5

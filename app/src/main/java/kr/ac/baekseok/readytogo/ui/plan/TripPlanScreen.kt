@@ -416,8 +416,16 @@ private fun BudgetBreakdown(plan: TripPlan) {
             verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
             BudgetRow("항공", b.flightWon)
-            BudgetRow("숙소 1박 상한", b.lodgingPerNightWon)
-            BudgetRow("식사 1끼 상한", b.mealWon)
+            // 단위를 적어 둔다. 인원이 늘면 이 값이 내려가는데, 무엇의 상한인지 모르면
+            // "예산이 줄었다"로 읽힌다 — 실제로는 1인·1실 몫이 줄어든 것이다.
+            BudgetRow(
+                label = if (b.roomCount > 1) "숙소 1박 상한 (1실 × ${b.roomCount}실)" else "숙소 1박 상한",
+                amount = b.lodgingPerNightWon,
+            )
+            BudgetRow(
+                label = if (b.adults > 1) "식사 1끼 상한 (1인 × ${b.adults}명)" else "식사 1끼 상한",
+                amount = b.mealWon,
+            )
             BudgetRow("교통·입장료·예비비", b.otherWon)
 
             if (b.flightAloneExceedsBudget) {

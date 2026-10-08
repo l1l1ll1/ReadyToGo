@@ -8,6 +8,7 @@ import kr.ac.baekseok.readytogo.data.model.TravelPurpose
 import kr.ac.baekseok.readytogo.data.model.TripCondition
 import kr.ac.baekseok.readytogo.data.repository.DestinationRepository
 import kr.ac.baekseok.readytogo.data.repository.asset.AssetDestinationRepository
+import kr.ac.baekseok.readytogo.domain.budget.BudgetRange
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -159,6 +160,24 @@ class TripInputViewModel(
      */
     fun onBudgetSelected(won: Long) {
         _condition.update { it.copy(budgetWon = won) }
+    }
+
+    /**
+     * 인원을 한 명씩 늘리거나 줄인다.
+     *
+     * 범위를 모델의 상수로 막는다 — 화면에서 버튼을 비활성화해도 값 자체가 범위를 벗어나면
+     * 방 수와 1인 상한 계산이 이상해진다.
+     */
+    fun onAdultsChange(delta: Int) {
+        _condition.update {
+            val next = (it.adults + delta)
+                .coerceIn(TripCondition.MIN_ADULTS, TripCondition.MAX_ADULTS)
+
+            // 예산 범위가 인원에 비례하므로 인원이 바뀌면 범위도 바뀐다.
+            // 정해 둔 금액은 그대로 두고, 범위를 벗어날 때만 가장 가까운 끝으로 옮긴다.
+            val budget = it.budgetWon?.let { won -> BudgetRange.coerce(won, next) }
+            it.copy(adults = next, budgetWon = budget)
+        }
     }
 
     /** 다중 선택이라 이미 골라둔 목적을 다시 누르면 해제된다. */

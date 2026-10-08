@@ -19,6 +19,54 @@ class BudgetAllocatorTest {
         budgetWon = budgetWon,
     )
 
+    /**
+     * 인원이 늘면 **1인·1실 몫이 줄어든다.** 총예산은 그대로이기 때문이다.
+     *
+     * 이 계산이 틀리면 4명 여행에서 1인 10만원짜리 식당이 "예산 내"로 잡힌다.
+     * 식당 가격은 1인분, 숙소 가격은 1실 기준으로 들어오므로 상한도 같은 기준이어야 한다.
+     */
+    @Test
+    fun `인원이 늘면 1인 식사 상한이 인원수만큼 내려간다`() {
+        val solo = allocateBudget(condition(1_500_000), cheapestFlightWon = 500_000)
+        val four = allocateBudget(
+            condition(1_500_000).copy(adults = 4),
+            cheapestFlightWon = 500_000,
+        )
+
+        assertEquals(20_000L, solo.mealWon)
+        // 같은 남은 예산을 네 배의 끼니가 나눠 쓴다.
+        assertEquals(5_000L, four.mealWon)
+    }
+
+    @Test
+    fun `숙소 상한은 방 수로 나눈다`() {
+        // 4명이면 2인 1실로 2실. 1실 상한은 혼자일 때의 절반이다.
+        val four = allocateBudget(
+            condition(1_500_000).copy(adults = 4),
+            cheapestFlightWon = 500_000,
+        )
+
+        assertEquals(2, four.roomCount)
+        assertEquals(56_250L, four.lodgingPerNightWon)
+    }
+
+    @Test
+    fun `홀수 인원은 방을 올림한다`() {
+        // 3명이 2인 1실이면 한 명이 남는다. 2실이 필요하다.
+        assertEquals(2, TripCondition(adults = 3).roomCount)
+        assertEquals(1, TripCondition(adults = 1).roomCount)
+        assertEquals(1, TripCondition(adults = 2).roomCount)
+        assertEquals(3, TripCondition(adults = 5).roomCount)
+        assertEquals(3, TripCondition(adults = 6).roomCount)
+    }
+
+    @Test
+    fun `인원을 정하지 않으면 1명으로 본다`() {
+        val result = allocateBudget(condition(1_500_000), cheapestFlightWon = 500_000)
+        assertEquals(1, result.adults)
+        assertEquals(1, result.roomCount)
+    }
+
     @Test
     fun `항공료를 뺀 나머지를 45대30대25로 나눈다`() {
         val result = allocateBudget(condition(1_500_000), cheapestFlightWon = 500_000)

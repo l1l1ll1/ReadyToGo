@@ -51,14 +51,20 @@ class SerpApiFlightRepository(
             return sampleResult(condition, "SERPAPI_KEY가 없다")
         }
 
-        val key = cache.keyOf(origin, destination, departureDate.toString(), returnDate.toString())
+        val key = cache.keyOf(
+            origin,
+            destination,
+            departureDate.toString(),
+            returnDate.toString(),
+            condition.adults,
+        )
         cache.read(key)?.let {
             Log.d(TAG, "캐시 사용: $key (호출 0회)")
             return Result.success(it)
         }
 
         val flights = runCatching {
-            fetch(origin, destination, departureDate, returnDate)
+            fetch(origin, destination, departureDate, returnDate, condition.adults)
         }.getOrElse { error ->
             return sampleResult(condition, "검색 실패: ${error.message}")
         }
@@ -88,8 +94,9 @@ class SerpApiFlightRepository(
         destination: String,
         departureDate: LocalDate,
         returnDate: LocalDate,
+        adults: Int,
     ): List<Flight> = withContext(Dispatchers.IO) {
-        val url = buildUrl(origin, destination, departureDate, returnDate)
+        val url = buildUrl(origin, destination, departureDate, returnDate, adults)
 
         val body = (URL(url).openConnection() as HttpURLConnection).run {
             connectTimeout = TIMEOUT_MS
@@ -115,6 +122,7 @@ class SerpApiFlightRepository(
         destination: String,
         departureDate: LocalDate,
         returnDate: LocalDate,
+        adults: Int,
     ): String {
         val params = mapOf(
             "engine" to "google_flights",
@@ -122,6 +130,8 @@ class SerpApiFlightRepository(
             "arrival_id" to destination,
             "outbound_date" to departureDate.format(DATE_FORMAT),
             "return_date" to returnDate.format(DATE_FORMAT),
+            // 인원을 넘기면 가격이 1인가가 아니라 **인원 전체 총액**으로 돌아온다.
+            "adults" to adults.toString(),
             // 원화로 직접 받아 환율 변환 단계를 없앤다.
             "currency" to "KRW",
             "hl" to "ko",

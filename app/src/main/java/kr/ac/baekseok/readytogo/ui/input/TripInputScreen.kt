@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -21,7 +22,9 @@ import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.Spa
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.CalendarMonth
+import androidx.compose.material.icons.outlined.RemoveCircleOutline
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -126,8 +129,15 @@ fun TripInputScreen(
                 onClick = { showDateSheet = true },
             )
 
+            PartySection(
+                adults = condition.adults,
+                roomCount = condition.roomCount,
+                onChange = viewModel::onAdultsChange,
+            )
+
             BudgetSection(
                 budgetWon = condition.budgetWon ?: TripInputViewModel.DEFAULT_BUDGET_WON,
+                adults = condition.adults,
                 onBudgetSelected = viewModel::onBudgetSelected,
                 onBudgetTyped = viewModel::onBudgetTyped,
             )
@@ -298,6 +308,59 @@ private fun DateCard(
 }
 
 @OptIn(ExperimentalLayoutApi::class)
+/**
+ * 인원 선택.
+ *
+ * 숫자를 직접 입력받지 않고 −/+ 로 둔 이유: 1~6명이라 범위가 좁고, 키보드를 띄우면
+ * 아래 섹션이 가려진다. 범위 끝에서는 버튼을 눌러도 안 되는 게 보이도록 흐리게 둔다.
+ *
+ * 방 수를 같이 보여주는 이유: 3명이면 2실이 되는데, 숙소 예산이 왜 그렇게 잡혔는지
+ * 결과 화면에서 처음 알게 되면 늦다.
+ */
+@Composable
+private fun PartySection(
+    adults: Int,
+    roomCount: Int,
+    onChange: (Int) -> Unit,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(Tokens.Space.sm)) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Text(
+                text = "인원",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.weight(1f),
+            )
+            IconButton(
+                onClick = { onChange(-1) },
+                enabled = adults > TripCondition.MIN_ADULTS,
+            ) {
+                Icon(Icons.Outlined.RemoveCircleOutline, contentDescription = "인원 줄이기")
+            }
+            Text(
+                text = "${adults}명",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.width(Tokens.Size.avatar),
+            )
+            IconButton(
+                onClick = { onChange(1) },
+                enabled = adults < TripCondition.MAX_ADULTS,
+            ) {
+                Icon(Icons.Outlined.AddCircleOutline, contentDescription = "인원 늘리기")
+            }
+        }
+        Text(
+            text = "성인 기준입니다. 숙소는 2인 1실로 ${roomCount}개 방을 잡습니다.",
+            style = MaterialTheme.typography.bodyMedium,
+            color = Tokens.Palette.TextSecondary,
+        )
+    }
+}
+
 @Composable
 private fun PurposeSection(
     selected: Set<TravelPurpose>,

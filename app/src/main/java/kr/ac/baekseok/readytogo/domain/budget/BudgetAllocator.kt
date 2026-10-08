@@ -28,6 +28,9 @@ fun allocateBudget(
     condition: TripCondition,
     cheapestFlightWon: Long?,
 ): BudgetAllocation {
+    val adults = condition.adults
+    val rooms = condition.roomCount
+
     val total = condition.budgetWon
         ?: return BudgetAllocation(
             totalWon = null,
@@ -37,23 +40,33 @@ fun allocateBudget(
             mealWon = null,
             otherWon = null,
             flightAloneExceedsBudget = false,
+            adults = adults,
+            roomCount = rooms,
         )
 
     val flight = cheapestFlightWon ?: 0L
     val remaining = (total - flight).coerceAtLeast(0L)
 
     val nights = nightsOf(condition)
-    val meals = daysOf(condition) * MEALS_PER_DAY
     val profile = PurposeProfiles.of(condition.purposes)
+
+    // 인원이 늘면 쓰는 양이 늘어난다. 총예산은 그대로이므로 **1인·1실 상한이 내려간다.**
+    // 식당 가격은 1인 기준, 숙소 가격은 1실 기준으로 들어오므로 상한도 같은 기준으로 맞춘다.
+    // 그러지 않으면 4명 여행에서 1인 10만원짜리 식당이 예산 안으로 잡힌다.
+    val mealSlots = daysOf(condition) * MEALS_PER_DAY * adults
+    val roomNights = nights * rooms
 
     return BudgetAllocation(
         totalWon = total,
         flightWon = cheapestFlightWon,
         remainingWon = remaining,
-        lodgingPerNightWon = (remaining * profile.lodgingShare).toLong() / nights,
-        mealWon = (remaining * profile.foodShare).toLong() / meals,
+        lodgingPerNightWon = (remaining * profile.lodgingShare).toLong() / roomNights,
+        mealWon = (remaining * profile.foodShare).toLong() / mealSlots,
+        // 교통·입장료는 1인당이 아니라 일행 전체 몫이다. 화면에 안내용으로만 쓴다.
         otherWon = (remaining * profile.otherShare).toLong(),
         flightAloneExceedsBudget = cheapestFlightWon != null && cheapestFlightWon > total,
+        adults = adults,
+        roomCount = rooms,
     )
 }
 

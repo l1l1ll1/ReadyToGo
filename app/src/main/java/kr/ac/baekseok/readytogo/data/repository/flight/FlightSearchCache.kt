@@ -22,8 +22,17 @@ class FlightSearchCache(context: Context) {
         context.applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
     /** 캐시 키. 이 네 가지가 같으면 같은 검색이다. */
-    fun keyOf(origin: String, destination: String, departureDate: String, returnDate: String) =
-        "$origin-$destination-$departureDate-$returnDate"
+    /**
+     * 인원이 키에 들어가는 이유: 가격이 **인원 전체의 총액**이라 1명 결과를 4명에게 보여주면
+     * 항공료가 4분의 1로 잡히고, 그 값으로 예산을 나누면 전부 틀어진다.
+     */
+    fun keyOf(
+        origin: String,
+        destination: String,
+        departureDate: String,
+        returnDate: String,
+        adults: Int,
+    ) = "$origin-$destination-$departureDate-$returnDate-${adults}인"
 
     /** 유효기간이 지나지 않은 결과만 돌려준다. 없으면 null. */
     fun read(key: String): List<Flight>? {

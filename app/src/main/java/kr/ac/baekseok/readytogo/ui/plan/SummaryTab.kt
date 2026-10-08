@@ -50,6 +50,8 @@ fun SummaryHeader(plan: TripPlan) {
                     c.returnDate?.let { back -> "${departure.format(DATE)} – ${back.format(DATE)}" }
                 },
                 "${plan.dailyPlans.size}일",
+                // 방 수까지 적는 이유: 숙소 예산이 왜 그 금액인지가 인원만으로는 안 보인다.
+                "성인 ${c.adults}명" + if (c.roomCount > 1) " · ${c.roomCount}실" else "",
             ).joinToString(" · "),
             style = MaterialTheme.typography.bodyMedium,
             color = Tokens.Palette.TextSecondary,
@@ -186,14 +188,18 @@ fun ItineraryHighlights(plan: TripPlan) {
  * - 현지 교통·입장료는 배분 몫을 그대로 더한다. 실제 값을 알 방법이 없다
  */
 private fun TripPlan.plannedSpendWon(): Long {
+    // 항공은 이미 인원 전체 총액이다(SerpApi에 인원을 넘겨 받는다). 다시 곱하면 안 된다.
     val flight = flights.minOfOrNull { it.priceWon } ?: 0L
 
+    // 숙소 가격은 1박 1실이다. 방 수와 박수를 둘 다 곱해야 전체 숙박비가 된다.
     val nights = (dailyPlans.size - 1).coerceAtLeast(0)
-    val lodgingTotal = (lodging?.qualityFirst?.item?.priceWon ?: 0L) * nights
+    val lodgingTotal =
+        (lodging?.qualityFirst?.item?.priceWon ?: 0L) * nights * condition.roomCount
 
+    // 식당 가격은 1인분이다. 인원을 곱한다.
     val meals = dailyPlans.sumOf { day ->
         day.meals.values.sumOf { it.qualityFirst.item.priceWon }
-    }
+    } * condition.adults
 
     return flight + lodgingTotal + meals + (budget.otherWon ?: 0L)
 }

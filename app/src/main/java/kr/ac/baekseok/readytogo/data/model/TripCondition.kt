@@ -30,4 +30,33 @@ data class TripCondition(
     /** 원 단위. 통화가 늘어날 일이 없어 Long 한 개로 둔다. */
     val budgetWon: Long? = null,
     val purposes: Set<TravelPurpose> = emptySet(),
-) : Serializable
+    /**
+     * 성인 인원. [MIN_ADULTS]~[MAX_ADULTS].
+     *
+     * 아동·유아를 나누지 않는 이유: 항공료 할인율과 숙소 정원 규칙이 항공사·숙소마다 달라
+     * 정확히 계산할 수 없다. 틀린 금액을 보여주느니 성인 기준으로만 잡고, 아동이 있으면
+     * 사용자가 실제 예약 단계에서 조정하는 쪽이 낫다.
+     *
+     * 6명을 상한으로 둔 이유: 그 이상은 단체 요금·다인실 규칙이 따로 적용돼
+     * 1인 기준 계산이 의미를 잃는다.
+     */
+    val adults: Int = 1,
+) : Serializable {
+
+    /**
+     * 필요한 객실 수. **2인 1실 기준**이다.
+     *
+     * 숙소 가격은 1박 1실 기준으로 들어오므로, 인원이 늘면 가격이 아니라 방 수가 늘어난다.
+     * 홀수면 한 명이 남으므로 올림한다 — 3명이면 2실이다.
+     */
+    val roomCount: Int
+        get() = (adults + ADULTS_PER_ROOM - 1) / ADULTS_PER_ROOM
+
+    companion object {
+        const val MIN_ADULTS = 1
+        const val MAX_ADULTS = 6
+
+        /** 2인 1실. 방 수 계산의 기준. */
+        const val ADULTS_PER_ROOM = 2
+    }
+}

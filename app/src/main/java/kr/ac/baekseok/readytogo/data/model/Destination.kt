@@ -24,4 +24,14 @@ data class Destination(
     /** 목록에서 한 줄로 보여줄 때. 예: "도쿄 (HND)" */
     val displayName: String
         get() = if (airportCodes.isEmpty()) city else "$city (${airportCodes.first()})"
+
+    /**
+     * 좁은 자리에 쓸 짧은 이름. 예: "코타쿠알라무다(Kota Kuala Muda)" → "코타쿠알라무다"
+     *
+     * 한글 표기가 애매한 소도시는 이름에 영문을 병기해 두는데(tools/geo/README.md),
+     * 그대로 쓰면 "인천 → 도쿄" 카드나 "도쿄 5일" 같은 제목에서 잘려 나간다.
+     * 고를 때는 영문이 도움이 되지만, 이미 고른 뒤에는 한글만으로 충분하다.
+     */
+    val shortName: String
+        get() = city.substringBefore('(').trim()
 }

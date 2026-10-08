@@ -40,7 +40,7 @@ fun SummaryHeader(plan: TripPlan) {
             .padding(Tokens.Space.lg),
     ) {
         Text(
-            text = "${c.origin?.city ?: "-"} → ${c.destination?.city ?: "-"}",
+            text = "${c.origin?.shortName ?: "-"} → ${c.destination?.shortName ?: "-"}",
             style = MaterialTheme.typography.titleLarge,
         )
         Text(

@@ -114,8 +114,8 @@ fun TripInputScreen(
             verticalArrangement = Arrangement.spacedBy(Tokens.Space.xl),
         ) {
             RouteCard(
-                originName = condition.origin?.city,
-                destinationName = condition.destination?.city,
+                originName = condition.origin?.shortName,
+                destinationName = condition.destination?.shortName,
                 onOriginClick = { openSheet = DestinationTarget.ORIGIN },
                 onDestinationClick = { openSheet = DestinationTarget.DESTINATION },
             )

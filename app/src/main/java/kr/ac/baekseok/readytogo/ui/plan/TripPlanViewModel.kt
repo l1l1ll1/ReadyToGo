@@ -189,8 +189,8 @@ class TripPlanViewModel(
             val trip = SavedTrip(
                 id = id,
                 // 기본 이름은 "도쿄 5일"처럼 자동으로 만든다. 이름을 먼저 물으면 저장이 번거로워진다.
-                title = "${destination.city} ${ChronoUnit.DAYS.between(departure, returnDate) + 1}일",
-                destinationName = destination.city,
+                title = "${destination.shortName} ${ChronoUnit.DAYS.between(departure, returnDate) + 1}일",
+                destinationName = destination.shortName,
                 departureDate = departure,
                 returnDate = returnDate,
                 condition = condition,

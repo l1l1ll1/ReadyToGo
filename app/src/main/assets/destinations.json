@@ -277,7 +277,7 @@
     },
     {
         "country":  "대만",
-        "city":  "Miaoli",
+        "city":  "먀오리(Miaoli)",
         "lat":  24.5643,
         "lon":  120.8237,
         "airports":  [
@@ -566,7 +566,7 @@
     },
     {
         "country":  "독일",
-        "city":  "Halle (Saale)",
+        "city":  "할레",
         "lat":  51.4816,
         "lon":  11.9795,
         "airports":  [
@@ -819,7 +819,7 @@
     },
     {
         "country":  "말레이시아",
-        "city":  "Kota Kuala Muda",
+        "city":  "코타쿠알라무다(Kota Kuala Muda)",
         "lat":  5.5882,
         "lon":  100.3708,
         "airports":  [
@@ -898,7 +898,7 @@
     },
     {
         "country":  "말레이시아",
-        "city":  "Kluang",
+        "city":  "클루앙(Kluang)",
         "lat":  2.0305,
         "lon":  103.3169,
         "airports":  [
@@ -907,7 +907,7 @@
     },
     {
         "country":  "말레이시아",
-        "city":  "Muar",
+        "city":  "무아르(Muar)",
         "lat":  2.0442,
         "lon":  102.5689,
         "airports":  [
@@ -927,7 +927,7 @@
     },
     {
         "country":  "말레이시아",
-        "city":  "Kapar",
+        "city":  "카파르(Kapar)",
         "lat":  3.1333,
         "lon":  101.3833,
         "airports":  [
@@ -946,7 +946,7 @@
     },
     {
         "country":  "말레이시아",
-        "city":  "Paya Terubong",
+        "city":  "파야테루봉(Paya Terubong)",
         "lat":  5.3728,
         "lon":  100.2797,
         "airports":  [
@@ -976,7 +976,7 @@
     },
     {
         "country":  "말레이시아",
-        "city":  "Kuala Kubu Baharu",
+        "city":  "쿠알라쿠부바루(Kuala Kubu Baharu)",
         "lat":  3.5638,
         "lon":  101.6581,
         "airports":  [
@@ -986,7 +986,7 @@
     },
     {
         "country":  "말레이시아",
-        "city":  "Kulim",
+        "city":  "쿨림(Kulim)",
         "lat":  5.365,
         "lon":  100.5618,
         "airports":  [
@@ -996,7 +996,7 @@
     },
     {
         "country":  "말레이시아",
-        "city":  "Batu Pahat",
+        "city":  "바투파핫(Batu Pahat)",
         "lat":  1.8548,
         "lon":  102.9325,
         "airports":  [
@@ -1006,7 +1006,7 @@
     },
     {
         "country":  "말레이시아",
-        "city":  "Sitiawan",
+        "city":  "시티아완(Sitiawan)",
         "lat":  4.2168,
         "lon":  100.6996,
         "airports":  [
@@ -1024,7 +1024,7 @@
     },
     {
         "country":  "말레이시아",
-        "city":  "Pasir Puteh",
+        "city":  "파시르푸테(Pasir Puteh)",
         "lat":  5.8333,
         "lon":  102.4,
         "airports":  [
@@ -1034,7 +1034,7 @@
     },
     {
         "country":  "말레이시아",
-        "city":  "Port Dickson",
+        "city":  "포트딕슨(Port Dickson)",
         "lat":  2.5246,
         "lon":  101.7965,
         "airports":  [
@@ -1045,7 +1045,7 @@
     },
     {
         "country":  "말레이시아",
-        "city":  "Maran",
+        "city":  "마란(Maran)",
         "lat":  3.586,
         "lon":  102.773,
         "airports":  [
@@ -1054,7 +1054,7 @@
     },
     {
         "country":  "말레이시아",
-        "city":  "Lahad Datu",
+        "city":  "라하드다투(Lahad Datu)",
         "lat":  5.023,
         "lon":  118.329,
         "airports":  [
@@ -1064,7 +1064,7 @@
     },
     {
         "country":  "말레이시아",
-        "city":  "Kuala Krai",
+        "city":  "쿠알라크라이(Kuala Krai)",
         "lat":  5.5313,
         "lon":  102.1993,
         "airports":  [
@@ -1073,7 +1073,7 @@
     },
     {
         "country":  "말레이시아",
-        "city":  "Pagoh",
+        "city":  "파고(Pagoh)",
         "lat":  2.1495,
         "lon":  102.7704,
         "airports":  [
@@ -1082,7 +1082,7 @@
     },
     {
         "country":  "말레이시아",
-        "city":  "Labuan",
+        "city":  "라부안",
         "lat":  5.2803,
         "lon":  115.2475,
         "airports":  [
@@ -1092,7 +1092,7 @@
     },
     {
         "country":  "말레이시아",
-        "city":  "Semenyih",
+        "city":  "스므니(Semenyih)",
         "lat":  2.9516,
         "lon":  101.843,
         "airports":  [
@@ -1103,7 +1103,7 @@
     },
     {
         "country":  "말레이시아",
-        "city":  "Marudi",
+        "city":  "마루디(Marudi)",
         "lat":  4.1833,
         "lon":  114.3167,
         "airports":  [
@@ -1114,7 +1114,7 @@
     },
     {
         "country":  "말레이시아",
-        "city":  "Kampung Sungai Kajang",
+        "city":  "캄풍숭아이카장(Kampung Sungai Kajang)",
         "lat":  3.4161,
         "lon":  101.173,
         "airports":  [
@@ -1124,7 +1124,7 @@
     },
     {
         "country":  "말레이시아",
-        "city":  "Cukai",
+        "city":  "추카이(Cukai)",
         "lat":  4.25,
         "lon":  103.4167,
         "airports":  [
@@ -1142,7 +1142,7 @@
     },
     {
         "country":  "말레이시아",
-        "city":  "Segamat",
+        "city":  "세가맛(Segamat)",
         "lat":  2.5148,
         "lon":  102.8158,
         "airports":  [
@@ -1734,7 +1734,7 @@
     },
     {
         "country":  "베트남",
-        "city":  "Buôn Ma Thuột",
+        "city":  "부온마투옷(Buon Ma Thuot)",
         "lat":  12.6675,
         "lon":  108.0378,
         "airports":  [
@@ -1743,7 +1743,7 @@
     },
     {
         "country":  "베트남",
-        "city":  "Thái Nguyên",
+        "city":  "타이응우옌(Thai Nguyen)",
         "lat":  21.5942,
         "lon":  105.8482,
         "airports":  [
@@ -1752,7 +1752,7 @@
     },
     {
         "country":  "베트남",
-        "city":  "Việt Trì",
+        "city":  "비엣찌(Viet Tri)",
         "lat":  21.3227,
         "lon":  105.402,
         "airports":  [
@@ -1761,7 +1761,7 @@
     },
     {
         "country":  "베트남",
-        "city":  "Bến Cát",
+        "city":  "벤깟(Ben Cat)",
         "lat":  11.15,
         "lon":  106.6,
         "airports":  [
@@ -1779,7 +1779,7 @@
     },
     {
         "country":  "베트남",
-        "city":  "Nghi Sơn",
+        "city":  "응이선(Nghi Son)",
         "lat":  19.3275,
         "lon":  105.8214,
         "airports":  [
@@ -1797,7 +1797,7 @@
     },
     {
         "country":  "베트남",
-        "city":  "Phú Mỹ",
+        "city":  "푸미(Phu My)",
         "lat":  10.6333,
         "lon":  107.0667,
         "airports":  [
@@ -1806,7 +1806,7 @@
     },
     {
         "country":  "베트남",
-        "city":  "Long Xuyên",
+        "city":  "롱쑤옌(Long Xuyen)",
         "lat":  10.3864,
         "lon":  105.4352,
         "airports":  [
@@ -1816,7 +1816,7 @@
     },
     {
         "country":  "베트남",
-        "city":  "Ba Vì",
+        "city":  "바비(Ba Vi)",
         "lat":  21.0833,
         "lon":  105.3833,
         "airports":  [
@@ -1834,7 +1834,7 @@
     },
     {
         "country":  "베트남",
-        "city":  "Mỹ Tho",
+        "city":  "미토(My Tho)",
         "lat":  10.36,
         "lon":  106.36,
         "airports":  [
@@ -1863,7 +1863,7 @@
     },
     {
         "country":  "베트남",
-        "city":  "Ðà Lạt",
+        "city":  "달랏",
         "lat":  11.9465,
         "lon":  108.4419,
         "airports":  [
@@ -1874,7 +1874,7 @@
     },
     {
         "country":  "베트남",
-        "city":  "Xuân Lộc",
+        "city":  "쑤언록(Xuan Loc)",
         "lat":  10.9333,
         "lon":  107.2333,
         "airports":  [
@@ -1883,7 +1883,7 @@
     },
     {
         "country":  "베트남",
-        "city":  "Thị Trấn Đông Triều",
+        "city":  "동찌에우(Dong Trieu)",
         "lat":  21.0824,
         "lon":  106.5138,
         "airports":  [
@@ -1894,7 +1894,7 @@
     },
     {
         "country":  "베트남",
-        "city":  "Ninh Hòa",
+        "city":  "닌호아(Ninh Hoa)",
         "lat":  12.4919,
         "lon":  109.125,
         "airports":  [
@@ -1904,7 +1904,7 @@
     },
     {
         "country":  "베트남",
-        "city":  "Phan Thiết",
+        "city":  "판티엣",
         "lat":  10.9289,
         "lon":  108.1021,
         "airports":  [
@@ -1913,7 +1913,7 @@
     },
     {
         "country":  "베트남",
-        "city":  "Cà Mau",
+        "city":  "까마우(Ca Mau)",
         "lat":  9.1768,
         "lon":  105.1524,
         "airports":  [
@@ -1923,7 +1923,7 @@
     },
     {
         "country":  "베트남",
-        "city":  "Sóc Trăng",
+        "city":  "속짱(Soc Trang)",
         "lat":  9.6,
         "lon":  105.9719,
         "airports":  [
@@ -1933,7 +1933,7 @@
     },
     {
         "country":  "베트남",
-        "city":  "Sa Dec",
+        "city":  "사덱(Sa Dec)",
         "lat":  10.2908,
         "lon":  105.7564,
         "airports":  [
@@ -1943,7 +1943,7 @@
     },
     {
         "country":  "베트남",
-        "city":  "Phan Rang-Tháp Chàm",
+        "city":  "판랑탑짬(Phan Rang-Thap Cham)",
         "lat":  11.5643,
         "lon":  108.9886,
         "airports":  [
@@ -1953,7 +1953,7 @@
     },
     {
         "country":  "베트남",
-        "city":  "Kon Tum",
+        "city":  "꼰뚬(Kon Tum)",
         "lat":  14.3545,
         "lon":  108.0076,
         "airports":  [
@@ -1962,7 +1962,7 @@
     },
     {
         "country":  "베트남",
-        "city":  "Lạng Sơn",
+        "city":  "랑선(Lang Son)",
         "lat":  21.8526,
         "lon":  106.761,
         "airports":  [
@@ -2232,7 +2232,7 @@
     },
     {
         "country":  "스페인",
-        "city":  "Gasteiz / Vitoria",
+        "city":  "비토리아(Vitoria)",
         "lat":  42.85,
         "lon":  -2.6727,
         "airports":  [
@@ -2322,7 +2322,7 @@
     },
     {
         "country":  "스페인",
-        "city":  "Donostia / San Sebastián",
+        "city":  "산세바스티안",
         "lat":  43.3128,
         "lon":  -1.975,
         "airports":  [
@@ -2333,7 +2333,7 @@
     },
     {
         "country":  "스페인",
-        "city":  "Castelló de la Plana",
+        "city":  "카스테욘데라플라나(Castello de la Plana)",
         "lat":  39.9857,
         "lon":  -0.0494,
         "airports":  [
@@ -2391,7 +2391,7 @@
     },
     {
         "country":  "스페인",
-        "city":  "Badajoz",
+        "city":  "바다호스(Badajoz)",
         "lat":  38.8779,
         "lon":  -6.9706,
         "airports":  [
@@ -2400,7 +2400,7 @@
     },
     {
         "country":  "스페인",
-        "city":  "Salamanca",
+        "city":  "살라망카",
         "lat":  40.9688,
         "lon":  -5.6639,
         "airports":  [
@@ -2409,7 +2409,7 @@
     },
     {
         "country":  "스페인",
-        "city":  "Huelva",
+        "city":  "우엘바(Huelva)",
         "lat":  37.2664,
         "lon":  -6.94,
         "airports":  [
@@ -2419,7 +2419,7 @@
     },
     {
         "country":  "스페인",
-        "city":  "Tarragona",
+        "city":  "타라고나",
         "lat":  41.119,
         "lon":  1.2454,
         "airports":  [
@@ -2430,7 +2430,7 @@
     },
     {
         "country":  "스페인",
-        "city":  "Lleida",
+        "city":  "예이다(Lleida)",
         "lat":  41.6167,
         "lon":  0.6222,
         "airports":  [
@@ -2450,7 +2450,7 @@
     },
     {
         "country":  "스페인",
-        "city":  "León",
+        "city":  "레온",
         "lat":  42.6,
         "lon":  -5.5703,
         "airports":  [
@@ -2468,7 +2468,7 @@
     },
     {
         "country":  "스페인",
-        "city":  "Jaén",
+        "city":  "하엔(Jaen)",
         "lat":  37.7692,
         "lon":  -3.7903,
         "airports":  [
@@ -2552,7 +2552,7 @@
     },
     {
         "country":  "아랍에미리트",
-        "city":  "Bani Yas City",
+        "city":  "바니야스(Bani Yas)",
         "lat":  24.3098,
         "lon":  54.6294,
         "airports":  [
@@ -2563,7 +2563,7 @@
     },
     {
         "country":  "아랍에미리트",
-        "city":  "Zayed City",
+        "city":  "자이드시티(Zayed City)",
         "lat":  23.6542,
         "lon":  53.7052,
         "airports":  [
@@ -2747,7 +2747,7 @@
     },
     {
         "country":  "영국",
-        "city":  "Kingston upon Hull",
+        "city":  "킹스턴어폰헐(Kingston upon Hull)",
         "lat":  53.7446,
         "lon":  -0.3352,
         "airports":  [
@@ -2788,7 +2788,7 @@
     },
     {
         "country":  "영국",
-        "city":  "Southend-on-Sea",
+        "city":  "사우스엔드온시(Southend-on-Sea)",
         "lat":  51.5378,
         "lon":  0.7143,
         "airports":  [
@@ -2896,7 +2896,7 @@
     },
     {
         "country":  "영국",
-        "city":  "Slough",
+        "city":  "슬라우(Slough)",
         "lat":  51.5095,
         "lon":  -0.5954,
         "airports":  [
@@ -2951,7 +2951,7 @@
     },
     {
         "country":  "영국",
-        "city":  "Telford",
+        "city":  "텔퍼드(Telford)",
         "lat":  52.6766,
         "lon":  -2.4493,
         "airports":  [
@@ -3234,7 +3234,7 @@
     },
     {
         "country":  "이탈리아",
-        "city":  "Brescia",
+        "city":  "브레시아",
         "lat":  45.5356,
         "lon":  10.2147,
         "airports":  [
@@ -3245,7 +3245,7 @@
     },
     {
         "country":  "이탈리아",
-        "city":  "Taranto",
+        "city":  "타란토(Taranto)",
         "lat":  40.4644,
         "lon":  17.2471,
         "airports":  [
@@ -3255,7 +3255,7 @@
     },
     {
         "country":  "이탈리아",
-        "city":  "Parma",
+        "city":  "파르마",
         "lat":  44.7993,
         "lon":  10.3262,
         "airports":  [
@@ -3266,7 +3266,7 @@
     },
     {
         "country":  "이탈리아",
-        "city":  "Modena",
+        "city":  "모데나",
         "lat":  44.6478,
         "lon":  10.9254,
         "airports":  [
@@ -3277,7 +3277,7 @@
     },
     {
         "country":  "이탈리아",
-        "city":  "Livorno",
+        "city":  "리보르노",
         "lat":  43.5443,
         "lon":  10.3262,
         "airports":  [
@@ -3297,7 +3297,7 @@
     },
     {
         "country":  "이탈리아",
-        "city":  "Rimini",
+        "city":  "리미니",
         "lat":  44.0576,
         "lon":  12.5653,
         "airports":  [
@@ -3308,7 +3308,7 @@
     },
     {
         "country":  "이탈리아",
-        "city":  "Mestre",
+        "city":  "메스트레(Mestre)",
         "lat":  45.4917,
         "lon":  12.2454,
         "airports":  [
@@ -3318,7 +3318,7 @@
     },
     {
         "country":  "이탈리아",
-        "city":  "Foggia",
+        "city":  "포자(Foggia)",
         "lat":  41.4584,
         "lon":  15.5519,
         "airports":  [
@@ -3327,7 +3327,7 @@
     },
     {
         "country":  "이탈리아",
-        "city":  "Ferrara",
+        "city":  "페라라",
         "lat":  44.838,
         "lon":  11.6206,
         "airports":  [
@@ -3338,7 +3338,7 @@
     },
     {
         "country":  "이탈리아",
-        "city":  "Salerno",
+        "city":  "살레르노",
         "lat":  40.6754,
         "lon":  14.7933,
         "airports":  [
@@ -3358,7 +3358,7 @@
     },
     {
         "country":  "이탈리아",
-        "city":  "Bergamo",
+        "city":  "베르가모",
         "lat":  45.696,
         "lon":  9.6672,
         "airports":  [
@@ -3380,7 +3380,7 @@
     },
     {
         "country":  "이탈리아",
-        "city":  "Perugia",
+        "city":  "페루자",
         "lat":  43.1122,
         "lon":  12.3888,
         "airports":  [
@@ -3390,7 +3390,7 @@
     },
     {
         "country":  "이탈리아",
-        "city":  "Pescara",
+        "city":  "페스카라(Pescara)",
         "lat":  42.4584,
         "lon":  14.2028,
         "airports":  [
@@ -3399,7 +3399,7 @@
     },
     {
         "country":  "이탈리아",
-        "city":  "Forlì",
+        "city":  "포를리(Forli)",
         "lat":  44.2218,
         "lon":  12.0414,
         "airports":  [
@@ -3410,7 +3410,7 @@
     },
     {
         "country":  "이탈리아",
-        "city":  "Vicenza",
+        "city":  "비첸차",
         "lat":  45.5467,
         "lon":  11.5475,
         "airports":  [
@@ -3421,7 +3421,7 @@
     },
     {
         "country":  "이탈리아",
-        "city":  "Terni",
+        "city":  "테르니(Terni)",
         "lat":  42.5634,
         "lon":  12.6433,
         "airports":  [
@@ -3432,7 +3432,7 @@
     },
     {
         "country":  "이탈리아",
-        "city":  "Bolzano",
+        "city":  "볼차노",
         "lat":  46.4907,
         "lon":  11.3398,
         "airports":  [
@@ -3441,7 +3441,7 @@
     },
     {
         "country":  "이탈리아",
-        "city":  "Piacenza",
+        "city":  "피아첸차(Piacenza)",
         "lat":  45.0524,
         "lon":  9.6934,
         "airports":  [
@@ -3452,7 +3452,7 @@
     },
     {
         "country":  "이탈리아",
-        "city":  "Novara",
+        "city":  "노바라(Novara)",
         "lat":  45.4469,
         "lon":  8.6212,
         "airports":  [
@@ -3463,7 +3463,7 @@
     },
     {
         "country":  "이탈리아",
-        "city":  "Arezzo",
+        "city":  "아레초(Arezzo)",
         "lat":  43.4628,
         "lon":  11.8807,
         "airports":  [
@@ -3474,7 +3474,7 @@
     },
     {
         "country":  "이탈리아",
-        "city":  "Udine",
+        "city":  "우디네(Udine)",
         "lat":  46.0693,
         "lon":  13.2372,
         "airports":  [
@@ -3485,7 +3485,7 @@
     },
     {
         "country":  "이탈리아",
-        "city":  "Andria",
+        "city":  "안드리아(Andria)",
         "lat":  41.2312,
         "lon":  16.298,
         "airports":  [
@@ -3495,7 +3495,7 @@
     },
     {
         "country":  "이탈리아",
-        "city":  "La Spezia",
+        "city":  "라스페치아",
         "lat":  44.103,
         "lon":  9.8238,
         "airports":  [
@@ -3665,7 +3665,7 @@
     },
     {
         "country":  "인도",
-        "city":  "Rasapūdipalem",
+        "city":  "라사푸디팔렘(Rasapudipalem)",
         "lat":  17.7331,
         "lon":  83.3162,
         "airports":  [
@@ -3684,7 +3684,7 @@
     },
     {
         "country":  "인도",
-        "city":  "Kallakurichi",
+        "city":  "칼라쿠리치(Kallakurichi)",
         "lat":  11.7338,
         "lon":  78.9592,
         "airports":  [
@@ -3693,7 +3693,7 @@
     },
     {
         "country":  "인도",
-        "city":  "Ludhiana",
+        "city":  "루디아나(Ludhiana)",
         "lat":  30.912,
         "lon":  75.8538,
         "airports":  [
@@ -3740,7 +3740,7 @@
     },
     {
         "country":  "인도",
-        "city":  "Faridabad",
+        "city":  "파리다바드(Faridabad)",
         "lat":  28.4112,
         "lon":  77.3132,
         "airports":  [
@@ -3750,7 +3750,7 @@
     },
     {
         "country":  "인도",
-        "city":  "Rājkot",
+        "city":  "라지코트(Rajkot)",
         "lat":  22.2916,
         "lon":  70.7932,
         "airports":  [
@@ -3769,7 +3769,7 @@
     },
     {
         "country":  "인도",
-        "city":  "Kalyān",
+        "city":  "칼얀(Kalyan)",
         "lat":  19.2437,
         "lon":  73.1355,
         "airports":  [
@@ -3789,7 +3789,7 @@
     },
     {
         "country":  "인도",
-        "city":  "Virār",
+        "city":  "비라르(Virar)",
         "lat":  19.4559,
         "lon":  72.8114,
         "airports":  [
@@ -3799,7 +3799,7 @@
     },
     {
         "country":  "인도",
-        "city":  "Nowrangapur",
+        "city":  "노랑가푸르(Nowrangapur)",
         "lat":  19.2311,
         "lon":  82.5483,
         "airports":  [
@@ -3817,7 +3817,7 @@
     },
     {
         "country":  "인도",
-        "city":  "Dhanbad",
+        "city":  "단바드(Dhanbad)",
         "lat":  23.7976,
         "lon":  86.4299,
         "airports":  [
@@ -3826,7 +3826,7 @@
     },
     {
         "country":  "인도",
-        "city":  "Aurangabad",
+        "city":  "아우랑가바드(Aurangabad)",
         "lat":  19.8776,
         "lon":  75.3423,
         "airports":  [
@@ -3881,7 +3881,7 @@
     },
     {
         "country":  "인도",
-        "city":  "Prayagraj",
+        "city":  "프라야그라지(Prayagraj)",
         "lat":  25.4448,
         "lon":  81.8432,
         "airports":  [
@@ -3969,7 +3969,7 @@
     },
     {
         "country":  "인도네시아",
-        "city":  "Jepara",
+        "city":  "제파라(Jepara)",
         "lat":  -6.5924,
         "lon":  110.671,
         "airports":  [
@@ -4037,7 +4037,7 @@
     },
     {
         "country":  "인도네시아",
-        "city":  "Tasikmalaya",
+        "city":  "타시크말라야(Tasikmalaya)",
         "lat":  -7.3274,
         "lon":  108.2207,
         "airports":  [
@@ -4048,7 +4048,7 @@
     },
     {
         "country":  "인도네시아",
-        "city":  "Serang",
+        "city":  "세랑(Serang)",
         "lat":  -6.1153,
         "lon":  106.1542,
         "airports":  [
@@ -4076,7 +4076,7 @@
     },
     {
         "country":  "인도네시아",
-        "city":  "Situbondo",
+        "city":  "시투본도(Situbondo)",
         "lat":  -7.7062,
         "lon":  114.0098,
         "airports":  [
@@ -4094,7 +4094,7 @@
     },
     {
         "country":  "인도네시아",
-        "city":  "Banjarmasin",
+        "city":  "반자르마신(Banjarmasin)",
         "lat":  -3.3199,
         "lon":  114.5908,
         "airports":  [
@@ -4103,7 +4103,7 @@
     },
     {
         "country":  "인도네시아",
-        "city":  "Jambi City",
+        "city":  "잠비(Jambi)",
         "lat":  -1.6,
         "lon":  103.6167,
         "airports":  [
@@ -4168,7 +4168,7 @@
     },
     {
         "country":  "인도네시아",
-        "city":  "Palu",
+        "city":  "팔루(Palu)",
         "lat":  -0.9083,
         "lon":  119.8708,
         "airports":  [
@@ -4188,7 +4188,7 @@
     },
     {
         "country":  "인도네시아",
-        "city":  "Sukabumi",
+        "city":  "수카부미(Sukabumi)",
         "lat":  -6.9181,
         "lon":  106.9267,
         "airports":  [
@@ -4208,7 +4208,7 @@
     },
     {
         "country":  "인도네시아",
-        "city":  "Dumai",
+        "city":  "두마이(Dumai)",
         "lat":  1.6671,
         "lon":  101.4432,
         "airports":  [
@@ -4235,7 +4235,7 @@
     },
     {
         "country":  "인도네시아",
-        "city":  "Pekalongan",
+        "city":  "프칼롱안(Pekalongan)",
         "lat":  -6.8886,
         "lon":  109.67529999999999,
         "airports":  [
@@ -4244,7 +4244,7 @@
     },
     {
         "country":  "인도네시아",
-        "city":  "Palangkaraya",
+        "city":  "팔랑카라야(Palangkaraya)",
         "lat":  -2.2083,
         "lon":  113.9167,
         "airports":  [
@@ -4253,7 +4253,7 @@
     },
     {
         "country":  "인도네시아",
-        "city":  "Karawang",
+        "city":  "카라왕(Karawang)",
         "lat":  -6.3052,
         "lon":  107.3197,
         "airports":  [
@@ -4264,7 +4264,7 @@
     },
     {
         "country":  "인도네시아",
-        "city":  "Kediri",
+        "city":  "케디리(Kediri)",
         "lat":  -7.8167,
         "lon":  112.0167,
         "airports":  [
@@ -4445,7 +4445,7 @@
     },
     {
         "country":  "일본",
-        "city":  "Aihara",
+        "city":  "아이하라",
         "lat":  35.6,
         "lon":  139.3167,
         "airports":  [
@@ -4564,7 +4564,7 @@
     },
     {
         "country":  "일본",
-        "city":  "Shinagawa",
+        "city":  "시나가와",
         "lat":  33.6363,
         "lon":  133.0057,
         "airports":  [
@@ -4586,7 +4586,7 @@
     },
     {
         "country":  "일본",
-        "city":  "Toyama",
+        "city":  "도야마",
         "lat":  36.7,
         "lon":  137.2167,
         "airports":  [
@@ -4618,7 +4618,7 @@
     },
     {
         "country":  "일본",
-        "city":  "Miyazaki",
+        "city":  "미야자키",
         "lat":  31.9167,
         "lon":  131.4167,
         "airports":  [
@@ -4650,7 +4650,7 @@
     },
     {
         "country":  "일본",
-        "city":  "Minato",
+        "city":  "미나토",
         "lat":  34.2152,
         "lon":  135.1501,
         "airports":  [
@@ -4670,7 +4670,7 @@
     },
     {
         "country":  "일본",
-        "city":  "Nagano",
+        "city":  "나가노",
         "lat":  36.65,
         "lon":  138.1833,
         "airports":  [
@@ -4920,7 +4920,7 @@
     },
     {
         "country":  "중국",
-        "city":  "Wuzhong",
+        "city":  "우중(Wuzhong)",
         "lat":  37.9867,
         "lon":  106.201,
         "airports":  [
@@ -5256,7 +5256,7 @@
     },
     {
         "country":  "체코",
-        "city":  "Jihlava",
+        "city":  "이흘라바(Jihlava)",
         "lat":  49.3961,
         "lon":  15.5912,
         "airports":  [
@@ -5332,7 +5332,7 @@
     },
     {
         "country":  "캄보디아",
-        "city":  "Preaek Prasab",
+        "city":  "프레아크프라삽(Preaek Prasab)",
         "lat":  12.3537,
         "lon":  106.0356,
         "airports":  [
@@ -5350,7 +5350,7 @@
     },
     {
         "country":  "캄보디아",
-        "city":  "Anlong Veaeng",
+        "city":  "안롱벵(Anlong Veng)",
         "lat":  14.2322,
         "lon":  104.0811,
         "airports":  [
@@ -5650,7 +5650,7 @@
     },
     {
         "country":  "캐나다",
-        "city":  "Saint-Louis-de-Terrebonne",
+        "city":  "생루이드테르본(Saint-Louis-de-Terrebonne)",
         "lat":  45.702,
         "lon":  -73.7867,
         "airports":  [
@@ -5699,7 +5699,7 @@
     },
     {
         "country":  "캐나다",
-        "city":  "Kamloops",
+        "city":  "캠룹스(Kamloops)",
         "lat":  50.6665,
         "lon":  -120.3192,
         "airports":  [
@@ -5726,7 +5726,7 @@
     },
     {
         "country":  "캐나다",
-        "city":  "Saint-Jean-sur-Richelieu",
+        "city":  "생장쉬르리슐리외(Saint-Jean-sur-Richelieu)",
         "lat":  45.3071,
         "lon":  -73.2626,
         "airports":  [
@@ -5808,7 +5808,7 @@
     },
     {
         "country":  "태국",
-        "city":  "Kabin Buri",
+        "city":  "까빈부리(Kabin Buri)",
         "lat":  13.9513,
         "lon":  101.7174,
         "airports":  [
@@ -5920,7 +5920,7 @@
     },
     {
         "country":  "태국",
-        "city":  "Yala",
+        "city":  "얄라(Yala)",
         "lat":  6.54,
         "lon":  101.2813,
         "airports":  [
@@ -5948,7 +5948,7 @@
     },
     {
         "country":  "태국",
-        "city":  "Nong Prue",
+        "city":  "농프르(Nong Prue)",
         "lat":  14.6078,
         "lon":  99.4578,
         "airports":  [
@@ -5966,7 +5966,7 @@
     },
     {
         "country":  "태국",
-        "city":  "Sakon Nakhon",
+        "city":  "사콘나콘(Sakon Nakhon)",
         "lat":  17.1612,
         "lon":  104.1472,
         "airports":  [
@@ -5976,7 +5976,7 @@
     },
     {
         "country":  "태국",
-        "city":  "Krathum Baen",
+        "city":  "끄라툼밴(Krathum Baen)",
         "lat":  13.6533,
         "lon":  100.2597,
         "airports":  [
@@ -5986,7 +5986,7 @@
     },
     {
         "country":  "태국",
-        "city":  "Saraburi",
+        "city":  "사라부리(Saraburi)",
         "lat":  14.5333,
         "lon":  100.9167,
         "airports":  [
@@ -5996,7 +5996,7 @@
     },
     {
         "country":  "태국",
-        "city":  "Trang",
+        "city":  "뜨랑(Trang)",
         "lat":  7.5563,
         "lon":  99.6114,
         "airports":  [
@@ -6006,7 +6006,7 @@
     },
     {
         "country":  "태국",
-        "city":  "Sattahip",
+        "city":  "사타힙(Sattahip)",
         "lat":  12.6663,
         "lon":  100.9018,
         "airports":  [
@@ -6053,7 +6053,7 @@
     },
     {
         "country":  "태국",
-        "city":  "Prachantakham",
+        "city":  "쁘라찬타캄(Prachantakham)",
         "lat":  14.0637,
         "lon":  101.5155,
         "airports":  [
@@ -6063,7 +6063,7 @@
     },
     {
         "country":  "태국",
-        "city":  "Kamphaeng Phet",
+        "city":  "깜팽펫(Kamphaeng Phet)",
         "lat":  16.4834,
         "lon":  99.5215,
         "airports":  [
@@ -6073,7 +6073,7 @@
     },
     {
         "country":  "태국",
-        "city":  "Chaiyaphum",
+        "city":  "차이야품(Chaiyaphum)",
         "lat":  15.8105,
         "lon":  102.0288,
         "airports":  [
@@ -6093,7 +6093,7 @@
     },
     {
         "country":  "태국",
-        "city":  "Lop Buri",
+        "city":  "롭부리(Lop Buri)",
         "lat":  14.7981,
         "lon":  100.654,
         "airports":  [
@@ -6111,7 +6111,7 @@
     },
     {
         "country":  "태국",
-        "city":  "Klaeng",
+        "city":  "클랭(Klaeng)",
         "lat":  12.78,
         "lon":  101.6491,
         "airports":  [
@@ -6121,7 +6121,7 @@
     },
     {
         "country":  "태국",
-        "city":  "Kalasin",
+        "city":  "깔라신(Kalasin)",
         "lat":  16.4328,
         "lon":  103.5066,
         "airports":  [
@@ -6131,7 +6131,7 @@
     },
     {
         "country":  "태국",
-        "city":  "Suphan Buri",
+        "city":  "수판부리(Suphan Buri)",
         "lat":  14.4742,
         "lon":  100.1222,
         "airports":  [
@@ -6316,7 +6316,7 @@
     },
     {
         "country":  "터키",
-        "city":  "Beylikdüzü",
+        "city":  "베일릭뒤쥐(Beylikduzu)",
         "lat":  40.982,
         "lon":  28.6399,
         "airports":  [
@@ -6327,7 +6327,7 @@
     },
     {
         "country":  "터키",
-        "city":  "Antakya",
+        "city":  "안타키아(Antakya)",
         "lat":  36.2066,
         "lon":  36.1572,
         "airports":  [
@@ -6374,7 +6374,7 @@
     },
     {
         "country":  "터키",
-        "city":  "Sultanbeyli",
+        "city":  "술탄베일리(Sultanbeyli)",
         "lat":  40.9607,
         "lon":  29.2707,
         "airports":  [
@@ -6480,7 +6480,7 @@
     },
     {
         "country":  "터키",
-        "city":  "Manisa",
+        "city":  "마니사(Manisa)",
         "lat":  38.612,
         "lon":  27.4265,
         "airports":  [
@@ -6499,7 +6499,7 @@
     },
     {
         "country":  "터키",
-        "city":  "Ordu",
+        "city":  "오르두(Ordu)",
         "lat":  40.9778,
         "lon":  37.8905,
         "airports":  [
@@ -6518,7 +6518,7 @@
     },
     {
         "country":  "터키",
-        "city":  "Çorlu",
+        "city":  "초를루(Corlu)",
         "lat":  41.1607,
         "lon":  27.8009,
         "airports":  [
@@ -6749,7 +6749,7 @@
     },
     {
         "country":  "프랑스",
-        "city":  "Saint-Quentin-en-Yvelines",
+        "city":  "생캉탱앙이블린(Saint-Quentin-en-Yvelines)",
         "lat":  48.7719,
         "lon":  2.0189,
         "airports":  [
@@ -6760,7 +6760,7 @@
     },
     {
         "country":  "프랑스",
-        "city":  "Brest",
+        "city":  "브레스트",
         "lat":  48.3903,
         "lon":  -4.4863,
         "airports":  [
@@ -6876,7 +6876,7 @@
     },
     {
         "country":  "프랑스",
-        "city":  "Nancy",
+        "city":  "낭시",
         "lat":  48.6844,
         "lon":  6.185,
         "airports":  [
@@ -6915,7 +6915,7 @@
     },
     {
         "country":  "프랑스",
-        "city":  "Pau",
+        "city":  "포(Pau)",
         "lat":  43.3112,
         "lon":  -0.3558,
         "airports":  [
@@ -7053,7 +7053,7 @@
     },
     {
         "country":  "필리핀",
-        "city":  "Tarlac City",
+        "city":  "타를라크(Tarlac)",
         "lat":  15.4802,
         "lon":  120.5979,
         "airports":  [
@@ -7063,7 +7063,7 @@
     },
     {
         "country":  "필리핀",
-        "city":  "Cabanatuan City",
+        "city":  "카바나투안(Cabanatuan)",
         "lat":  15.4859,
         "lon":  120.9665,
         "airports":  [
@@ -7114,7 +7114,7 @@
     },
     {
         "country":  "필리핀",
-        "city":  "Marawi City",
+        "city":  "마라위(Marawi)",
         "lat":  8.0034,
         "lon":  124.284,
         "airports":  [
@@ -7143,7 +7143,7 @@
     },
     {
         "country":  "필리핀",
-        "city":  "Batangas",
+        "city":  "바탕가스",
         "lat":  13.7567,
         "lon":  121.0584,
         "airports":  [
@@ -7199,7 +7199,7 @@
     },
     {
         "country":  "필리핀",
-        "city":  "Binangonan",
+        "city":  "비낭오난(Binangonan)",
         "lat":  14.4646,
         "lon":  121.1929,
         "airports":  [
@@ -7208,7 +7208,7 @@
     },
     {
         "country":  "필리핀",
-        "city":  "Kabankalan",
+        "city":  "카반칼란(Kabankalan)",
         "lat":  9.9839,
         "lon":  122.8142,
         "airports":  [
@@ -7218,7 +7218,7 @@
     },
     {
         "country":  "필리핀",
-        "city":  "Toledo",
+        "city":  "톨레도(Toledo)",
         "lat":  10.3773,
         "lon":  123.6386,
         "airports":  [
@@ -7229,7 +7229,7 @@
     },
     {
         "country":  "필리핀",
-        "city":  "Pagadian",
+        "city":  "파가디안(Pagadian)",
         "lat":  7.8257,
         "lon":  123.437,
         "airports":  [
@@ -7249,7 +7249,7 @@
     },
     {
         "country":  "필리핀",
-        "city":  "Sorsogon",
+        "city":  "소르소곤(Sorsogon)",
         "lat":  12.9739,
         "lon":  123.9933,
         "airports":  [
@@ -7260,7 +7260,7 @@
     },
     {
         "country":  "필리핀",
-        "city":  "Roxas City",
+        "city":  "록사스(Roxas City)",
         "lat":  11.5853,
         "lon":  122.7511,
         "airports":  [
@@ -7271,7 +7271,7 @@
     },
     {
         "country":  "필리핀",
-        "city":  "Legaspi",
+        "city":  "레가스피(Legaspi)",
         "lat":  13.1412,
         "lon":  123.7407,
         "airports":  [
@@ -7301,7 +7301,7 @@
     },
     {
         "country":  "필리핀",
-        "city":  "Tuguegarao",
+        "city":  "투게가라오(Tuguegarao)",
         "lat":  17.6158,
         "lon":  121.7228,
         "airports":  [
@@ -7311,7 +7311,7 @@
     },
     {
         "country":  "필리핀",
-        "city":  "Ilagan",
+        "city":  "일라간(Ilagan)",
         "lat":  17.1485,
         "lon":  121.8892,
         "airports":  [
@@ -7321,7 +7321,7 @@
     },
     {
         "country":  "필리핀",
-        "city":  "Mariveles",
+        "city":  "마리벨레스(Mariveles)",
         "lat":  14.4338,
         "lon":  120.4857,
         "airports":  [
@@ -7545,7 +7545,7 @@
     },
     {
         "country":  "호주",
-        "city":  "Maitland",
+        "city":  "메이틀랜드(Maitland)",
         "lat":  -32.7331,
         "lon":  151.5574,
         "airports":  [
@@ -7593,7 +7593,7 @@
     },
     {
         "country":  "호주",
-        "city":  "Bundaberg",
+        "city":  "번더버그(Bundaberg)",
         "lat":  -24.8662,
         "lon":  152.3479,
         "airports":  [
@@ -7603,7 +7603,7 @@
     },
     {
         "country":  "호주",
-        "city":  "Hervey Bay",
+        "city":  "허비베이(Hervey Bay)",
         "lat":  -25.2876,
         "lon":  152.7694,
         "airports":  [
@@ -7613,7 +7613,7 @@
     },
     {
         "country":  "호주",
-        "city":  "Port Macquarie",
+        "city":  "포트맥쿼리(Port Macquarie)",
         "lat":  -31.4308,
         "lon":  152.9089,
         "airports":  [

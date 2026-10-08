@@ -178,20 +178,24 @@ private fun DestinationList(
             ) {
                 Icon(icon, contentDescription = null, tint = Tokens.Palette.TextSecondary)
                 Column(modifier = Modifier.weight(1f)) {
+                    // 도시 이름만 큰 줄에 둔다. 공항 코드를 뒤에 붙이면
+                    // "코타쿠알라무다(Kota Kuala Muda) (PEN)"처럼 괄호가 두 번 겹친다
+                    // — 한글 표기가 애매한 도시는 이름 안에 이미 영문이 병기돼 있다.
                     Text(
-                        text = destination.labelFor(query),
+                        text = destination.city,
                         style = MaterialTheme.typography.bodyLarge,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
-                    // 전 세계 검색 결과에서는 나라를 같이 보여줘야 동명 도시를 구분할 수 있다.
-                    if (showCountry) {
-                        Text(
-                            text = destination.country,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Tokens.Palette.TextSecondary,
-                        )
-                    }
+                    // 공항 코드는 아랫줄로. 검색 결과에서는 나라도 같이 보여줘야
+                    // 동명 도시를 구분할 수 있다.
+                    Text(
+                        text = destination.subtitleFor(query, showCountry),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Tokens.Palette.TextSecondary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
                 }
             }
         }
@@ -199,14 +203,16 @@ private fun DestinationList(
 }
 
 /**
- * 목록에 적을 이름.
+ * 도시 이름 아랫줄에 적을 것.
  *
- * 공항 코드로 검색했으면 **그 코드**를 보여준다. 기본값(가장 가까운 공항)을 그대로 쓰면
- * "HND"를 찾았는데 "가시와 (NRT)"가 나와 왜 걸렸는지 알 수 없다 — 가시와는 두 공항을 다 쓴다.
+ * 공항 코드로 검색했으면 **그 코드를 앞세운다.** 가장 가까운 공항을 그대로 쓰면
+ * "HND"를 찾았는데 "NRT"가 나와 왜 걸렸는지 알 수 없다 — 가시와는 두 공항을 다 쓴다.
  */
-private fun Destination.labelFor(query: String): String {
+private fun Destination.subtitleFor(query: String, showCountry: Boolean): String {
     val matched = airportCodes.firstOrNull { it.equals(query.trim(), ignoreCase = true) }
-    return if (matched != null) "$city ($matched)" else displayName
+    val code = matched ?: airportCodes.firstOrNull()
+
+    return listOfNotNull(country.takeIf { showCountry }, code).joinToString(" · ")
 }
 
 @Composable

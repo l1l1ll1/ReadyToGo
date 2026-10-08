@@ -123,7 +123,7 @@ class FakeSavedTripRepository(
             return SavedTrip(
                 id = SavedTrip.idFor(condition) ?: error("샘플 조건이 덜 채워졌습니다: $title"),
                 title = title,
-                destinationName = destination.city,
+                destinationName = destination.shortName,
                 departureDate = departure,
                 returnDate = returnDate,
                 condition = condition,

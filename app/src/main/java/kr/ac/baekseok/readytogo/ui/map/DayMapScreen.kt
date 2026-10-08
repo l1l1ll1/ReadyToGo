@@ -33,6 +33,10 @@ import kr.ac.baekseok.readytogo.data.model.DayPlan
 import kr.ac.baekseok.readytogo.data.model.Lodging
 import kr.ac.baekseok.readytogo.data.model.MealTime
 import kr.ac.baekseok.readytogo.data.model.Restaurant
+import kr.ac.baekseok.readytogo.domain.recommend.distanceKm
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
 import com.google.android.gms.maps.model.LatLng as GmsLatLng
 import kr.ac.baekseok.readytogo.data.model.LatLng as AppLatLng
 
@@ -86,7 +90,7 @@ fun DayMapContent(
     lodging: Lodging?,
     modifier: Modifier = Modifier,
 ) {
-    val spots = remember(day, lodging) { day.toMapSpots(lodging) }
+    val spots = remember(day, lodging) { day.toMapSpots(lodging).spreadOverlapping() }
 
     Box(modifier = modifier.fillMaxSize()) {
         if (spots.isEmpty()) {
@@ -135,7 +139,8 @@ private fun DayMap(spots: List<MapSpot>) {
 
             spots.forEach { spot ->
                 Marker(
-                    state = MarkerState(position = spot.position.toGms()),
+                    // 겹친 마커는 살짝 옮겨 찍는다. 선과 카메라는 위에서 원래 좌표를 썼다.
+                    state = MarkerState(position = spot.displayPosition.toGms()),
                     title = spot.title,
                     snippet = spot.snippet,
                     icon = BitmapDescriptorFactory.defaultMarker(spot.kind.markerHue),
@@ -176,15 +181,112 @@ private fun LegendRow(color: Color, label: String) {
     )
 }
 
-/** 지도에 찍을 지점 하나. 모델을 그대로 쓰지 않는 이유는 관광지·숙소·식당을 한 목록으로 다루기 위함이다. */
-private data class MapSpot(
+/**
+ * 지도에 찍을 지점 하나. 모델을 그대로 쓰지 않는 이유는 관광지·숙소·식당을 한 목록으로 다루기 위함이다.
+ *
+ * @param position 실제 좌표. 동선 선과 카메라 범위는 이 값을 쓴다.
+ * @param displayPosition 마커를 실제로 찍을 좌표. 겹치는 마커를 펼칠 때만 [position]과 달라진다.
+ */
+internal data class MapSpot(
     val position: AppLatLng,
     val title: String,
     val snippet: String,
     val kind: SpotKind,
+    val displayPosition: AppLatLng = position,
 )
 
-private enum class SpotKind(val markerHue: Float) {
+/**
+ * 겹치는 마커를 작은 원으로 펼친다.
+ *
+ * **왜 필요한가**: 식당과 관광지가 같은 건물이거나 100m 안에 있으면 마커가 완전히 포개져
+ * 하나만 보인다. 실제로 우에노에서 주황 마커 둘이 겹쳐 하나가 사라졌다.
+ * Google Maps SDK는 겹친 마커를 알아서 떨어뜨려 주지 않는다.
+ *
+ * **왜 클러스터링이 아닌가**: 하루 마커가 많아야 7개(관광지 3~4 + 식당 3 + 숙소 1)다.
+ * 클러스터링은 수십·수백 개를 묶을 때 쓰는 것이고, 7개에 쓰면 오히려 묶음 안에 숨어
+ * 무엇이 있는지 더 안 보인다. 라이브러리도 하나 늘어난다.
+ *
+ * **기준 거리를 그날 일정 크기에서 뽑는 이유**: 카메라가 그날 장소를 다 담도록 맞춰지므로
+ * 확대 비율이 날마다 다르다. 고정 미터값을 쓰면 좁은 날에는 멀쩡한 마커까지 밀어내고,
+ * 넓은 날에는 겹친 걸 못 잡는다. 일정 전체 폭의 일정 비율로 잡아야 어느 날이든 비슷하게 보인다.
+ *
+ * 마커를 실제 위치에서 옮기는 것이므로 오차가 생긴다. 그래서 펼치는 반경을 겹침 기준의
+ * 절반 남짓으로 작게 두고, 동선 선과 카메라는 원래 좌표를 그대로 쓴다.
+ */
+internal fun List<MapSpot>.spreadOverlapping(): List<MapSpot> {
+    if (size < 2) return this
+
+    // 그날 일정이 얼마나 넓게 퍼져 있는지. 가장 먼 두 지점 사이 거리를 폭으로 본다.
+    val span = flatMap { a -> map { b -> distanceKm(a.position, b.position) } }.max()
+    val thresholdKm = (span * OVERLAP_SPAN_RATIO)
+        .coerceIn(MIN_OVERLAP_KM, MAX_OVERLAP_KM)
+
+    // 기준 거리 안에 있는 것끼리 묶는다. 첫 지점이 그 묶음의 중심이 된다.
+    val groups = mutableListOf<MutableList<MapSpot>>()
+    forEach { spot ->
+        val group = groups.firstOrNull {
+            distanceKm(it.first().position, spot.position) <= thresholdKm
+        }
+        if (group != null) group += spot else groups += mutableListOf(spot)
+    }
+
+    return groups.flatMap { group ->
+        if (group.size == 1) return@flatMap group
+
+        // 묶음 중심을 기준으로 원 위에 고르게 배치한다.
+        val centerLat = group.map { it.position.latitude }.average()
+        val centerLon = group.map { it.position.longitude }.average()
+        val radiusKm = thresholdKm * SPREAD_RADIUS_RATIO
+
+        group.mapIndexed { index, spot ->
+            val angle = 2 * PI * index / group.size
+            spot.copy(
+                displayPosition = offsetBy(
+                    latitude = centerLat,
+                    longitude = centerLon,
+                    northKm = radiusKm * cos(angle),
+                    eastKm = radiusKm * sin(angle),
+                ),
+            )
+        }
+    }
+}
+
+/**
+ * 좌표를 북쪽·동쪽으로 몇 km 옮긴다.
+ *
+ * 경도 1도의 거리는 위도에 따라 달라진다(적도에서 111km, 극지방에서 0). 그래서 경도 변환에만
+ * cos(위도)를 곱한다. 수백 미터 범위라 지구를 평면으로 봐도 오차가 보이지 않는다.
+ */
+private fun offsetBy(
+    latitude: Double,
+    longitude: Double,
+    northKm: Double,
+    eastKm: Double,
+): AppLatLng {
+    val latDegrees = northKm / KM_PER_DEGREE
+    val lonDegrees = eastKm / (KM_PER_DEGREE * cos(Math.toRadians(latitude)))
+    return AppLatLng(latitude + latDegrees, longitude + lonDegrees)
+}
+
+/** 일정 폭의 이 비율 안에 있으면 겹친 것으로 본다. */
+private const val OVERLAP_SPAN_RATIO = 0.04
+
+/**
+ * 겹침 기준의 하한·상한.
+ * 일정이 한 건물에 모인 날에도 최소한은 떨어뜨리고, 하루에 수십 km를 도는 날에
+ * 1km 떨어진 곳까지 겹쳤다고 보지 않게 한다.
+ */
+private const val MIN_OVERLAP_KM = 0.05
+private const val MAX_OVERLAP_KM = 0.4
+
+/** 펼치는 반경은 겹침 기준보다 작아야 한다. 그러지 않으면 펼친 것들이 다시 겹친다. */
+private const val SPREAD_RADIUS_RATIO = 0.6
+
+/** 위도 1도의 거리(km). 경도는 여기에 cos(위도)를 곱한다. */
+private const val KM_PER_DEGREE = 111.32
+
+internal enum class SpotKind(val markerHue: Float) {
     ATTRACTION(BitmapDescriptorFactory.HUE_RED),
     LODGING(BitmapDescriptorFactory.HUE_AZURE),
     RESTAURANT(BitmapDescriptorFactory.HUE_ORANGE),

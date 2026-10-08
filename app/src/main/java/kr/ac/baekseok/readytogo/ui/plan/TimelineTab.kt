@@ -1,0 +1,363 @@
+package kr.ac.baekseok.readytogo.ui.plan
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.DirectionsBus
+import androidx.compose.material.icons.outlined.DirectionsWalk
+import androidx.compose.material.icons.outlined.LocalCafe
+import androidx.compose.material.icons.outlined.Place
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ScrollableTabRow
+import androidx.compose.material3.Tab
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import kr.ac.baekseok.readytogo.data.model.DayPlan
+import kr.ac.baekseok.readytogo.data.model.FavoritePlace
+import kr.ac.baekseok.readytogo.data.model.TripPlan
+import kr.ac.baekseok.readytogo.domain.plan.TimelineEntry
+import kr.ac.baekseok.readytogo.domain.plan.TimelineItem
+import kr.ac.baekseok.readytogo.domain.plan.TravelLeg
+import kr.ac.baekseok.readytogo.domain.plan.TravelMode
+import kr.ac.baekseok.readytogo.domain.plan.formatDuration
+import kr.ac.baekseok.readytogo.domain.plan.toTimeline
+import kr.ac.baekseok.readytogo.ui.component.EmptyState
+import kr.ac.baekseok.readytogo.ui.component.FavoriteButton
+import kr.ac.baekseok.readytogo.ui.theme.Tokens
+
+/**
+ * 일정표 탭 — 날짜 칩으로 전환하는 세로 타임라인.
+ *
+ * 전에는 하루치를 카드 한 장에 "가볼 곳 / 아침 / 점심 / 저녁" 네 덩어리로 묶어 보여줬다.
+ * 그러면 **실제로 움직이는 순서**가 보이지 않는다 — 아침 먹고 어디를 가는지, 두 곳 사이가
+ * 걸어갈 거리인지 알 수 없었다. 관광지와 식당을 시간 순으로 섞고 사이에 이동시간을 넣는다.
+ *
+ * @param onDeleted 항목을 뺐을 때. 일차 번호와 항목 키를 넘긴다.
+ */
+@Composable
+fun TimelineTab(
+    plan: TripPlan,
+    selectedDayNumber: Int,
+    edits: TimelineEdits,
+    favoriteIds: Set<String>,
+    onSelectDay: (Int) -> Unit,
+    onOpenMapForDay: (Int) -> Unit,
+    onItemClick: (Int, TimelineItem) -> Unit,
+    onToggleFavorite: (FavoritePlace) -> Unit,
+) {
+    val day = plan.dailyPlans.firstOrNull { it.dayNumber == selectedDayNumber }
+        ?: plan.dailyPlans.firstOrNull()
+
+    Column(modifier = Modifier.fillMaxWidth()) {
+        ScrollableTabRow(
+            selectedTabIndex = ((day?.dayNumber ?: 1) - 1).coerceAtLeast(0),
+            edgePadding = 0.dp,
+        ) {
+            plan.dailyPlans.forEach { candidate ->
+                Tab(
+                    selected = candidate.dayNumber == day?.dayNumber,
+                    onClick = { onSelectDay(candidate.dayNumber) },
+                    text = { Text("${candidate.dayNumber}일차") },
+                )
+            }
+        }
+
+        if (day == null) {
+            EmptyState(title = "일정이 없습니다", description = "")
+            return@Column
+        }
+
+        val entries = day.toTimeline(
+            deletedKeys = edits.deletedIn(day.dayNumber),
+            swappedMealKeys = edits.swappedIn(day.dayNumber),
+        )
+
+        LazyColumn(
+            contentPadding = PaddingValues(
+                start = Tokens.Space.lg,
+                end = Tokens.Space.lg,
+                top = Tokens.Space.md,
+                bottom = Tokens.Space.xxl,
+            ),
+        ) {
+            item {
+                DayHeader(
+                    day = day,
+                    totalMinutes = entries.sumOf { entry ->
+                        entry.item.stayMinutes + (entry.travelFromPrevious?.minutes ?: 0)
+                    },
+                    onOpenMap = { onOpenMapForDay(day.dayNumber) },
+                )
+            }
+
+            if (entries.isEmpty()) {
+                item {
+                    EmptyState(
+                        title = "이 날은 비어 있습니다",
+                        description = "이동·휴식에 쓰는 날이거나, 항목을 모두 뺐습니다.",
+                    )
+                }
+            }
+
+            items(entries, key = { it.item.key }) { entry ->
+                TimelineRow(
+                    entry = entry,
+                    favoriteIds = favoriteIds,
+                    cityName = plan.condition.destination?.city.orEmpty(),
+                    onClick = { onItemClick(day.dayNumber, entry.item) },
+                    onToggleFavorite = onToggleFavorite,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun DayHeader(day: DayPlan, totalMinutes: Int, onOpenMap: () -> Unit) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = Tokens.Space.md),
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = "${day.dayNumber}일차 · ${day.date.format(DATE)}",
+                style = MaterialTheme.typography.titleMedium,
+            )
+            // 하루가 얼마나 빡빡한지 숫자로 알려준다. 항목만 세어서는 감이 안 온다.
+            if (totalMinutes > 0) {
+                Text(
+                    text = "이동 포함 ${formatDuration(totalMinutes)}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Tokens.Palette.TextSecondary,
+                )
+            }
+        }
+        TextButton(onClick = onOpenMap) { Text("지도") }
+    }
+}
+
+/**
+ * 타임라인 한 줄 — 왼쪽에 점과 세로줄, 오른쪽에 내용.
+ *
+ * 이동시간은 **항목 위**에 둔다. 아래에 두면 마지막 항목 뒤에 갈 곳 없는 이동이 남는다.
+ */
+@Composable
+private fun TimelineRow(
+    entry: TimelineEntry,
+    favoriteIds: Set<String>,
+    cityName: String,
+    onClick: () -> Unit,
+    onToggleFavorite: (FavoritePlace) -> Unit,
+) {
+    Column {
+        entry.travelFromPrevious?.let { TravelRow(it) }
+
+        Row(modifier = Modifier.fillMaxWidth()) {
+            TimelineRail(icon = entry.item.icon)
+
+            Column(
+                verticalArrangement = Arrangement.spacedBy(Tokens.Space.xs),
+                modifier = Modifier
+                    .weight(1f)
+                    .clip(Tokens.Radius.card)
+                    .clickable(onClick = onClick)
+                    .padding(
+                        start = Tokens.Space.md,
+                        end = Tokens.Space.sm,
+                        top = Tokens.Space.sm,
+                        bottom = Tokens.Space.lg,
+                    ),
+            ) {
+                when (val item = entry.item) {
+                    is TimelineItem.Visit -> VisitContent(item)
+                    is TimelineItem.Meal -> MealContent(item)
+                }
+            }
+
+            // ♥는 줄 전체 클릭과 겹치지 않게 Row의 바깥에 둔다.
+            FavoriteButton(
+                favorite = entry.item.favoriteId in favoriteIds,
+                onToggle = { onToggleFavorite(entry.item.toFavoritePlace(cityName)) },
+            )
+        }
+    }
+}
+
+/** 왼쪽 세로줄과 점. 항목이 한 줄로 이어져 보이게 한다. */
+@Composable
+private fun TimelineRail(icon: ImageVector) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.width(Tokens.Size.timelineRailWidth),
+    ) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .size(Tokens.Space.xxl)
+                .clip(CircleShape)
+                .background(Tokens.Palette.PointLight),
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = Tokens.Palette.PointDark,
+                modifier = Modifier.size(Tokens.Space.lg),
+            )
+        }
+        // 점 아래로 선을 늘려 다음 항목까지 이어 붙인다.
+        Box(
+            modifier = Modifier
+                .width(Tokens.Size.timelineLineWidth)
+                .height(Tokens.Size.timelineLineHeight)
+                .background(Tokens.Palette.Divider),
+        )
+    }
+}
+
+@Composable
+private fun VisitContent(item: TimelineItem.Visit) {
+    val attraction = item.attraction
+    Text(
+        text = attraction.name,
+        style = MaterialTheme.typography.titleSmall,
+        maxLines = 2,
+        overflow = TextOverflow.Ellipsis,
+    )
+    Text(
+        text = "관광지 · ★${attraction.rating}" +
+            if (attraction.reviewCount > 0) " (리뷰 ${"%,d".format(attraction.reviewCount)})" else "",
+        style = MaterialTheme.typography.bodyMedium,
+        color = Tokens.Palette.TextSecondary,
+    )
+    Text(
+        text = formatDuration(item.stayMinutes),
+        style = MaterialTheme.typography.labelMedium,
+        color = Tokens.Palette.TextSecondary,
+    )
+}
+
+/**
+ * 끼니 한 줄.
+ *
+ * 예산 초과 빨간 표시와 현지 통화 병기를 여기서도 유지한다 — 카드에서만 보이고 타임라인에서
+ * 사라지면 같은 식당이 화면에 따라 다르게 보인다. 표기 함수는 결과 화면과 공유한다.
+ */
+@Composable
+private fun MealContent(item: TimelineItem.Meal) {
+    val restaurant = item.restaurant
+    val overBudget = item.shown.overBudget
+    val accent = if (overBudget) MaterialTheme.colorScheme.error else Tokens.Palette.Point
+
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text(
+            text = item.meal.label,
+            style = MaterialTheme.typography.labelMedium,
+            color = accent,
+            fontWeight = FontWeight.Bold,
+        )
+        if (overBudget) {
+            Text(
+                text = " · 예산 초과",
+                style = MaterialTheme.typography.labelMedium,
+                color = accent,
+            )
+        }
+    }
+    Text(
+        text = restaurant.name,
+        style = MaterialTheme.typography.titleSmall,
+        maxLines = 2,
+        overflow = TextOverflow.Ellipsis,
+    )
+    Text(
+        text = restaurant.detailLine(),
+        style = MaterialTheme.typography.bodyMedium,
+        color = Tokens.Palette.TextSecondary,
+    )
+    Text(
+        // priceText()가 원화와 현지 통화를 줄바꿈으로 함께 돌려준다.
+        text = restaurant.priceText(),
+        style = MaterialTheme.typography.bodyMedium,
+        color = if (overBudget) accent else Tokens.Palette.TextPrimary,
+        fontWeight = FontWeight.Bold,
+    )
+    Text(
+        text = formatDuration(item.stayMinutes),
+        style = MaterialTheme.typography.labelMedium,
+        color = Tokens.Palette.TextSecondary,
+    )
+}
+
+/** 두 항목 사이의 이동. 세로줄 자리에 아이콘을 맞춰 줄이 끊기지 않게 한다. */
+@Composable
+private fun TravelRow(leg: TravelLeg) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = Tokens.Space.sm),
+    ) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.width(Tokens.Size.timelineRailWidth),
+        ) {
+            Icon(
+                imageVector = when (leg.mode) {
+                    TravelMode.WALK -> Icons.Outlined.DirectionsWalk
+                    TravelMode.TRANSIT -> Icons.Outlined.DirectionsBus
+                },
+                contentDescription = null,
+                tint = Tokens.Palette.TextSecondary,
+                modifier = Modifier.size(Tokens.Space.lg),
+            )
+        }
+        Text(
+            text = "${leg.label} · ${"%.1f".format(leg.distanceKm)}km",
+            style = MaterialTheme.typography.labelMedium,
+            color = Tokens.Palette.TextSecondary,
+            modifier = Modifier.padding(start = Tokens.Space.md),
+        )
+    }
+}
+
+private val TimelineItem.icon: ImageVector
+    get() = when (this) {
+        is TimelineItem.Visit -> Icons.Outlined.Place
+        is TimelineItem.Meal -> Icons.Outlined.LocalCafe
+    }
+
+/** 즐겨찾기 비교·저장에 쓰는 id. 식당은 지금 보여주는 쪽을 담는다. */
+private val TimelineItem.favoriteId: String
+    get() = when (this) {
+        is TimelineItem.Visit -> attraction.id
+        is TimelineItem.Meal -> restaurant.id
+    }
+
+private fun TimelineItem.toFavoritePlace(cityName: String): FavoritePlace = when (this) {
+    is TimelineItem.Visit -> attraction.toFavorite(cityName)
+    is TimelineItem.Meal -> restaurant.toFavorite(cityName)
+}

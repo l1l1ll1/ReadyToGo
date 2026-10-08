@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem *)",
+      "PowerShell($env:JAVA_HOME = \"C:\\\\Program Files\\\\Android\\\\Android Studio\\\\jbr\"; .\\\\gradlew.bat assembleDebug testDebugUnitTest --console=plain)",
+      "PowerShell($env:JAVA_HOME = \"C:\\\\Program Files\\\\Android\\\\Android Studio\\\\jbr\"; .\\\\gradlew.bat assembleDebug testDebugUnitTest --console=plain 2>&1 | Select-Object -Last 25)",
+      "PowerShell(foreach \\($v in @\\(\"8.6.0\",\"9.0.0-rc03\"\\)\\) { try { $c = \\(New-Object System.Net.WebClient\\).DownloadString\\(\"https://repo1.maven.org/maven2/com/google/maps/android/maps-compose/$v/maps-compose-$v.pom\"\\); $x = [xml]$c; Write-Output \"=== maps-compose $v ===\"; $x.project.dependencies.dependency | Where-Object { $_.groupId -match \"androidx.compose|com.google.android.gms\" } | ForEach-Object { \"{0}:{1} = {2} \\({3}\\)\" -f $_.groupId, $_.artifactId, $_.version, $_.scope } } catch { Write-Output \"FAIL $v : $\\($_.Exception.Message\\)\" } })"
+    ]
+  }
+}

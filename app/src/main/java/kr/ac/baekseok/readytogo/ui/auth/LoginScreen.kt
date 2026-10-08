@@ -1,0 +1,142 @@
+package kr.ac.baekseok.readytogo.ui.auth
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import kr.ac.baekseok.readytogo.data.model.AuthState
+import kr.ac.baekseok.readytogo.ui.component.PrimaryButton
+import kr.ac.baekseok.readytogo.ui.component.SecondaryButton
+import kr.ac.baekseok.readytogo.ui.theme.Tokens
+
+/**
+ * 로그인 화면.
+ *
+ * **"둘러보기"를 로그인과 나란히 둔다.** 로그인을 강제하면 앱이 무엇을 해주는지 보기도 전에
+ * 계정을 만들어야 해서 대부분 닫는다. 저장만 막으면 충분하다(CLAUDE.md 앱 구조 → 로그인).
+ *
+ * 1단계에서는 Google 로그인이 가짜다 — 버튼을 누르면 잠시 로딩 후 로그인된 상태가 된다.
+ * Firebase 연결은 8단계 2번에서 한다.
+ *
+ * @param onSignedIn 로그인 또는 둘러보기로 들어갔을 때.
+ */
+@Composable
+fun LoginScreen(
+    onSignedIn: () -> Unit,
+    viewModel: AuthViewModel = viewModel(),
+) {
+    val authState by viewModel.authState.collectAsState()
+    val signingIn by viewModel.signingIn.collectAsState()
+    val error by viewModel.error.collectAsState()
+
+    // 로그인·둘러보기 중 무엇이든 "들어갈 수 있는 상태"가 되면 넘긴다.
+    LaunchedEffect(authState) {
+        if (authState is AuthState.SignedIn || authState is AuthState.Guest) onSignedIn()
+    }
+
+    Surface(color = Tokens.Palette.Background, modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = Tokens.Space.screenHorizontal),
+        ) {
+            Spacer(modifier = Modifier.weight(1f))
+
+            Column(horizontalAlignment = Alignment.Start) {
+                Text(
+                    text = "Readytogo",
+                    style = MaterialTheme.typography.displaySmall,
+                    color = Tokens.Palette.Point,
+                )
+                Spacer(modifier = Modifier.height(Tokens.Space.sm))
+                Text(
+                    text = "경비와 날짜만 알려주세요.\n항공·숙소·식당·동선을 한 번에 맞춰 드립니다.",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Tokens.Palette.TextSecondary,
+                )
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            if (error != null) {
+                Text(
+                    text = error.orEmpty(),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Tokens.Palette.Danger,
+                    modifier = Modifier.padding(bottom = Tokens.Space.md),
+                )
+            }
+
+            // Google 로고 이미지는 쓰지 않는다 — 브랜드 가이드라인이 따라붙고,
+            // 비슷하게 그려 넣는 것은 더 나쁘다. 글자로만 표기한다.
+            PrimaryButton(
+                text = "Google 계정으로 계속하기",
+                onClick = viewModel::signInWithGoogle,
+                loading = signingIn,
+            )
+
+            Spacer(modifier = Modifier.height(Tokens.Space.md))
+
+            SecondaryButton(
+                text = "로그인 없이 둘러보기",
+                onClick = viewModel::continueAsGuest,
+            )
+
+            Spacer(modifier = Modifier.height(Tokens.Space.md))
+
+            Text(
+                text = "둘러보기는 일정을 만들 수 있지만 저장되지 않습니다.",
+                style = MaterialTheme.typography.labelMedium,
+                color = Tokens.Palette.TextSecondary,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth(),
+            )
+
+            Spacer(modifier = Modifier.height(Tokens.Space.xxl))
+        }
+    }
+}
+
+/** 프로필 사진이 없을 때 쓰는 이니셜 원. 설정·프로필 화면이 같이 쓴다. */
+@Composable
+fun InitialAvatar(
+    name: String,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .size(Tokens.Size.avatar)
+            .clip(CircleShape)
+            .background(Tokens.Palette.PointLight),
+    ) {
+        Text(
+            // 한글은 첫 글자, 영문도 첫 글자. 두 글자를 쓰면 한글에서 "여행"처럼 단어가 되어 어색하다.
+            text = name.take(1).ifBlank { "?" },
+            color = Tokens.Palette.PointDark,
+            fontSize = 22.sp,
+            fontWeight = FontWeight.Bold,
+        )
+    }
+}

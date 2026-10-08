@@ -1,0 +1,103 @@
+import java.util.Properties
+
+plugins {
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.compose)
+}
+
+/**
+ * Maps 키는 local.properties에서 읽는다.
+ * 키를 소스에 적지 않기 위함이며, local.properties는 형상관리에 올리지 않는다.
+ * 키가 없어도 빌드는 되게 둔다 — 지도만 안 뜨고 나머지 화면은 그대로 확인할 수 있다.
+ */
+val localProperties: Properties = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) file.inputStream().use { load(it) }
+}
+
+val mapsApiKey: String = localProperties.getProperty("MAPS_API_KEY", "")
+
+/** SerpApi(항공권) 키. 없으면 Mock 항공 데이터로 동작한다. */
+val serpApiKey: String = localProperties.getProperty("SERPAPI_KEY", "")
+
+android {
+    namespace = "kr.ac.baekseok.readytogo"
+    // androidx.core 1.19.0 / lifecycle 2.11.0이 compileSdk 37 이상을 요구한다.
+    // targetSdk는 런타임 동작이 바뀌므로 36에 그대로 둔다.
+    compileSdk {
+        version = release(37)
+    }
+
+    defaultConfig {
+        applicationId = "kr.ac.baekseok.readytogo"
+        minSdk = 33
+        targetSdk = 36
+        versionCode = 1
+        versionName = "1.0"
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // AndroidManifest의 ${MAPS_API_KEY} 자리에 채워진다.
+        manifestPlaceholders["MAPS_API_KEY"] = mapsApiKey
+
+        // Places SDK는 Manifest가 아니라 코드에서 키를 넘겨야 해서 BuildConfig로도 내보낸다.
+        buildConfigField("String", "MAPS_API_KEY", "\"$mapsApiKey\"")
+        buildConfigField("String", "SERPAPI_KEY", "\"$serpApiKey\"")
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+    buildFeatures {
+        compose = true
+        buildConfig = true
+    }
+
+    testOptions {
+        unitTests {
+            // 단위 테스트에는 android.util.Log 같은 프레임워크 구현이 없어 호출하면 예외가 난다.
+            // 로그 한 줄 때문에 테스트가 깨지는 것을 막는다(기본값을 돌려주게 한다).
+            isReturnDefaultValues = true
+        }
+    }
+}
+
+dependencies {
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    // Composable 안에서 viewModel()로 ViewModel을 받기 위해 사용
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.activity.compose)
+    // 화면 이동(입력 → 결과 → 지도)
+    implementation(libs.androidx.navigation.compose)
+    // Google 지도. maps-compose는 Compose에서 지도를 쓰기 위한 공식 래퍼다.
+    implementation(libs.play.services.maps)
+    implementation(libs.maps.compose)
+    // 식당·관광지 검색. 7단계에서 MockPlaceRepository를 대체한다.
+    implementation(libs.places)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.material3)
+    // 아이콘. material3에 딸려 오지 않아 따로 넣는다.
+    // extended는 아이콘이 2천 개지만, R8이 실제로 쓰는 것만 남기므로 APK는 거의 늘지 않는다.
+    implementation(libs.androidx.compose.material.icons.extended)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
+}

@@ -1,0 +1,7632 @@
+[
+    {
+        "country":  "괌",
+        "city":  "괌",
+        "lat":  13.4443,
+        "lon":  144.7937,
+        "airports":  [
+                         "GUM"
+                     ]
+    },
+    {
+        "country":  "뉴질랜드",
+        "city":  "오클랜드",
+        "lat":  -36.8485,
+        "lon":  174.7635,
+        "airports":  [
+                         "AKL"
+                     ]
+    },
+    {
+        "country":  "뉴질랜드",
+        "city":  "크라이스트처치",
+        "lat":  -43.5333,
+        "lon":  172.6333,
+        "airports":  [
+                         "CHC"
+                     ]
+    },
+    {
+        "country":  "뉴질랜드",
+        "city":  "웰링턴",
+        "lat":  -41.2866,
+        "lon":  174.7756,
+        "airports":  [
+                         "WLG",
+                         "BHE"
+                     ]
+    },
+    {
+        "country":  "뉴질랜드",
+        "city":  "해밀턴",
+        "lat":  -37.7833,
+        "lon":  175.2833,
+        "airports":  [
+                         "AKL",
+                         "HLZ",
+                         "TRG"
+                     ]
+    },
+    {
+        "country":  "뉴질랜드",
+        "city":  "타우랑가",
+        "lat":  -37.6861,
+        "lon":  176.1667,
+        "airports":  [
+                         "TRG",
+                         "ROT",
+                         "WHK"
+                     ]
+    },
+    {
+        "country":  "뉴질랜드",
+        "city":  "더니든",
+        "lat":  -45.8742,
+        "lon":  170.5036,
+        "airports":  [
+                         "DUD"
+                     ]
+    },
+    {
+        "country":  "뉴질랜드",
+        "city":  "파머스턴노스",
+        "lat":  -40.3564,
+        "lon":  175.6111,
+        "airports":  [
+                         "PMR",
+                         "WAG"
+                     ]
+    },
+    {
+        "country":  "뉴질랜드",
+        "city":  "뉴플리머스",
+        "lat":  -39.0667,
+        "lon":  174.0833,
+        "airports":  [
+                         "NPL"
+                     ]
+    },
+    {
+        "country":  "뉴질랜드",
+        "city":  "헤이스팅스",
+        "lat":  -39.6381,
+        "lon":  176.8492,
+        "airports":  [
+                         "NPE"
+                     ]
+    },
+    {
+        "country":  "뉴질랜드",
+        "city":  "로토루아",
+        "lat":  -38.1387,
+        "lon":  176.2452,
+        "airports":  [
+                         "ROT",
+                         "TRG",
+                         "WHK"
+                     ]
+    },
+    {
+        "country":  "뉴질랜드",
+        "city":  "인버카길",
+        "lat":  -46.4,
+        "lon":  168.35,
+        "airports":  [
+                         "IVC"
+                     ]
+    },
+    {
+        "country":  "뉴질랜드",
+        "city":  "넬슨",
+        "lat":  -41.2708,
+        "lon":  173.284,
+        "airports":  [
+                         "NSN",
+                         "BHE"
+                     ]
+    },
+    {
+        "country":  "뉴질랜드",
+        "city":  "황아레이",
+        "lat":  -35.7317,
+        "lon":  174.3239,
+        "airports":  [
+                         "WRE",
+                         "KKE"
+                     ]
+    },
+    {
+        "country":  "대만",
+        "city":  "타이베이",
+        "lat":  25.0531,
+        "lon":  121.5264,
+        "airports":  [
+                         "TSA",
+                         "TPE"
+                     ]
+    },
+    {
+        "country":  "대만",
+        "city":  "타이중",
+        "lat":  24.1469,
+        "lon":  120.6839,
+        "airports":  [
+                         "RMQ",
+                         "HUN",
+                         "CYI"
+                     ]
+    },
+    {
+        "country":  "대만",
+        "city":  "가오슝",
+        "lat":  22.6163,
+        "lon":  120.3133,
+        "airports":  [
+                         "KHH",
+                         "TNN",
+                         "TTT"
+                     ]
+    },
+    {
+        "country":  "대만",
+        "city":  "타이난",
+        "lat":  22.9908,
+        "lon":  120.2133,
+        "airports":  [
+                         "TNN",
+                         "KHH",
+                         "MZG"
+                     ]
+    },
+    {
+        "country":  "대만",
+        "city":  "신주",
+        "lat":  24.8036,
+        "lon":  120.9686,
+        "airports":  [
+                         "TPE",
+                         "TSA",
+                         "RMQ"
+                     ]
+    },
+    {
+        "country":  "대만",
+        "city":  "자이",
+        "lat":  23.4792,
+        "lon":  120.4489,
+        "airports":  [
+                         "TNN",
+                         "MZG",
+                         "RMQ"
+                     ]
+    },
+    {
+        "country":  "대만",
+        "city":  "바더 구",
+        "lat":  24.9298,
+        "lon":  121.2837,
+        "airports":  [
+                         "TPE",
+                         "TSA",
+                         "RMQ"
+                     ]
+    },
+    {
+        "country":  "대만",
+        "city":  "더우류",
+        "lat":  23.7094,
+        "lon":  120.5433,
+        "airports":  [
+                         "RMQ",
+                         "TNN",
+                         "MZG"
+                     ]
+    },
+    {
+        "country":  "대만",
+        "city":  "난터우",
+        "lat":  23.9157,
+        "lon":  120.6639,
+        "airports":  [
+                         "RMQ",
+                         "HUN",
+                         "CYI"
+                     ]
+    },
+    {
+        "country":  "대만",
+        "city":  "타이둥",
+        "lat":  22.7599,
+        "lon":  121.1446,
+        "airports":  [
+                         "KHH",
+                         "TNN",
+                         "TTT"
+                     ]
+    },
+    {
+        "country":  "대만",
+        "city":  "화롄",
+        "lat":  23.9769,
+        "lon":  121.6044,
+        "airports":  [
+                         "HUN"
+                     ]
+    },
+    {
+        "country":  "대만",
+        "city":  "이란",
+        "lat":  24.757,
+        "lon":  121.753,
+        "airports":  [
+                         "TSA",
+                         "TPE",
+                         "HUN"
+                     ]
+    },
+    {
+        "country":  "대만",
+        "city":  "푸리진",
+        "lat":  23.9664,
+        "lon":  120.9695,
+        "airports":  [
+                         "RMQ",
+                         "HUN",
+                         "CYI"
+                     ]
+    },
+    {
+        "country":  "대만",
+        "city":  "Miaoli",
+        "lat":  24.5643,
+        "lon":  120.8237,
+        "airports":  [
+                         "RMQ",
+                         "TPE",
+                         "TSA"
+                     ]
+    },
+    {
+        "country":  "대만",
+        "city":  "마궁",
+        "lat":  23.5654,
+        "lon":  119.5863,
+        "airports":  [
+                         "MZG",
+                         "TNN",
+                         "CYI"
+                     ]
+    },
+    {
+        "country":  "대만",
+        "city":  "지우펀",
+        "lat":  25.1097,
+        "lon":  121.8445,
+        "airports":  [
+                         "TSA",
+                         "TPE"
+                     ]
+    },
+    {
+        "country":  "독일",
+        "city":  "베를린",
+        "lat":  52.5244,
+        "lon":  13.4105,
+        "airports":  [
+                         "BER"
+                     ]
+    },
+    {
+        "country":  "독일",
+        "city":  "함부르크",
+        "lat":  53.5507,
+        "lon":  9.993,
+        "airports":  [
+                         "HAM",
+                         "BRE",
+                         "LBC"
+                     ]
+    },
+    {
+        "country":  "독일",
+        "city":  "뮌헨",
+        "lat":  48.1374,
+        "lon":  11.5755,
+        "airports":  [
+                         "MUC"
+                     ]
+    },
+    {
+        "country":  "독일",
+        "city":  "쾰른",
+        "lat":  50.9333,
+        "lon":  6.95,
+        "airports":  [
+                         "CGN",
+                         "DUS",
+                         "DTM"
+                     ]
+    },
+    {
+        "country":  "독일",
+        "city":  "프랑크푸르트",
+        "lat":  50.1155,
+        "lon":  8.6842,
+        "airports":  [
+                         "FRA",
+                         "MHG"
+                     ]
+    },
+    {
+        "country":  "독일",
+        "city":  "뒤셀도르프",
+        "lat":  51.2232,
+        "lon":  6.7793,
+        "airports":  [
+                         "DUS",
+                         "CGN",
+                         "NRN"
+                     ]
+    },
+    {
+        "country":  "독일",
+        "city":  "슈투트가르트",
+        "lat":  48.7823,
+        "lon":  9.177,
+        "airports":  [
+                         "STR",
+                         "FKB",
+                         "MHG"
+                     ]
+    },
+    {
+        "country":  "독일",
+        "city":  "에센",
+        "lat":  51.4566,
+        "lon":  7.0123,
+        "airports":  [
+                         "DUS",
+                         "DTM",
+                         "NRN"
+                     ]
+    },
+    {
+        "country":  "독일",
+        "city":  "도르트문트",
+        "lat":  51.5149,
+        "lon":  7.466,
+        "airports":  [
+                         "DTM",
+                         "DUS",
+                         "FMO"
+                     ]
+    },
+    {
+        "country":  "독일",
+        "city":  "드레스덴",
+        "lat":  51.0509,
+        "lon":  13.7383,
+        "airports":  [
+                         "DRS"
+                     ]
+    },
+    {
+        "country":  "독일",
+        "city":  "브레멘",
+        "lat":  53.0758,
+        "lon":  8.8072,
+        "airports":  [
+                         "BRE",
+                         "HAJ",
+                         "HAM"
+                     ]
+    },
+    {
+        "country":  "독일",
+        "city":  "뉘른베르크",
+        "lat":  49.4542,
+        "lon":  11.0775,
+        "airports":  [
+                         "NUE"
+                     ]
+    },
+    {
+        "country":  "독일",
+        "city":  "하노버",
+        "lat":  52.3705,
+        "lon":  9.7332,
+        "airports":  [
+                         "HAJ",
+                         "BRE"
+                     ]
+    },
+    {
+        "country":  "독일",
+        "city":  "라이프치히",
+        "lat":  51.3396,
+        "lon":  12.3713,
+        "airports":  [
+                         "LEJ",
+                         "DRS"
+                     ]
+    },
+    {
+        "country":  "독일",
+        "city":  "빌레펠트",
+        "lat":  52.0333,
+        "lon":  8.5333,
+        "airports":  [
+                         "PAD",
+                         "FMO",
+                         "DTM"
+                     ]
+    },
+    {
+        "country":  "독일",
+        "city":  "뮌스터",
+        "lat":  51.9624,
+        "lon":  7.6257,
+        "airports":  [
+                         "FMO",
+                         "DTM",
+                         "PAD"
+                     ]
+    },
+    {
+        "country":  "독일",
+        "city":  "만하임",
+        "lat":  49.4891,
+        "lon":  8.4669,
+        "airports":  [
+                         "FRA",
+                         "FKB",
+                         "MHG"
+                     ]
+    },
+    {
+        "country":  "독일",
+        "city":  "아우크스부르크",
+        "lat":  48.3715,
+        "lon":  10.8985,
+        "airports":  [
+                         "FMM",
+                         "MUC"
+                     ]
+    },
+    {
+        "country":  "독일",
+        "city":  "비스바덴",
+        "lat":  50.086,
+        "lon":  8.2444,
+        "airports":  [
+                         "FRA",
+                         "HHN",
+                         "MHG"
+                     ]
+    },
+    {
+        "country":  "독일",
+        "city":  "카를스루에",
+        "lat":  49.0094,
+        "lon":  8.4044,
+        "airports":  [
+                         "FKB",
+                         "STR",
+                         "MHG"
+                     ]
+    },
+    {
+        "country":  "독일",
+        "city":  "아헨",
+        "lat":  50.7766,
+        "lon":  6.0834,
+        "airports":  [
+                         "DUS",
+                         "CGN",
+                         "NRN"
+                     ]
+    },
+    {
+        "country":  "독일",
+        "city":  "킬",
+        "lat":  54.3213,
+        "lon":  10.1349,
+        "airports":  [
+                         "HAM",
+                         "LBC"
+                     ]
+    },
+    {
+        "country":  "독일",
+        "city":  "켐니츠",
+        "lat":  50.8357,
+        "lon":  12.9292,
+        "airports":  [
+                         "DRS",
+                         "LEJ"
+                     ]
+    },
+    {
+        "country":  "독일",
+        "city":  "브라운슈바이크",
+        "lat":  52.2659,
+        "lon":  10.5267,
+        "airports":  [
+                         "HAJ"
+                     ]
+    },
+    {
+        "country":  "독일",
+        "city":  "마그데부르크",
+        "lat":  52.1313,
+        "lon":  11.6319,
+        "airports":  [
+                         "LEJ"
+                     ]
+    },
+    {
+        "country":  "독일",
+        "city":  "Halle (Saale)",
+        "lat":  51.4816,
+        "lon":  11.9795,
+        "airports":  [
+                         "LEJ",
+                         "ERF"
+                     ]
+    },
+    {
+        "country":  "독일",
+        "city":  "프라이부르크",
+        "lat":  47.9959,
+        "lon":  7.8522,
+        "airports":  [
+                         "FKB"
+                     ]
+    },
+    {
+        "country":  "독일",
+        "city":  "에르푸르트",
+        "lat":  50.9773,
+        "lon":  11.0354,
+        "airports":  [
+                         "ERF",
+                         "LEJ"
+                     ]
+    },
+    {
+        "country":  "독일",
+        "city":  "뤼베크",
+        "lat":  53.868899999999996,
+        "lon":  10.6873,
+        "airports":  [
+                         "HAM",
+                         "LBC"
+                     ]
+    },
+    {
+        "country":  "독일",
+        "city":  "로스토크",
+        "lat":  54.0887,
+        "lon":  12.1405,
+        "airports":  [
+                         "RLG",
+                         "LBC"
+                     ]
+    },
+    {
+        "country":  "독일",
+        "city":  "카셀",
+        "lat":  51.3167,
+        "lon":  9.5,
+        "airports":  [
+                         "KSF",
+                         "PAD"
+                     ]
+    },
+    {
+        "country":  "독일",
+        "city":  "포츠담",
+        "lat":  52.3989,
+        "lon":  13.0657,
+        "airports":  [
+                         "BER"
+                     ]
+    },
+    {
+        "country":  "독일",
+        "city":  "자르브뤼켄",
+        "lat":  49.2326,
+        "lon":  7.0098,
+        "airports":  [
+                         "HHN",
+                         "FKB",
+                         "SCN"
+                     ]
+    },
+    {
+        "country":  "독일",
+        "city":  "함",
+        "lat":  51.6803,
+        "lon":  7.8209,
+        "airports":  [
+                         "DTM",
+                         "FMO",
+                         "PAD"
+                     ]
+    },
+    {
+        "country":  "독일",
+        "city":  "다름슈타트",
+        "lat":  49.8717,
+        "lon":  8.6503,
+        "airports":  [
+                         "FRA",
+                         "HHN",
+                         "MHG"
+                     ]
+    },
+    {
+        "country":  "독일",
+        "city":  "오스나브뤼크",
+        "lat":  52.2726,
+        "lon":  8.0498,
+        "airports":  [
+                         "FMO",
+                         "PAD",
+                         "DTM"
+                     ]
+    },
+    {
+        "country":  "독일",
+        "city":  "올덴부르크",
+        "lat":  53.1404,
+        "lon":  8.2148,
+        "airports":  [
+                         "BRE",
+                         "FCN"
+                     ]
+    },
+    {
+        "country":  "독일",
+        "city":  "레겐스부르크",
+        "lat":  49.0151,
+        "lon":  12.1016,
+        "airports":  [
+                         "MUC",
+                         "NUE"
+                     ]
+    },
+    {
+        "country":  "독일",
+        "city":  "파더보른",
+        "lat":  51.719,
+        "lon":  8.7544,
+        "airports":  [
+                         "PAD",
+                         "KSF",
+                         "DTM"
+                     ]
+    },
+    {
+        "country":  "독일",
+        "city":  "뷔르츠부르크",
+        "lat":  49.7939,
+        "lon":  9.9512,
+        "airports":  [
+                         "NUE"
+                     ]
+    },
+    {
+        "country":  "라오스",
+        "city":  "비엔티안",
+        "lat":  17.9667,
+        "lon":  102.6,
+        "airports":  [
+                         "VTE"
+                     ]
+    },
+    {
+        "country":  "라오스",
+        "city":  "사반나켓",
+        "lat":  16.5703,
+        "lon":  104.7622,
+        "airports":  [
+                         "PKZ"
+                     ]
+    },
+    {
+        "country":  "라오스",
+        "city":  "팍세",
+        "lat":  15.1202,
+        "lon":  105.799,
+        "airports":  [
+                         "PKZ"
+                     ]
+    },
+    {
+        "country":  "라오스",
+        "city":  "루앙프라방",
+        "lat":  19.8933,
+        "lon":  102.1525,
+        "airports":  [
+                         "LPQ"
+                     ]
+    },
+    {
+        "country":  "마카오",
+        "city":  "마카오",
+        "lat":  22.2006,
+        "lon":  113.5461,
+        "airports":  [
+                         "MFM"
+                     ]
+    },
+    {
+        "country":  "말레이시아",
+        "city":  "쿠알라룸푸르",
+        "lat":  3.1412,
+        "lon":  101.6865,
+        "airports":  [
+                         "SZB",
+                         "KUL"
+                     ]
+    },
+    {
+        "country":  "말레이시아",
+        "city":  "조호르바루",
+        "lat":  1.4655,
+        "lon":  103.7578,
+        "airports":  [
+                         "JHB"
+                     ]
+    },
+    {
+        "country":  "말레이시아",
+        "city":  "이포",
+        "lat":  4.5841,
+        "lon":  101.0829,
+        "airports":  [
+                         "IPH"
+                     ]
+    },
+    {
+        "country":  "말레이시아",
+        "city":  "말라카",
+        "lat":  2.196,
+        "lon":  102.2405,
+        "airports":  [
+                         "KUL",
+                         "MKZ"
+                     ]
+    },
+    {
+        "country":  "말레이시아",
+        "city":  "코타바루",
+        "lat":  6.1236,
+        "lon":  102.2433,
+        "airports":  [
+                         "KBR"
+                     ]
+    },
+    {
+        "country":  "말레이시아",
+        "city":  "쿠안탄",
+        "lat":  3.8077,
+        "lon":  103.326,
+        "airports":  [
+                         "KUA"
+                     ]
+    },
+    {
+        "country":  "말레이시아",
+        "city":  "Kota Kuala Muda",
+        "lat":  5.5882,
+        "lon":  100.3708,
+        "airports":  [
+                         "PEN",
+                         "AOR"
+                     ]
+    },
+    {
+        "country":  "말레이시아",
+        "city":  "코타키나바루",
+        "lat":  5.9749,
+        "lon":  116.0724,
+        "airports":  [
+                         "BKI"
+                     ]
+    },
+    {
+        "country":  "말레이시아",
+        "city":  "산다칸",
+        "lat":  5.8402,
+        "lon":  118.1179,
+        "airports":  [
+                         "SDK",
+                         "LDU"
+                     ]
+    },
+    {
+        "country":  "말레이시아",
+        "city":  "쿠알라트렝가누",
+        "lat":  5.3302,
+        "lon":  103.1408,
+        "airports":  [
+                         "TGG"
+                     ]
+    },
+    {
+        "country":  "말레이시아",
+        "city":  "알로르스타르",
+        "lat":  6.121,
+        "lon":  100.3601,
+        "airports":  [
+                         "LGK",
+                         "PEN",
+                         "AOR"
+                     ]
+    },
+    {
+        "country":  "말레이시아",
+        "city":  "쿠칭",
+        "lat":  1.55,
+        "lon":  110.3333,
+        "airports":  [
+                         "KCH"
+                     ]
+    },
+    {
+        "country":  "말레이시아",
+        "city":  "스름반",
+        "lat":  2.7297,
+        "lon":  101.9381,
+        "airports":  [
+                         "KUL",
+                         "SZB",
+                         "MKZ"
+                     ]
+    },
+    {
+        "country":  "말레이시아",
+        "city":  "타와우",
+        "lat":  4.2448,
+        "lon":  117.8912,
+        "airports":  [
+                         "TWU",
+                         "LDU"
+                     ]
+    },
+    {
+        "country":  "말레이시아",
+        "city":  "Kluang",
+        "lat":  2.0305,
+        "lon":  103.3169,
+        "airports":  [
+                         "JHB"
+                     ]
+    },
+    {
+        "country":  "말레이시아",
+        "city":  "Muar",
+        "lat":  2.0442,
+        "lon":  102.5689,
+        "airports":  [
+                         "MKZ"
+                     ]
+    },
+    {
+        "country":  "말레이시아",
+        "city":  "미리",
+        "lat":  4.3993,
+        "lon":  113.9916,
+        "airports":  [
+                         "MYY",
+                         "MUR",
+                         "MZV"
+                     ]
+    },
+    {
+        "country":  "말레이시아",
+        "city":  "Kapar",
+        "lat":  3.1333,
+        "lon":  101.3833,
+        "airports":  [
+                         "SZB",
+                         "KUL"
+                     ]
+    },
+    {
+        "country":  "말레이시아",
+        "city":  "틀룩인탄",
+        "lat":  4.0222,
+        "lon":  101.0208,
+        "airports":  [
+                         "IPH"
+                     ]
+    },
+    {
+        "country":  "말레이시아",
+        "city":  "Paya Terubong",
+        "lat":  5.3728,
+        "lon":  100.2797,
+        "airports":  [
+                         "PEN",
+                         "AOR"
+                     ]
+    },
+    {
+        "country":  "말레이시아",
+        "city":  "타이핑",
+        "lat":  4.85,
+        "lon":  100.7333,
+        "airports":  [
+                         "IPH",
+                         "PEN"
+                     ]
+    },
+    {
+        "country":  "말레이시아",
+        "city":  "시부",
+        "lat":  2.3,
+        "lon":  111.8167,
+        "airports":  [
+                         "SBW",
+                         "MKM"
+                     ]
+    },
+    {
+        "country":  "말레이시아",
+        "city":  "Kuala Kubu Baharu",
+        "lat":  3.5638,
+        "lon":  101.6581,
+        "airports":  [
+                         "SZB",
+                         "KUL"
+                     ]
+    },
+    {
+        "country":  "말레이시아",
+        "city":  "Kulim",
+        "lat":  5.365,
+        "lon":  100.5618,
+        "airports":  [
+                         "PEN",
+                         "AOR"
+                     ]
+    },
+    {
+        "country":  "말레이시아",
+        "city":  "Batu Pahat",
+        "lat":  1.8548,
+        "lon":  102.9325,
+        "airports":  [
+                         "JHB",
+                         "MKZ"
+                     ]
+    },
+    {
+        "country":  "말레이시아",
+        "city":  "Sitiawan",
+        "lat":  4.2168,
+        "lon":  100.6996,
+        "airports":  [
+                         "IPH"
+                     ]
+    },
+    {
+        "country":  "말레이시아",
+        "city":  "빈툴루",
+        "lat":  3.1667,
+        "lon":  113.0333,
+        "airports":  [
+                         "BTU"
+                     ]
+    },
+    {
+        "country":  "말레이시아",
+        "city":  "Pasir Puteh",
+        "lat":  5.8333,
+        "lon":  102.4,
+        "airports":  [
+                         "KBR",
+                         "TGG"
+                     ]
+    },
+    {
+        "country":  "말레이시아",
+        "city":  "Port Dickson",
+        "lat":  2.5246,
+        "lon":  101.7965,
+        "airports":  [
+                         "KUL",
+                         "SZB",
+                         "MKZ"
+                     ]
+    },
+    {
+        "country":  "말레이시아",
+        "city":  "Maran",
+        "lat":  3.586,
+        "lon":  102.773,
+        "airports":  [
+                         "KUA"
+                     ]
+    },
+    {
+        "country":  "말레이시아",
+        "city":  "Lahad Datu",
+        "lat":  5.023,
+        "lon":  118.329,
+        "airports":  [
+                         "LDU",
+                         "TWU"
+                     ]
+    },
+    {
+        "country":  "말레이시아",
+        "city":  "Kuala Krai",
+        "lat":  5.5313,
+        "lon":  102.1993,
+        "airports":  [
+                         "KBR"
+                     ]
+    },
+    {
+        "country":  "말레이시아",
+        "city":  "Pagoh",
+        "lat":  2.1495,
+        "lon":  102.7704,
+        "airports":  [
+                         "MKZ"
+                     ]
+    },
+    {
+        "country":  "말레이시아",
+        "city":  "Labuan",
+        "lat":  5.2803,
+        "lon":  115.2475,
+        "airports":  [
+                         "LBU",
+                         "LMN"
+                     ]
+    },
+    {
+        "country":  "말레이시아",
+        "city":  "Semenyih",
+        "lat":  2.9516,
+        "lon":  101.843,
+        "airports":  [
+                         "KUL",
+                         "SZB",
+                         "MKZ"
+                     ]
+    },
+    {
+        "country":  "말레이시아",
+        "city":  "Marudi",
+        "lat":  4.1833,
+        "lon":  114.3167,
+        "airports":  [
+                         "MUR",
+                         "MYY",
+                         "MZV"
+                     ]
+    },
+    {
+        "country":  "말레이시아",
+        "city":  "Kampung Sungai Kajang",
+        "lat":  3.4161,
+        "lon":  101.173,
+        "airports":  [
+                         "SZB",
+                         "KUL"
+                     ]
+    },
+    {
+        "country":  "말레이시아",
+        "city":  "Cukai",
+        "lat":  4.25,
+        "lon":  103.4167,
+        "airports":  [
+                         "KUA"
+                     ]
+    },
+    {
+        "country":  "말레이시아",
+        "city":  "케닌가우",
+        "lat":  5.3378,
+        "lon":  116.1602,
+        "airports":  [
+                         "BKI"
+                     ]
+    },
+    {
+        "country":  "말레이시아",
+        "city":  "Segamat",
+        "lat":  2.5148,
+        "lon":  102.8158,
+        "airports":  [
+                         "MKZ"
+                     ]
+    },
+    {
+        "country":  "몽골",
+        "city":  "울란바타르",
+        "lat":  47.9077,
+        "lon":  106.8832,
+        "airports":  [
+                         "UBN"
+                     ]
+    },
+    {
+        "country":  "몽골",
+        "city":  "에르데네트",
+        "lat":  49.0333,
+        "lon":  104.0833,
+        "airports":  [
+                         "UGA"
+                     ]
+    },
+    {
+        "country":  "몽골",
+        "city":  "다르한",
+        "lat":  49.4867,
+        "lon":  105.9228,
+        "airports":  [
+                         "UGA"
+                     ]
+    },
+    {
+        "country":  "미국",
+        "city":  "뉴욕",
+        "lat":  40.7143,
+        "lon":  -74.006,
+        "airports":  [
+                         "LGA",
+                         "EWR",
+                         "JFK"
+                     ]
+    },
+    {
+        "country":  "미국",
+        "city":  "로스앤젤레스",
+        "lat":  34.0522,
+        "lon":  -118.2437,
+        "airports":  [
+                         "LAX",
+                         "BUR",
+                         "LGB"
+                     ]
+    },
+    {
+        "country":  "미국",
+        "city":  "시카고",
+        "lat":  41.85,
+        "lon":  -87.65,
+        "airports":  [
+                         "MDW",
+                         "ORD",
+                         "GYY"
+                     ]
+    },
+    {
+        "country":  "미국",
+        "city":  "휴스턴",
+        "lat":  29.7633,
+        "lon":  -95.3633,
+        "airports":  [
+                         "HOU",
+                         "IAH"
+                     ]
+    },
+    {
+        "country":  "미국",
+        "city":  "피닉스",
+        "lat":  33.4484,
+        "lon":  -112.074,
+        "airports":  [
+                         "PHX",
+                         "AZA"
+                     ]
+    },
+    {
+        "country":  "미국",
+        "city":  "필라델피아",
+        "lat":  39.9524,
+        "lon":  -75.1636,
+        "airports":  [
+                         "PHL",
+                         "TTN",
+                         "ILG"
+                     ]
+    },
+    {
+        "country":  "미국",
+        "city":  "샌안토니오",
+        "lat":  29.4241,
+        "lon":  -98.4936,
+        "airports":  [
+                         "SAT"
+                     ]
+    },
+    {
+        "country":  "미국",
+        "city":  "샌디에고",
+        "lat":  32.7157,
+        "lon":  -117.1647,
+        "airports":  [
+                         "SAN",
+                         "CLD"
+                     ]
+    },
+    {
+        "country":  "미국",
+        "city":  "달라스",
+        "lat":  32.7831,
+        "lon":  -96.8067,
+        "airports":  [
+                         "DAL",
+                         "DFW",
+                         "FTW"
+                     ]
+    },
+    {
+        "country":  "미국",
+        "city":  "잭슨빌",
+        "lat":  30.3322,
+        "lon":  -81.6556,
+        "airports":  [
+                         "JAX",
+                         "UST",
+                         "GNV"
+                     ]
+    },
+    {
+        "country":  "미국",
+        "city":  "포트워스",
+        "lat":  32.7254,
+        "lon":  -97.3208,
+        "airports":  [
+                         "DFW",
+                         "DAL",
+                         "FTW"
+                     ]
+    },
+    {
+        "country":  "미국",
+        "city":  "산호세",
+        "lat":  37.3394,
+        "lon":  -121.895,
+        "airports":  [
+                         "SJC",
+                         "OAK",
+                         "SFO"
+                     ]
+    },
+    {
+        "country":  "미국",
+        "city":  "오스틴",
+        "lat":  30.2672,
+        "lon":  -97.7431,
+        "airports":  [
+                         "AUS",
+                         "GRK"
+                     ]
+    },
+    {
+        "country":  "미국",
+        "city":  "콜럼버스",
+        "lat":  39.9612,
+        "lon":  -82.9988,
+        "airports":  [
+                         "CMH",
+                         "LCK"
+                     ]
+    },
+    {
+        "country":  "미국",
+        "city":  "샬럿",
+        "lat":  35.2271,
+        "lon":  -80.8431,
+        "airports":  [
+                         "CLT",
+                         "USA"
+                     ]
+    },
+    {
+        "country":  "미국",
+        "city":  "인디애나폴리스",
+        "lat":  39.7684,
+        "lon":  -86.158,
+        "airports":  [
+                         "IND",
+                         "LAF"
+                     ]
+    },
+    {
+        "country":  "미국",
+        "city":  "샌프란",
+        "lat":  37.7749,
+        "lon":  -122.4194,
+        "airports":  [
+                         "SFO",
+                         "OAK",
+                         "SJC"
+                     ]
+    },
+    {
+        "country":  "미국",
+        "city":  "시애틀",
+        "lat":  47.6062,
+        "lon":  -122.3321,
+        "airports":  [
+                         "SEA",
+                         "BFI",
+                         "PAE"
+                     ]
+    },
+    {
+        "country":  "미국",
+        "city":  "덴버",
+        "lat":  39.7392,
+        "lon":  -104.9847,
+        "airports":  [
+                         "DEN",
+                         "BJC"
+                     ]
+    },
+    {
+        "country":  "미국",
+        "city":  "워싱턴",
+        "lat":  38.8951,
+        "lon":  -77.0364,
+        "airports":  [
+                         "DCA",
+                         "IAD",
+                         "BWI"
+                     ]
+    },
+    {
+        "country":  "미국",
+        "city":  "내슈빌",
+        "lat":  36.1659,
+        "lon":  -86.7844,
+        "airports":  [
+                         "BNA"
+                     ]
+    },
+    {
+        "country":  "미국",
+        "city":  "오클라호마시티",
+        "lat":  35.4676,
+        "lon":  -97.5164,
+        "airports":  [
+                         "OKC",
+                         "SWO"
+                     ]
+    },
+    {
+        "country":  "미국",
+        "city":  "엘패소",
+        "lat":  31.7587,
+        "lon":  -106.4869,
+        "airports":  [
+                         "ELP",
+                         "LRU"
+                     ]
+    },
+    {
+        "country":  "미국",
+        "city":  "보스턴",
+        "lat":  42.3584,
+        "lon":  -71.0598,
+        "airports":  [
+                         "BOS",
+                         "PVD",
+                         "BED"
+                     ]
+    },
+    {
+        "country":  "미국",
+        "city":  "포틀랜드",
+        "lat":  45.5234,
+        "lon":  -122.6762,
+        "airports":  [
+                         "PDX",
+                         "SLE"
+                     ]
+    },
+    {
+        "country":  "미국",
+        "city":  "디트로이트",
+        "lat":  42.3314,
+        "lon":  -83.0458,
+        "airports":  [
+                         "DTW",
+                         "FNT"
+                     ]
+    },
+    {
+        "country":  "미국",
+        "city":  "라스베가스",
+        "lat":  36.175,
+        "lon":  -115.1372,
+        "airports":  [
+                         "LAS",
+                         "BLD"
+                     ]
+    },
+    {
+        "country":  "미국",
+        "city":  "멤피스",
+        "lat":  35.1495,
+        "lon":  -90.049,
+        "airports":  [
+                         "MEM",
+                         "JBR"
+                     ]
+    },
+    {
+        "country":  "미국",
+        "city":  "루이빌",
+        "lat":  38.2542,
+        "lon":  -85.7594,
+        "airports":  [
+                         "SDF"
+                     ]
+    },
+    {
+        "country":  "미국",
+        "city":  "볼티모어",
+        "lat":  39.2904,
+        "lon":  -76.6122,
+        "airports":  [
+                         "BWI",
+                         "DCA",
+                         "IAD"
+                     ]
+    },
+    {
+        "country":  "미국",
+        "city":  "앨버커키",
+        "lat":  35.0845,
+        "lon":  -106.6511,
+        "airports":  [
+                         "ABQ",
+                         "SAF"
+                     ]
+    },
+    {
+        "country":  "미국",
+        "city":  "밀워키",
+        "lat":  43.0389,
+        "lon":  -87.9065,
+        "airports":  [
+                         "MKE"
+                     ]
+    },
+    {
+        "country":  "미국",
+        "city":  "투손",
+        "lat":  32.2217,
+        "lon":  -110.9265,
+        "airports":  [
+                         "TUS"
+                     ]
+    },
+    {
+        "country":  "미국",
+        "city":  "프레즈노",
+        "lat":  36.7477,
+        "lon":  -119.7724,
+        "airports":  [
+                         "FAT",
+                         "MCE"
+                     ]
+    },
+    {
+        "country":  "미국",
+        "city":  "새크라멘토",
+        "lat":  38.5816,
+        "lon":  -121.4944,
+        "airports":  [
+                         "SMF",
+                         "SCK",
+                         "CCR"
+                     ]
+    },
+    {
+        "country":  "미국",
+        "city":  "아틀란타",
+        "lat":  33.749,
+        "lon":  -84.388,
+        "airports":  [
+                         "ATL",
+                         "PDK"
+                     ]
+    },
+    {
+        "country":  "미국",
+        "city":  "마이애미",
+        "lat":  25.7743,
+        "lon":  -80.1937,
+        "airports":  [
+                         "MIA",
+                         "FLL",
+                         "OPF"
+                     ]
+    },
+    {
+        "country":  "미국",
+        "city":  "오마하",
+        "lat":  41.2563,
+        "lon":  -95.9404,
+        "airports":  [
+                         "OMA",
+                         "LNK"
+                     ]
+    },
+    {
+        "country":  "미국",
+        "city":  "롤리",
+        "lat":  35.7721,
+        "lon":  -78.6386,
+        "airports":  [
+                         "RDU",
+                         "FAY"
+                     ]
+    },
+    {
+        "country":  "미국",
+        "city":  "캔자스시티",
+        "lat":  39.0997,
+        "lon":  -94.5786,
+        "airports":  [
+                         "MCI"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "호찌민",
+        "lat":  10.823,
+        "lon":  106.6296,
+        "airports":  [
+                         "SGN"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "하노이",
+        "lat":  21.0245,
+        "lon":  105.8412,
+        "airports":  [
+                         "HAN",
+                         "HPH"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "하이퐁",
+        "lat":  20.8648,
+        "lon":  106.6834,
+        "airports":  [
+                         "HPH",
+                         "HAN",
+                         "VDO"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "껀터",
+        "lat":  10.0371,
+        "lon":  105.7882,
+        "airports":  [
+                         "VCA",
+                         "VKG"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "후에",
+        "lat":  16.4619,
+        "lon":  107.5955,
+        "airports":  [
+                         "HUI",
+                         "DAD"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "다낭",
+        "lat":  16.0678,
+        "lon":  108.2208,
+        "airports":  [
+                         "DAD",
+                         "HUI"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "비엔호아",
+        "lat":  10.9447,
+        "lon":  106.8243,
+        "airports":  [
+                         "SGN"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "타인호아",
+        "lat":  19.8,
+        "lon":  105.7667,
+        "airports":  [
+                         "VII"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "빈",
+        "lat":  18.6734,
+        "lon":  105.6923,
+        "airports":  [
+                         "VII"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "나트랑",
+        "lat":  12.2451,
+        "lon":  109.1943,
+        "airports":  [
+                         "CXR",
+                         "TBB"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "꾸이년",
+        "lat":  13.7765,
+        "lon":  109.2237,
+        "airports":  [
+                         "UIH",
+                         "TBB"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "붕따우",
+        "lat":  10.346,
+        "lon":  107.0843,
+        "airports":  [
+                         "SGN"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "락자",
+        "lat":  10.0124,
+        "lon":  105.0809,
+        "airports":  [
+                         "VCA",
+                         "VKG",
+                         "CAH"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "박장",
+        "lat":  21.2731,
+        "lon":  106.1946,
+        "airports":  [
+                         "HAN",
+                         "HPH"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "남딘",
+        "lat":  20.4339,
+        "lon":  106.1773,
+        "airports":  [
+                         "HPH",
+                         "HAN"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "Buôn Ma Thuột",
+        "lat":  12.6675,
+        "lon":  108.0378,
+        "airports":  [
+                         "BMV"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "Thái Nguyên",
+        "lat":  21.5942,
+        "lon":  105.8482,
+        "airports":  [
+                         "HAN"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "Việt Trì",
+        "lat":  21.3227,
+        "lon":  105.402,
+        "airports":  [
+                         "HAN"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "Bến Cát",
+        "lat":  11.15,
+        "lon":  106.6,
+        "airports":  [
+                         "SGN"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "닌빈",
+        "lat":  20.2581,
+        "lon":  105.9796,
+        "airports":  [
+                         "HPH"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "Nghi Sơn",
+        "lat":  19.3275,
+        "lon":  105.8214,
+        "airports":  [
+                         "VII"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "푸꼭",
+        "lat":  10.2241,
+        "lon":  103.9716,
+        "airports":  [
+                         "PQC"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "Phú Mỹ",
+        "lat":  10.6333,
+        "lon":  107.0667,
+        "airports":  [
+                         "SGN"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "Long Xuyên",
+        "lat":  10.3864,
+        "lon":  105.4352,
+        "airports":  [
+                         "VCA",
+                         "VKG"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "Ba Vì",
+        "lat":  21.0833,
+        "lon":  105.3833,
+        "airports":  [
+                         "HAN"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "꽝응아이",
+        "lat":  15.1205,
+        "lon":  108.7923,
+        "airports":  [
+                         "DAD"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "Mỹ Tho",
+        "lat":  10.36,
+        "lon":  106.36,
+        "airports":  [
+                         "SGN",
+                         "VCA"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "할롱",
+        "lat":  20.9504,
+        "lon":  107.0734,
+        "airports":  [
+                         "HPH",
+                         "VDO"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "하띤",
+        "lat":  18.3428,
+        "lon":  105.9057,
+        "airports":  [
+                         "VII"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "Ðà Lạt",
+        "lat":  11.9465,
+        "lon":  108.4419,
+        "airports":  [
+                         "CXR",
+                         "DLI",
+                         "BMV"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "Xuân Lộc",
+        "lat":  10.9333,
+        "lon":  107.2333,
+        "airports":  [
+                         "SGN"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "Thị Trấn Đông Triều",
+        "lat":  21.0824,
+        "lon":  106.5138,
+        "airports":  [
+                         "HPH",
+                         "HAN",
+                         "VDO"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "Ninh Hòa",
+        "lat":  12.4919,
+        "lon":  109.125,
+        "airports":  [
+                         "CXR",
+                         "TBB"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "Phan Thiết",
+        "lat":  10.9289,
+        "lon":  108.1021,
+        "airports":  [
+                         "DLI"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "Cà Mau",
+        "lat":  9.1768,
+        "lon":  105.1524,
+        "airports":  [
+                         "CAH",
+                         "VKG"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "Sóc Trăng",
+        "lat":  9.6,
+        "lon":  105.9719,
+        "airports":  [
+                         "VCA",
+                         "CAH"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "Sa Dec",
+        "lat":  10.2908,
+        "lon":  105.7564,
+        "airports":  [
+                         "VCA",
+                         "VKG"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "Phan Rang-Tháp Chàm",
+        "lat":  11.5643,
+        "lon":  108.9886,
+        "airports":  [
+                         "CXR",
+                         "DLI"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "Kon Tum",
+        "lat":  14.3545,
+        "lon":  108.0076,
+        "airports":  [
+                         "PXU"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "Lạng Sơn",
+        "lat":  21.8526,
+        "lon":  106.761,
+        "airports":  [
+                         "VDO"
+                     ]
+    },
+    {
+        "country":  "베트남",
+        "city":  "호이안",
+        "lat":  15.8801,
+        "lon":  108.338,
+        "airports":  [
+                         "DAD"
+                     ]
+    },
+    {
+        "country":  "스위스",
+        "city":  "취리히",
+        "lat":  47.3667,
+        "lon":  8.55,
+        "airports":  [
+                         "ZRH",
+                         "ACH",
+                         "BRN"
+                     ]
+    },
+    {
+        "country":  "스위스",
+        "city":  "제네바",
+        "lat":  46.2022,
+        "lon":  6.1457,
+        "airports":  [
+                         "GVA"
+                     ]
+    },
+    {
+        "country":  "스위스",
+        "city":  "바젤",
+        "lat":  47.5584,
+        "lon":  7.5733,
+        "airports":  [
+                         "ZRH",
+                         "BRN"
+                     ]
+    },
+    {
+        "country":  "스위스",
+        "city":  "로잔",
+        "lat":  46.516,
+        "lon":  6.6328,
+        "airports":  [
+                         "GVA",
+                         "BRN"
+                     ]
+    },
+    {
+        "country":  "스위스",
+        "city":  "베른",
+        "lat":  46.9481,
+        "lon":  7.4474,
+        "airports":  [
+                         "BRN"
+                     ]
+    },
+    {
+        "country":  "스위스",
+        "city":  "루체른",
+        "lat":  47.0505,
+        "lon":  8.3064,
+        "airports":  [
+                         "ZRH",
+                         "BRN"
+                     ]
+    },
+    {
+        "country":  "스위스",
+        "city":  "장크트갈렌",
+        "lat":  47.4239,
+        "lon":  9.3748,
+        "airports":  [
+                         "ZRH",
+                         "ACH"
+                     ]
+    },
+    {
+        "country":  "스위스",
+        "city":  "루가노",
+        "lat":  46.0101,
+        "lon":  8.96,
+        "airports":  [
+                         "LUG"
+                     ]
+    },
+    {
+        "country":  "스위스",
+        "city":  "인터라켄",
+        "lat":  46.6863,
+        "lon":  7.8632,
+        "airports":  [
+                         "BRN",
+                         "ZRH"
+                     ]
+    },
+    {
+        "country":  "스위스",
+        "city":  "체르마트",
+        "lat":  46.0207,
+        "lon":  7.7491,
+        "airports":  [
+                         "GVA",
+                         "ZRH"
+                     ]
+    },
+    {
+        "country":  "스위스",
+        "city":  "비엘",
+        "lat":  47.1371,
+        "lon":  7.2461,
+        "airports":  [
+                         "BRN"
+                     ]
+    },
+    {
+        "country":  "스페인",
+        "city":  "마드리드",
+        "lat":  40.4165,
+        "lon":  -3.7026,
+        "airports":  [
+                         "MAD"
+                     ]
+    },
+    {
+        "country":  "스페인",
+        "city":  "바르셀로나",
+        "lat":  41.3888,
+        "lon":  2.159,
+        "airports":  [
+                         "BCN",
+                         "GRO",
+                         "REU"
+                     ]
+    },
+    {
+        "country":  "스페인",
+        "city":  "발렌시아",
+        "lat":  39.4739,
+        "lon":  -0.3797,
+        "airports":  [
+                         "VLC",
+                         "CDT"
+                     ]
+    },
+    {
+        "country":  "스페인",
+        "city":  "사라고사",
+        "lat":  41.6561,
+        "lon":  -0.8773,
+        "airports":  [
+                         "ZAZ"
+                     ]
+    },
+    {
+        "country":  "스페인",
+        "city":  "세비야",
+        "lat":  37.3828,
+        "lon":  -5.9732,
+        "airports":  [
+                         "SVQ",
+                         "XRY"
+                     ]
+    },
+    {
+        "country":  "스페인",
+        "city":  "말라가",
+        "lat":  36.7202,
+        "lon":  -4.4203,
+        "airports":  [
+                         "AGP",
+                         "GRX"
+                     ]
+    },
+    {
+        "country":  "스페인",
+        "city":  "무르시아",
+        "lat":  37.987,
+        "lon":  -1.13,
+        "airports":  [
+                         "RMU",
+                         "ALC"
+                     ]
+    },
+    {
+        "country":  "스페인",
+        "city":  "팔마데마요르카",
+        "lat":  39.5694,
+        "lon":  2.6502,
+        "airports":  [
+                         "PMI"
+                     ]
+    },
+    {
+        "country":  "스페인",
+        "city":  "라스팔마스",
+        "lat":  28.1018,
+        "lon":  -15.4157,
+        "airports":  [
+                         "LPA"
+                     ]
+    },
+    {
+        "country":  "스페인",
+        "city":  "알리칸테",
+        "lat":  38.3452,
+        "lon":  -0.4815,
+        "airports":  [
+                         "ALC",
+                         "RMU"
+                     ]
+    },
+    {
+        "country":  "스페인",
+        "city":  "빌바오",
+        "lat":  43.2627,
+        "lon":  -2.9253,
+        "airports":  [
+                         "BIO",
+                         "VIT",
+                         "SDR"
+                     ]
+    },
+    {
+        "country":  "스페인",
+        "city":  "코르도바",
+        "lat":  37.8916,
+        "lon":  -4.7728,
+        "airports":  [
+                         "ODB"
+                     ]
+    },
+    {
+        "country":  "스페인",
+        "city":  "바야돌리드",
+        "lat":  41.6554,
+        "lon":  -4.7235,
+        "airports":  [
+                         "VLL"
+                     ]
+    },
+    {
+        "country":  "스페인",
+        "city":  "비고",
+        "lat":  42.2328,
+        "lon":  -8.7226,
+        "airports":  [
+                         "SCQ",
+                         "VGO"
+                     ]
+    },
+    {
+        "country":  "스페인",
+        "city":  "히혼",
+        "lat":  43.5357,
+        "lon":  -5.6615,
+        "airports":  [
+                         "OVD"
+                     ]
+    },
+    {
+        "country":  "스페인",
+        "city":  "Gasteiz / Vitoria",
+        "lat":  42.85,
+        "lon":  -2.6727,
+        "airports":  [
+                         "BIO",
+                         "VIT",
+                         "RJL"
+                     ]
+    },
+    {
+        "country":  "스페인",
+        "city":  "라코루냐",
+        "lat":  43.3714,
+        "lon":  -8.396,
+        "airports":  [
+                         "SCQ",
+                         "LCG"
+                     ]
+    },
+    {
+        "country":  "스페인",
+        "city":  "그라나다",
+        "lat":  37.1882,
+        "lon":  -3.6067,
+        "airports":  [
+                         "AGP",
+                         "GRX"
+                     ]
+    },
+    {
+        "country":  "스페인",
+        "city":  "카르타헤나",
+        "lat":  37.602,
+        "lon":  -0.984,
+        "airports":  [
+                         "RMU",
+                         "ALC"
+                     ]
+    },
+    {
+        "country":  "스페인",
+        "city":  "헤레스데라프론테라",
+        "lat":  36.6864,
+        "lon":  -6.1361,
+        "airports":  [
+                         "SVQ",
+                         "XRY"
+                     ]
+    },
+    {
+        "country":  "스페인",
+        "city":  "산타크루스데테네리페",
+        "lat":  28.4682,
+        "lon":  -16.2546,
+        "airports":  [
+                         "TFN",
+                         "TFS"
+                     ]
+    },
+    {
+        "country":  "스페인",
+        "city":  "팜플로나",
+        "lat":  42.8169,
+        "lon":  -1.6432,
+        "airports":  [
+                         "PNA",
+                         "EAS",
+                         "RJL"
+                     ]
+    },
+    {
+        "country":  "스페인",
+        "city":  "알메리아",
+        "lat":  36.8381,
+        "lon":  -2.4597,
+        "airports":  [
+                         "LEI"
+                     ]
+    },
+    {
+        "country":  "스페인",
+        "city":  "알칼라데에나레스",
+        "lat":  40.482,
+        "lon":  -3.36,
+        "airports":  [
+                         "MAD"
+                     ]
+    },
+    {
+        "country":  "스페인",
+        "city":  "Donostia / San Sebastián",
+        "lat":  43.3128,
+        "lon":  -1.975,
+        "airports":  [
+                         "BIO",
+                         "EAS",
+                         "PNA"
+                     ]
+    },
+    {
+        "country":  "스페인",
+        "city":  "Castelló de la Plana",
+        "lat":  39.9857,
+        "lon":  -0.0494,
+        "airports":  [
+                         "VLC",
+                         "CDT"
+                     ]
+    },
+    {
+        "country":  "스페인",
+        "city":  "부르고스",
+        "lat":  42.3411,
+        "lon":  -3.7018,
+        "airports":  [
+                         "VIT"
+                     ]
+    },
+    {
+        "country":  "스페인",
+        "city":  "산탄데르",
+        "lat":  43.4659,
+        "lon":  -3.8049,
+        "airports":  [
+                         "BIO",
+                         "SDR"
+                     ]
+    },
+    {
+        "country":  "스페인",
+        "city":  "알바세테",
+        "lat":  38.9942,
+        "lon":  -1.8564,
+        "airports":  [
+                         "VLC"
+                     ]
+    },
+    {
+        "country":  "스페인",
+        "city":  "마르베야",
+        "lat":  36.5154,
+        "lon":  -4.8858,
+        "airports":  [
+                         "AGP"
+                     ]
+    },
+    {
+        "country":  "스페인",
+        "city":  "로그로뇨",
+        "lat":  42.4662,
+        "lon":  -2.4512,
+        "airports":  [
+                         "RJL",
+                         "VIT",
+                         "PNA"
+                     ]
+    },
+    {
+        "country":  "스페인",
+        "city":  "Badajoz",
+        "lat":  38.8779,
+        "lon":  -6.9706,
+        "airports":  [
+                         "BJZ"
+                     ]
+    },
+    {
+        "country":  "스페인",
+        "city":  "Salamanca",
+        "lat":  40.9688,
+        "lon":  -5.6639,
+        "airports":  [
+                         "SLM"
+                     ]
+    },
+    {
+        "country":  "스페인",
+        "city":  "Huelva",
+        "lat":  37.2664,
+        "lon":  -6.94,
+        "airports":  [
+                         "SVQ",
+                         "XRY"
+                     ]
+    },
+    {
+        "country":  "스페인",
+        "city":  "Tarragona",
+        "lat":  41.119,
+        "lon":  1.2454,
+        "airports":  [
+                         "REU",
+                         "BCN",
+                         "ILD"
+                     ]
+    },
+    {
+        "country":  "스페인",
+        "city":  "Lleida",
+        "lat":  41.6167,
+        "lon":  0.6222,
+        "airports":  [
+                         "REU",
+                         "ILD"
+                     ]
+    },
+    {
+        "country":  "스페인",
+        "city":  "마타로",
+        "lat":  41.5421,
+        "lon":  2.4445,
+        "airports":  [
+                         "BCN",
+                         "GRO"
+                     ]
+    },
+    {
+        "country":  "스페인",
+        "city":  "León",
+        "lat":  42.6,
+        "lon":  -5.5703,
+        "airports":  [
+                         "LEN"
+                     ]
+    },
+    {
+        "country":  "스페인",
+        "city":  "알헤시라스",
+        "lat":  36.1333,
+        "lon":  -5.4505,
+        "airports":  [
+                         "XRY"
+                     ]
+    },
+    {
+        "country":  "스페인",
+        "city":  "Jaén",
+        "lat":  37.7692,
+        "lon":  -3.7903,
+        "airports":  [
+                         "GRX",
+                         "ODB"
+                     ]
+    },
+    {
+        "country":  "싱가포르",
+        "city":  "싱가포르",
+        "lat":  1.2897,
+        "lon":  103.8501,
+        "airports":  [
+                         "SIN",
+                         "XSP"
+                     ]
+    },
+    {
+        "country":  "아랍에미리트",
+        "city":  "두바이",
+        "lat":  25.0772,
+        "lon":  55.3093,
+        "airports":  [
+                         "DXB",
+                         "DWC",
+                         "SHJ"
+                     ]
+    },
+    {
+        "country":  "아랍에미리트",
+        "city":  "아부다비",
+        "lat":  24.4512,
+        "lon":  54.397,
+        "airports":  [
+                         "AUH",
+                         "DWC"
+                     ]
+    },
+    {
+        "country":  "아랍에미리트",
+        "city":  "샤르자",
+        "lat":  25.3342,
+        "lon":  55.4122,
+        "airports":  [
+                         "DXB",
+                         "SHJ",
+                         "DWC"
+                     ]
+    },
+    {
+        "country":  "아랍에미리트",
+        "city":  "알아인",
+        "lat":  24.1917,
+        "lon":  55.7606,
+        "airports":  [
+                         "AAN",
+                         "DWC"
+                     ]
+    },
+    {
+        "country":  "아랍에미리트",
+        "city":  "라스알카이마",
+        "lat":  25.7895,
+        "lon":  55.9432,
+        "airports":  [
+                         "RKT",
+                         "SHJ",
+                         "DXB"
+                     ]
+    },
+    {
+        "country":  "아랍에미리트",
+        "city":  "푸자이라",
+        "lat":  25.1164,
+        "lon":  56.3414,
+        "airports":  [
+                         "FJR",
+                         "RKT",
+                         "SHJ"
+                     ]
+    },
+    {
+        "country":  "아랍에미리트",
+        "city":  "Bani Yas City",
+        "lat":  24.3098,
+        "lon":  54.6294,
+        "airports":  [
+                         "AUH",
+                         "DWC",
+                         "AAN"
+                     ]
+    },
+    {
+        "country":  "아랍에미리트",
+        "city":  "Zayed City",
+        "lat":  23.6542,
+        "lon":  53.7052,
+        "airports":  [
+                         "AUH"
+                     ]
+    },
+    {
+        "country":  "아랍에미리트",
+        "city":  "움알쿠와인",
+        "lat":  25.5647,
+        "lon":  55.5552,
+        "airports":  [
+                         "SHJ",
+                         "RKT",
+                         "DXB"
+                     ]
+    },
+    {
+        "country":  "영국",
+        "city":  "런던",
+        "lat":  51.5085,
+        "lon":  -0.1257,
+        "airports":  [
+                         "LHR",
+                         "LGW",
+                         "LTN"
+                     ]
+    },
+    {
+        "country":  "영국",
+        "city":  "버밍엄",
+        "lat":  52.4814,
+        "lon":  -1.8998,
+        "airports":  [
+                         "BHX",
+                         "EMA",
+                         "MAN"
+                     ]
+    },
+    {
+        "country":  "영국",
+        "city":  "글래스고",
+        "lat":  55.8652,
+        "lon":  -4.2576,
+        "airports":  [
+                         "GLA",
+                         "PIK",
+                         "EDI"
+                     ]
+    },
+    {
+        "country":  "영국",
+        "city":  "맨체스터",
+        "lat":  53.481,
+        "lon":  -2.2374,
+        "airports":  [
+                         "MAN",
+                         "LPL",
+                         "LBA"
+                     ]
+    },
+    {
+        "country":  "영국",
+        "city":  "셰필드",
+        "lat":  53.383,
+        "lon":  -1.4659,
+        "airports":  [
+                         "MAN",
+                         "LBA",
+                         "EMA"
+                     ]
+    },
+    {
+        "country":  "영국",
+        "city":  "리즈",
+        "lat":  53.7965,
+        "lon":  -1.5478,
+        "airports":  [
+                         "LBA",
+                         "MAN",
+                         "MME"
+                     ]
+    },
+    {
+        "country":  "영국",
+        "city":  "에든버러",
+        "lat":  55.9521,
+        "lon":  -3.1965,
+        "airports":  [
+                         "EDI",
+                         "GLA",
+                         "PIK"
+                     ]
+    },
+    {
+        "country":  "영국",
+        "city":  "리버풀",
+        "lat":  53.4106,
+        "lon":  -2.9779,
+        "airports":  [
+                         "LPL",
+                         "MAN"
+                     ]
+    },
+    {
+        "country":  "영국",
+        "city":  "브리스틀",
+        "lat":  51.4552,
+        "lon":  -2.5966,
+        "airports":  [
+                         "BRS",
+                         "CWL",
+                         "BOH"
+                     ]
+    },
+    {
+        "country":  "영국",
+        "city":  "카디프",
+        "lat":  51.48,
+        "lon":  -3.18,
+        "airports":  [
+                         "CWL",
+                         "BRS",
+                         "EXT"
+                     ]
+    },
+    {
+        "country":  "영국",
+        "city":  "레스터",
+        "lat":  52.6386,
+        "lon":  -1.1317,
+        "airports":  [
+                         "EMA",
+                         "BHX",
+                         "LTN"
+                     ]
+    },
+    {
+        "country":  "영국",
+        "city":  "밸파스트",
+        "lat":  54.5968,
+        "lon":  -5.9254,
+        "airports":  [
+                         "BFS",
+                         "BHD",
+                         "LDY"
+                     ]
+    },
+    {
+        "country":  "영국",
+        "city":  "코번트리",
+        "lat":  52.4066,
+        "lon":  -1.5122,
+        "airports":  [
+                         "BHX",
+                         "EMA",
+                         "LTN"
+                     ]
+    },
+    {
+        "country":  "영국",
+        "city":  "노팅엄",
+        "lat":  52.9536,
+        "lon":  -1.1505,
+        "airports":  [
+                         "EMA",
+                         "BHX",
+                         "MAN"
+                     ]
+    },
+    {
+        "country":  "영국",
+        "city":  "레딩",
+        "lat":  51.4562,
+        "lon":  -0.9711,
+        "airports":  [
+                         "LHR",
+                         "LTN",
+                         "LGW"
+                     ]
+    },
+    {
+        "country":  "영국",
+        "city":  "Kingston upon Hull",
+        "lat":  53.7446,
+        "lon":  -0.3352,
+        "airports":  [
+                         "LBA",
+                         "HUY"
+                     ]
+    },
+    {
+        "country":  "영국",
+        "city":  "프레스턴",
+        "lat":  53.7628,
+        "lon":  -2.7045,
+        "airports":  [
+                         "LPL",
+                         "MAN",
+                         "LBA"
+                     ]
+    },
+    {
+        "country":  "영국",
+        "city":  "스완지",
+        "lat":  51.6208,
+        "lon":  -3.9432,
+        "airports":  [
+                         "CWL",
+                         "BRS"
+                     ]
+    },
+    {
+        "country":  "영국",
+        "city":  "뉴캐슬어폰타인",
+        "lat":  54.9733,
+        "lon":  -1.614,
+        "airports":  [
+                         "NCL",
+                         "MME"
+                     ]
+    },
+    {
+        "country":  "영국",
+        "city":  "Southend-on-Sea",
+        "lat":  51.5378,
+        "lon":  0.7143,
+        "airports":  [
+                         "STN",
+                         "LGW",
+                         "LHR"
+                     ]
+    },
+    {
+        "country":  "영국",
+        "city":  "브라이턴",
+        "lat":  50.8284,
+        "lon":  -0.1395,
+        "airports":  [
+                         "LGW",
+                         "LHR",
+                         "LCY"
+                     ]
+    },
+    {
+        "country":  "영국",
+        "city":  "사우샘프턴",
+        "lat":  50.904,
+        "lon":  -1.4043,
+        "airports":  [
+                         "LGW",
+                         "LHR",
+                         "SOU"
+                     ]
+    },
+    {
+        "country":  "영국",
+        "city":  "플리머스",
+        "lat":  50.3715,
+        "lon":  -4.143,
+        "airports":  [
+                         "NQY",
+                         "EXT"
+                     ]
+    },
+    {
+        "country":  "영국",
+        "city":  "스토크온트렌트",
+        "lat":  53.0042,
+        "lon":  -2.1854,
+        "airports":  [
+                         "MAN",
+                         "LPL",
+                         "EMA"
+                     ]
+    },
+    {
+        "country":  "영국",
+        "city":  "밀턴케인스",
+        "lat":  52.0417,
+        "lon":  -0.7558,
+        "airports":  [
+                         "LTN",
+                         "LHR",
+                         "STN"
+                     ]
+    },
+    {
+        "country":  "영국",
+        "city":  "루턴",
+        "lat":  51.8797,
+        "lon":  -0.4175,
+        "airports":  [
+                         "LTN",
+                         "STN",
+                         "LHR"
+                     ]
+    },
+    {
+        "country":  "영국",
+        "city":  "스윈던",
+        "lat":  51.558,
+        "lon":  -1.7812,
+        "airports":  [
+                         "BRS",
+                         "LHR",
+                         "BHX"
+                     ]
+    },
+    {
+        "country":  "영국",
+        "city":  "애버딘",
+        "lat":  57.1437,
+        "lon":  -2.0981,
+        "airports":  [
+                         "ABZ",
+                         "DND"
+                     ]
+    },
+    {
+        "country":  "영국",
+        "city":  "입스위치",
+        "lat":  52.0592,
+        "lon":  1.1554,
+        "airports":  [
+                         "STN",
+                         "SEN",
+                         "NWI"
+                     ]
+    },
+    {
+        "country":  "영국",
+        "city":  "Slough",
+        "lat":  51.5095,
+        "lon":  -0.5954,
+        "airports":  [
+                         "LHR",
+                         "LTN",
+                         "LGW"
+                     ]
+    },
+    {
+        "country":  "영국",
+        "city":  "본머스",
+        "lat":  50.7205,
+        "lon":  -1.8795,
+        "airports":  [
+                         "BRS",
+                         "BOH",
+                         "SOU"
+                     ]
+    },
+    {
+        "country":  "영국",
+        "city":  "피터버러",
+        "lat":  52.5736,
+        "lon":  -0.2478,
+        "airports":  [
+                         "LTN",
+                         "EMA",
+                         "STN"
+                     ]
+    },
+    {
+        "country":  "영국",
+        "city":  "옥스퍼드",
+        "lat":  51.7522,
+        "lon":  -1.256,
+        "airports":  [
+                         "LTN",
+                         "LHR",
+                         "BHX"
+                     ]
+    },
+    {
+        "country":  "영국",
+        "city":  "요크",
+        "lat":  53.9576,
+        "lon":  -1.0827,
+        "airports":  [
+                         "LBA",
+                         "HUY",
+                         "MME"
+                     ]
+    },
+    {
+        "country":  "영국",
+        "city":  "Telford",
+        "lat":  52.6766,
+        "lon":  -2.4493,
+        "airports":  [
+                         "BHX",
+                         "MAN",
+                         "EMA"
+                     ]
+    },
+    {
+        "country":  "영국",
+        "city":  "번리",
+        "lat":  53.8,
+        "lon":  -2.2333,
+        "airports":  [
+                         "LBA",
+                         "MAN",
+                         "LPL"
+                     ]
+    },
+    {
+        "country":  "영국",
+        "city":  "던디",
+        "lat":  56.4691,
+        "lon":  -2.9749,
+        "airports":  [
+                         "EDI",
+                         "ABZ",
+                         "DND"
+                     ]
+    },
+    {
+        "country":  "영국",
+        "city":  "케임브리지",
+        "lat":  52.2,
+        "lon":  0.1167,
+        "airports":  [
+                         "STN",
+                         "LTN",
+                         "LHR"
+                     ]
+    },
+    {
+        "country":  "영국",
+        "city":  "노리치",
+        "lat":  52.6278,
+        "lon":  1.2983,
+        "airports":  [
+                         "NWI"
+                     ]
+    },
+    {
+        "country":  "영국",
+        "city":  "미들즈브러",
+        "lat":  54.5762,
+        "lon":  -1.2348,
+        "airports":  [
+                         "NCL",
+                         "LBA",
+                         "MME"
+                     ]
+    },
+    {
+        "country":  "오스트리아",
+        "city":  "비엔나",
+        "lat":  48.2085,
+        "lon":  16.3721,
+        "airports":  [
+                         "VIE"
+                     ]
+    },
+    {
+        "country":  "오스트리아",
+        "city":  "그라츠",
+        "lat":  47.0673,
+        "lon":  15.442,
+        "airports":  [
+                         "GRZ",
+                         "KLU"
+                     ]
+    },
+    {
+        "country":  "오스트리아",
+        "city":  "린츠",
+        "lat":  48.306399999999996,
+        "lon":  14.2861,
+        "airports":  [
+                         "LNZ"
+                     ]
+    },
+    {
+        "country":  "오스트리아",
+        "city":  "잘츠부르크",
+        "lat":  47.7994,
+        "lon":  13.044,
+        "airports":  [
+                         "SZG",
+                         "LNZ"
+                     ]
+    },
+    {
+        "country":  "오스트리아",
+        "city":  "인스브루크",
+        "lat":  47.2627,
+        "lon":  11.3945,
+        "airports":  [
+                         "INN"
+                     ]
+    },
+    {
+        "country":  "오스트리아",
+        "city":  "클라겐푸르트",
+        "lat":  46.6247,
+        "lon":  14.3053,
+        "airports":  [
+                         "KLU",
+                         "GRZ"
+                     ]
+    },
+    {
+        "country":  "오스트리아",
+        "city":  "할슈타트",
+        "lat":  47.5622,
+        "lon":  13.6493,
+        "airports":  [
+                         "SZG"
+                     ]
+    },
+    {
+        "country":  "오스트리아",
+        "city":  "필라흐",
+        "lat":  46.6103,
+        "lon":  13.8558,
+        "airports":  [
+                         "KLU"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "로마",
+        "lat":  41.8919,
+        "lon":  12.5113,
+        "airports":  [
+                         "CIA",
+                         "FCO"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "밀라노",
+        "lat":  45.4643,
+        "lon":  9.1895,
+        "airports":  [
+                         "LIN",
+                         "MXP",
+                         "BGY"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "나폴리",
+        "lat":  40.8522,
+        "lon":  14.2681,
+        "airports":  [
+                         "NAP",
+                         "QSR"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "토리노",
+        "lat":  45.0705,
+        "lon":  7.6868,
+        "airports":  [
+                         "TRN",
+                         "CUF"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "팔레르모",
+        "lat":  38.1166,
+        "lon":  13.3636,
+        "airports":  [
+                         "PMO",
+                         "TPS"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "제노바",
+        "lat":  44.4048,
+        "lon":  8.9444,
+        "airports":  [
+                         "GOA"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "볼로냐",
+        "lat":  44.4938,
+        "lon":  11.3387,
+        "airports":  [
+                         "BLQ",
+                         "FLR",
+                         "FRL"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "플로렌스",
+        "lat":  43.7792,
+        "lon":  11.2463,
+        "airports":  [
+                         "FLR",
+                         "PSA",
+                         "BLQ"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "바리",
+        "lat":  41.1207,
+        "lon":  16.8698,
+        "airports":  [
+                         "BRI"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "카타니아",
+        "lat":  37.4922,
+        "lon":  15.0704,
+        "airports":  [
+                         "CTA",
+                         "CIY",
+                         "REG"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "베로나",
+        "lat":  45.4385,
+        "lon":  10.9938,
+        "airports":  [
+                         "VRN",
+                         "TSF",
+                         "VBS"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "메시나",
+        "lat":  38.1939,
+        "lon":  15.5526,
+        "airports":  [
+                         "CTA",
+                         "SUF",
+                         "REG"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "트리에스테",
+        "lat":  45.6495,
+        "lon":  13.7768,
+        "airports":  [
+                         "TRS"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "파도바",
+        "lat":  45.408,
+        "lon":  11.8859,
+        "airports":  [
+                         "TSF",
+                         "VCE",
+                         "VRN"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "Brescia",
+        "lat":  45.5356,
+        "lon":  10.2147,
+        "airports":  [
+                         "BGY",
+                         "VRN",
+                         "LIN"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "Taranto",
+        "lat":  40.4644,
+        "lon":  17.2471,
+        "airports":  [
+                         "BDS",
+                         "BRI"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "Parma",
+        "lat":  44.7993,
+        "lon":  10.3262,
+        "airports":  [
+                         "VRN",
+                         "BLQ",
+                         "PMF"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "Modena",
+        "lat":  44.6478,
+        "lon":  10.9254,
+        "airports":  [
+                         "BLQ",
+                         "VRN",
+                         "FLR"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "Livorno",
+        "lat":  43.5443,
+        "lon":  10.3262,
+        "airports":  [
+                         "PSA",
+                         "FLR",
+                         "EBA"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "칼리아리",
+        "lat":  39.2305,
+        "lon":  9.1192,
+        "airports":  [
+                         "CAG"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "Rimini",
+        "lat":  44.0576,
+        "lon":  12.5653,
+        "airports":  [
+                         "RMI",
+                         "FRL",
+                         "AOI"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "Mestre",
+        "lat":  45.4917,
+        "lon":  12.2454,
+        "airports":  [
+                         "VCE",
+                         "TSF"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "Foggia",
+        "lat":  41.4584,
+        "lon":  15.5519,
+        "airports":  [
+                         "FOG"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "Ferrara",
+        "lat":  44.838,
+        "lon":  11.6206,
+        "airports":  [
+                         "BLQ",
+                         "VRN",
+                         "VCE"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "Salerno",
+        "lat":  40.6754,
+        "lon":  14.7933,
+        "airports":  [
+                         "NAP",
+                         "QSR"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "시라쿠사",
+        "lat":  37.0754,
+        "lon":  15.2866,
+        "airports":  [
+                         "CTA",
+                         "CIY"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "Bergamo",
+        "lat":  45.696,
+        "lon":  9.6672,
+        "airports":  [
+                         "BGY",
+                         "LIN",
+                         "MXP"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "트렌토",
+        "lat":  46.0679,
+        "lon":  11.1211,
+        "airports":  [
+                         "VRN",
+                         "TSF",
+                         "BZO"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "Perugia",
+        "lat":  43.1122,
+        "lon":  12.3888,
+        "airports":  [
+                         "PEG",
+                         "AOI"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "Pescara",
+        "lat":  42.4584,
+        "lon":  14.2028,
+        "airports":  [
+                         "PSR"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "Forlì",
+        "lat":  44.2218,
+        "lon":  12.0414,
+        "airports":  [
+                         "RMI",
+                         "BLQ",
+                         "FLR"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "Vicenza",
+        "lat":  45.5467,
+        "lon":  11.5475,
+        "airports":  [
+                         "TSF",
+                         "VRN",
+                         "VCE"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "Terni",
+        "lat":  42.5634,
+        "lon":  12.6433,
+        "airports":  [
+                         "PEG",
+                         "CIA",
+                         "FCO"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "Bolzano",
+        "lat":  46.4907,
+        "lon":  11.3398,
+        "airports":  [
+                         "BZO"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "Piacenza",
+        "lat":  45.0524,
+        "lon":  9.6934,
+        "airports":  [
+                         "LIN",
+                         "BGY",
+                         "GOA"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "Novara",
+        "lat":  45.4469,
+        "lon":  8.6212,
+        "airports":  [
+                         "MXP",
+                         "LIN",
+                         "TRN"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "Arezzo",
+        "lat":  43.4628,
+        "lon":  11.8807,
+        "airports":  [
+                         "PEG",
+                         "FLR",
+                         "RMI"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "Udine",
+        "lat":  46.0693,
+        "lon":  13.2372,
+        "airports":  [
+                         "TRS",
+                         "VCE",
+                         "TSF"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "Andria",
+        "lat":  41.2312,
+        "lon":  16.298,
+        "airports":  [
+                         "BRI",
+                         "FOG"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "La Spezia",
+        "lat":  44.103,
+        "lon":  9.8238,
+        "airports":  [
+                         "PSA",
+                         "GOA",
+                         "PMF"
+                     ]
+    },
+    {
+        "country":  "이탈리아",
+        "city":  "친퀘테레",
+        "lat":  44.1461,
+        "lon":  9.6439,
+        "airports":  [
+                         "PSA",
+                         "GOA"
+                     ]
+    },
+    {
+        "country":  "인도",
+        "city":  "뭄바이",
+        "lat":  19.0728,
+        "lon":  72.8826,
+        "airports":  [
+                         "BOM",
+                         "NMI"
+                     ]
+    },
+    {
+        "country":  "인도",
+        "city":  "방갈로르",
+        "lat":  12.9719,
+        "lon":  77.5937,
+        "airports":  [
+                         "BLR"
+                     ]
+    },
+    {
+        "country":  "인도",
+        "city":  "하이데라바드",
+        "lat":  17.384,
+        "lon":  78.4564,
+        "airports":  [
+                         "HYD"
+                     ]
+    },
+    {
+        "country":  "인도",
+        "city":  "아마다바드",
+        "lat":  23.0258,
+        "lon":  72.5873,
+        "airports":  [
+                         "AMD"
+                     ]
+    },
+    {
+        "country":  "인도",
+        "city":  "첸나이",
+        "lat":  13.0878,
+        "lon":  80.2785,
+        "airports":  [
+                         "MAA"
+                     ]
+    },
+    {
+        "country":  "인도",
+        "city":  "콜카타",
+        "lat":  22.5626,
+        "lon":  88.363,
+        "airports":  [
+                         "CCU"
+                     ]
+    },
+    {
+        "country":  "인도",
+        "city":  "수라트",
+        "lat":  21.1959,
+        "lon":  72.8302,
+        "airports":  [
+                         "STV",
+                         "BHU"
+                     ]
+    },
+    {
+        "country":  "인도",
+        "city":  "푸네",
+        "lat":  18.5196,
+        "lon":  73.8554,
+        "airports":  [
+                         "PNQ",
+                         "NMI"
+                     ]
+    },
+    {
+        "country":  "인도",
+        "city":  "자이푸르",
+        "lat":  26.9196,
+        "lon":  75.7878,
+        "airports":  [
+                         "JAI"
+                     ]
+    },
+    {
+        "country":  "인도",
+        "city":  "칸푸르",
+        "lat":  26.4652,
+        "lon":  80.3498,
+        "airports":  [
+                         "LKO",
+                         "KNU"
+                     ]
+    },
+    {
+        "country":  "인도",
+        "city":  "러크나우",
+        "lat":  26.8393,
+        "lon":  80.9231,
+        "airports":  [
+                         "LKO",
+                         "KNU"
+                     ]
+    },
+    {
+        "country":  "인도",
+        "city":  "나그푸르",
+        "lat":  21.1463,
+        "lon":  79.0849,
+        "airports":  [
+                         "NAG"
+                     ]
+    },
+    {
+        "country":  "인도",
+        "city":  "코임바토르",
+        "lat":  11.0056,
+        "lon":  76.9661,
+        "airports":  [
+                         "CJB"
+                     ]
+    },
+    {
+        "country":  "인도",
+        "city":  "인도르",
+        "lat":  22.7179,
+        "lon":  75.8333,
+        "airports":  [
+                         "IDR"
+                     ]
+    },
+    {
+        "country":  "인도",
+        "city":  "바도다라",
+        "lat":  22.2994,
+        "lon":  73.2081,
+        "airports":  [
+                         "BDQ"
+                     ]
+    },
+    {
+        "country":  "인도",
+        "city":  "보팔",
+        "lat":  23.2547,
+        "lon":  77.4029,
+        "airports":  [
+                         "BHO"
+                     ]
+    },
+    {
+        "country":  "인도",
+        "city":  "Rasapūdipalem",
+        "lat":  17.7331,
+        "lon":  83.3162,
+        "airports":  [
+                         "VTZ"
+                     ]
+    },
+    {
+        "country":  "인도",
+        "city":  "파트나",
+        "lat":  25.5941,
+        "lon":  85.1356,
+        "airports":  [
+                         "PAT",
+                         "GAY"
+                     ]
+    },
+    {
+        "country":  "인도",
+        "city":  "Kallakurichi",
+        "lat":  11.7338,
+        "lon":  78.9592,
+        "airports":  [
+                         "PNY"
+                     ]
+    },
+    {
+        "country":  "인도",
+        "city":  "Ludhiana",
+        "lat":  30.912,
+        "lon":  75.8538,
+        "airports":  [
+                         "HWR",
+                         "IXC"
+                     ]
+    },
+    {
+        "country":  "인도",
+        "city":  "나시크",
+        "lat":  19.9973,
+        "lon":  73.791,
+        "airports":  [
+                         "ISK",
+                         "SAG"
+                     ]
+    },
+    {
+        "country":  "인도",
+        "city":  "마두라이",
+        "lat":  9.919,
+        "lon":  78.1195,
+        "airports":  [
+                         "IXM"
+                     ]
+    },
+    {
+        "country":  "인도",
+        "city":  "티루넬벨리",
+        "lat":  8.7274,
+        "lon":  77.6838,
+        "airports":  [
+                         "TRV"
+                     ]
+    },
+    {
+        "country":  "인도",
+        "city":  "아그라",
+        "lat":  27.1833,
+        "lon":  78.0167,
+        "airports":  [
+                         "AGR"
+                     ]
+    },
+    {
+        "country":  "인도",
+        "city":  "Faridabad",
+        "lat":  28.4112,
+        "lon":  77.3132,
+        "airports":  [
+                         "DEL",
+                         "DXN"
+                     ]
+    },
+    {
+        "country":  "인도",
+        "city":  "Rājkot",
+        "lat":  22.2916,
+        "lon":  70.7932,
+        "airports":  [
+                         "HSR",
+                         "JGA"
+                     ]
+    },
+    {
+        "country":  "인도",
+        "city":  "잠셰드푸르",
+        "lat":  22.8028,
+        "lon":  86.1854,
+        "airports":  [
+                         "IXR"
+                     ]
+    },
+    {
+        "country":  "인도",
+        "city":  "Kalyān",
+        "lat":  19.2437,
+        "lon":  73.1355,
+        "airports":  [
+                         "NMI",
+                         "BOM"
+                     ]
+    },
+    {
+        "country":  "인도",
+        "city":  "메루트",
+        "lat":  28.98,
+        "lon":  77.7064,
+        "airports":  [
+                         "DEL",
+                         "DXN"
+                     ]
+    },
+    {
+        "country":  "인도",
+        "city":  "Virār",
+        "lat":  19.4559,
+        "lon":  72.8114,
+        "airports":  [
+                         "BOM",
+                         "NMI"
+                     ]
+    },
+    {
+        "country":  "인도",
+        "city":  "Nowrangapur",
+        "lat":  19.2311,
+        "lon":  82.5483,
+        "airports":  [
+                         "UKE"
+                     ]
+    },
+    {
+        "country":  "인도",
+        "city":  "스리나가르",
+        "lat":  34.0856,
+        "lon":  74.8056,
+        "airports":  [
+                         "SXR"
+                     ]
+    },
+    {
+        "country":  "인도",
+        "city":  "Dhanbad",
+        "lat":  23.7976,
+        "lon":  86.4299,
+        "airports":  [
+                         "RDP"
+                     ]
+    },
+    {
+        "country":  "인도",
+        "city":  "Aurangabad",
+        "lat":  19.8776,
+        "lon":  75.3423,
+        "airports":  [
+                         "IXU"
+                     ]
+    },
+    {
+        "country":  "인도",
+        "city":  "바라나시",
+        "lat":  25.3167,
+        "lon":  83.0104,
+        "airports":  [
+                         "VNS"
+                     ]
+    },
+    {
+        "country":  "인도",
+        "city":  "암리차르",
+        "lat":  31.6223,
+        "lon":  74.8753,
+        "airports":  [
+                         "ATQ",
+                         "IXP"
+                     ]
+    },
+    {
+        "country":  "인도",
+        "city":  "비자야와다",
+        "lat":  16.5074,
+        "lon":  80.6466,
+        "airports":  [
+                         "VGA"
+                     ]
+    },
+    {
+        "country":  "인도",
+        "city":  "란치",
+        "lat":  23.3432,
+        "lon":  85.3094,
+        "airports":  [
+                         "IXR"
+                     ]
+    },
+    {
+        "country":  "인도",
+        "city":  "자발푸르",
+        "lat":  23.167,
+        "lon":  79.9501,
+        "airports":  [
+                         "JLR"
+                     ]
+    },
+    {
+        "country":  "인도",
+        "city":  "Prayagraj",
+        "lat":  25.4448,
+        "lon":  81.8432,
+        "airports":  [
+                         "IXD"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "자카르타",
+        "lat":  -6.2146,
+        "lon":  106.8451,
+        "airports":  [
+                         "HLP",
+                         "CGK"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "수라바야",
+        "lat":  -7.2492,
+        "lon":  112.7508,
+        "airports":  [
+                         "SUB",
+                         "MLG"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "반둥",
+        "lat":  -6.9222,
+        "lon":  107.6069,
+        "airports":  [
+                         "BDO",
+                         "KJT"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "메단",
+        "lat":  3.5833,
+        "lon":  98.6667,
+        "airports":  [
+                         "KNO",
+                         "LSR"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "팔렘방",
+        "lat":  -2.9167,
+        "lon":  104.7458,
+        "airports":  [
+                         "PLM"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "스마랑",
+        "lat":  -6.9931,
+        "lon":  110.4208,
+        "airports":  [
+                         "SRG",
+                         "SOC",
+                         "JOG"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "마카사르",
+        "lat":  -5.1486,
+        "lon":  119.4319,
+        "airports":  [
+                         "UPG"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "바탐 섬",
+        "lat":  1.1494,
+        "lon":  104.0249,
+        "airports":  [
+                         "BTH",
+                         "TNJ"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "Jepara",
+        "lat":  -6.5924,
+        "lon":  110.671,
+        "airports":  [
+                         "SRG"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "페칸바루",
+        "lat":  0.5167,
+        "lon":  101.4417,
+        "airports":  [
+                         "PKU"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "반다르람풍",
+        "lat":  -5.4292,
+        "lon":  105.2611,
+        "airports":  [
+                         "TKG"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "보고르",
+        "lat":  -6.5944,
+        "lon":  106.7892,
+        "airports":  [
+                         "HLP",
+                         "CGK",
+                         "BDO"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "파당",
+        "lat":  -0.9492,
+        "lon":  100.3543,
+        "airports":  [
+                         "PDG"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "말랑",
+        "lat":  -7.9797,
+        "lon":  112.6304,
+        "airports":  [
+                         "SUB",
+                         "MLG",
+                         "DHX"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "사마린다",
+        "lat":  -0.4917,
+        "lon":  117.1458,
+        "airports":  [
+                         "BPN",
+                         "AAP"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "Tasikmalaya",
+        "lat":  -7.3274,
+        "lon":  108.2207,
+        "airports":  [
+                         "KJT",
+                         "BDO",
+                         "CXP"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "Serang",
+        "lat":  -6.1153,
+        "lon":  106.1542,
+        "airports":  [
+                         "CGK",
+                         "HLP"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "발릭파판",
+        "lat":  -1.2675,
+        "lon":  116.8289,
+        "airports":  [
+                         "BPN"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "폰티아낙",
+        "lat":  -0.0319,
+        "lon":  109.325,
+        "airports":  [
+                         "PNK"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "Situbondo",
+        "lat":  -7.7062,
+        "lon":  114.0098,
+        "airports":  [
+                         "SUB"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "덴파사르",
+        "lat":  -8.65,
+        "lon":  115.2167,
+        "airports":  [
+                         "DPS"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "Banjarmasin",
+        "lat":  -3.3199,
+        "lon":  114.5908,
+        "airports":  [
+                         "BDJ"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "Jambi City",
+        "lat":  -1.6,
+        "lon":  103.6167,
+        "airports":  [
+                         "PLM"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "수라카르타",
+        "lat":  -7.5561,
+        "lon":  110.8317,
+        "airports":  [
+                         "SOC",
+                         "SRG",
+                         "YIA"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "쿠팡",
+        "lat":  -10.1708,
+        "lon":  123.6069,
+        "airports":  [
+                         "KOE"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "마나도",
+        "lat":  1.4822,
+        "lon":  124.8489,
+        "airports":  [
+                         "MDC"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "마타람",
+        "lat":  -8.5833,
+        "lon":  116.1167,
+        "airports":  [
+                         "LOP"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "자야푸라",
+        "lat":  -2.5337,
+        "lon":  140.7181,
+        "airports":  [
+                         "DJJ"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "븡쿨루",
+        "lat":  -3.8004,
+        "lon":  102.2655,
+        "airports":  [
+                         "BKS"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "Palu",
+        "lat":  -0.9083,
+        "lon":  119.8708,
+        "airports":  [
+                         "PLW"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "욕야카르타",
+        "lat":  -7.8014,
+        "lon":  110.3647,
+        "airports":  [
+                         "YIA",
+                         "SOC",
+                         "SRG"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "Sukabumi",
+        "lat":  -6.9181,
+        "lon":  106.9267,
+        "airports":  [
+                         "HLP",
+                         "CGK",
+                         "BDO"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "큰다리",
+        "lat":  -3.9778,
+        "lon":  122.5151,
+        "airports":  [
+                         "KXB"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "Dumai",
+        "lat":  1.6671,
+        "lon":  101.4432,
+        "airports":  [
+                         "DUM"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "암본",
+        "lat":  -3.6958,
+        "lon":  128.1833,
+        "airports":  [
+                         "AMQ"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "치르본",
+        "lat":  -6.7063,
+        "lon":  108.557,
+        "airports":  [
+                         "KJT"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "Pekalongan",
+        "lat":  -6.8886,
+        "lon":  109.67529999999999,
+        "airports":  [
+                         "SRG"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "Palangkaraya",
+        "lat":  -2.2083,
+        "lon":  113.9167,
+        "airports":  [
+                         "PKY"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "Karawang",
+        "lat":  -6.3052,
+        "lon":  107.3197,
+        "airports":  [
+                         "HLP",
+                         "CGK",
+                         "BDO"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "Kediri",
+        "lat":  -7.8167,
+        "lon":  112.0167,
+        "airports":  [
+                         "SUB",
+                         "DHX",
+                         "MLG"
+                     ]
+    },
+    {
+        "country":  "인도네시아",
+        "city":  "우붓",
+        "lat":  -8.5069,
+        "lon":  115.2625,
+        "airports":  [
+                         "DPS"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "도쿄",
+        "lat":  35.6895,
+        "lon":  139.6917,
+        "airports":  [
+                         "HND",
+                         "NRT",
+                         "IBR"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "요코하마",
+        "lat":  35.4333,
+        "lon":  139.65,
+        "airports":  [
+                         "HND",
+                         "NRT",
+                         "OIM"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "오사카",
+        "lat":  34.6938,
+        "lon":  135.5011,
+        "airports":  [
+                         "ITM",
+                         "UKB",
+                         "KIX"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "나고야",
+        "lat":  35.1815,
+        "lon":  136.9064,
+        "airports":  [
+                         "NGO",
+                         "NKM"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "삿포로",
+        "lat":  43.0667,
+        "lon":  141.35,
+        "airports":  [
+                         "CTS",
+                         "OKD"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "후쿠오카",
+        "lat":  33.6,
+        "lon":  130.4167,
+        "airports":  [
+                         "FUK",
+                         "HSG",
+                         "KKJ"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "고베",
+        "lat":  34.6913,
+        "lon":  135.183,
+        "airports":  [
+                         "UKB",
+                         "ITM",
+                         "KIX"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "교토",
+        "lat":  35.0211,
+        "lon":  135.7538,
+        "airports":  [
+                         "ITM",
+                         "UKB",
+                         "KIX"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "히로시마",
+        "lat":  34.4,
+        "lon":  132.45,
+        "airports":  [
+                         "HIJ",
+                         "MYJ",
+                         "IWK"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "센다이",
+        "lat":  38.2667,
+        "lon":  140.8667,
+        "airports":  [
+                         "SDJ",
+                         "GAJ"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "지바",
+        "lat":  35.6,
+        "lon":  140.1167,
+        "airports":  [
+                         "HND",
+                         "NRT",
+                         "IBR"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "기타큐슈",
+        "lat":  33.8518,
+        "lon":  130.8503,
+        "airports":  [
+                         "KKJ",
+                         "FUK",
+                         "HSG"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "니가타",
+        "lat":  37.9226,
+        "lon":  139.0412,
+        "airports":  [
+                         "KIJ",
+                         "SDS"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "하마마쓰",
+        "lat":  34.7,
+        "lon":  137.7333,
+        "airports":  [
+                         "FSZ",
+                         "NGO",
+                         "NKM"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "구마모토",
+        "lat":  32.8059,
+        "lon":  130.6918,
+        "airports":  [
+                         "KMJ",
+                         "HSG",
+                         "NGS"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "Aihara",
+        "lat":  35.6,
+        "lon":  139.3167,
+        "airports":  [
+                         "HND",
+                         "NRT",
+                         "OIM"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "오카야마",
+        "lat":  34.65,
+        "lon":  133.9333,
+        "airports":  [
+                         "OKJ",
+                         "TAK",
+                         "TKS"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "시즈오카",
+        "lat":  34.9833,
+        "lon":  138.3833,
+        "airports":  [
+                         "FSZ",
+                         "OIM"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "가고시마",
+        "lat":  31.5667,
+        "lon":  130.55,
+        "airports":  [
+                         "KOJ",
+                         "KMI"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "히메지",
+        "lat":  34.8167,
+        "lon":  134.7,
+        "airports":  [
+                         "UKB",
+                         "KIX",
+                         "ITM"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "우쓰노미야",
+        "lat":  36.5667,
+        "lon":  139.8833,
+        "airports":  [
+                         "IBR",
+                         "NRT",
+                         "FKS"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "마쓰야마",
+        "lat":  33.8392,
+        "lon":  132.7657,
+        "airports":  [
+                         "MYJ",
+                         "HIJ",
+                         "KCZ"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "오이타",
+        "lat":  33.2333,
+        "lon":  131.6,
+        "airports":  [
+                         "KMJ",
+                         "KKJ",
+                         "OIT"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "후쿠야마",
+        "lat":  34.4833,
+        "lon":  133.3667,
+        "airports":  [
+                         "HIJ",
+                         "OKJ",
+                         "TAK"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "가나자와",
+        "lat":  36.6,
+        "lon":  136.6167,
+        "airports":  [
+                         "KMQ",
+                         "TOY",
+                         "NTQ"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "가시와",
+        "lat":  35.8622,
+        "lon":  139.9773,
+        "airports":  [
+                         "NRT",
+                         "HND",
+                         "IBR"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "Shinagawa",
+        "lat":  33.6363,
+        "lon":  133.0057,
+        "airports":  [
+                         "MYJ",
+                         "KCZ",
+                         "HIJ"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "다카마쓰",
+        "lat":  34.3333,
+        "lon":  134.05,
+        "airports":  [
+                         "TAK",
+                         "OKJ",
+                         "TKS"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "Toyama",
+        "lat":  36.7,
+        "lon":  137.2167,
+        "airports":  [
+                         "KMQ",
+                         "TOY",
+                         "NTQ"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "나가사키",
+        "lat":  32.75,
+        "lon":  129.8833,
+        "airports":  [
+                         "NGS",
+                         "HSG",
+                         "KMJ"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "기후",
+        "lat":  35.4229,
+        "lon":  136.7604,
+        "airports":  [
+                         "NGO",
+                         "NKM"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "Miyazaki",
+        "lat":  31.9167,
+        "lon":  131.4167,
+        "airports":  [
+                         "KMI",
+                         "KOJ"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "오카자키",
+        "lat":  34.95,
+        "lon":  137.1667,
+        "airports":  [
+                         "NGO",
+                         "FSZ",
+                         "NKM"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "도요하시",
+        "lat":  34.7667,
+        "lon":  137.3833,
+        "airports":  [
+                         "NGO",
+                         "FSZ",
+                         "NKM"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "Minato",
+        "lat":  34.2152,
+        "lon":  135.1501,
+        "airports":  [
+                         "KIX",
+                         "UKB",
+                         "TKS"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "다카사키",
+        "lat":  36.3333,
+        "lon":  139.0167,
+        "airports":  [
+                         "MMJ"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "Nagano",
+        "lat":  36.65,
+        "lon":  138.1833,
+        "airports":  [
+                         "MMJ",
+                         "TOY"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "나라",
+        "lat":  34.685,
+        "lon":  135.8048,
+        "airports":  [
+                         "ITM",
+                         "UKB",
+                         "KIX"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "이와키",
+        "lat":  37.05,
+        "lon":  140.8833,
+        "airports":  [
+                         "FKS"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "가와고에",
+        "lat":  35.9086,
+        "lon":  139.4853,
+        "airports":  [
+                         "HND",
+                         "NRT",
+                         "IBR"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "유후인",
+        "lat":  33.2646,
+        "lon":  131.3536,
+        "airports":  [
+                         "OIT",
+                         "FUK"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "가마쿠라",
+        "lat":  35.3192,
+        "lon":  139.5466,
+        "airports":  [
+                         "HND",
+                         "NRT"
+                     ]
+    },
+    {
+        "country":  "일본",
+        "city":  "하코네",
+        "lat":  35.2324,
+        "lon":  139.1069,
+        "airports":  [
+                         "HND",
+                         "NRT"
+                     ]
+    },
+    {
+        "country":  "중국",
+        "city":  "상하이",
+        "lat":  31.2222,
+        "lon":  121.4581,
+        "airports":  [
+                         "SHA",
+                         "PVG",
+                         "JNH"
+                     ]
+    },
+    {
+        "country":  "중국",
+        "city":  "충칭",
+        "lat":  29.5603,
+        "lon":  106.5577,
+        "airports":  [
+                         "CKG"
+                     ]
+    },
+    {
+        "country":  "중국",
+        "city":  "청두",
+        "lat":  30.6667,
+        "lon":  104.0667,
+        "airports":  [
+                         "CTU",
+                         "TFU"
+                     ]
+    },
+    {
+        "country":  "중국",
+        "city":  "베이징",
+        "lat":  39.9075,
+        "lon":  116.3972,
+        "airports":  [
+                         "PEK",
+                         "PKX"
+                     ]
+    },
+    {
+        "country":  "중국",
+        "city":  "광저우",
+        "lat":  23.1167,
+        "lon":  113.25,
+        "airports":  [
+                         "CAN",
+                         "SZX",
+                         "FUO"
+                     ]
+    },
+    {
+        "country":  "중국",
+        "city":  "선전",
+        "lat":  22.5455,
+        "lon":  114.0683,
+        "airports":  [
+                         "SZX",
+                         "ZUH",
+                         "HUZ"
+                     ]
+    },
+    {
+        "country":  "중국",
+        "city":  "천진",
+        "lat":  39.1422,
+        "lon":  117.1767,
+        "airports":  [
+                         "TSN",
+                         "PKX"
+                     ]
+    },
+    {
+        "country":  "중국",
+        "city":  "우한",
+        "lat":  30.5833,
+        "lon":  114.2667,
+        "airports":  [
+                         "WUH",
+                         "EHU"
+                     ]
+    },
+    {
+        "country":  "중국",
+        "city":  "시안",
+        "lat":  34.2583,
+        "lon":  108.9286,
+        "airports":  [
+                         "XIY"
+                     ]
+    },
+    {
+        "country":  "중국",
+        "city":  "항저우",
+        "lat":  30.2936,
+        "lon":  120.1614,
+        "airports":  [
+                         "HGH",
+                         "JNH"
+                     ]
+    },
+    {
+        "country":  "중국",
+        "city":  "하얼빈",
+        "lat":  45.75,
+        "lon":  126.65,
+        "airports":  [
+                         "HRB"
+                     ]
+    },
+    {
+        "country":  "중국",
+        "city":  "둥관",
+        "lat":  23.018,
+        "lon":  113.7487,
+        "airports":  [
+                         "SZX",
+                         "CAN",
+                         "FUO"
+                     ]
+    },
+    {
+        "country":  "중국",
+        "city":  "허페이",
+        "lat":  31.8639,
+        "lon":  117.2808,
+        "airports":  [
+                         "HFE"
+                     ]
+    },
+    {
+        "country":  "중국",
+        "city":  "웨이팡",
+        "lat":  36.71,
+        "lon":  119.1019,
+        "airports":  [
+                         "TAO",
+                         "WEF",
+                         "DOY"
+                     ]
+    },
+    {
+        "country":  "중국",
+        "city":  "난징",
+        "lat":  32.0617,
+        "lon":  118.7778,
+        "airports":  [
+                         "NKG",
+                         "CZX"
+                     ]
+    },
+    {
+        "country":  "중국",
+        "city":  "선양",
+        "lat":  41.7922,
+        "lon":  123.4328,
+        "airports":  [
+                         "SHE",
+                         "AOG"
+                     ]
+    },
+    {
+        "country":  "중국",
+        "city":  "지난",
+        "lat":  36.6683,
+        "lon":  116.9972,
+        "airports":  [
+                         "TNA"
+                     ]
+    },
+    {
+        "country":  "중국",
+        "city":  "다롄",
+        "lat":  38.9122,
+        "lon":  121.6022,
+        "airports":  [
+                         "DLC"
+                     ]
+    },
+    {
+        "country":  "중국",
+        "city":  "Wuzhong",
+        "lat":  37.9867,
+        "lon":  106.201,
+        "airports":  [
+                         "INC"
+                     ]
+    },
+    {
+        "country":  "중국",
+        "city":  "칭다오",
+        "lat":  36.0649,
+        "lon":  120.3804,
+        "airports":  [
+                         "TAO"
+                     ]
+    },
+    {
+        "country":  "중국",
+        "city":  "연대",
+        "lat":  37.4765,
+        "lon":  121.4408,
+        "airports":  [
+                         "YNT",
+                         "WEH"
+                     ]
+    },
+    {
+        "country":  "중국",
+        "city":  "쑤저우",
+        "lat":  31.3041,
+        "lon":  120.5954,
+        "airports":  [
+                         "WUX",
+                         "SHA",
+                         "JNH"
+                     ]
+    },
+    {
+        "country":  "중국",
+        "city":  "정저우",
+        "lat":  34.7578,
+        "lon":  113.6486,
+        "airports":  [
+                         "CGO"
+                     ]
+    },
+    {
+        "country":  "중국",
+        "city":  "난닝",
+        "lat":  22.8167,
+        "lon":  108.3167,
+        "airports":  [
+                         "NNG"
+                     ]
+    },
+    {
+        "country":  "중국",
+        "city":  "쿤밍",
+        "lat":  25.0389,
+        "lon":  102.7183,
+        "airports":  [
+                         "KMG"
+                     ]
+    },
+    {
+        "country":  "중국",
+        "city":  "스자좡",
+        "lat":  38.0414,
+        "lon":  114.4786,
+        "airports":  [
+                         "SJW"
+                     ]
+    },
+    {
+        "country":  "중국",
+        "city":  "장춘",
+        "lat":  43.88,
+        "lon":  125.3228,
+        "airports":  [
+                         "CGQ"
+                     ]
+    },
+    {
+        "country":  "중국",
+        "city":  "타이위안",
+        "lat":  37.8694,
+        "lon":  112.5603,
+        "airports":  [
+                         "TYN"
+                     ]
+    },
+    {
+        "country":  "중국",
+        "city":  "쯔보",
+        "lat":  36.7906,
+        "lon":  118.0633,
+        "airports":  [
+                         "TNA",
+                         "WEF"
+                     ]
+    },
+    {
+        "country":  "중국",
+        "city":  "샤먼",
+        "lat":  24.4798,
+        "lon":  118.0819,
+        "airports":  [
+                         "XMN",
+                         "JJN"
+                     ]
+    },
+    {
+        "country":  "중국",
+        "city":  "양저우",
+        "lat":  32.3972,
+        "lon":  119.4358,
+        "airports":  [
+                         "NKG",
+                         "YTY",
+                         "CZX"
+                     ]
+    },
+    {
+        "country":  "중국",
+        "city":  "화이안시",
+        "lat":  33.5886,
+        "lon":  119.0192,
+        "airports":  [
+                         "HIA",
+                         "LYG"
+                     ]
+    },
+    {
+        "country":  "중국",
+        "city":  "구이양",
+        "lat":  26.5833,
+        "lon":  106.7167,
+        "airports":  [
+                         "KWE",
+                         "AVA"
+                     ]
+    },
+    {
+        "country":  "중국",
+        "city":  "우시",
+        "lat":  31.5689,
+        "lon":  120.2886,
+        "airports":  [
+                         "WUX",
+                         "CZX",
+                         "NTG"
+                     ]
+    },
+    {
+        "country":  "중국",
+        "city":  "란저우",
+        "lat":  36.057,
+        "lon":  103.8399,
+        "airports":  [
+                         "LHW"
+                     ]
+    },
+    {
+        "country":  "중국",
+        "city":  "푸저우",
+        "lat":  26.0614,
+        "lon":  119.3061,
+        "airports":  [
+                         "FOC"
+                     ]
+    },
+    {
+        "country":  "중국",
+        "city":  "우루무치",
+        "lat":  43.801,
+        "lon":  87.6005,
+        "airports":  [
+                         "URC"
+                     ]
+    },
+    {
+        "country":  "중국",
+        "city":  "짜오좡",
+        "lat":  34.8647,
+        "lon":  117.5542,
+        "airports":  [
+                         "LYI",
+                         "XUZ"
+                     ]
+    },
+    {
+        "country":  "중국",
+        "city":  "중산",
+        "lat":  22.5231,
+        "lon":  113.3791,
+        "airports":  [
+                         "SZX",
+                         "ZUH",
+                         "CAN"
+                     ]
+    },
+    {
+        "country":  "중국",
+        "city":  "산터우",
+        "lat":  23.3549,
+        "lon":  116.6788,
+        "airports":  [
+                         "SWA"
+                     ]
+    },
+    {
+        "country":  "체코",
+        "city":  "프라하",
+        "lat":  50.088,
+        "lon":  14.4208,
+        "airports":  [
+                         "PRG",
+                         "PED"
+                     ]
+    },
+    {
+        "country":  "체코",
+        "city":  "브르노",
+        "lat":  49.1952,
+        "lon":  16.608,
+        "airports":  [
+                         "BRQ"
+                     ]
+    },
+    {
+        "country":  "체코",
+        "city":  "오스트라바",
+        "lat":  49.8347,
+        "lon":  18.282,
+        "airports":  [
+                         "OSR"
+                     ]
+    },
+    {
+        "country":  "체코",
+        "city":  "플젠",
+        "lat":  49.7475,
+        "lon":  13.3776,
+        "airports":  [
+                         "KLV",
+                         "PRG"
+                     ]
+    },
+    {
+        "country":  "체코",
+        "city":  "리베레츠",
+        "lat":  50.7671,
+        "lon":  15.0562,
+        "airports":  [
+                         "PRG",
+                         "PED"
+                     ]
+    },
+    {
+        "country":  "체코",
+        "city":  "올로모우츠",
+        "lat":  49.5955,
+        "lon":  17.2518,
+        "airports":  [
+                         "OSR",
+                         "BRQ"
+                     ]
+    },
+    {
+        "country":  "체코",
+        "city":  "체스케부데요비체",
+        "lat":  48.9745,
+        "lon":  14.4743,
+        "airports":  [
+                         "JCL"
+                     ]
+    },
+    {
+        "country":  "체코",
+        "city":  "흐라데츠크랄로베",
+        "lat":  50.2092,
+        "lon":  15.8328,
+        "airports":  [
+                         "PED"
+                     ]
+    },
+    {
+        "country":  "체코",
+        "city":  "우스티나트라벰",
+        "lat":  50.6607,
+        "lon":  14.0323,
+        "airports":  [
+                         "PRG",
+                         "KLV"
+                     ]
+    },
+    {
+        "country":  "체코",
+        "city":  "즐린",
+        "lat":  49.2264,
+        "lon":  17.6706,
+        "airports":  [
+                         "OSR",
+                         "BRQ"
+                     ]
+    },
+    {
+        "country":  "체코",
+        "city":  "모스트",
+        "lat":  50.503,
+        "lon":  13.6362,
+        "airports":  [
+                         "KLV",
+                         "PRG"
+                     ]
+    },
+    {
+        "country":  "체코",
+        "city":  "체스키크룸로프",
+        "lat":  48.8127,
+        "lon":  14.3175,
+        "airports":  [
+                         "PRG"
+                     ]
+    },
+    {
+        "country":  "체코",
+        "city":  "오파바",
+        "lat":  49.9387,
+        "lon":  17.9026,
+        "airports":  [
+                         "OSR"
+                     ]
+    },
+    {
+        "country":  "체코",
+        "city":  "Jihlava",
+        "lat":  49.3961,
+        "lon":  15.5912,
+        "airports":  [
+                         "PED",
+                         "JCL",
+                         "BRQ"
+                     ]
+    },
+    {
+        "country":  "캄보디아",
+        "city":  "프놈펜",
+        "lat":  11.5624,
+        "lon":  104.916,
+        "airports":  [
+                         "KTI"
+                     ]
+    },
+    {
+        "country":  "캄보디아",
+        "city":  "타케오",
+        "lat":  10.9908,
+        "lon":  104.785,
+        "airports":  [
+                         "KTI"
+                     ]
+    },
+    {
+        "country":  "캄보디아",
+        "city":  "시엠레아프",
+        "lat":  13.3618,
+        "lon":  103.8606,
+        "airports":  [
+                         "SAI",
+                         "BBM"
+                     ]
+    },
+    {
+        "country":  "캄보디아",
+        "city":  "바탐방",
+        "lat":  13.1027,
+        "lon":  103.1982,
+        "airports":  [
+                         "BBM"
+                     ]
+    },
+    {
+        "country":  "캄보디아",
+        "city":  "포이펫",
+        "lat":  13.658,
+        "lon":  102.5636,
+        "airports":  [
+                         "BBM"
+                     ]
+    },
+    {
+        "country":  "캄보디아",
+        "city":  "캄퐁츠낭",
+        "lat":  12.25,
+        "lon":  104.6667,
+        "airports":  [
+                         "KTI"
+                     ]
+    },
+    {
+        "country":  "캄보디아",
+        "city":  "시아누크빌",
+        "lat":  10.6093,
+        "lon":  103.5296,
+        "airports":  [
+                         "KOS",
+                         "DSY"
+                     ]
+    },
+    {
+        "country":  "캄보디아",
+        "city":  "Preaek Prasab",
+        "lat":  12.3537,
+        "lon":  106.0356,
+        "airports":  [
+                         "KTI"
+                     ]
+    },
+    {
+        "country":  "캄보디아",
+        "city":  "캄퐁참",
+        "lat":  11.9934,
+        "lon":  105.4635,
+        "airports":  [
+                         "KTI"
+                     ]
+    },
+    {
+        "country":  "캄보디아",
+        "city":  "Anlong Veaeng",
+        "lat":  14.2322,
+        "lon":  104.0811,
+        "airports":  [
+                         "SAI"
+                     ]
+    },
+    {
+        "country":  "캄보디아",
+        "city":  "포삿",
+        "lat":  12.5388,
+        "lon":  103.9192,
+        "airports":  [
+                         "SAI",
+                         "BBM"
+                     ]
+    },
+    {
+        "country":  "캐나다",
+        "city":  "토론토",
+        "lat":  43.7064,
+        "lon":  -79.3986,
+        "airports":  [
+                         "YYZ",
+                         "YHM",
+                         "YTZ"
+                     ]
+    },
+    {
+        "country":  "캐나다",
+        "city":  "몬트리올",
+        "lat":  45.5088,
+        "lon":  -73.5878,
+        "airports":  [
+                         "YUL",
+                         "YHU",
+                         "YMX"
+                     ]
+    },
+    {
+        "country":  "캐나다",
+        "city":  "캘거리",
+        "lat":  51.0501,
+        "lon":  -114.0853,
+        "airports":  [
+                         "YYC"
+                     ]
+    },
+    {
+        "country":  "캐나다",
+        "city":  "오타와",
+        "lat":  45.4112,
+        "lon":  -75.6981,
+        "airports":  [
+                         "YOW",
+                         "YRO",
+                         "YND"
+                     ]
+    },
+    {
+        "country":  "캐나다",
+        "city":  "에드먼턴",
+        "lat":  53.5501,
+        "lon":  -113.4687,
+        "airports":  [
+                         "YEG"
+                     ]
+    },
+    {
+        "country":  "캐나다",
+        "city":  "위니펙",
+        "lat":  49.8844,
+        "lon":  -97.147,
+        "airports":  [
+                         "YWG"
+                     ]
+    },
+    {
+        "country":  "캐나다",
+        "city":  "미시소거",
+        "lat":  43.5789,
+        "lon":  -79.6583,
+        "airports":  [
+                         "YYZ",
+                         "YHM",
+                         "YTZ"
+                     ]
+    },
+    {
+        "country":  "캐나다",
+        "city":  "밴쿠버",
+        "lat":  49.2497,
+        "lon":  -123.1193,
+        "airports":  [
+                         "YVR",
+                         "YYJ",
+                         "YCD"
+                     ]
+    },
+    {
+        "country":  "캐나다",
+        "city":  "해밀턴",
+        "lat":  43.2501,
+        "lon":  -79.8496,
+        "airports":  [
+                         "YHM",
+                         "YYZ",
+                         "YKF"
+                     ]
+    },
+    {
+        "country":  "캐나다",
+        "city":  "서리",
+        "lat":  49.1064,
+        "lon":  -122.8251,
+        "airports":  [
+                         "YVR",
+                         "YYJ",
+                         "YXX"
+                     ]
+    },
+    {
+        "country":  "캐나다",
+        "city":  "퀘벡",
+        "lat":  46.8123,
+        "lon":  -71.2145,
+        "airports":  [
+                         "YQB"
+                     ]
+    },
+    {
+        "country":  "캐나다",
+        "city":  "핼리팩스",
+        "lat":  44.6427,
+        "lon":  -63.5769,
+        "airports":  [
+                         "YHZ"
+                     ]
+    },
+    {
+        "country":  "캐나다",
+        "city":  "런던",
+        "lat":  42.9834,
+        "lon":  -81.233,
+        "airports":  [
+                         "YXU",
+                         "YKF"
+                     ]
+    },
+    {
+        "country":  "캐나다",
+        "city":  "빅토리아",
+        "lat":  48.4359,
+        "lon":  -123.3516,
+        "airports":  [
+                         "YYJ",
+                         "YVR",
+                         "YCD"
+                     ]
+    },
+    {
+        "country":  "캐나다",
+        "city":  "새스커툰",
+        "lat":  52.1324,
+        "lon":  -106.6689,
+        "airports":  [
+                         "YXE"
+                     ]
+    },
+    {
+        "country":  "캐나다",
+        "city":  "키치너",
+        "lat":  43.4254,
+        "lon":  -80.5112,
+        "airports":  [
+                         "YHM",
+                         "YYZ",
+                         "YKF"
+                     ]
+    },
+    {
+        "country":  "캐나다",
+        "city":  "윈저",
+        "lat":  42.3001,
+        "lon":  -83.0165,
+        "airports":  [
+                         "YQG"
+                     ]
+    },
+    {
+        "country":  "캐나다",
+        "city":  "리자이나",
+        "lat":  50.4501,
+        "lon":  -104.6178,
+        "airports":  [
+                         "YQR"
+                     ]
+    },
+    {
+        "country":  "캐나다",
+        "city":  "오샤와",
+        "lat":  43.9001,
+        "lon":  -78.8496,
+        "airports":  [
+                         "YYZ",
+                         "YTZ",
+                         "YPQ"
+                     ]
+    },
+    {
+        "country":  "캐나다",
+        "city":  "서드베리",
+        "lat":  46.49,
+        "lon":  -80.99,
+        "airports":  [
+                         "YSB"
+                     ]
+    },
+    {
+        "country":  "캐나다",
+        "city":  "사그네",
+        "lat":  48.4168,
+        "lon":  -71.0657,
+        "airports":  [
+                         "YBG",
+                         "YRJ"
+                     ]
+    },
+    {
+        "country":  "캐나다",
+        "city":  "배리",
+        "lat":  44.4001,
+        "lon":  -79.6663,
+        "airports":  [
+                         "YYZ",
+                         "YLK",
+                         "YQA"
+                     ]
+    },
+    {
+        "country":  "캐나다",
+        "city":  "켈로나",
+        "lat":  49.8831,
+        "lon":  -119.4857,
+        "airports":  [
+                         "YLW",
+                         "YYF"
+                     ]
+    },
+    {
+        "country":  "캐나다",
+        "city":  "트루아리비에르",
+        "lat":  46.3451,
+        "lon":  -72.5477,
+        "airports":  [
+                         "YQB"
+                     ]
+    },
+    {
+        "country":  "캐나다",
+        "city":  "애버츠퍼드",
+        "lat":  49.058,
+        "lon":  -122.2526,
+        "airports":  [
+                         "YVR",
+                         "YYJ",
+                         "YXX"
+                     ]
+    },
+    {
+        "country":  "캐나다",
+        "city":  "세인트캐서린스",
+        "lat":  43.1713,
+        "lon":  -79.2427,
+        "airports":  [
+                         "YHM",
+                         "YYZ",
+                         "YCM"
+                     ]
+    },
+    {
+        "country":  "캐나다",
+        "city":  "킹스턴",
+        "lat":  44.2298,
+        "lon":  -76.481,
+        "airports":  [
+                         "YOW"
+                     ]
+    },
+    {
+        "country":  "캐나다",
+        "city":  "셰르브루크",
+        "lat":  45.4001,
+        "lon":  -71.8991,
+        "airports":  [
+                         "YHU"
+                     ]
+    },
+    {
+        "country":  "캐나다",
+        "city":  "Saint-Louis-de-Terrebonne",
+        "lat":  45.702,
+        "lon":  -73.7867,
+        "airports":  [
+                         "YUL",
+                         "YMX",
+                         "YHU"
+                     ]
+    },
+    {
+        "country":  "캐나다",
+        "city":  "세인트존스",
+        "lat":  47.5649,
+        "lon":  -52.7093,
+        "airports":  [
+                         "YYT"
+                     ]
+    },
+    {
+        "country":  "캐나다",
+        "city":  "선더베이",
+        "lat":  48.382,
+        "lon":  -89.2502,
+        "airports":  [
+                         "YQT"
+                     ]
+    },
+    {
+        "country":  "캐나다",
+        "city":  "시드니",
+        "lat":  46.1351,
+        "lon":  -60.1831,
+        "airports":  [
+                         "YQY"
+                     ]
+    },
+    {
+        "country":  "캐나다",
+        "city":  "브랜트퍼드",
+        "lat":  43.1334,
+        "lon":  -80.2664,
+        "airports":  [
+                         "YHM",
+                         "YYZ",
+                         "YKF"
+                     ]
+    },
+    {
+        "country":  "캐나다",
+        "city":  "Kamloops",
+        "lat":  50.6665,
+        "lon":  -120.3192,
+        "airports":  [
+                         "YKA"
+                     ]
+    },
+    {
+        "country":  "캐나다",
+        "city":  "레스브리지",
+        "lat":  49.7,
+        "lon":  -112.8186,
+        "airports":  [
+                         "YQL"
+                     ]
+    },
+    {
+        "country":  "캐나다",
+        "city":  "레드디어",
+        "lat":  52.2668,
+        "lon":  -113.802,
+        "airports":  [
+                         "YEG"
+                     ]
+    },
+    {
+        "country":  "캐나다",
+        "city":  "Saint-Jean-sur-Richelieu",
+        "lat":  45.3071,
+        "lon":  -73.2626,
+        "airports":  [
+                         "YUL",
+                         "YHU",
+                         "YMX"
+                     ]
+    },
+    {
+        "country":  "캐나다",
+        "city":  "뉴마켓",
+        "lat":  44.0501,
+        "lon":  -79.4663,
+        "airports":  [
+                         "YYZ",
+                         "YTZ",
+                         "YLK"
+                     ]
+    },
+    {
+        "country":  "캐나다",
+        "city":  "나나이모",
+        "lat":  49.1664,
+        "lon":  -123.94,
+        "airports":  [
+                         "YVR",
+                         "YYJ",
+                         "YCD"
+                     ]
+    },
+    {
+        "country":  "캐나다",
+        "city":  "에어드리",
+        "lat":  51.3001,
+        "lon":  -114.0353,
+        "airports":  [
+                         "YYC"
+                     ]
+    },
+    {
+        "country":  "태국",
+        "city":  "방콕",
+        "lat":  13.754,
+        "lon":  100.5014,
+        "airports":  [
+                         "DMK",
+                         "BKK"
+                     ]
+    },
+    {
+        "country":  "태국",
+        "city":  "촌부리",
+        "lat":  13.3622,
+        "lon":  100.9834,
+        "airports":  [
+                         "BKK",
+                         "DMK",
+                         "UTP"
+                     ]
+    },
+    {
+        "country":  "태국",
+        "city":  "핫야이",
+        "lat":  7.0084,
+        "lon":  100.4767,
+        "airports":  [
+                         "HDY"
+                     ]
+    },
+    {
+        "country":  "태국",
+        "city":  "람빵",
+        "lat":  18.2923,
+        "lon":  99.4928,
+        "airports":  [
+                         "CNX",
+                         "LPT"
+                     ]
+    },
+    {
+        "country":  "태국",
+        "city":  "Kabin Buri",
+        "lat":  13.9513,
+        "lon":  101.7174,
+        "airports":  [
+                         "BKK"
+                     ]
+    },
+    {
+        "country":  "태국",
+        "city":  "수랏타니",
+        "lat":  9.1401,
+        "lon":  99.3331,
+        "airports":  [
+                         "USM",
+                         "URT",
+                         "NST"
+                     ]
+    },
+    {
+        "country":  "태국",
+        "city":  "우돈타니",
+        "lat":  17.4157,
+        "lon":  102.7859,
+        "airports":  [
+                         "UTH"
+                     ]
+    },
+    {
+        "country":  "태국",
+        "city":  "치앙마이",
+        "lat":  18.7904,
+        "lon":  98.9847,
+        "airports":  [
+                         "CNX",
+                         "LPT"
+                     ]
+    },
+    {
+        "country":  "태국",
+        "city":  "나콘랏차시마",
+        "lat":  14.9707,
+        "lon":  102.102,
+        "airports":  [
+                         "BFV"
+                     ]
+    },
+    {
+        "country":  "태국",
+        "city":  "후아힌",
+        "lat":  12.5706,
+        "lon":  99.9588,
+        "airports":  [
+                         "HHQ"
+                     ]
+    },
+    {
+        "country":  "태국",
+        "city":  "우본랏차타니",
+        "lat":  15.2384,
+        "lon":  104.8487,
+        "airports":  [
+                         "UBP"
+                     ]
+    },
+    {
+        "country":  "태국",
+        "city":  "파타야",
+        "lat":  12.9333,
+        "lon":  100.8833,
+        "airports":  [
+                         "UTP",
+                         "BKK"
+                     ]
+    },
+    {
+        "country":  "태국",
+        "city":  "콘깬",
+        "lat":  16.4467,
+        "lon":  102.833,
+        "airports":  [
+                         "KKC"
+                     ]
+    },
+    {
+        "country":  "태국",
+        "city":  "라용",
+        "lat":  12.681,
+        "lon":  101.258,
+        "airports":  [
+                         "UTP"
+                     ]
+    },
+    {
+        "country":  "태국",
+        "city":  "나콘시탐마랏",
+        "lat":  8.4333,
+        "lon":  99.9667,
+        "airports":  [
+                         "NST"
+                     ]
+    },
+    {
+        "country":  "태국",
+        "city":  "짠타부리",
+        "lat":  12.6096,
+        "lon":  102.1045,
+        "airports":  [
+                         "TDX"
+                     ]
+    },
+    {
+        "country":  "태국",
+        "city":  "Yala",
+        "lat":  6.54,
+        "lon":  101.2813,
+        "airports":  [
+                         "NAW"
+                     ]
+    },
+    {
+        "country":  "태국",
+        "city":  "나콘사완",
+        "lat":  15.7047,
+        "lon":  100.1372,
+        "airports":  [
+                         "PHS"
+                     ]
+    },
+    {
+        "country":  "태국",
+        "city":  "푸껫",
+        "lat":  7.8906,
+        "lon":  98.3981,
+        "airports":  [
+                         "HKT",
+                         "KBV"
+                     ]
+    },
+    {
+        "country":  "태국",
+        "city":  "Nong Prue",
+        "lat":  14.6078,
+        "lon":  99.4578,
+        "airports":  [
+                         "DMK"
+                     ]
+    },
+    {
+        "country":  "태국",
+        "city":  "치앙라이",
+        "lat":  19.9086,
+        "lon":  99.8325,
+        "airports":  [
+                         "CEI"
+                     ]
+    },
+    {
+        "country":  "태국",
+        "city":  "Sakon Nakhon",
+        "lat":  17.1612,
+        "lon":  104.1472,
+        "airports":  [
+                         "SNO",
+                         "KOP"
+                     ]
+    },
+    {
+        "country":  "태국",
+        "city":  "Krathum Baen",
+        "lat":  13.6533,
+        "lon":  100.2597,
+        "airports":  [
+                         "DMK",
+                         "BKK"
+                     ]
+    },
+    {
+        "country":  "태국",
+        "city":  "Saraburi",
+        "lat":  14.5333,
+        "lon":  100.9167,
+        "airports":  [
+                         "DMK",
+                         "BKK"
+                     ]
+    },
+    {
+        "country":  "태국",
+        "city":  "Trang",
+        "lat":  7.5563,
+        "lon":  99.6114,
+        "airports":  [
+                         "KBV",
+                         "TST"
+                     ]
+    },
+    {
+        "country":  "태국",
+        "city":  "Sattahip",
+        "lat":  12.6663,
+        "lon":  100.9018,
+        "airports":  [
+                         "UTP"
+                     ]
+    },
+    {
+        "country":  "태국",
+        "city":  "깐짜나부리",
+        "lat":  14.0041,
+        "lon":  99.5483,
+        "airports":  [
+                         "DMK"
+                     ]
+    },
+    {
+        "country":  "태국",
+        "city":  "농카이",
+        "lat":  17.8785,
+        "lon":  102.742,
+        "airports":  [
+                         "UTH"
+                     ]
+    },
+    {
+        "country":  "태국",
+        "city":  "핏사눌록",
+        "lat":  16.8248,
+        "lon":  100.2586,
+        "airports":  [
+                         "PHS",
+                         "THS"
+                     ]
+    },
+    {
+        "country":  "태국",
+        "city":  "아유타야",
+        "lat":  14.3532,
+        "lon":  100.5689,
+        "airports":  [
+                         "DMK",
+                         "BKK"
+                     ]
+    },
+    {
+        "country":  "태국",
+        "city":  "Prachantakham",
+        "lat":  14.0637,
+        "lon":  101.5155,
+        "airports":  [
+                         "BKK",
+                         "DMK"
+                     ]
+    },
+    {
+        "country":  "태국",
+        "city":  "Kamphaeng Phet",
+        "lat":  16.4834,
+        "lon":  99.5215,
+        "airports":  [
+                         "PHS",
+                         "THS"
+                     ]
+    },
+    {
+        "country":  "태국",
+        "city":  "Chaiyaphum",
+        "lat":  15.8105,
+        "lon":  102.0288,
+        "airports":  [
+                         "KKC"
+                     ]
+    },
+    {
+        "country":  "태국",
+        "city":  "우따라딧",
+        "lat":  17.6256,
+        "lon":  100.0942,
+        "airports":  [
+                         "THS",
+                         "LPT",
+                         "PHS"
+                     ]
+    },
+    {
+        "country":  "태국",
+        "city":  "Lop Buri",
+        "lat":  14.7981,
+        "lon":  100.654,
+        "airports":  [
+                         "DMK"
+                     ]
+    },
+    {
+        "country":  "태국",
+        "city":  "춤폰",
+        "lat":  10.4957,
+        "lon":  99.1797,
+        "airports":  [
+                         "CJM"
+                     ]
+    },
+    {
+        "country":  "태국",
+        "city":  "Klaeng",
+        "lat":  12.78,
+        "lon":  101.6491,
+        "airports":  [
+                         "UTP",
+                         "TDX"
+                     ]
+    },
+    {
+        "country":  "태국",
+        "city":  "Kalasin",
+        "lat":  16.4328,
+        "lon":  103.5066,
+        "airports":  [
+                         "ROI",
+                         "KKC"
+                     ]
+    },
+    {
+        "country":  "태국",
+        "city":  "Suphan Buri",
+        "lat":  14.4742,
+        "lon":  100.1222,
+        "airports":  [
+                         "DMK"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "비잔티움",
+        "lat":  41.0138,
+        "lon":  28.9497,
+        "airports":  [
+                         "SAW",
+                         "IST",
+                         "TEQ"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "앙카라",
+        "lat":  39.9199,
+        "lon":  32.8543,
+        "airports":  [
+                         "ESB"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "부르사",
+        "lat":  40.1956,
+        "lon":  29.0601,
+        "airports":  [
+                         "SAW",
+                         "YEI"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "이즈미르",
+        "lat":  38.4127,
+        "lon":  27.1384,
+        "airports":  [
+                         "ADB"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "가지안테프",
+        "lat":  37.0594,
+        "lon":  37.3825,
+        "airports":  [
+                         "GZT",
+                         "KCM"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "디야르바키르",
+        "lat":  37.9136,
+        "lon":  40.2172,
+        "airports":  [
+                         "DIY",
+                         "BAL",
+                         "MQM"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "아다나",
+        "lat":  36.9862,
+        "lon":  35.3253,
+        "airports":  [
+                         "COV"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "카이세리",
+        "lat":  38.7322,
+        "lon":  35.4853,
+        "airports":  [
+                         "ASR",
+                         "NAV"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "코니아",
+        "lat":  37.8714,
+        "lon":  32.4846,
+        "airports":  [
+                         "KYA"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "안탈리아",
+        "lat":  36.9081,
+        "lon":  30.6956,
+        "airports":  [
+                         "AYT"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "에스키셰히르",
+        "lat":  39.7767,
+        "lon":  30.5206,
+        "airports":  [
+                         "AOE",
+                         "KZR",
+                         "YEI"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "에르주룸",
+        "lat":  39.9086,
+        "lon":  41.2769,
+        "airports":  [
+                         "ERZ"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "말라티아",
+        "lat":  38.3502,
+        "lon":  38.3167,
+        "airports":  [
+                         "MLX",
+                         "ADF",
+                         "EZS"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "메르신",
+        "lat":  36.812,
+        "lon":  34.6389,
+        "airports":  [
+                         "COV"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "반",
+        "lat":  38.4946,
+        "lon":  43.3832,
+        "airports":  [
+                         "VAN"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "바트만",
+        "lat":  37.8874,
+        "lon":  41.1322,
+        "airports":  [
+                         "BAL",
+                         "DIY",
+                         "MQM"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "샨르우르파",
+        "lat":  37.1671,
+        "lon":  38.7939,
+        "airports":  [
+                         "GNY",
+                         "ADF"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "엘라지",
+        "lat":  38.6743,
+        "lon":  39.2232,
+        "airports":  [
+                         "EZS"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "Beylikdüzü",
+        "lat":  40.982,
+        "lon":  28.6399,
+        "airports":  [
+                         "IST",
+                         "SAW",
+                         "TEQ"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "Antakya",
+        "lat":  36.2066,
+        "lon":  36.1572,
+        "airports":  [
+                         "HTY"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "삼순",
+        "lat":  41.2798,
+        "lon":  36.3361,
+        "airports":  [
+                         "SZF",
+                         "MZH"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "카라만마라슈",
+        "lat":  37.5847,
+        "lon":  36.9264,
+        "airports":  [
+                         "GZT",
+                         "KCM"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "우샤크",
+        "lat":  38.6735,
+        "lon":  29.4058,
+        "airports":  [
+                         "KZR"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "알라니아",
+        "lat":  36.5438,
+        "lon":  31.9998,
+        "airports":  [
+                         "GZP"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "Sultanbeyli",
+        "lat":  40.9607,
+        "lon":  29.2707,
+        "airports":  [
+                         "SAW",
+                         "IST",
+                         "YEI"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "타르수스",
+        "lat":  36.9177,
+        "lon":  34.8928,
+        "airports":  [
+                         "COV"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "악사라이",
+        "lat":  38.3725,
+        "lon":  34.0254,
+        "airports":  [
+                         "NAV"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "데니즐리",
+        "lat":  37.7742,
+        "lon":  29.0875,
+        "airports":  [
+                         "DNZ"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "아디야만",
+        "lat":  37.7644,
+        "lon":  38.2763,
+        "airports":  [
+                         "GNY",
+                         "ADF",
+                         "MLX"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "아다파자리",
+        "lat":  40.7806,
+        "lon":  30.4033,
+        "airports":  [
+                         "SAW",
+                         "YEI"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "초룸",
+        "lat":  40.5489,
+        "lon":  34.9533,
+        "airports":  [
+                         "MZH"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "시바스",
+        "lat":  39.7483,
+        "lon":  37.0161,
+        "airports":  [
+                         "VAS",
+                         "TJK"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "아피온카라히사르",
+        "lat":  38.7567,
+        "lon":  30.5433,
+        "airports":  [
+                         "KZR"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "이스켄데룬",
+        "lat":  36.5872,
+        "lon":  36.1735,
+        "airports":  [
+                         "HTY"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "트라브존",
+        "lat":  41.005,
+        "lon":  39.7269,
+        "airports":  [
+                         "TZX",
+                         "RZV"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "Manisa",
+        "lat":  38.612,
+        "lon":  27.4265,
+        "airports":  [
+                         "ADB"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "발리케시르",
+        "lat":  39.6492,
+        "lon":  27.8861,
+        "airports":  [
+                         "EDO",
+                         "BZI"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "Ordu",
+        "lat":  40.9778,
+        "lon":  37.8905,
+        "airports":  [
+                         "OGU"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "오스마니예",
+        "lat":  37.0742,
+        "lon":  36.2478,
+        "airports":  [
+                         "HTY",
+                         "KCM"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "Çorlu",
+        "lat":  41.1607,
+        "lon":  27.8009,
+        "airports":  [
+                         "IST",
+                         "TEQ"
+                     ]
+    },
+    {
+        "country":  "터키",
+        "city":  "카파도키아",
+        "lat":  38.6431,
+        "lon":  34.8289,
+        "airports":  [
+                         "NAV",
+                         "ASR"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "파리",
+        "lat":  48.8534,
+        "lon":  2.3488,
+        "airports":  [
+                         "ORY",
+                         "CDG",
+                         "BVA"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "마르세유",
+        "lat":  43.297,
+        "lon":  5.3811,
+        "airports":  [
+                         "MRS",
+                         "TLN",
+                         "AVN"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "리옹",
+        "lat":  45.7491,
+        "lon":  4.8479,
+        "airports":  [
+                         "LYS",
+                         "GNB",
+                         "CMF"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "툴루즈",
+        "lat":  43.6043,
+        "lon":  1.4437,
+        "airports":  [
+                         "TLS",
+                         "DCM",
+                         "CCF"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "니스",
+        "lat":  43.7031,
+        "lon":  7.2661,
+        "airports":  [
+                         "NCE"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "낭트",
+        "lat":  47.2172,
+        "lon":  -1.5534,
+        "airports":  [
+                         "NTE",
+                         "RNS"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "스트라스부르",
+        "lat":  48.5839,
+        "lon":  7.7455,
+        "airports":  [
+                         "SXB"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "보르도",
+        "lat":  44.8412,
+        "lon":  -0.5805,
+        "airports":  [
+                         "BOD",
+                         "EGC"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "몽펠리에",
+        "lat":  43.6109,
+        "lon":  3.8764,
+        "airports":  [
+                         "MPL",
+                         "FNI",
+                         "BZR"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "릴",
+        "lat":  50.6339,
+        "lon":  3.0551,
+        "airports":  [
+                         "LIL"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "렌",
+        "lat":  48.1111,
+        "lon":  -1.6743,
+        "airports":  [
+                         "RNS"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "랭스",
+        "lat":  49.2653,
+        "lon":  4.0285,
+        "airports":  [
+                         "XCR"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "르아브르",
+        "lat":  49.4935,
+        "lon":  0.1078,
+        "airports":  [
+                         "DOL",
+                         "CFR"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "생테티엔",
+        "lat":  45.4339,
+        "lon":  4.39,
+        "airports":  [
+                         "LYS",
+                         "GNB"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "툴롱",
+        "lat":  43.1244,
+        "lon":  5.9284,
+        "airports":  [
+                         "MRS",
+                         "TLN"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "앙제",
+        "lat":  47.4716,
+        "lon":  -0.552,
+        "airports":  [
+                         "NTE",
+                         "TUF"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "디종",
+        "lat":  47.3134,
+        "lon":  5.0139,
+        "airports":  [
+                         "DLE"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "그르노블",
+        "lat":  45.1787,
+        "lon":  5.7148,
+        "airports":  [
+                         "LYS",
+                         "GNB",
+                         "CMF"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "님",
+        "lat":  43.8366,
+        "lon":  4.3579,
+        "airports":  [
+                         "MPL",
+                         "MRS",
+                         "FNI"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "클레르몽페랑",
+        "lat":  45.7797,
+        "lon":  3.0868,
+        "airports":  [
+                         "CFE"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "엑상프로방스",
+        "lat":  43.5283,
+        "lon":  5.4497,
+        "airports":  [
+                         "MRS",
+                         "AVN",
+                         "TLN"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "Saint-Quentin-en-Yvelines",
+        "lat":  48.7719,
+        "lon":  2.0189,
+        "airports":  [
+                         "ORY",
+                         "CDG",
+                         "BVA"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "Brest",
+        "lat":  48.3903,
+        "lon":  -4.4863,
+        "airports":  [
+                         "BES"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "르망",
+        "lat":  48.0021,
+        "lon":  0.2025,
+        "airports":  [
+                         "TUF"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "아미앵",
+        "lat":  49.9,
+        "lon":  2.3,
+        "airports":  [
+                         "BVA",
+                         "LIL"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "투르",
+        "lat":  47.3948,
+        "lon":  0.704,
+        "airports":  [
+                         "TUF",
+                         "PIS"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "리모주",
+        "lat":  45.8336,
+        "lon":  1.2476,
+        "airports":  [
+                         "LIG",
+                         "BVE"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "브장송",
+        "lat":  47.2488,
+        "lon":  6.0182,
+        "airports":  [
+                         "DLE"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "메스",
+        "lat":  49.1191,
+        "lon":  6.1727,
+        "airports":  [
+                         "ETZ"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "오를레앙",
+        "lat":  47.9025,
+        "lon":  1.9041,
+        "airports":  [
+                         "ORY"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "루앙",
+        "lat":  49.4431,
+        "lon":  1.0993,
+        "airports":  [
+                         "BVA",
+                         "DOL"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "뮐루즈",
+        "lat":  47.752,
+        "lon":  7.3287,
+        "airports":  [
+                         "BSL",
+                         "SXB"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "페르피냥",
+        "lat":  42.6976,
+        "lon":  2.8954,
+        "airports":  [
+                         "PGF",
+                         "CCF",
+                         "BZR"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "캉",
+        "lat":  49.1858,
+        "lon":  -0.3591,
+        "airports":  [
+                         "CFR",
+                         "DOL"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "Nancy",
+        "lat":  48.6844,
+        "lon":  6.185,
+        "airports":  [
+                         "ETZ"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "아비뇽",
+        "lat":  43.9483,
+        "lon":  4.8089,
+        "airports":  [
+                         "MRS",
+                         "MPL",
+                         "AVN"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "됭케르크",
+        "lat":  51.0344,
+        "lon":  2.3768,
+        "airports":  [
+                         "LIL"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "푸아티에",
+        "lat":  46.5826,
+        "lon":  0.3435,
+        "airports":  [
+                         "PIS",
+                         "TUF"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "Pau",
+        "lat":  43.3112,
+        "lon":  -0.3558,
+        "airports":  [
+                         "PUF",
+                         "LDE",
+                         "BIQ"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "라로셸",
+        "lat":  46.1631,
+        "lon":  -1.1522,
+        "airports":  [
+                         "LRH"
+                     ]
+    },
+    {
+        "country":  "프랑스",
+        "city":  "몽생미셸",
+        "lat":  48.6361,
+        "lon":  -1.5115,
+        "airports":  [
+                         "RNS"
+                     ]
+    },
+    {
+        "country":  "필리핀",
+        "city":  "다바오",
+        "lat":  7.0731,
+        "lon":  125.61279999999999,
+        "airports":  [
+                         "DVO"
+                     ]
+    },
+    {
+        "country":  "필리핀",
+        "city":  "마닐라",
+        "lat":  14.6042,
+        "lon":  120.9822,
+        "airports":  [
+                         "MNL",
+                         "CRK",
+                         "SFS"
+                     ]
+    },
+    {
+        "country":  "필리핀",
+        "city":  "삼보앙가",
+        "lat":  6.9103,
+        "lon":  122.0739,
+        "airports":  [
+                         "ZAM"
+                     ]
+    },
+    {
+        "country":  "필리핀",
+        "city":  "세부",
+        "lat":  10.3167,
+        "lon":  123.8907,
+        "airports":  [
+                         "CEB",
+                         "TAG"
+                     ]
+    },
+    {
+        "country":  "필리핀",
+        "city":  "카가얀데오로",
+        "lat":  8.4822,
+        "lon":  124.6472,
+        "airports":  [
+                         "CGY",
+                         "CGM",
+                         "OZC"
+                     ]
+    },
+    {
+        "country":  "필리핀",
+        "city":  "제너럴산토스",
+        "lat":  6.1128,
+        "lon":  125.1717,
+        "airports":  [
+                         "GES"
+                     ]
+    },
+    {
+        "country":  "필리핀",
+        "city":  "칼람바",
+        "lat":  14.2117,
+        "lon":  121.1653,
+        "airports":  [
+                         "MNL"
+                     ]
+    },
+    {
+        "country":  "필리핀",
+        "city":  "앙헬레스",
+        "lat":  15.15,
+        "lon":  120.5833,
+        "airports":  [
+                         "CRK",
+                         "SFS",
+                         "MNL"
+                     ]
+    },
+    {
+        "country":  "필리핀",
+        "city":  "일로일로",
+        "lat":  10.6969,
+        "lon":  122.5644,
+        "airports":  [
+                         "ILO",
+                         "BCD"
+                     ]
+    },
+    {
+        "country":  "필리핀",
+        "city":  "바콜로드",
+        "lat":  10.6667,
+        "lon":  122.95,
+        "airports":  [
+                         "BCD",
+                         "ILO"
+                     ]
+    },
+    {
+        "country":  "필리핀",
+        "city":  "다스마리냐스",
+        "lat":  14.3294,
+        "lon":  120.9367,
+        "airports":  [
+                         "MNL",
+                         "SFS"
+                     ]
+    },
+    {
+        "country":  "필리핀",
+        "city":  "Tarlac City",
+        "lat":  15.4802,
+        "lon":  120.5979,
+        "airports":  [
+                         "CRK",
+                         "SFS"
+                     ]
+    },
+    {
+        "country":  "필리핀",
+        "city":  "Cabanatuan City",
+        "lat":  15.4859,
+        "lon":  120.9665,
+        "airports":  [
+                         "CRK"
+                     ]
+    },
+    {
+        "country":  "필리핀",
+        "city":  "일리간",
+        "lat":  8.2289,
+        "lon":  124.2434,
+        "airports":  [
+                         "CGY",
+                         "OZC",
+                         "PAG"
+                     ]
+    },
+    {
+        "country":  "필리핀",
+        "city":  "부투안",
+        "lat":  8.9492,
+        "lon":  125.5436,
+        "airports":  [
+                         "BXU",
+                         "SUG",
+                         "CGM"
+                     ]
+    },
+    {
+        "country":  "필리핀",
+        "city":  "바기오",
+        "lat":  16.4164,
+        "lon":  120.5931,
+        "airports":  [
+                         "CYZ"
+                     ]
+    },
+    {
+        "country":  "필리핀",
+        "city":  "말롤로스",
+        "lat":  14.8443,
+        "lon":  120.8104,
+        "airports":  [
+                         "MNL",
+                         "CRK",
+                         "SFS"
+                     ]
+    },
+    {
+        "country":  "필리핀",
+        "city":  "Marawi City",
+        "lat":  8.0034,
+        "lon":  124.284,
+        "airports":  [
+                         "CGY",
+                         "OZC",
+                         "PAG"
+                     ]
+    },
+    {
+        "country":  "필리핀",
+        "city":  "타클로반",
+        "lat":  11.2433,
+        "lon":  125.0047,
+        "airports":  [
+                         "TAC"
+                     ]
+    },
+    {
+        "country":  "필리핀",
+        "city":  "오르모크",
+        "lat":  11.0064,
+        "lon":  124.6075,
+        "airports":  [
+                         "TAC"
+                     ]
+    },
+    {
+        "country":  "필리핀",
+        "city":  "Batangas",
+        "lat":  13.7567,
+        "lon":  121.0584,
+        "airports":  [
+                         "MNL"
+                     ]
+    },
+    {
+        "country":  "필리핀",
+        "city":  "타굼",
+        "lat":  7.4475,
+        "lon":  125.8046,
+        "airports":  [
+                         "DVO"
+                     ]
+    },
+    {
+        "country":  "필리핀",
+        "city":  "루세나",
+        "lat":  13.9314,
+        "lon":  121.6172,
+        "airports":  [
+                         "MNL"
+                     ]
+    },
+    {
+        "country":  "필리핀",
+        "city":  "발렌시아",
+        "lat":  7.9064,
+        "lon":  125.0942,
+        "airports":  [
+                         "CGY"
+                     ]
+    },
+    {
+        "country":  "필리핀",
+        "city":  "푸에르토프린세사",
+        "lat":  9.7392,
+        "lon":  118.7353,
+        "airports":  [
+                         "PPS"
+                     ]
+    },
+    {
+        "country":  "필리핀",
+        "city":  "올롱가포",
+        "lat":  14.8292,
+        "lon":  120.2828,
+        "airports":  [
+                         "SFS",
+                         "CRK",
+                         "MNL"
+                     ]
+    },
+    {
+        "country":  "필리핀",
+        "city":  "Binangonan",
+        "lat":  14.4646,
+        "lon":  121.1929,
+        "airports":  [
+                         "MNL"
+                     ]
+    },
+    {
+        "country":  "필리핀",
+        "city":  "Kabankalan",
+        "lat":  9.9839,
+        "lon":  122.8142,
+        "airports":  [
+                         "BCD",
+                         "DGT"
+                     ]
+    },
+    {
+        "country":  "필리핀",
+        "city":  "Toledo",
+        "lat":  10.3773,
+        "lon":  123.6386,
+        "airports":  [
+                         "CEB",
+                         "BCD",
+                         "TAG"
+                     ]
+    },
+    {
+        "country":  "필리핀",
+        "city":  "Pagadian",
+        "lat":  7.8257,
+        "lon":  123.437,
+        "airports":  [
+                         "PAG",
+                         "OZC",
+                         "DPL"
+                     ]
+    },
+    {
+        "country":  "필리핀",
+        "city":  "코로나달",
+        "lat":  6.5031,
+        "lon":  124.8469,
+        "airports":  [
+                         "GES"
+                     ]
+    },
+    {
+        "country":  "필리핀",
+        "city":  "Sorsogon",
+        "lat":  12.9739,
+        "lon":  123.9933,
+        "airports":  [
+                         "DRP",
+                         "VRC",
+                         "MBT"
+                     ]
+    },
+    {
+        "country":  "필리핀",
+        "city":  "Roxas City",
+        "lat":  11.5853,
+        "lon":  122.7511,
+        "airports":  [
+                         "KLO",
+                         "ILO",
+                         "BCD"
+                     ]
+    },
+    {
+        "country":  "필리핀",
+        "city":  "Legaspi",
+        "lat":  13.1412,
+        "lon":  123.7407,
+        "airports":  [
+                         "DRP",
+                         "VRC",
+                         "WNP"
+                     ]
+    },
+    {
+        "country":  "필리핀",
+        "city":  "나가",
+        "lat":  13.6192,
+        "lon":  123.1814,
+        "airports":  [
+                         "DRP",
+                         "WNP"
+                     ]
+    },
+    {
+        "country":  "필리핀",
+        "city":  "다구판",
+        "lat":  16.0431,
+        "lon":  120.3332,
+        "airports":  [
+                         "CRK"
+                     ]
+    },
+    {
+        "country":  "필리핀",
+        "city":  "Tuguegarao",
+        "lat":  17.6158,
+        "lon":  121.7228,
+        "airports":  [
+                         "TUG",
+                         "CYZ"
+                     ]
+    },
+    {
+        "country":  "필리핀",
+        "city":  "Ilagan",
+        "lat":  17.1485,
+        "lon":  121.8892,
+        "airports":  [
+                         "CYZ",
+                         "TUG"
+                     ]
+    },
+    {
+        "country":  "필리핀",
+        "city":  "Mariveles",
+        "lat":  14.4338,
+        "lon":  120.4857,
+        "airports":  [
+                         "SFS",
+                         "MNL",
+                         "CRK"
+                     ]
+    },
+    {
+        "country":  "필리핀",
+        "city":  "보라카이",
+        "lat":  11.9674,
+        "lon":  121.9248,
+        "airports":  [
+                         "MPH",
+                         "KLO"
+                     ]
+    },
+    {
+        "country":  "호주",
+        "city":  "시드니",
+        "lat":  -33.8678,
+        "lon":  151.2073,
+        "airports":  [
+                         "SYD"
+                     ]
+    },
+    {
+        "country":  "호주",
+        "city":  "멜버른",
+        "lat":  -37.814,
+        "lon":  144.9633,
+        "airports":  [
+                         "MEL",
+                         "AVV",
+                         "MEB"
+                     ]
+    },
+    {
+        "country":  "호주",
+        "city":  "브리즈번",
+        "lat":  -27.4679,
+        "lon":  153.0281,
+        "airports":  [
+                         "BNE",
+                         "OOL",
+                         "MCY"
+                     ]
+    },
+    {
+        "country":  "호주",
+        "city":  "퍼스",
+        "lat":  -31.9522,
+        "lon":  115.8614,
+        "airports":  [
+                         "PER"
+                     ]
+    },
+    {
+        "country":  "호주",
+        "city":  "애들레이드",
+        "lat":  -34.9287,
+        "lon":  138.5986,
+        "airports":  [
+                         "ADL"
+                     ]
+    },
+    {
+        "country":  "호주",
+        "city":  "골드코스트",
+        "lat":  -28.0003,
+        "lon":  153.4309,
+        "airports":  [
+                         "OOL",
+                         "BNE",
+                         "BNK"
+                     ]
+    },
+    {
+        "country":  "호주",
+        "city":  "뉴캐슬",
+        "lat":  -32.9295,
+        "lon":  151.7801,
+        "airports":  [
+                         "NTL"
+                     ]
+    },
+    {
+        "country":  "호주",
+        "city":  "선샤인코스트",
+        "lat":  -26.6568,
+        "lon":  153.0796,
+        "airports":  [
+                         "MCY",
+                         "BNE"
+                     ]
+    },
+    {
+        "country":  "호주",
+        "city":  "캔버라",
+        "lat":  -35.2835,
+        "lon":  149.1281,
+        "airports":  [
+                         "CBR"
+                     ]
+    },
+    {
+        "country":  "호주",
+        "city":  "센트럴코스트",
+        "lat":  -33.4298,
+        "lon":  151.3714,
+        "airports":  [
+                         "SYD",
+                         "NTL"
+                     ]
+    },
+    {
+        "country":  "호주",
+        "city":  "절롱",
+        "lat":  -38.1471,
+        "lon":  144.3607,
+        "airports":  [
+                         "AVV",
+                         "MEL",
+                         "MEB"
+                     ]
+    },
+    {
+        "country":  "호주",
+        "city":  "울런공",
+        "lat":  -34.424,
+        "lon":  150.8934,
+        "airports":  [
+                         "SYD"
+                     ]
+    },
+    {
+        "country":  "호주",
+        "city":  "호바트",
+        "lat":  -42.8794,
+        "lon":  147.3294,
+        "airports":  [
+                         "HBA"
+                     ]
+    },
+    {
+        "country":  "호주",
+        "city":  "타운즈빌",
+        "lat":  -19.2664,
+        "lon":  146.8057,
+        "airports":  [
+                         "TSV"
+                     ]
+    },
+    {
+        "country":  "호주",
+        "city":  "케언스",
+        "lat":  -16.9237,
+        "lon":  145.7661,
+        "airports":  [
+                         "CNS"
+                     ]
+    },
+    {
+        "country":  "호주",
+        "city":  "터움바",
+        "lat":  -27.5606,
+        "lon":  151.9539,
+        "airports":  [
+                         "WTB",
+                         "OKY"
+                     ]
+    },
+    {
+        "country":  "호주",
+        "city":  "다윈",
+        "lat":  -12.4611,
+        "lon":  130.8418,
+        "airports":  [
+                         "DRW"
+                     ]
+    },
+    {
+        "country":  "호주",
+        "city":  "밸러랫",
+        "lat":  -37.5662,
+        "lon":  143.8496,
+        "airports":  [
+                         "AVV",
+                         "MEL",
+                         "MEB"
+                     ]
+    },
+    {
+        "country":  "호주",
+        "city":  "만두라",
+        "lat":  -32.5269,
+        "lon":  115.7217,
+        "airports":  [
+                         "PER"
+                     ]
+    },
+    {
+        "country":  "호주",
+        "city":  "벤디고",
+        "lat":  -36.7582,
+        "lon":  144.2802,
+        "airports":  [
+                         "MEL"
+                     ]
+    },
+    {
+        "country":  "호주",
+        "city":  "론서스턴",
+        "lat":  -41.4388,
+        "lon":  147.1347,
+        "airports":  [
+                         "LST",
+                         "DPO"
+                     ]
+    },
+    {
+        "country":  "호주",
+        "city":  "Maitland",
+        "lat":  -32.7331,
+        "lon":  151.5574,
+        "airports":  [
+                         "NTL"
+                     ]
+    },
+    {
+        "country":  "호주",
+        "city":  "매카이",
+        "lat":  -21.1534,
+        "lon":  149.1655,
+        "airports":  [
+                         "MKY",
+                         "HTI",
+                         "PPP"
+                     ]
+    },
+    {
+        "country":  "호주",
+        "city":  "록햄프턴",
+        "lat":  -23.3803,
+        "lon":  150.506,
+        "airports":  [
+                         "ROK",
+                         "GLT"
+                     ]
+    },
+    {
+        "country":  "호주",
+        "city":  "코프스하버",
+        "lat":  -30.2963,
+        "lon":  153.1135,
+        "airports":  [
+                         "CFS"
+                     ]
+    },
+    {
+        "country":  "호주",
+        "city":  "번버리",
+        "lat":  -33.3271,
+        "lon":  115.6414,
+        "airports":  [
+                         "PER"
+                     ]
+    },
+    {
+        "country":  "호주",
+        "city":  "Bundaberg",
+        "lat":  -24.8662,
+        "lon":  152.3479,
+        "airports":  [
+                         "BDB",
+                         "HVB"
+                     ]
+    },
+    {
+        "country":  "호주",
+        "city":  "Hervey Bay",
+        "lat":  -25.2876,
+        "lon":  152.7694,
+        "airports":  [
+                         "HVB",
+                         "BDB"
+                     ]
+    },
+    {
+        "country":  "호주",
+        "city":  "Port Macquarie",
+        "lat":  -31.4308,
+        "lon":  152.9089,
+        "airports":  [
+                         "PQQ"
+                     ]
+    },
+    {
+        "country":  "홍콩",
+        "city":  "홍콩",
+        "lat":  22.2783,
+        "lon":  114.1747,
+        "airports":  [
+                         "HKG"
+                     ]
+    }
+]

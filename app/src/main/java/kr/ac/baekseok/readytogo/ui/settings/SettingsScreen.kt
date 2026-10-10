@@ -1,5 +1,9 @@
 package kr.ac.baekseok.readytogo.ui.settings
 
+import android.Manifest
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,9 +27,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kr.ac.baekseok.readytogo.R
+import kr.ac.baekseok.readytogo.notification.canPostNotifications
 import kr.ac.baekseok.readytogo.data.model.AppLanguage
 import kr.ac.baekseok.readytogo.data.model.TextScale
 import kr.ac.baekseok.readytogo.ui.component.SectionHeader
@@ -49,6 +55,33 @@ fun SettingsScreen(
     val settings by viewModel.settings.collectAsState()
     var showLanguagePicker by remember { mutableStateOf(false) }
     var showTextScalePicker by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
+    val permissionDenied = stringResource(R.string.settings_notify_permission_denied)
+
+    // 권한 요청은 비동기라 "어느 토글을 켜려던 것인지"를 들고 있어야 한다.
+    var pendingToggle by remember { mutableStateOf<((Boolean) -> Unit)?>(null) }
+    val askNotificationPermission = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { granted ->
+        // 거부하면 토글을 켜지 않는다. 켜진 채로 두면 오지 않는 알림을 기다리게 된다.
+        if (granted) {
+            pendingToggle?.invoke(true)
+        } else {
+            Toast.makeText(context, permissionDenied, Toast.LENGTH_LONG).show()
+        }
+        pendingToggle = null
+    }
+
+    /** 알림 토글. 켤 때만 권한을 묻는다 — 끄는 데는 권한이 필요 없다. */
+    fun toggleNotification(enabled: Boolean, apply: (Boolean) -> Unit) {
+        if (!enabled || context.canPostNotifications()) {
+            apply(enabled)
+            return
+        }
+        pendingToggle = apply
+        askNotificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
+    }
 
     LazyColumn(
         contentPadding = PaddingValues(
@@ -81,14 +114,14 @@ fun SettingsScreen(
             ToggleRow(
                 label = stringResource(R.string.settings_notify_week),
                 checked = settings.notifyBeforeWeek,
-                onCheckedChange = viewModel::setNotifyBeforeWeek,
+                onCheckedChange = { toggleNotification(it, viewModel::setNotifyBeforeWeek) },
             )
         }
         item {
             ToggleRow(
                 label = stringResource(R.string.settings_notify_day),
                 checked = settings.notifyBeforeDay,
-                onCheckedChange = viewModel::setNotifyBeforeDay,
+                onCheckedChange = { toggleNotification(it, viewModel::setNotifyBeforeDay) },
             )
         }
 

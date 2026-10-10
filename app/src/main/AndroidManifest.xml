@@ -5,6 +5,15 @@
     <!-- Places API 호출용. Mock만 쓸 때는 필요 없었다. -->
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- 출발 전 알림. 안드로이드 13부터는 런타임에 사용자에게 따로 물어야 한다. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!--
+      예약해둔 알람은 재부팅하면 전부 사라진다. 이 권한이 있어야 부팅 완료를 받아
+      다시 예약할 수 있다. 없으면 기기를 껐다 켠 사용자만 알림을 못 받는다.
+    -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <application
         android:name=".ReadytogoApplication"
         android:allowBackup="true"
@@ -32,6 +41,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- 예약한 시각이 되면 알람이 여기로 온다. 다른 앱이 부를 일이 없어 exported=false. -->
+        <receiver
+            android:name=".notification.TripAlarmReceiver"
+            android:exported="false" />
+
+        <!-- 재부팅 후 알람을 다시 예약한다. -->
+        <receiver
+            android:name=".notification.BootReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

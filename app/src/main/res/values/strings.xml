@@ -83,6 +83,7 @@
     <string name="settings_section_notification">알림</string>
     <string name="settings_notify_week">출발 7일 전 알림</string>
     <string name="settings_notify_day">출발 1일 전 알림</string>
+    <string name="settings_notify_permission_denied">알림 권한이 없어 켤 수 없습니다. 기기 설정에서 허용해 주세요.</string>
     <string name="settings_section_accessibility">접근성</string>
     <string name="settings_text_scale">글자 크기</string>
     <string name="settings_high_contrast">고대비</string>
@@ -132,4 +133,10 @@
     <string name="about_data_sources_body">도시·공항 목록: OurAirports (public domain), GeoNames (CC BY 4.0)\n장소·평점·가격대: Google Places API\n항공 가격: SerpApi (Google Flights)\n환율: open.er-api.com</string>
     <string name="about_licenses">오픈소스 라이선스</string>
     <string name="about_privacy">개인정보 처리 방침</string>
+
+    <!-- 알림 -->
+    <string name="notification_channel_name">출발 전 알림</string>
+    <string name="notification_channel_body">저장한 일정의 출발 7일 전·1일 전에 알려 드립니다.</string>
+    <!-- 예: "도쿄 출발이 7일 남았습니다." -->
+    <string name="notification_body">%1$s 출발이 %2$d일 남았습니다.</string>
 </resources>

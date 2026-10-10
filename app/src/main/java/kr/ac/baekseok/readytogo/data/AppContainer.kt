@@ -11,9 +11,11 @@ import kr.ac.baekseok.readytogo.data.repository.prefs.PreferencesSettingsReposit
 import kr.ac.baekseok.readytogo.data.repository.firebase.FirebaseAuthRepository
 import kr.ac.baekseok.readytogo.data.repository.firebase.FirestoreFavoriteRepository
 import kr.ac.baekseok.readytogo.data.repository.firebase.FirestoreSavedTripRepository
+import kr.ac.baekseok.readytogo.notification.TripNotifications
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 /**
@@ -48,6 +50,26 @@ object AppContainer {
         appContext = context.applicationContext
         syncLanguage()
         observeSignInForPendingTrip()
+        observeTripsForReminders()
+    }
+
+    /**
+     * 저장된 일정이나 알림 설정이 바뀌면 알람을 다시 깐다.
+     *
+     * 화면이 아니라 여기서 보는 이유: 일정은 결과 화면에서 저장되고 여행 탭에서 지워지고
+     * 로그인하면 통째로 바뀐다. 그 세 곳에 각각 예약 코드를 넣으면 한 곳을 빠뜨린다.
+     * 목록과 설정 둘만 보면 어느 경로로 바뀌었든 한 번에 따라간다.
+     */
+    private fun observeTripsForReminders() {
+        TripNotifications.ensureChannel(appContext)
+
+        appScope.launch {
+            combine(savedTrips.observeAll(), settings.settings) { trips, appSettings ->
+                trips to appSettings
+            }.collect { (trips, appSettings) ->
+                TripNotifications.reschedule(appContext, trips, appSettings)
+            }
+        }
     }
 
     /**

@@ -11,10 +11,16 @@ import kr.ac.baekseok.readytogo.R
  */
 data class AppSettings(
     val language: AppLanguage = AppLanguage.KOREAN,
-    /** 출발 7일 전 알림. */
-    val notifyBeforeWeek: Boolean = true,
-    /** 출발 1일 전 알림. */
-    val notifyBeforeDay: Boolean = true,
+    /**
+     * 출발 7일 전 알림.
+     *
+     * **기본값이 꺼짐인 이유**: 안드로이드 13부터 알림에는 사용자 허락이 따로 필요하다.
+     * 켜진 상태로 시작하면, 허락하지 않은 사용자에게 "알림을 보내는 중"이라고 보여주면서
+     * 실제로는 아무것도 가지 않는다. 켤 때 허락을 묻는 쪽이 약속과 동작이 맞는다.
+     */
+    val notifyBeforeWeek: Boolean = false,
+    /** 출발 1일 전 알림. [notifyBeforeWeek]와 같은 이유로 기본값이 꺼짐이다. */
+    val notifyBeforeDay: Boolean = false,
     val textScale: TextScale = TextScale.NORMAL,
     /** 고대비. 켜면 글자와 배경 대비를 높인다. */
     val highContrast: Boolean = false,

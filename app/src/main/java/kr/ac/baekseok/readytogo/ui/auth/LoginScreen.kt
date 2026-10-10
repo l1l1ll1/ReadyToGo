@@ -72,31 +72,31 @@ fun LoginScreen(
     Surface(color = LocalPalette.current.Background, modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
 
-            // 위 2/3 — 노을. 앱을 열자마자 보이는 면이라 여기서 분위기를 다 정한다.
+            // 위 2/3 — 연노랑. 앱을 열자마자 보이는 면이라 여기서 분위기를 다 정한다.
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier
                     .weight(LOGO_AREA_WEIGHT)
                     .fillMaxWidth()
-                    .background(Brush.linearGradient(LocalPalette.current.Sunset))
+                    .background(LocalPalette.current.Secondary)
                     .padding(horizontal = Tokens.Space.screenHorizontal),
             ) {
                 Wordmark(width = Tokens.Size.loginWordmark)
 
-                // 워드마크는 궤적이 글자 위로 지나가 윗변이 꽉 찬 모양이다. 문구를 가까이 붙이면
-                // 한 덩어리로 보여 로고가 아니라 제목처럼 읽힌다.
+                // 워드마크 아래쪽 밑줄이 글자에 붙어 있다. 문구를 가까이 두면 한 덩어리로
+                // 보여 로고가 아니라 제목처럼 읽힌다.
                 Spacer(modifier = Modifier.height(Tokens.Space.xxl))
 
                 Text(
                     text = stringResource(R.string.login_tagline),
                     style = MaterialTheme.typography.bodyLarge,
-                    color = Color.White.copy(alpha = 0.95f),
+                    color = LocalPalette.current.TextPrimary,
                     textAlign = TextAlign.Center,
                 )
             }
 
-            // 아래 1/3 — 흰 바탕에 할 일만. 버튼을 노을 위에 올리면 주황 버튼이 묻힌다.
+            // 아래 1/3 — 흰 바탕에 할 일만. 버튼을 연노랑 위에 올리면 두 면이 경쟁한다.
             Column(
                 modifier = Modifier
                     .weight(ACTION_AREA_WEIGHT)
@@ -151,8 +151,8 @@ fun LoginScreen(
 /**
  * 위아래 영역 비율. 2 : 1이다.
  *
- * 노을을 절반만 쓰면 배경 사진이 아니라 머리띠처럼 보이고, 전부 채우면 버튼이 그 위에 올라가
- * 주황 버튼이 배경에 묻힌다.
+ * 연노랑을 절반만 쓰면 배경이 아니라 머리띠처럼 보이고, 전부 채우면 버튼이 그 위에 올라가
+ * 두 면이 서로 경쟁한다.
  */
 private const val LOGO_AREA_WEIGHT = 2f
 private const val ACTION_AREA_WEIGHT = 1f

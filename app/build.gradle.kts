@@ -85,6 +85,9 @@ android {
 
 dependencies {
     implementation(libs.androidx.core.ktx)
+    // 앱이 첫 화면을 그릴 때까지 시스템 시작 화면을 붙잡아 둔다.
+    // 없으면 Compose 스플래시가 한 프레임도 안 나오고 지나간다(SplashScreen.kt 주석).
+    implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     // Composable 안에서 viewModel()로 ViewModel을 받기 위해 사용
     implementation(libs.androidx.lifecycle.viewmodel.compose)

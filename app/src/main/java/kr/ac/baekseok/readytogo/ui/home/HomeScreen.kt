@@ -74,7 +74,9 @@ fun HomeScreen(
             // 목록 맨 위 버튼을 FAB로 옮겨 어디까지 내려가도 손에 닿게 한다.
             ExtendedFloatingActionButton(
                 onClick = onCreateTrip,
-                containerColor = LocalPalette.current.Point,
+                // 코랄은 "지금 눌러야 할 것"에 쓴다. 터쿼이즈로 두면 탭 바와 같은 색이라
+                // 바닥에 버튼이 하나 더 있는 것처럼 보인다.
+                containerColor = LocalPalette.current.Accent,
                 contentColor = Color.White,
                 icon = { Icon(Icons.Filled.Add, contentDescription = null) },
                 text = { Text(stringResource(R.string.home_create_trip)) },
@@ -132,11 +134,16 @@ private fun HomeList(
             item {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     // 빈 화면에 글자만 있으면 로딩이 덜 끝난 것처럼 보인다.
-                    // 앱 아이콘 심볼을 옅게 깔아 "아직 아무것도 없는 자리"로 읽히게 한다.
+                    // 앱 그림을 옅게 깔아 "아직 아무것도 없는 자리"로 읽히게 한다.
+                    //
+                    // **단색으로 칠하지 않고 알파만 낮춘다.** 그림이 여러 색이라 tint를 걸면
+                    // 알파가 있는 곳이 전부 한 색으로 뭉개져 덩어리가 된다.
+                    // (모노크롬용 drawable은 <bitmap> XML이라 painterResource로 못 읽는다 —
+                    //  그걸 넣었다가 "Only VectorDrawables and rasterized asset types" 로 죽었다.)
                     Image(
-                        painter = painterResource(R.drawable.ic_launcher_monochrome),
+                        painter = painterResource(R.drawable.ic_launcher_art),
                         contentDescription = null,
-                        colorFilter = ColorFilter.tint(LocalPalette.current.PointLight),
+                        alpha = EMPTY_STATE_ART_ALPHA,
                         modifier = Modifier
                             .padding(top = Tokens.Space.xl)
                             .size(Tokens.Size.emptyStateSymbol),
@@ -208,7 +215,7 @@ private fun UpcomingTripCard(trip: SavedTrip, today: LocalDate, onClick: () -> U
         subtitle = "${trip.departureDate.format(DATE_FORMAT)} – " +
             "${trip.returnDate.format(DATE_FORMAT)} · ${trip.dayCount}일",
         // 목적지가 어디든 이 카드만은 브랜드 색으로 둔다. 홈에서 가장 먼저 보이는 면이다.
-        colors = LocalPalette.current.Sunset,
+        colors = LocalPalette.current.HeroGradient,
         height = Tokens.Size.heroCardHeight,
         onClick = onClick,
     ) {
@@ -227,7 +234,9 @@ private fun UpcomingTripCard(trip: SavedTrip, today: LocalDate, onClick: () -> U
                     else -> stringResource(R.string.home_travelling)
                 },
                 style = MaterialTheme.typography.labelLarge,
-                color = LocalPalette.current.Point,
+                // D-day는 "며칠 남았는지"를 눈에 걸리게 하는 자리라 코랄을 쓴다.
+                // 터쿼이즈로 두면 카드 배경과 같은 계열이라 배지가 배경에 묻힌다.
+                color = LocalPalette.current.Accent,
                 modifier = Modifier.padding(
                     horizontal = Tokens.Space.md,
                     vertical = Tokens.Space.sm,
@@ -250,12 +259,21 @@ private fun RecentTripRow(trip: SavedTrip, onClick: () -> Unit) {
             .background(LocalPalette.current.SurfaceMuted)
             .padding(Tokens.Space.md),
     ) {
-        PhotoCard(
-            key = trip.destinationName,
-            title = "",
-            height = THUMB_SIZE,
-            modifier = Modifier.width(THUMB_SIZE),
-        )
+        // 목록 줄의 썸네일은 사진 자리가 아니라 **표식**이다. 목적지마다 색이 달라지면
+        // 다섯 줄이 알록달록해져 제목이 안 읽힌다. 연노랑 한 가지에 작은 아이콘만 얹는다.
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .size(THUMB_SIZE)
+                .clip(Tokens.Radius.button)
+                .background(LocalPalette.current.Secondary),
+        ) {
+            Image(
+                painter = painterResource(R.drawable.ic_launcher_art),
+                contentDescription = null,
+                modifier = Modifier.size(THUMB_ICON_SIZE),
+            )
+        }
         Column(
             verticalArrangement = Arrangement.spacedBy(Tokens.Space.xs),
             modifier = Modifier.weight(1f),
@@ -279,4 +297,10 @@ private fun RecentTripRow(trip: SavedTrip, onClick: () -> Unit) {
 }
 
 private val THUMB_SIZE = Tokens.Space.xxl * 2
+
+/** 썸네일 안 아이콘. 네모를 꽉 채우면 표식이 아니라 잘린 그림처럼 보인다. */
+private val THUMB_ICON_SIZE = Tokens.Space.xxl * 1.4f
+
+/** 빈 목록 자리의 그림 진하기. 글자보다 눈에 들어오면 주인공이 바뀐다. */
+private const val EMPTY_STATE_ART_ALPHA = 0.35f
 private val DATE_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("M.d")

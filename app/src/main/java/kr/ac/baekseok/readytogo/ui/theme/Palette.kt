@@ -13,9 +13,27 @@ import androidx.compose.ui.graphics.Color
  * 다크 모드도 같은 구조로 한 벌 더 만들면 된다 — 화면 코드는 건드릴 것이 없다.
  */
 data class AppPalette(
+    /** 터쿼이즈. 버튼, 탭 선택, 링크, 진행바. */
     val Point: Color,
     val PointDark: Color,
     val PointLight: Color,
+
+    /**
+     * 선샤인 옐로. 칩 배경, 강조 카드 배경, 섹션을 나누는 연한 면.
+     *
+     * **글자 색으로 쓰지 않는다.** 흰 배경에서 대비가 1.2:1밖에 안 돼 아무것도 읽히지 않는다.
+     * 바탕으로만 깔고 그 위에는 [TextPrimary]를 얹는다.
+     */
+    val Secondary: Color,
+
+    /**
+     * 코랄 오렌지. FAB, 주요 동작 버튼, D-day 배지, 예산 초과 표시.
+     *
+     * [Point]와 역할이 다르다 — 터쿼이즈는 "지금 고른 것/갈 수 있는 곳"이고,
+     * 코랄은 "지금 눌러야 할 것/눈에 걸려야 할 것"이다. 한 화면에 코랄은 하나만 둔다.
+     */
+    val Accent: Color,
+
     val Background: Color,
     val Surface: Color,
     val SurfaceMuted: Color,
@@ -25,85 +43,89 @@ data class AppPalette(
     val Danger: Color,
     val Warning: Color,
     val Heart: Color,
+
     /**
-     * 노을 그라데이션. 스플래시·로그인 상단·홈의 다가오는 여행 카드처럼 **큰 면**에만 쓴다.
+     * 큰 면에 까는 그라데이션. 홈의 "다가오는 여행" 카드처럼 한 화면에 한 곳만 쓴다.
      *
-     * 작은 요소(버튼, 칩)에 쓰지 않는 이유: 면이 작으면 세 색이 다 보이지 않아 그냥
-     * 탁한 주황이 되고, 포인트 컬러와도 구분되지 않는다.
-     *
-     * 위에 흰 글자가 올라가므로 고대비에서는 한 단 어두운 조합을 쓴다.
+     * 작은 요소(버튼, 칩)에 쓰지 않는 이유: 면이 작으면 두 색이 구분되지 않아
+     * 그냥 터쿼이즈 한 색이 되고, 포인트 컬러와 겹쳐 보인다.
      */
-    val Sunset: List<Color>,
+    val HeroGradient: List<Color>,
 )
 
 /**
  * 기본 한 벌.
  *
- * 포인트 컬러 하나로만 끌고 간다. 노을 주황이고, 흰 배경에서 대비가 충분하다.
- * 에어비앤비류 분위기를 참고하되 그쪽 코랄 계열은 쓰지 않는다 — 브랜드 색 모방은 금지다.
+ * 터쿼이즈(주)·선샤인 옐로(보조)·코랄(강조) 셋으로 간다. 셋 다 흰 배경 위에서 쓰고,
+ * 글자는 딥 네이비로 받는다 — 순검정보다 부드럽고 파랑 계열과 같은 가족으로 읽힌다.
  */
 val LightPalette = AppPalette(
-    Point = Color(0xFFF97316),
-    PointDark = Color(0xFFC2410C),
-    PointLight = Color(0xFFFFEDD5),
+    Point = Color(0xFF20B8C4),
+    PointDark = Color(0xFF178F99),
+    PointLight = Color(0xFFD6F3F5),
 
-    // 배경은 흰색. 카드는 아주 옅은 회색으로 띄워 경계선 없이 구분한다.
+    Secondary = Color(0xFFFFF0B3),
+    Accent = Color(0xFFFF805E),
+
     Background = Color(0xFFFFFFFF),
     Surface = Color(0xFFFFFFFF),
-    SurfaceMuted = Color(0xFFF4F5F7),
+    // 카드는 아주 옅은 회색으로 띄워 경계선 없이 구분한다.
+    SurfaceMuted = Color(0xFFF4F6F8),
 
-    TextPrimary = Color(0xFF1A1C1E),
-    TextSecondary = Color(0xFF5F6368),
+    TextPrimary = Color(0xFF233B5D),
+    // 보조 글자는 같은 네이비의 60%다. 별도 회색을 쓰면 두 색 계열이 섞여 탁해진다.
+    TextSecondary = Color(0xFF233B5D).copy(alpha = 0.6f),
 
     // 선은 거의 안 보일 정도로만. 큰 사진 카드가 주인공이라 선이 끼면 지저분해진다.
-    Divider = Color(0xFFE8EAED),
+    Divider = Color(0xFFE4E8EC),
 
-    Danger = Color(0xFFB3261E),
+    // 삭제·탈퇴처럼 되돌릴 수 없는 일에만 쓴다. 예산 초과 같은 "주의"는 Accent 쪽이다.
+    Danger = Color(0xFFD03A2C),
     Warning = Color(0xFFB26B00),
 
-    // 즐겨찾기 ♥ 채운 상태. 포인트 컬러와 구분돼야 눌린 게 보인다.
+    // 즐겨찾기 ♥ 채운 상태. 코랄과 구분돼야 눌린 게 보인다.
     Heart = Color(0xFFE0245E),
 
-    Sunset = listOf(
-        Color(0xFFFDE68A),
-        Color(0xFFFB923C),
-        Color(0xFFF43F5E),
+    HeroGradient = listOf(
+        Color(0xFF20B8C4),
+        Color(0xFF5ED3DC),
     ),
 )
 
 /**
  * 고대비 한 벌.
  *
- * **흰 배경은 그대로 둔다.** 배경까지 검게 뒤집으면 큰 사진 카드 위 글자 대비가 다시 무너지고,
+ * **흰 배경은 그대로 둔다.** 배경까지 검게 뒤집으면 큰 카드 위 글자 대비가 다시 무너지고,
  * 이 앱의 분위기가 아니게 된다(CLAUDE.md 디자인). 대신 **흐린 것들을 진하게** 만든다:
- * 보조 글자, 선, 포인트 컬러가 대상이다.
+ * 보조 글자, 선, 포인트·강조 컬러가 대상이다.
  *
- * 특히 보조 글자(#5F6368)가 문제였다. 흰 배경 위 대비가 약 5.9:1로 본문 기준(4.5:1)은
- * 넘지만 작은 글씨(13sp)에서 읽기 어렵다. 거의 검정에 가깝게 내려 11:1 이상으로 올린다.
+ * 특히 보조 글자(네이비 60%)가 문제였다. 흰 배경 위 대비가 작은 글씨(13sp)에서 모자란다.
+ * 알파를 빼고 진한 네이비를 그대로 쓴다.
  */
 val HighContrastPalette = LightPalette.copy(
-    Point = Color(0xFF9A3412),
-    PointDark = Color(0xFF7C2D12),
-    PointLight = Color(0xFFFFE0C2),
+    Point = Color(0xFF0E6E76),
+    PointDark = Color(0xFF0A5056),
+    PointLight = Color(0xFFBFE9ED),
 
-    SurfaceMuted = Color(0xFFE9ECEF),
+    // 연노랑은 바탕으로만 쓰이므로 글자(네이비)와의 대비를 올리는 쪽으로 진하게 간다.
+    Secondary = Color(0xFFFFE38A),
+    Accent = Color(0xFFC9472A),
 
-    TextPrimary = Color(0xFF000000),
-    TextSecondary = Color(0xFF26292C),
+    SurfaceMuted = Color(0xFFEAEEF2),
+
+    TextPrimary = Color(0xFF0F1F33),
+    TextSecondary = Color(0xFF0F1F33),
 
     // 선이 보여야 섹션 경계가 읽힌다. 평소에는 일부러 안 보이게 두는 값이다.
-    Divider = Color(0xFF9AA0A6),
+    Divider = Color(0xFF8D96A0),
 
-    Danger = Color(0xFF8C1D18),
+    Danger = Color(0xFF9B1C12),
     Warning = Color(0xFF6E4200),
     Heart = Color(0xFFB0124C),
 
-    // 기본 노을의 첫 색(#FDE68A)은 흰 글자와 대비가 2:1이 안 된다. 큰 글자라 기본에서는
-    // 그림자로 버티지만, 고대비에서는 세 색을 한 단씩 내려 흰 글자가 분명히 읽히게 한다.
-    Sunset = listOf(
-        Color(0xFFF59E0B),
-        Color(0xFFEA580C),
-        Color(0xFFBE123C),
+    HeroGradient = listOf(
+        Color(0xFF0E6E76),
+        Color(0xFF2FA3AD),
     ),
 )
 

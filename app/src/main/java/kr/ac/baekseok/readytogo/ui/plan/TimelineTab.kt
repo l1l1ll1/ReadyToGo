@@ -281,7 +281,8 @@ private fun VisitContent(item: TimelineItem.Visit) {
 private fun MealContent(item: TimelineItem.Meal) {
     val restaurant = item.restaurant
     val overBudget = item.shown.overBudget
-    val accent = if (overBudget) MaterialTheme.colorScheme.error else LocalPalette.current.Point
+    // 예산 초과는 코랄. 붉은 Danger는 되돌릴 수 없는 일에만 쓴다(SummaryTab 주석 참고).
+    val accent = if (overBudget) LocalPalette.current.Accent else LocalPalette.current.Point
 
     Row(verticalAlignment = Alignment.CenterVertically) {
         Text(

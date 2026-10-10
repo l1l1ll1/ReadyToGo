@@ -61,6 +61,7 @@ import kr.ac.baekseok.readytogo.data.model.TripPlan
 import kr.ac.baekseok.readytogo.domain.plan.TimelineItem
 import kr.ac.baekseok.readytogo.ui.component.FavoriteButton
 import kr.ac.baekseok.readytogo.ui.map.DayMapContent
+import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.ReadytogoTheme
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -762,7 +763,8 @@ private fun ChoiceRow(
     reviewCount: Int = 0,
 ) {
     val accent: Color =
-        if (overBudget) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+        // 예산 초과는 코랄. 붉은 Danger는 되돌릴 수 없는 일에만 쓴다(SummaryTab 주석 참고).
+        if (overBudget) LocalPalette.current.Accent else LocalPalette.current.Point
     val open = rememberUrlOpener(url)
 
     Row(

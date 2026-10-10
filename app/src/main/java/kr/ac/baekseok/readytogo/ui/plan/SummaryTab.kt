@@ -127,7 +127,9 @@ private fun formatRoughWon(won: Long): String = ((won + 50) / 100 * 100).won()
 private fun BudgetUsageBar(totalWon: Long, plannedWon: Long) {
     val ratio = (plannedWon.toFloat() / totalWon).coerceAtLeast(0f)
     val overBudget = ratio > 1f
-    val color = if (overBudget) MaterialTheme.colorScheme.error else LocalPalette.current.Point
+    // 예산 초과는 **코랄**이다. 붉은 Danger는 삭제·탈퇴처럼 되돌릴 수 없는 일에만 쓴다 —
+    // 예산을 넘은 건 잘못이 아니라 "눈에 걸려야 할 것"이다.
+    val color = if (overBudget) LocalPalette.current.Accent else LocalPalette.current.Point
 
     Column(verticalArrangement = Arrangement.spacedBy(Tokens.Space.xs)) {
         Row(verticalAlignment = Alignment.CenterVertically) {

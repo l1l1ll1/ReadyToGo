@@ -2,46 +2,13 @@
 <!--
   테마 아이콘(안드로이드 13+)용 단색 실루엣.
 
-  전경과 같은 모양이지만 **핀 가운데 빨간 점이 없다.** 시스템이 이 그림 전체를 한 가지 색으로
-  칠하기 때문에, 점을 남겨도 핀과 같은 색이 되어 보이지 않는다. 모양만 또렷하면 된다.
+  **전경 그림의 알파만 쓴다.** 시스템이 이 그림을 자기 색으로 덮어 칠하는데, 색이 여러 개인
+  PNG를 그대로 넘기면 알파가 있는 곳이 전부 한 색으로 뭉개져 덩어리처럼 보인다.
+  tint를 걸어 미리 단색으로 만들어 두면 모양(알파)만 남는다.
 
-  색을 흰색으로 적어 두는 이유: 시스템이 알파 모양만 보고 자기 색을 입힌다. 실제로 흰색이
-  나오지는 않는다.
+  흰색으로 칠해 두는 이유: 실제로 흰색이 나오지는 않는다. 시스템이 다시 칠한다.
 -->
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="108dp"
-    android:height="108dp"
-    android:viewportWidth="108"
-    android:viewportHeight="108">
-
-    <group
-        android:pivotX="54"
-        android:pivotY="54"
-        android:scaleX="0.82"
-        android:scaleY="0.82">
-
-        <path android:fillColor="#FFFFFF" android:pathData="M27.75,64 a2.5,2.5 0 1,0 0.1,0 z" />
-        <path android:fillColor="#FFFFFF" android:pathData="M34,58.1 a2.5,2.5 0 1,0 0.1,0 z" />
-        <path android:fillColor="#FFFFFF" android:pathData="M40.4,54.4 a2.5,2.5 0 1,0 0.1,0 z" />
-        <path android:fillColor="#FFFFFF" android:pathData="M46.6,51.8 a2.5,2.5 0 1,0 0.1,0 z" />
-        <path android:fillColor="#FFFFFF" android:pathData="M52.4,48.8 a2.5,2.5 0 1,0 0.1,0 z" />
-        <path android:fillColor="#FFFFFF" android:pathData="M57.3,44.1 a2.5,2.5 0 1,0 0.1,0 z" />
-        <path android:fillColor="#FFFFFF" android:pathData="M60,39.5 a2.5,2.5 0 1,0 0.1,0 z" />
-        <path android:fillColor="#FFFFFF" android:pathData="M63,33.9 a2.5,2.5 0 1,0 0.1,0 z" />
-        <path android:fillColor="#FFFFFF" android:pathData="M67.6,28.7 a2.5,2.5 0 1,0 0.1,0 z" />
-        <path android:fillColor="#FFFFFF" android:pathData="M73,26.3 a2.5,2.5 0 1,0 0.1,0 z" />
-
-        <group
-            android:translateX="24"
-            android:translateY="76"
-            android:rotation="-40">
-            <path
-                android:fillColor="#FFFFFF"
-                android:pathData="M0,-10 l3,7 l9,6 l-1,3 l-8,-3 l-1,6 l3,2 l-1,2 l-4,-1 l-4,1 l-1,-2 l3,-2 l-1,-6 l-8,3 l-1,-3 l9,-6 z" />
-        </group>
-
-        <path
-            android:fillColor="#FFFFFF"
-            android:pathData="M84,18 a11,11 0 0 1 11,11 c0,8 -11,20 -11,20 s-11,-12 -11,-20 a11,11 0 0 1 11,-11 z" />
-    </group>
-</vector>
+<bitmap xmlns:android="http://schemas.android.com/apk/res/android"
+    android:src="@drawable/ic_launcher_art"
+    android:tint="#FFFFFF"
+    android:gravity="fill" />

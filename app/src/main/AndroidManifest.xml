@@ -34,7 +34,7 @@
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.Readytogo">
+            android:theme="@style/Theme.Readytogo.Starting">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

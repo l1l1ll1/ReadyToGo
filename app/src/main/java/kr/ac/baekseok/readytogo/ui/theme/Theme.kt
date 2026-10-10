@@ -57,13 +57,17 @@ private fun colorSchemeOf(palette: AppPalette) = lightColorScheme(
     primaryContainer = palette.PointLight,
     onPrimaryContainer = palette.PointDark,
 
-    // 포인트 컬러 하나로 끌고 가므로 secondary·tertiary도 같은 계열로 맞춘다.
-    secondary = palette.PointDark,
-    onSecondary = palette.Background,
-    secondaryContainer = palette.PointLight,
-    onSecondaryContainer = palette.PointDark,
-    tertiary = palette.Point,
+    // secondary는 연노랑 면이다. 그 위 글자는 네이비여야 읽힌다 — 흰 글자는 사라진다.
+    secondary = palette.Secondary,
+    onSecondary = palette.TextPrimary,
+    secondaryContainer = palette.Secondary,
+    onSecondaryContainer = palette.TextPrimary,
+
+    // tertiary는 코랄. Material이 "세 번째 강조"로 쓰는 자리에 그대로 맞는다.
+    tertiary = palette.Accent,
     onTertiary = palette.Background,
+    tertiaryContainer = palette.Accent,
+    onTertiaryContainer = palette.Background,
 
     // 스낵바의 동작 버튼("되돌리기")이 inversePrimary를 쓴다. 지정하지 않으면 Material 기본
     // 연보라가 어두운 스낵바 위에 남는다. 어두운 배경에서 읽히는 밝은 청록을 쓴다.

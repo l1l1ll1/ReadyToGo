@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--
-      시스템 스플래시 배경.
-
-      **왜 단색인가**: 안드로이드 12부터 앱 시작 화면은 시스템이 그린다. 거기에 넣을 수 있는
-      것은 배경 "색" 하나와 아이콘뿐이라, windowBackground에 그라데이션을 걸어도
-      납작한 한 색으로 눌린다. 그래서 노을 가운데 색을 골라 명시한다 —
-      무엇이 나올지 모르는 채로 두는 것보다 낫다.
-
-      노을 그라데이션 자체는 그 뒤에 이어지는 Compose 스플래시가 보여준다.
+      앱 아이콘 배경. 전경 그림이 색을 다 들고 있어 배경은 흰 종이 역할만 한다.
+      (색 한 벌은 Palette.kt에 있다. 여기 있는 둘은 Compose 밖 — 매니페스트와
+      리소스 XML에서 써야 해서 어쩔 수 없이 따로 둔다.)
     -->
-    <color name="splash_background">#FB923C</color>
+    <color name="icon_background">#FFFFFF</color>
+
+    <!-- 시스템 시작 화면 배경. Compose 스플래시도 같은 흰색이라 경계가 보이지 않는다. -->
+    <color name="splash_background">#FFFFFF</color>
 </resources>

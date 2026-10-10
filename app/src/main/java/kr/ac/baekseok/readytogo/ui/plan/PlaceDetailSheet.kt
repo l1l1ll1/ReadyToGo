@@ -148,14 +148,14 @@ private fun MealDetail(item: TimelineItem.Meal) {
             Text(
                 text = item.meal.label,
                 style = MaterialTheme.typography.labelLarge,
-                color = if (overBudget) LocalPalette.current.Danger else LocalPalette.current.Point,
+                color = if (overBudget) LocalPalette.current.Accent else LocalPalette.current.Point,
                 fontWeight = FontWeight.Bold,
             )
             if (overBudget) {
                 Text(
                     text = " · 예산 초과",
                     style = MaterialTheme.typography.labelLarge,
-                    color = LocalPalette.current.Danger,
+                    color = LocalPalette.current.Accent,
                 )
             }
         }
@@ -170,7 +170,7 @@ private fun MealDetail(item: TimelineItem.Meal) {
             text = restaurant.priceText(),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
-            color = if (overBudget) LocalPalette.current.Danger else LocalPalette.current.TextPrimary,
+            color = if (overBudget) LocalPalette.current.Accent else LocalPalette.current.TextPrimary,
         )
 
         // 교체하면 무엇으로 바뀌는지 미리 알려준다. 누르고 나서 알게 하면 되돌리게 된다.

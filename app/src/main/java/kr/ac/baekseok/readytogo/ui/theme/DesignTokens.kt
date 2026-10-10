@@ -17,24 +17,24 @@ object Tokens {
      * 사진 자리를 채우는 그라데이션. 아직 실제 사진을 붙이지 않아 색으로 칸을 채운다.
      * 카드마다 다른 조합이 나오도록 [placeholderGradient]가 골라 쓴다.
      *
-     * **전부 노을 계열로 맞춘다.** 전에는 청록·파랑·보라·초록이 섞여 있어서, 홈의
-     * 다가오는 여행 카드(노을) 바로 아래에 파란 썸네일이 붙는 식으로 색이 따로 놀았다.
+     * **브랜드 세 색(터쿼이즈·연노랑·코랄)에서만 조합한다.** 예전에는 청록·파랑·보라가,
+     * 그다음에는 주황·자주가 섞여 있었는데, 그때마다 홈의 다가오는 여행 카드와 색이 따로 놀았다.
      * 다섯 가지를 두는 이유는 그대로다 — 목적지마다 달라야 목록이 한 덩어리로 안 보인다.
      *
      * 색 한 벌([AppPalette])과 달리 여기 있는 값은 고대비에서도 바뀌지 않는다 —
      * 사진을 대신하는 자리라 글자를 얹지 않고, 대비를 따질 대상이 아니다.
      */
     val PlaceholderGradients = listOf(
-        // 해질녘 — 브랜드 노을에 가장 가깝다.
-        listOf(Color(0xFFFB923C), Color(0xFFF43F5E)),
-        // 한낮 — 노랑에서 주황으로.
-        listOf(Color(0xFFFDE68A), Color(0xFFF97316)),
-        // 저녁 늦게 — 주황에서 자주로.
-        listOf(Color(0xFFF97316), Color(0xFF9F1239)),
-        // 사막 — 모래빛 갈색.
-        listOf(Color(0xFFD97706), Color(0xFF7C2D12)),
-        // 새벽 — 분홍빛이 도는 살구색.
-        listOf(Color(0xFFFCA5A5), Color(0xFFEA580C)),
+        // 바다 — 브랜드 터쿼이즈에 가장 가깝다.
+        listOf(Color(0xFF20B8C4), Color(0xFF5ED3DC)),
+        // 해변 — 터쿼이즈에서 모래빛으로.
+        listOf(Color(0xFF3FC7C0), Color(0xFFFFE08A)),
+        // 노을 — 코랄에서 노랑으로.
+        listOf(Color(0xFFFF805E), Color(0xFFFFC978)),
+        // 깊은 바다 — 터쿼이즈에서 네이비로.
+        listOf(Color(0xFF178F99), Color(0xFF2C5A86)),
+        // 산호 — 코랄에서 분홍으로.
+        listOf(Color(0xFFFF9A7B), Color(0xFFF2679B)),
     )
 
     /** 4dp 배수로만 쓴다. 눈대중으로 5, 7, 13을 섞으면 줄이 안 맞는다. */

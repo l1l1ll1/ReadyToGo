@@ -104,8 +104,6 @@ private const val APACHE_2 = "Apache License 2.0"
 private const val APACHE_2_URL = "https://www.apache.org/licenses/LICENSE-2.0"
 private const val GOOGLE_TERMS = "Google API 서비스 약관"
 private const val GOOGLE_TERMS_URL = "https://developers.google.com/terms"
-private const val OFL = "SIL Open Font License 1.1"
-private const val OFL_URL = "https://openfontlicense.org/"
 
 private val LIBRARIES = listOf(
     Library("Jetpack Compose · Material 3", APACHE_2, APACHE_2_URL),
@@ -118,8 +116,6 @@ private val LIBRARIES = listOf(
     Library("Google Identity (googleid)", APACHE_2, APACHE_2_URL),
     Library("Google Maps SDK for Android", GOOGLE_TERMS, GOOGLE_TERMS_URL),
     Library("Google Places SDK for Android", GOOGLE_TERMS, GOOGLE_TERMS_URL),
-    // 로고 글자에 쓰는 글꼴. 라이선스 전문은 저장소의 licenses/Sora-OFL.txt에도 들어 있다.
-    Library("Sora (글꼴)", OFL, OFL_URL),
 )
 
 /** 라이브러리 한 줄. 라이선스 이름을 누르면 전문을 브라우저로 연다. */

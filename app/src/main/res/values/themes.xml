@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!--
+      앱이 뜰 때 쓰는 테마.
+
+      core-splashscreen이 요구하는 모양이다: 시작 화면 설정을 여기 적고, 준비가 끝나면
+      [postSplashScreenTheme]로 갈아탄다. MainActivity가 installSplashScreen()을 부른다.
+    -->
+    <style name="Theme.Readytogo.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/splash_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+        <item name="postSplashScreenTheme">@style/Theme.Readytogo</item>
+    </style>
+
     <style name="Theme.Readytogo" parent="android:Theme.Material.Light.NoActionBar">
-        <!--
-          안드로이드 12+의 시작 화면 배경색. 여기 적지 않으면 시스템이 windowBackground에서
-          색을 뽑아 쓰는데, 그 결과가 무엇일지는 드로어블에 달려 있어 예측이 안 된다.
-          colors.xml 주석 참고.
-        -->
-        <item name="android:windowSplashScreenBackground">@color/splash_background</item>
-
-        <!-- 시작 화면이 내려간 뒤 Compose가 그려지기 전까지 깔리는 배경(splash_background.xml). -->
-        <item name="android:windowBackground">@drawable/splash_background</item>
-
-        <!-- 노을 위에 흰 상태바 글자는 안 보인다. 어두운 글자로 둔다. -->
+        <!-- 시작 화면이 걷힌 뒤 Compose가 그려지기 전까지. 스플래시와 같은 흰색이라 경계가 없다. -->
+        <item name="android:windowBackground">@color/splash_background</item>
+        <!-- 흰 배경이라 상태바 글자는 어두워야 보인다. -->
         <item name="android:windowLightStatusBar">true</item>
     </style>
 </resources>

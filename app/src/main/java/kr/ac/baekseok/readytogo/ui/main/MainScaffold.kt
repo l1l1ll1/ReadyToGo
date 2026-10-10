@@ -13,6 +13,7 @@ import androidx.compose.material.icons.outlined.Place
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -84,6 +85,16 @@ fun MainScaffold(
                         onClick = {
                             if (!selected) navController.switchTab(tab)
                         },
+                        // **색을 직접 지정한다.** 기본값은 Material이 colorScheme에서 골라 오는데,
+                        // secondaryContainer(연노랑)를 쓰는 바람에 선택된 탭 글자가
+                        // 흰 바탕에 연노랑으로 나와 읽히지 않았다.
+                        colors = NavigationBarItemDefaults.colors(
+                            selectedIconColor = LocalPalette.current.PointDark,
+                            selectedTextColor = LocalPalette.current.PointDark,
+                            indicatorColor = LocalPalette.current.PointLight,
+                            unselectedIconColor = LocalPalette.current.TextSecondary,
+                            unselectedTextColor = LocalPalette.current.TextSecondary,
+                        ),
                         icon = {
                             Icon(
                                 imageVector = if (selected) tab.selectedIcon else tab.icon,

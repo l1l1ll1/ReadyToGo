@@ -233,6 +233,9 @@ private fun NavGraphBuilder.planGraph(navController: NavHostController) {
             TripPlanScreen(
                 condition = condition,
                 onBack = { navController.popBackStack() },
+                // 둘러보기 중 저장을 눌렀을 때. 로그인 화면을 이 위에 쌓는다 —
+                // 로그인이 끝나면 보류해둔 일정이 자동으로 저장된다(AppContainer).
+                onSignIn = { navController.navigate(Routes.LOGIN) },
             )
         }
     }

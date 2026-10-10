@@ -91,6 +91,7 @@ private enum class PlanTab(val label: String) {
 fun TripPlanScreen(
     condition: TripCondition,
     onBack: () -> Unit,
+    onSignIn: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: TripPlanViewModel = viewModel(),
 ) {
@@ -98,6 +99,7 @@ fun TripPlanScreen(
     val favoriteIds by viewModel.favoriteIds.collectAsState()
     val saved by viewModel.saved.collectAsState()
     val message by viewModel.message.collectAsState()
+    val signInRequested by viewModel.signInRequested.collectAsState()
     val edits by viewModel.edits.collectAsState()
     val lastDeleted by viewModel.lastDeleted.collectAsState()
 
@@ -109,9 +111,12 @@ fun TripPlanScreen(
         favoriteIds = favoriteIds,
         saved = saved,
         message = message,
+        signInRequested = signInRequested,
         edits = edits,
         canUndoDelete = lastDeleted != null,
         onBack = onBack,
+        onSignIn = onSignIn,
+        onSignInRequestShown = viewModel::clearSignInRequest,
         onRetry = viewModel::retry,
         onToggleSaved = viewModel::toggleSaved,
         onToggleFavorite = viewModel::toggleFavorite,
@@ -131,10 +136,13 @@ private fun TripPlanContent(
     favoriteIds: Set<String> = emptySet(),
     saved: Boolean = false,
     message: String? = null,
+    signInRequested: Boolean = false,
     edits: TimelineEdits = TimelineEdits(),
     canUndoDelete: Boolean = false,
     onBack: () -> Unit,
     onRetry: () -> Unit,
+    onSignIn: () -> Unit = {},
+    onSignInRequestShown: () -> Unit = {},
     onToggleSaved: () -> Unit = {},
     onToggleFavorite: (FavoritePlace) -> Unit = {},
     onMessageShown: () -> Unit = {},
@@ -166,6 +174,18 @@ private fun TripPlanContent(
         )
         if (result == SnackbarResult.ActionPerformed) onUndoDelete() else onUndoExpired()
         onMessageShown()
+    }
+
+    // 둘러보기 중 저장을 눌렀을 때. 안내만 띄우면 어디서 로그인하는지 알 수 없어 버튼을 같이 둔다.
+    LaunchedEffect(signInRequested) {
+        if (!signInRequested) return@LaunchedEffect
+        val result = snackbarHostState.showSnackbar(
+            message = "로그인하면 이 일정을 저장할 수 있습니다.",
+            actionLabel = "로그인",
+            withDismissAction = false,
+        )
+        onSignInRequestShown()
+        if (result == SnackbarResult.ActionPerformed) onSignIn()
     }
 
     Scaffold(

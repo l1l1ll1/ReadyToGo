@@ -1,14 +1,10 @@
 package kr.ac.baekseok.readytogo.data.repository.places
 
 import android.content.Context
-import com.google.android.gms.tasks.Task
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.net.PlacesClient
 import kr.ac.baekseok.readytogo.BuildConfig
-import kotlinx.coroutines.suspendCancellableCoroutine
 import java.util.Locale
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 
 /**
  * Places 클라이언트를 만든다. 식당·관광지와 숙소가 같은 SDK를 쓰므로 초기화를 한곳에 모은다.
@@ -26,11 +22,4 @@ internal object PlacesClientFactory {
         }
         return Places.createClient(app)
     }
-}
-
-/** Places SDK는 Task를 돌려준다. 코루틴에서 기다릴 수 있게 감싼다. */
-internal suspend fun <T> Task<T>.await(): T = suspendCancellableCoroutine { continuation ->
-    addOnSuccessListener { continuation.resume(it) }
-    addOnFailureListener { continuation.resumeWithException(it) }
-    addOnCanceledListener { continuation.cancel() }
 }

@@ -10,6 +10,7 @@ import kr.ac.baekseok.readytogo.data.model.LatLng
 import kr.ac.baekseok.readytogo.data.model.Lodging
 import kr.ac.baekseok.readytogo.data.model.TripCondition
 import kr.ac.baekseok.readytogo.data.repository.LodgingRepository
+import kr.ac.baekseok.readytogo.data.repository.await
 import kr.ac.baekseok.readytogo.domain.budget.LodgingPriceTable
 import com.google.android.gms.maps.model.LatLng as GmsLatLng
 

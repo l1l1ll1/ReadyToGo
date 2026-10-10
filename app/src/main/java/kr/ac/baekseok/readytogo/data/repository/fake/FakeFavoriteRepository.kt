@@ -53,6 +53,11 @@ class FakeFavoriteRepository(
         return Result.success(Unit)
     }
 
+    override suspend fun deleteAll(): Result<Unit> {
+        _favorites.value = emptyList()
+        return Result.success(Unit)
+    }
+
     private companion object {
         val SAMPLES = listOf(
             FavoritePlace(

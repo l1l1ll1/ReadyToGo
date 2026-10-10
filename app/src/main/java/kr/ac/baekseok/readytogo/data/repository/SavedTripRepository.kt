@@ -19,4 +19,11 @@ interface SavedTripRepository {
 
     /** 이름만 바꾼다. 일정 전체를 다시 저장하지 않아도 되게 따로 둔다. */
     suspend fun rename(id: String, title: String): Result<Unit>
+
+    /**
+     * 이 계정의 일정을 전부 지운다.
+     *
+     * 탈퇴에만 쓴다. 계정을 먼저 지우면 저장 위치에 접근할 권한이 사라져 데이터가 남아버린다.
+     */
+    suspend fun deleteAll(): Result<Unit>
 }

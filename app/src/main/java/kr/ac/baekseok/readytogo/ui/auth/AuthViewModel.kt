@@ -1,5 +1,6 @@
 package kr.ac.baekseok.readytogo.ui.auth
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kr.ac.baekseok.readytogo.data.AppContainer
@@ -36,13 +37,20 @@ class AuthViewModel : ViewModel() {
         viewModelScope.launch { repository.restoreSession() }
     }
 
-    fun signInWithGoogle() {
+    /**
+     * Google 계정으로 로그인한다.
+     *
+     * @param context 계정 선택창을 띄울 **화면의** Context.
+     *        Credential Manager는 이 Context로 창을 올리기 때문에 Application Context로는
+     *        아무것도 보이지 않는다. 그래서 ViewModel이 들고 있지 않고 화면에서 받는다.
+     */
+    fun signInWithGoogle(context: Context) {
         if (_signingIn.value) return
         _signingIn.value = true
         _error.value = null
 
         viewModelScope.launch {
-            repository.signInWithGoogle()
+            repository.signInWithGoogle(context)
                 .onFailure { _error.value = it.message ?: "로그인에 실패했습니다." }
             _signingIn.value = false
         }
@@ -54,8 +62,26 @@ class AuthViewModel : ViewModel() {
         viewModelScope.launch { repository.signOut() }
     }
 
+    /**
+     * 탈퇴.
+     *
+     * **저장한 데이터를 먼저 지우고 계정을 지운다.** 순서를 바꾸면 안 된다 — 계정이 사라지는
+     * 순간 보안 규칙이 보는 uid가 없어져서, 그 계정 경로의 일정·즐겨찾기를 아무도 지울 수 없게 된다.
+     *
+     * 데이터 삭제가 실패하면 계정을 지우지 않는다. 지워버리면 영원히 남는 데이터가 되므로,
+     * 탈퇴를 실패로 끝내고 다시 시도하게 하는 쪽이 낫다.
+     */
     fun deleteAccount() {
         viewModelScope.launch {
+            val dataDeleted = AppContainer.savedTrips.deleteAll()
+                .mapCatching { AppContainer.favorites.deleteAll().getOrThrow() }
+
+            dataDeleted
+                .onFailure {
+                    _error.value = "저장된 데이터를 지우지 못해 탈퇴를 멈췄습니다. 다시 시도해 주세요."
+                    return@launch
+                }
+
             repository.deleteAccount()
                 .onFailure { _error.value = it.message ?: "탈퇴에 실패했습니다." }
         }

@@ -126,6 +126,15 @@ class TripPlanViewModel(
     val message: StateFlow<String?> = _message.asStateFlow()
 
     /**
+     * 둘러보기 중에 저장을 눌렀다. 화면이 로그인 버튼이 달린 안내를 띄운다.
+     *
+     * [message]와 따로 두는 이유: 이 안내에는 "로그인" 버튼이 붙고, 일반 메시지의
+     * "되돌리기" 버튼과 겹칠 수 없다. 한 칸에 섞으면 어느 버튼을 달지 매번 따져야 한다.
+     */
+    private val _signInRequested = MutableStateFlow(false)
+    val signInRequested: StateFlow<Boolean> = _signInRequested.asStateFlow()
+
+    /**
      * 사용자가 일정에서 손본 것.
      *
      * **계획을 다시 만들지 않고 위에 덮어쓴다.** 항목 하나를 지울 때마다 다시 만들면
@@ -196,6 +205,15 @@ class TripPlanViewModel(
                 condition = condition,
                 savedAt = LocalDate.now(),
             )
+
+            // 둘러보기 중이면 저장할 곳이 없다. 일정을 기억해 두고 로그인을 권한다 —
+            // 로그인 뒤에 AppContainer가 이 일정을 알아서 저장한다. 다시 입력하지 않아도 된다.
+            if (!AppContainer.auth.authState.value.canSave) {
+                AppContainer.rememberPendingTrip(trip)
+                _signInRequested.value = true
+                return@launch
+            }
+
             AppContainer.savedTrips.save(trip)
                 .onSuccess { _message.value = "여행 탭에 저장했습니다." }
                 .onFailure { _message.value = it.message ?: "저장하지 못했습니다." }
@@ -216,6 +234,10 @@ class TripPlanViewModel(
 
     fun clearMessage() {
         _message.value = null
+    }
+
+    fun clearSignInRequest() {
+        _signInRequested.value = false
     }
 
     /**

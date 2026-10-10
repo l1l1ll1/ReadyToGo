@@ -59,6 +59,11 @@ class FakeSavedTripRepository(
         return Result.success(Unit)
     }
 
+    override suspend fun deleteAll(): Result<Unit> {
+        _trips.value = emptyList()
+        return Result.success(Unit)
+    }
+
     private companion object {
 
         /** 다가오는 여행 하나, 먼 여행 하나, 지난 여행 하나. 세 경우의 카드를 다 볼 수 있다. */

@@ -1,0 +1,34 @@
+// Readytogo Firestore 보안 규칙
+//
+// Firebase 콘솔 → Firestore Database → 규칙 탭에 이 내용을 붙여넣고 "게시"를 누른다.
+// 테스트 모드 기본 규칙(30일 뒤 전부 차단, 그전에는 전부 허용)을 반드시 이것으로 바꿔야 한다.
+//
+// 핵심: **로그인한 사용자가 자기 데이터만** 읽고 쓴다.
+// 데이터를 users/{uid}/... 경로에 넣었기 때문에 규칙이 문서를 읽지 않고 경로만 비교하면 된다.
+// 문서 안의 ownerId 필드와 비교하는 방식은 규칙이 문서를 먼저 읽어야 해서
+// 읽기 횟수가 늘고(무료 한도를 더 빨리 쓴다) 규칙도 복잡해진다.
+//
+// 이 파일은 참고용 사본이다. 실제로 적용되는 것은 콘솔에 게시한 내용이다.
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // 내 uid와 경로의 uid가 같을 때만 허용한다.
+    function isOwner(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    // 사용자 문서와 그 아래 전부(trips, favorites, 나중에 추가될 것까지).
+    match /users/{uid}/{document=**} {
+      allow read, write: if isOwner(uid);
+    }
+
+    // 위에 걸리지 않은 모든 경로는 막는다.
+    // 규칙에 없으면 기본이 거부지만, 나중에 컬렉션을 추가할 때 의도를 분명히 하려고 적어 둔다.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

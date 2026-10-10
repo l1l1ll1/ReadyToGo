@@ -3,6 +3,8 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    // google-services.json을 읽어 Firebase 설정을 빌드에 넣는다. 파일이 없으면 빌드가 실패한다.
+    alias(libs.plugins.google.services)
 }
 
 /**
@@ -93,6 +95,16 @@ dependencies {
     // 아이콘. material3에 딸려 오지 않아 따로 넣는다.
     // extended는 아이콘이 2천 개지만, R8이 실제로 쓰는 것만 남기므로 APK는 거의 늘지 않는다.
     implementation(libs.androidx.compose.material.icons.extended)
+
+    // 로그인과 저장. BOM이 auth·firestore 버전을 맞춰주므로 개별 버전을 적지 않는다.
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore)
+
+    // Google 계정 선택창. 예전 GoogleSignInClient는 deprecated라 Credential Manager를 쓴다.
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.google.identity.googleid)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

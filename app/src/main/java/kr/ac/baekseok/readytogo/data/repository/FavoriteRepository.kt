@@ -19,4 +19,7 @@ interface FavoriteRepository {
     suspend fun add(place: FavoritePlace): Result<Unit>
 
     suspend fun remove(placeId: String): Result<Unit>
+
+    /** 이 계정의 즐겨찾기를 전부 지운다. 탈퇴에만 쓴다 — [SavedTripRepository.deleteAll] 주석 참고. */
+    suspend fun deleteAll(): Result<Unit>
 }

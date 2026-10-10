@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
@@ -36,8 +37,7 @@ import kr.ac.baekseok.readytogo.ui.theme.Tokens
  * **"둘러보기"를 로그인과 나란히 둔다.** 로그인을 강제하면 앱이 무엇을 해주는지 보기도 전에
  * 계정을 만들어야 해서 대부분 닫는다. 저장만 막으면 충분하다(CLAUDE.md 앱 구조 → 로그인).
  *
- * 1단계에서는 Google 로그인이 가짜다 — 버튼을 누르면 잠시 로딩 후 로그인된 상태가 된다.
- * Firebase 연결은 8단계 2번에서 한다.
+ * Google 로그인은 Firebase Auth + Credential Manager로 실제 동작한다(8단계 2번).
  *
  * @param onSignedIn 로그인 또는 둘러보기로 들어갔을 때.
  */
@@ -49,6 +49,9 @@ fun LoginScreen(
     val authState by viewModel.authState.collectAsState()
     val signingIn by viewModel.signingIn.collectAsState()
     val error by viewModel.error.collectAsState()
+
+    // 계정 선택창은 이 화면의 Context로 띄운다 — AuthViewModel.signInWithGoogle 주석 참고.
+    val context = LocalContext.current
 
     // 로그인·둘러보기 중 무엇이든 "들어갈 수 있는 상태"가 되면 넘긴다.
     LaunchedEffect(authState) {
@@ -92,7 +95,7 @@ fun LoginScreen(
             // 비슷하게 그려 넣는 것은 더 나쁘다. 글자로만 표기한다.
             PrimaryButton(
                 text = "Google 계정으로 계속하기",
-                onClick = viewModel::signInWithGoogle,
+                onClick = { viewModel.signInWithGoogle(context) },
                 loading = signingIn,
             )
 

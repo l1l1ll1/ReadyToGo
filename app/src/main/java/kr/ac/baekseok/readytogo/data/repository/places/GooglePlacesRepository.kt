@@ -16,6 +16,7 @@ import kr.ac.baekseok.readytogo.data.model.TravelPurpose
 import kr.ac.baekseok.readytogo.data.model.TripCondition
 import kr.ac.baekseok.readytogo.data.repository.ExchangeRateRepository
 import kr.ac.baekseok.readytogo.data.repository.PlaceRepository
+import kr.ac.baekseok.readytogo.data.repository.await
 import kr.ac.baekseok.readytogo.domain.purpose.PurposeAttractionTypes
 import kr.ac.baekseok.readytogo.data.repository.exchange.OpenExchangeRateRepository
 import kotlinx.coroutines.async

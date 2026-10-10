@@ -16,6 +16,13 @@ kotlin = "2.4.10"
 # BOM이 이보다 낮으면 컴파일 classpath만 옛 버전에 묶여 런타임에 NoSuchMethodError가 난다.
 composeBom = "2026.09.00"
 
+# Firebase. BOM이 auth·firestore 버전을 맞춰주므로 개별 버전을 적지 않는다.
+firebaseBom = "34.4.0"
+googleServices = "4.4.3"
+# Google 로그인. 예전 GoogleSignInClient(play-services-auth)는 deprecated라 Credential Manager를 쓴다.
+credentials = "1.6.0"
+googleid = "1.1.1"
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -40,7 +47,19 @@ androidx-compose-material3 = { group = "androidx.compose.material3", name = "mat
 # core에는 없다. 버전은 Compose BOM이 맞춰준다.
 androidx-compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 
+# Firebase. 8단계 2번 — 로그인과 저장을 실제 서비스로 바꾼다.
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
+firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore" }
+
+# Google 로그인. Credential Manager가 계정 선택창을 띄우고, googleid가 그 응답을
+# Google ID 토큰으로 해석한다. 토큰을 Firebase Auth에 넘겨 로그인을 마친다.
+androidx-credentials = { group = "androidx.credentials", name = "credentials", version.ref = "credentials" }
+androidx-credentials-play-services-auth = { group = "androidx.credentials", name = "credentials-play-services-auth", version.ref = "credentials" }
+google-identity-googleid = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleid" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
+google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 

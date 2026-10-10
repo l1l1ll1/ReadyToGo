@@ -12,7 +12,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import kr.ac.baekseok.readytogo.BuildConfig
+import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.ui.component.SectionHeader
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 
@@ -33,23 +35,10 @@ fun AboutScreen() {
         ),
         verticalArrangement = Arrangement.spacedBy(Tokens.Space.xs),
     ) {
-        item { InfoRow(label = "앱 버전", value = BuildConfig.VERSION_NAME) }
-
         item {
-            Column {
-                HorizontalDivider(
-                    color = Tokens.Palette.Divider,
-                    modifier = Modifier.padding(vertical = Tokens.Space.lg),
-                )
-                SectionHeader(title = "데이터 출처")
-            }
-        }
-        item {
-            Paragraph(
-                "도시·공항 목록: OurAirports (public domain), GeoNames (CC BY 4.0)\n" +
-                    "장소·평점·가격대: Google Places API\n" +
-                    "항공 가격: SerpApi (Google Flights)\n" +
-                    "환율: open.er-api.com",
+            InfoRow(
+                label = stringResource(R.string.about_version),
+                value = BuildConfig.VERSION_NAME,
             )
         }
 
@@ -59,7 +48,18 @@ fun AboutScreen() {
                     color = Tokens.Palette.Divider,
                     modifier = Modifier.padding(vertical = Tokens.Space.lg),
                 )
-                SectionHeader(title = "오픈소스 라이선스")
+                SectionHeader(title = stringResource(R.string.about_data_sources))
+            }
+        }
+        item { Paragraph(stringResource(R.string.about_data_sources_body)) }
+
+        item {
+            Column {
+                HorizontalDivider(
+                    color = Tokens.Palette.Divider,
+                    modifier = Modifier.padding(vertical = Tokens.Space.lg),
+                )
+                SectionHeader(title = stringResource(R.string.about_licenses))
             }
         }
         item {
@@ -77,7 +77,7 @@ fun AboutScreen() {
                     color = Tokens.Palette.Divider,
                     modifier = Modifier.padding(vertical = Tokens.Space.lg),
                 )
-                SectionHeader(title = "개인정보 처리 방침")
+                SectionHeader(title = stringResource(R.string.about_privacy))
             }
         }
         item {

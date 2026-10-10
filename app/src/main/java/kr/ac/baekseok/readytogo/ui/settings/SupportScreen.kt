@@ -2,6 +2,7 @@ package kr.ac.baekseok.readytogo.ui.settings
 
 import android.content.Intent
 import android.net.Uri
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,14 +21,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.annotation.StringRes
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.ui.component.SecondaryButton
 import kr.ac.baekseok.readytogo.ui.component.SectionHeader
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 
 /** FAQ 한 항목. */
-private data class FaqItem(val question: String, val answer: String)
+private data class FaqItem(@StringRes val questionRes: Int, @StringRes val answerRes: Int)
 
 /**
  * 고객센터 — 문의 메일 + FAQ.
@@ -52,20 +56,25 @@ fun SupportScreen() {
         item {
             Column(verticalArrangement = Arrangement.spacedBy(Tokens.Space.md)) {
                 Text(
-                    text = "문제가 있거나 제안할 것이 있으면 메일로 알려 주세요.",
+                    text = stringResource(R.string.support_intro),
                     style = MaterialTheme.typography.bodyLarge,
                     color = Tokens.Palette.TextSecondary,
                 )
+
+                val subject = stringResource(R.string.support_mail_subject)
+                val noMailApp = stringResource(R.string.support_no_mail_app)
                 SecondaryButton(
-                    text = "문의 메일 보내기",
+                    text = stringResource(R.string.support_send_mail),
                     onClick = {
-                        // 메일 앱이 없는 기기도 있다. 그때는 아무 일도 일어나지 않게 둔다 —
-                        // 예외를 던지면 앱이 죽는다.
+                        // 메일 앱이 없는 기기도 있다. 예외를 던지면 앱이 죽으므로
+                        // 토스트로 알리고 넘어간다 — 아무 일도 안 일어나면 버튼이 고장난 줄 안다.
                         val intent = Intent(Intent.ACTION_SENDTO).apply {
                             data = Uri.parse("mailto:$SUPPORT_EMAIL")
-                            putExtra(Intent.EXTRA_SUBJECT, "[Readytogo] 문의")
+                            putExtra(Intent.EXTRA_SUBJECT, subject)
                         }
-                        runCatching { context.startActivity(intent) }
+                        runCatching { context.startActivity(intent) }.onFailure {
+                            Toast.makeText(context, noMailApp, Toast.LENGTH_SHORT).show()
+                        }
                     },
                 )
             }
@@ -73,7 +82,7 @@ fun SupportScreen() {
 
         item {
             SectionHeader(
-                title = "자주 묻는 질문",
+                title = stringResource(R.string.support_faq),
                 modifier = Modifier.padding(top = Tokens.Space.xl),
             )
         }
@@ -90,10 +99,13 @@ fun SupportScreen() {
                     .padding(vertical = Tokens.Space.md),
                 verticalArrangement = Arrangement.spacedBy(Tokens.Space.sm),
             ) {
-                Text(text = item.question, style = MaterialTheme.typography.titleSmall)
+                Text(
+                    text = stringResource(item.questionRes),
+                    style = MaterialTheme.typography.titleSmall,
+                )
                 AnimatedVisibility(visible = expandedIndex == index) {
                     Text(
-                        text = item.answer,
+                        text = stringResource(item.answerRes),
                         style = MaterialTheme.typography.bodyMedium,
                         color = Tokens.Palette.TextSecondary,
                     )
@@ -108,27 +120,9 @@ fun SupportScreen() {
 private const val SUPPORT_EMAIL = "support@readytogo.app"
 
 private val FAQ = listOf(
-    FaqItem(
-        question = "항공권이나 숙소를 앱에서 바로 예약할 수 있나요?",
-        answer = "아니요. 가격과 링크까지만 보여 드립니다. 예약은 해당 사이트에서 진행해 주세요.",
-    ),
-    FaqItem(
-        question = "추천 식당은 어떤 기준으로 고르나요?",
-        answer = "평점과 그날 동선을 반반으로 보고 점수를 냅니다. " +
-            "평점만 보면 일정과 멀리 떨어진 곳이 뜨고, 동선만 보면 아무 데나 가까운 곳이 뜹니다.",
-    ),
-    FaqItem(
-        question = "끼니마다 두 곳이 나오는 이유가 뭔가요?",
-        answer = "하나는 점수가 가장 높은 곳, 다른 하나는 예산이나 가격·동선을 기준으로 고른 대안입니다. " +
-            "카드에 어떤 기준으로 골랐는지 이름표가 붙습니다.",
-    ),
-    FaqItem(
-        question = "로그인하지 않으면 무엇이 제한되나요?",
-        answer = "일정을 만드는 것은 모두 됩니다. 저장과 즐겨찾기만 로그인이 필요합니다.",
-    ),
-    FaqItem(
-        question = "항공 가격이 실제와 다릅니다.",
-        answer = "검색 시점의 가격이고, 실제 요금은 수시로 바뀝니다. " +
-            "\"예시 데이터\" 표시가 붙어 있으면 실시간 조회가 아니라 참고용 값입니다.",
-    ),
+    FaqItem(R.string.faq_1_q, R.string.faq_1_a),
+    FaqItem(R.string.faq_2_q, R.string.faq_2_a),
+    FaqItem(R.string.faq_3_q, R.string.faq_3_a),
+    FaqItem(R.string.faq_4_q, R.string.faq_4_a),
+    FaqItem(R.string.faq_5_q, R.string.faq_5_a),
 )

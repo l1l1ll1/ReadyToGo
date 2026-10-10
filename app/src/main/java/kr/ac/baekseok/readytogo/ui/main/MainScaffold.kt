@@ -17,25 +17,28 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.annotation.StringRes
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 
 /** 하단 탭 네 개. */
 enum class MainTab(
     val route: String,
-    val label: String,
+    @StringRes val labelRes: Int,
     val selectedIcon: ImageVector,
     val icon: ImageVector,
 ) {
-    HOME("tab/home", "홈", Icons.Filled.Home, Icons.Outlined.Home),
-    TRIPS("tab/trips", "여행", Icons.Outlined.Place, Icons.Outlined.Place),
-    SAVED("tab/saved", "저장", Icons.Filled.Favorite, Icons.Outlined.Favorite),
-    PROFILE("tab/profile", "프로필", Icons.Filled.Person, Icons.Outlined.Person),
+    HOME("tab/home", R.string.tab_home, Icons.Filled.Home, Icons.Outlined.Home),
+    TRIPS("tab/trips", R.string.tab_trips, Icons.Outlined.Place, Icons.Outlined.Place),
+    SAVED("tab/saved", R.string.tab_saved, Icons.Filled.Favorite, Icons.Outlined.Favorite),
+    PROFILE("tab/profile", R.string.tab_profile, Icons.Filled.Person, Icons.Outlined.Person),
 }
 
 /**
@@ -74,6 +77,7 @@ fun MainScaffold(
                     val selected = currentDestination?.hierarchy
                         ?.any { it.route == tab.route } == true
 
+                    val label = stringResource(tab.labelRes)
                     NavigationBarItem(
                         selected = selected,
                         onClick = {
@@ -82,10 +86,10 @@ fun MainScaffold(
                         icon = {
                             Icon(
                                 imageVector = if (selected) tab.selectedIcon else tab.icon,
-                                contentDescription = tab.label,
+                                contentDescription = label,
                             )
                         },
-                        label = { Text(tab.label) },
+                        label = { Text(label) },
                     )
                 }
             }

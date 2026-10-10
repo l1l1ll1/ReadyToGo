@@ -25,16 +25,19 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.annotation.StringRes
 import kotlinx.coroutines.launch
+import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.ui.component.PhotoCard
 import kr.ac.baekseok.readytogo.ui.component.PrimaryButton
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 
 /** 온보딩 한 장. */
 private data class OnboardingPage(
-    val title: String,
-    val description: String,
+    @StringRes val titleRes: Int,
+    @StringRes val bodyRes: Int,
     /** 사진 자리 색을 고르는 기준. 장마다 다른 색이 나오게 한다. */
     val colorKey: String,
 )
@@ -63,7 +66,10 @@ fun OnboardingScreen(onFinish: () -> Unit) {
                         onClick = onFinish,
                         modifier = Modifier.align(Alignment.CenterEnd),
                     ) {
-                        Text("건너뛰기", style = MaterialTheme.typography.labelMedium)
+                        Text(
+                            text = stringResource(R.string.onboarding_skip),
+                            style = MaterialTheme.typography.labelMedium,
+                        )
                     }
                 } else {
                     // 버튼이 사라지면 아래 내용이 위로 튀어오른다. 같은 높이를 비워 둔다.
@@ -88,13 +94,13 @@ fun OnboardingScreen(onFinish: () -> Unit) {
                     )
                     Spacer(modifier = Modifier.height(Tokens.Space.xl))
                     Text(
-                        text = page.title,
+                        text = stringResource(page.titleRes),
                         style = MaterialTheme.typography.titleLarge,
                         textAlign = TextAlign.Center,
                     )
                     Spacer(modifier = Modifier.height(Tokens.Space.md))
                     Text(
-                        text = page.description,
+                        text = stringResource(page.bodyRes),
                         style = MaterialTheme.typography.bodyLarge,
                         color = Tokens.Palette.TextSecondary,
                         textAlign = TextAlign.Center,
@@ -109,7 +115,9 @@ fun OnboardingScreen(onFinish: () -> Unit) {
             )
 
             PrimaryButton(
-                text = if (isLastPage) "시작하기" else "다음",
+                text = stringResource(
+                    if (isLastPage) R.string.onboarding_start else R.string.common_next,
+                ),
                 onClick = {
                     if (isLastPage) {
                         onFinish()
@@ -152,18 +160,18 @@ private const val ONBOARDING_IMAGE_SCALE = 1.4f
 
 private val PAGES = listOf(
     OnboardingPage(
-        title = "조건만 넣으면 끝",
-        description = "경비, 날짜, 가고 싶은 곳, 여행 목적.\n네 가지만 고르면 나머지는 앱이 맞춥니다.",
+        titleRes = R.string.onboarding_1_title,
+        bodyRes = R.string.onboarding_1_body,
         colorKey = "onboarding-1",
     ),
     OnboardingPage(
-        title = "항공·숙소·식당을 한 번에",
-        description = "최저가 항공권과 동선에 맞는 숙소,\n끼니마다 두 곳씩 골라 드립니다.",
+        titleRes = R.string.onboarding_2_title,
+        bodyRes = R.string.onboarding_2_body,
         colorKey = "onboarding-2",
     ),
     OnboardingPage(
-        title = "지도에서 바로 확인",
-        description = "하루 동선을 지도로 보고,\n마음에 드는 곳은 즐겨찾기에 담아 두세요.",
+        titleRes = R.string.onboarding_3_title,
+        bodyRes = R.string.onboarding_3_body,
         colorKey = "onboarding-3",
     ),
 )

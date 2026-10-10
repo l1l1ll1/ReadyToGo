@@ -20,7 +20,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kr.ac.baekseok.readytogo.R
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -247,7 +249,10 @@ private fun NavGraphBuilder.planGraph(navController: NavHostController) {
 /** 설정과 그 하위 화면. 모두 뒤로 가기만 있으면 되는 단순 화면이다. */
 private fun NavGraphBuilder.settingsGraph(navController: NavHostController) {
     composable(Routes.SETTINGS) {
-        TitledScreen(title = "설정", onBack = { navController.popBackStack() }) {
+        TitledScreen(
+            title = stringResource(R.string.settings_title),
+            onBack = { navController.popBackStack() },
+        ) {
             SettingsScreen(
                 onOpenAccount = { navController.navigate(Routes.ACCOUNT) },
                 onOpenSupport = { navController.navigate(Routes.SUPPORT) },
@@ -257,7 +262,10 @@ private fun NavGraphBuilder.settingsGraph(navController: NavHostController) {
     }
 
     composable(Routes.ACCOUNT) {
-        TitledScreen(title = "계정 관리", onBack = { navController.popBackStack() }) {
+        TitledScreen(
+            title = stringResource(R.string.account_title),
+            onBack = { navController.popBackStack() },
+        ) {
             AccountScreen(
                 onSignedOut = {
                     // 로그아웃하면 탭을 모두 비우고 로그인 화면으로 돌아간다.
@@ -271,13 +279,19 @@ private fun NavGraphBuilder.settingsGraph(navController: NavHostController) {
     }
 
     composable(Routes.SUPPORT) {
-        TitledScreen(title = "고객센터", onBack = { navController.popBackStack() }) {
+        TitledScreen(
+            title = stringResource(R.string.support_title),
+            onBack = { navController.popBackStack() },
+        ) {
             SupportScreen()
         }
     }
 
     composable(Routes.ABOUT) {
-        TitledScreen(title = "정보", onBack = { navController.popBackStack() }) {
+        TitledScreen(
+            title = stringResource(R.string.about_title),
+            onBack = { navController.popBackStack() },
+        ) {
             AboutScreen()
         }
     }
@@ -304,7 +318,7 @@ private fun TitledScreen(
                     IconButton(onClick = onBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "뒤로",
+                            contentDescription = stringResource(R.string.common_back),
                         )
                     }
                 },

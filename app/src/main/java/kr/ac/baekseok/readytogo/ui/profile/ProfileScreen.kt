@@ -26,7 +26,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.data.model.AuthState
 import kr.ac.baekseok.readytogo.ui.auth.AuthViewModel
 import kr.ac.baekseok.readytogo.ui.auth.InitialAvatar
@@ -73,28 +75,28 @@ fun ProfileScreen(
             item {
                 MenuRow(
                     icon = Icons.Outlined.Favorite,
-                    label = "저장한 장소",
+                    label = stringResource(R.string.profile_saved_places),
                     onClick = onOpenSaved,
                 )
             }
             item {
                 MenuRow(
                     icon = Icons.Outlined.Settings,
-                    label = "설정",
+                    label = stringResource(R.string.profile_settings),
                     onClick = onOpenSettings,
                 )
             }
             item {
                 MenuRow(
                     icon = Icons.Outlined.MailOutline,
-                    label = "고객센터",
+                    label = stringResource(R.string.profile_support),
                     onClick = onOpenSupport,
                 )
             }
             item {
                 MenuRow(
                     icon = Icons.Outlined.Info,
-                    label = "정보",
+                    label = stringResource(R.string.profile_about),
                     onClick = onOpenAbout,
                 )
             }
@@ -135,13 +137,16 @@ private fun GuestHeader(onSignIn: () -> Unit) {
             .background(Tokens.Palette.SurfaceMuted)
             .padding(Tokens.Space.lg),
     ) {
-        Text(text = "로그인하지 않았습니다", style = MaterialTheme.typography.titleMedium)
         Text(
-            text = "로그인하면 만든 일정과 저장한 장소가 기기를 바꿔도 남습니다.",
+            text = stringResource(R.string.profile_guest_title),
+            style = MaterialTheme.typography.titleMedium,
+        )
+        Text(
+            text = stringResource(R.string.profile_guest_body),
             style = MaterialTheme.typography.bodyMedium,
             color = Tokens.Palette.TextSecondary,
         )
-        SecondaryButton(text = "로그인", onClick = onSignIn)
+        SecondaryButton(text = stringResource(R.string.common_sign_in), onClick = onSignIn)
     }
 }
 

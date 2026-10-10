@@ -22,8 +22,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.data.model.FavoriteKind
 import kr.ac.baekseok.readytogo.data.model.FavoritePlace
 import kr.ac.baekseok.readytogo.ui.component.EmptyState
@@ -50,13 +52,13 @@ fun SavedScreen(
                 // 둘러보기 중에는 ♥ 자체를 쓸 수 없으므로 "♥를 누르면 모인다"는 안내가 거짓이 된다.
                 if (state.canSave) {
                     EmptyState(
-                        title = "저장한 장소가 없습니다",
-                        description = "일정 결과에서 ♥를 누르면 여기에 모입니다.",
+                        title = stringResource(R.string.saved_empty_title),
+                        description = stringResource(R.string.saved_empty_body),
                     )
                 } else {
                     EmptyState(
-                        title = "둘러보기 중입니다",
-                        description = "장소를 저장하려면 로그인이 필요합니다.",
+                        title = stringResource(R.string.saved_guest_title),
+                        description = stringResource(R.string.saved_guest_body),
                     )
                 }
             }
@@ -82,8 +84,8 @@ fun SavedScreen(
                 if (state.visible.isEmpty()) {
                     item {
                         EmptyState(
-                            title = "이 종류로 저장한 곳이 없습니다",
-                            description = "다른 종류를 골라 보세요.",
+                            title = stringResource(R.string.saved_filter_empty_title),
+                            description = stringResource(R.string.saved_filter_empty_body),
                         )
                     }
                 } else {
@@ -115,7 +117,7 @@ private fun KindFilter(
         FilterChip(
             selected = selected == null,
             onClick = { onSelect(null) },
-            label = { Text("전체 $total") },
+            label = { Text(stringResource(R.string.saved_filter_all, total)) },
             shape = Tokens.Radius.chip,
         )
         FavoriteKind.entries.forEach { kind ->

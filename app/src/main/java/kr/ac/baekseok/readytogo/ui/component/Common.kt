@@ -23,7 +23,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 
 /**
@@ -125,7 +127,9 @@ fun FavoriteButton(
             Icon(
                 imageVector = if (favorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
                 // 접근성 — 스크린 리더가 상태까지 읽어야 누른 건지 알 수 있다.
-                contentDescription = if (favorite) "즐겨찾기 해제" else "즐겨찾기 추가",
+                contentDescription = stringResource(
+                    if (favorite) R.string.common_favorite_remove else R.string.common_favorite_add,
+                ),
                 tint = if (favorite) Tokens.Palette.Heart else Tokens.Palette.TextSecondary,
             )
         }

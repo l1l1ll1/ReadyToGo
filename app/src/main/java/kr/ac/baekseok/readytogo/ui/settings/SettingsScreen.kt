@@ -23,7 +23,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.data.model.AppLanguage
 import kr.ac.baekseok.readytogo.data.model.TextScale
 import kr.ac.baekseok.readytogo.ui.component.SectionHeader
@@ -35,8 +37,7 @@ import kr.ac.baekseok.readytogo.ui.theme.Tokens
  * 언어·알림·접근성을 하위 화면으로 빼지 않고 여기서 토글·다이얼로그로 끝낸다.
  * 항목이 두세 개씩이라 화면을 만들면 탭 한 번이 더 늘어날 뿐이다.
  *
- * **1단계에서는 값만 바뀌고 실제로 동작하지 않는다.** 언어를 영어로 바꿔도 화면은 한국어다.
- * 실제 동작은 8단계 3번에서 연결한다.
+ * 언어를 바꾸면 시스템이 화면을 다시 만들어 그 자리에서 글자가 바뀐다(AppLocale 참고).
  */
 @Composable
 fun SettingsScreen(
@@ -58,62 +59,77 @@ fun SettingsScreen(
         ),
         verticalArrangement = Arrangement.spacedBy(Tokens.Space.xs),
     ) {
-        item { SectionHeader(title = "계정") }
-        item { NavigationRow(label = "계정 관리", onClick = onOpenAccount) }
-
-        item { SettingsSectionGap(title = "언어") }
+        item { SectionHeader(title = stringResource(R.string.settings_section_account)) }
         item {
             NavigationRow(
-                label = "앱 언어",
-                value = settings.language.label,
+                label = stringResource(R.string.settings_account),
+                onClick = onOpenAccount,
+            )
+        }
+
+        item { SettingsSectionGap(title = stringResource(R.string.settings_section_language)) }
+        item {
+            NavigationRow(
+                label = stringResource(R.string.settings_language),
+                value = stringResource(settings.language.labelRes),
                 onClick = { showLanguagePicker = true },
             )
         }
 
-        item { SettingsSectionGap(title = "알림") }
+        item { SettingsSectionGap(title = stringResource(R.string.settings_section_notification)) }
         item {
             ToggleRow(
-                label = "출발 7일 전 알림",
+                label = stringResource(R.string.settings_notify_week),
                 checked = settings.notifyBeforeWeek,
                 onCheckedChange = viewModel::setNotifyBeforeWeek,
             )
         }
         item {
             ToggleRow(
-                label = "출발 1일 전 알림",
+                label = stringResource(R.string.settings_notify_day),
                 checked = settings.notifyBeforeDay,
                 onCheckedChange = viewModel::setNotifyBeforeDay,
             )
         }
 
-        item { SettingsSectionGap(title = "접근성") }
+        item { SettingsSectionGap(title = stringResource(R.string.settings_section_accessibility)) }
         item {
             NavigationRow(
-                label = "글자 크기",
-                value = settings.textScale.label,
+                label = stringResource(R.string.settings_text_scale),
+                value = stringResource(settings.textScale.labelRes),
                 onClick = { showTextScalePicker = true },
             )
         }
         item {
             ToggleRow(
-                label = "고대비",
-                description = "글자와 배경의 대비를 높입니다.",
+                label = stringResource(R.string.settings_high_contrast),
+                description = stringResource(R.string.settings_high_contrast_body),
                 checked = settings.highContrast,
                 onCheckedChange = viewModel::setHighContrast,
             )
         }
 
-        item { SettingsSectionGap(title = "도움") }
-        item { NavigationRow(label = "고객센터", onClick = onOpenSupport) }
-        item { NavigationRow(label = "정보", onClick = onOpenAbout) }
+        item { SettingsSectionGap(title = stringResource(R.string.settings_section_help)) }
+        item {
+            NavigationRow(
+                label = stringResource(R.string.profile_support),
+                onClick = onOpenSupport,
+            )
+        }
+        item {
+            NavigationRow(
+                label = stringResource(R.string.profile_about),
+                onClick = onOpenAbout,
+            )
+        }
     }
 
     if (showLanguagePicker) {
         ChoiceDialog(
-            title = "앱 언어",
+            title = stringResource(R.string.settings_language),
             options = AppLanguage.entries,
             selected = settings.language,
-            labelOf = { it.label },
+            labelOf = { stringResource(it.labelRes) },
             onSelect = {
                 viewModel.setLanguage(it)
                 showLanguagePicker = false
@@ -124,10 +140,10 @@ fun SettingsScreen(
 
     if (showTextScalePicker) {
         ChoiceDialog(
-            title = "글자 크기",
+            title = stringResource(R.string.settings_text_scale),
             options = TextScale.entries,
             selected = settings.textScale,
-            labelOf = { it.label },
+            labelOf = { stringResource(it.labelRes) },
             onSelect = {
                 viewModel.setTextScale(it)
                 showTextScalePicker = false
@@ -215,7 +231,8 @@ private fun <T> ChoiceDialog(
     title: String,
     options: List<T>,
     selected: T,
-    labelOf: (T) -> String,
+    // stringResource를 쓰려면 @Composable이어야 한다 — 이름표가 리소스에서 온다.
+    labelOf: @Composable (T) -> String,
     onSelect: (T) -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -242,7 +259,7 @@ private fun <T> ChoiceDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = onDismiss) { Text("닫기") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_close)) }
         },
     )
 }

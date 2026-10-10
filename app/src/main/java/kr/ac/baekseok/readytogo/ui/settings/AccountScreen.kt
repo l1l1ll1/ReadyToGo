@@ -23,7 +23,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.data.model.AuthState
 import kr.ac.baekseok.readytogo.ui.auth.AuthViewModel
 import kr.ac.baekseok.readytogo.ui.auth.InitialAvatar
@@ -85,7 +87,10 @@ fun AccountScreen(
                 }
 
                 Spacer(modifier = Modifier.height(Tokens.Space.xl))
-                SecondaryButton(text = "로그아웃", onClick = viewModel::signOut)
+                SecondaryButton(
+                    text = stringResource(R.string.account_sign_out),
+                    onClick = viewModel::signOut,
+                )
 
                 // 탈퇴는 화면 맨 아래로 내린다.
                 Spacer(modifier = Modifier.weight(1f))
@@ -94,7 +99,7 @@ fun AccountScreen(
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     Text(
-                        text = "회원 탈퇴",
+                        text = stringResource(R.string.account_delete),
                         style = MaterialTheme.typography.labelMedium,
                         color = Tokens.Palette.Danger,
                     )
@@ -103,8 +108,8 @@ fun AccountScreen(
             }
 
             else -> EmptyState(
-                title = "로그인하지 않았습니다",
-                description = "계정을 관리하려면 먼저 로그인해 주세요.",
+                title = stringResource(R.string.account_signed_out_title),
+                description = stringResource(R.string.account_signed_out_body),
             )
         }
     }
@@ -112,20 +117,23 @@ fun AccountScreen(
     if (showDeleteConfirm) {
         AlertDialog(
             onDismissRequest = { showDeleteConfirm = false },
-            title = { Text("정말 탈퇴할까요?") },
-            text = {
-                Text("저장한 일정과 즐겨찾기가 모두 지워집니다. 되돌릴 수 없습니다.")
-            },
+            title = { Text(stringResource(R.string.account_delete_confirm_title)) },
+            text = { Text(stringResource(R.string.account_delete_confirm_body)) },
             confirmButton = {
                 TextButton(onClick = {
                     viewModel.deleteAccount()
                     showDeleteConfirm = false
                 }) {
-                    Text("탈퇴", color = Tokens.Palette.Danger)
+                    Text(
+                        text = stringResource(R.string.account_delete_confirm_action),
+                        color = Tokens.Palette.Danger,
+                    )
                 }
             },
             dismissButton = {
-                TextButton(onClick = { showDeleteConfirm = false }) { Text("취소") }
+                TextButton(onClick = { showDeleteConfirm = false }) {
+                    Text(stringResource(R.string.common_cancel))
+                }
             },
         )
     }

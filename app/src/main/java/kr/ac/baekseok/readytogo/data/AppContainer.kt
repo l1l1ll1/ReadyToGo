@@ -6,8 +6,8 @@ import kr.ac.baekseok.readytogo.data.model.AuthState
 import kr.ac.baekseok.readytogo.data.model.SavedTrip
 import kr.ac.baekseok.readytogo.data.repository.FavoriteRepository
 import kr.ac.baekseok.readytogo.data.repository.SavedTripRepository
-import kr.ac.baekseok.readytogo.data.repository.SettingsRepository
-import kr.ac.baekseok.readytogo.data.repository.fake.FakeSettingsRepository
+import kr.ac.baekseok.readytogo.data.locale.AppLocale
+import kr.ac.baekseok.readytogo.data.repository.prefs.PreferencesSettingsRepository
 import kr.ac.baekseok.readytogo.data.repository.firebase.FirebaseAuthRepository
 import kr.ac.baekseok.readytogo.data.repository.firebase.FirestoreFavoriteRepository
 import kr.ac.baekseok.readytogo.data.repository.firebase.FirestoreSavedTripRepository
@@ -46,7 +46,29 @@ object AppContainer {
     /** Application.onCreate에서 한 번 부른다. */
     fun initialize(context: Context) {
         appContext = context.applicationContext
+        syncLanguage()
         observeSignInForPendingTrip()
+    }
+
+    /**
+     * 저장된 언어를 시스템에 맞춘다.
+     *
+     * **Activity가 생기기 전에 해야 한다.** 화면이 뜬 뒤에 바꾸면 시스템이 화면을 다시 만들어
+     * 첫 실행마다 스플래시가 한 번 깜빡인다. Application.onCreate가 그 자리다.
+     *
+     * 기기 언어를 따라가지 않고 저장된 값을 쓰는 이유: 설정 화면이 "앱 언어"를 한 줄로
+     * 보여주는데, 기기 언어를 따르는 상태와 직접 고른 상태를 구분하려면 "시스템 기본"이라는
+     * 세 번째 상태가 필요하다. 쓰는 사람이 둘(한국어/English) 중에 고르는 편이 단순하다.
+     *
+     * 이후 설정에서 언어를 바꾸면 여기서 받아 적용한다. 화면(ViewModel)이 직접 하지 않는 이유는
+     * 언어를 바꾸는 순간 그 화면이 다시 만들어지기 때문이다 — 사라질 객체에게 맡길 일이 아니다.
+     */
+    private fun syncLanguage() {
+        AppLocale.apply(appContext, settings.settings.value.language)
+
+        appScope.launch {
+            settings.settings.collect { AppLocale.apply(appContext, it.language) }
+        }
     }
 
     val auth: FirebaseAuthRepository by lazy { FirebaseAuthRepository(appContext) }
@@ -56,8 +78,10 @@ object AppContainer {
     val savedTrips: SavedTripRepository by lazy { FirestoreSavedTripRepository(auth.authState) }
     val favorites: FavoriteRepository by lazy { FirestoreFavoriteRepository(auth.authState) }
 
-    /** 설정은 기기에 남는 값이라 Firestore를 쓰지 않는다. 8단계 3번에서 실제 저장으로 바꾼다. */
-    val settings: SettingsRepository by lazy { FakeSettingsRepository() }
+    /** 설정은 계정이 아니라 기기에 딸린 값이라 Firestore를 쓰지 않는다. */
+    val settings: PreferencesSettingsRepository by lazy {
+        PreferencesSettingsRepository(appContext)
+    }
 
     /**
      * 온보딩을 본 적 있는지.

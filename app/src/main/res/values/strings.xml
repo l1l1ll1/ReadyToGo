@@ -1,3 +1,135 @@
 <resources>
-    <string name="app_name">Readytogo</string>
+    <!--
+      화면에 보이는 글자는 전부 여기에 모은다. 영어판은 values-en/strings.xml이다.
+
+      이름 규칙: <화면>_<무엇>. 화면 이름을 앞에 두면 같은 단어라도 어느 화면 것인지
+      알 수 있고, 한 화면을 통째로 고칠 때 찾기 쉽다.
+
+      8단계 3번 1차 범위: 설정·진입(온보딩/로그인/홈)·공통. 결과·입력 화면은 다음 차례다.
+    -->
+
+    <string name="app_name" translatable="false">Readytogo</string>
+
+    <!-- 공통 -->
+    <string name="common_close">닫기</string>
+    <string name="common_cancel">취소</string>
+    <string name="common_back">뒤로</string>
+    <string name="common_next">다음</string>
+    <string name="common_sign_in">로그인</string>
+    <string name="common_favorite_add">즐겨찾기 추가</string>
+    <string name="common_favorite_remove">즐겨찾기 해제</string>
+    <string name="common_see_all">모두 보기</string>
+
+    <!-- 하단 탭 -->
+    <string name="tab_home">홈</string>
+    <string name="tab_trips">여행</string>
+    <string name="tab_saved">저장</string>
+    <string name="tab_profile">프로필</string>
+
+    <!-- 온보딩 -->
+    <string name="onboarding_skip">건너뛰기</string>
+    <string name="onboarding_start">시작하기</string>
+    <string name="onboarding_1_title">조건만 넣으면 끝</string>
+    <string name="onboarding_1_body">경비, 날짜, 가고 싶은 곳, 여행 목적.\n네 가지만 고르면 나머지는 앱이 맞춥니다.</string>
+    <string name="onboarding_2_title">항공·숙소·식당을 한 번에</string>
+    <string name="onboarding_2_body">최저가 항공권과 동선에 맞는 숙소,\n끼니마다 두 곳씩 골라 드립니다.</string>
+    <string name="onboarding_3_title">지도에서 바로 확인</string>
+    <string name="onboarding_3_body">하루 동선을 지도로 보고,\n마음에 드는 곳은 즐겨찾기에 담아 두세요.</string>
+
+    <!-- 로그인 -->
+    <string name="login_tagline">경비와 날짜만 알려주세요.\n항공·숙소·식당·동선을 한 번에 맞춰 드립니다.</string>
+    <string name="login_google">Google 계정으로 계속하기</string>
+    <string name="login_guest">로그인 없이 둘러보기</string>
+    <string name="login_guest_note">둘러보기는 일정을 만들 수 있지만 저장되지 않습니다.</string>
+
+    <!-- 홈 -->
+    <string name="home_greeting_named">%1$s 님, 어디로 갈까요?</string>
+    <string name="home_greeting">어디로 갈까요?</string>
+    <string name="home_guest_note">둘러보기 중입니다. 로그인하면 일정을 저장할 수 있습니다.</string>
+    <string name="home_create_trip">새 여행 만들기</string>
+    <string name="home_upcoming">다가오는 여행</string>
+    <string name="home_recent">최근 일정</string>
+    <string name="home_empty_guest_title">저장은 로그인이 필요합니다</string>
+    <string name="home_empty_title">아직 만든 일정이 없습니다</string>
+    <string name="home_empty_body">경비와 날짜만 넣으면 항공·숙소·식당까지 한 번에 맞춰 드립니다.</string>
+    <string name="home_empty_action">첫 일정 만들기</string>
+    <string name="home_dday">D-%1$d</string>
+    <string name="home_departure_day">출발일</string>
+    <string name="home_travelling">여행 중</string>
+
+    <!-- 저장 탭 -->
+    <string name="saved_empty_title">저장한 장소가 없습니다</string>
+    <string name="saved_empty_body">일정 결과에서 ♥를 누르면 여기에 모입니다.</string>
+    <string name="saved_guest_title">둘러보기 중입니다</string>
+    <string name="saved_guest_body">장소를 저장하려면 로그인이 필요합니다.</string>
+    <string name="saved_filter_empty_title">이 종류로 저장한 곳이 없습니다</string>
+    <string name="saved_filter_empty_body">다른 종류를 골라 보세요.</string>
+    <string name="saved_filter_all">전체 %1$d</string>
+
+    <!-- 프로필 -->
+    <string name="profile_guest_title">로그인하지 않았습니다</string>
+    <string name="profile_guest_body">로그인하면 만든 일정과 저장한 장소가 기기를 바꿔도 남습니다.</string>
+    <string name="profile_saved_places">저장한 장소</string>
+    <string name="profile_settings">설정</string>
+    <string name="profile_support">고객센터</string>
+    <string name="profile_about">정보</string>
+
+    <!-- 설정 -->
+    <string name="settings_title">설정</string>
+    <string name="settings_section_account">계정</string>
+    <string name="settings_account">계정 관리</string>
+    <string name="settings_section_language">언어</string>
+    <string name="settings_language">앱 언어</string>
+    <string name="settings_section_notification">알림</string>
+    <string name="settings_notify_week">출발 7일 전 알림</string>
+    <string name="settings_notify_day">출발 1일 전 알림</string>
+    <string name="settings_section_accessibility">접근성</string>
+    <string name="settings_text_scale">글자 크기</string>
+    <string name="settings_high_contrast">고대비</string>
+    <string name="settings_high_contrast_body">글자와 배경의 대비를 높입니다.</string>
+    <string name="settings_section_help">도움</string>
+
+    <!-- 언어 이름은 그 언어로 적는다. 영어판에서도 "한국어"는 한국어로 보여야 고를 수 있다. -->
+    <string name="language_korean" translatable="false">한국어</string>
+    <string name="language_english" translatable="false">English</string>
+
+    <string name="text_scale_small">작게</string>
+    <string name="text_scale_normal">보통</string>
+    <string name="text_scale_large">크게</string>
+
+    <!-- 계정 관리 -->
+    <string name="account_title">계정 관리</string>
+    <string name="account_sign_out">로그아웃</string>
+    <string name="account_delete">회원 탈퇴</string>
+    <string name="account_delete_confirm_title">정말 탈퇴할까요?</string>
+    <string name="account_delete_confirm_body">저장한 일정과 즐겨찾기가 모두 지워집니다. 되돌릴 수 없습니다.</string>
+    <string name="account_delete_confirm_action">탈퇴</string>
+    <string name="account_signed_out_title">로그인하지 않았습니다</string>
+    <string name="account_signed_out_body">계정을 관리하려면 먼저 로그인해 주세요.</string>
+
+    <!-- 고객센터 -->
+    <string name="support_title">고객센터</string>
+    <string name="support_intro">문제가 있거나 제안할 것이 있으면 메일로 알려 주세요.</string>
+    <string name="support_send_mail">문의 메일 보내기</string>
+    <string name="support_mail_subject">[Readytogo] 문의</string>
+    <string name="support_no_mail_app">메일 앱을 찾을 수 없습니다.</string>
+    <string name="support_faq">자주 묻는 질문</string>
+    <string name="faq_1_q">항공권이나 숙소를 앱에서 바로 예약할 수 있나요?</string>
+    <string name="faq_1_a">아니요. 가격과 링크까지만 보여 드립니다. 예약은 해당 사이트에서 진행해 주세요.</string>
+    <string name="faq_2_q">추천 식당은 어떤 기준으로 고르나요?</string>
+    <string name="faq_2_a">평점과 그날 동선을 반반으로 보고 점수를 냅니다. 평점만 보면 일정과 멀리 떨어진 곳이 뜨고, 동선만 보면 아무 데나 가까운 곳이 뜹니다.</string>
+    <string name="faq_3_q">끼니마다 두 곳이 나오는 이유가 뭔가요?</string>
+    <string name="faq_3_a">하나는 점수가 가장 높은 곳, 다른 하나는 예산이나 가격·동선을 기준으로 고른 대안입니다. 카드에 어떤 기준으로 골랐는지 이름표가 붙습니다.</string>
+    <string name="faq_4_q">로그인하지 않으면 무엇이 제한되나요?</string>
+    <string name="faq_4_a">일정을 만드는 것은 모두 됩니다. 저장과 즐겨찾기만 로그인이 필요합니다.</string>
+    <string name="faq_5_q">항공 가격이 실제와 다릅니다.</string>
+    <string name="faq_5_a">검색 시점의 가격이고, 실제 요금은 수시로 바뀝니다. \"예시 데이터\" 표시가 붙어 있으면 실시간 조회가 아니라 참고용 값입니다.</string>
+
+    <!-- 정보 -->
+    <string name="about_title">정보</string>
+    <string name="about_version">앱 버전</string>
+    <string name="about_data_sources">데이터 출처</string>
+    <string name="about_data_sources_body">도시·공항 목록: OurAirports (public domain), GeoNames (CC BY 4.0)\n장소·평점·가격대: Google Places API\n항공 가격: SerpApi (Google Flights)\n환율: open.er-api.com</string>
+    <string name="about_licenses">오픈소스 라이선스</string>
+    <string name="about_privacy">개인정보 처리 방침</string>
 </resources>

@@ -22,10 +22,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.data.model.AuthState
 import kr.ac.baekseok.readytogo.ui.component.PrimaryButton
 import kr.ac.baekseok.readytogo.ui.component.SecondaryButton
@@ -79,7 +81,7 @@ fun LoginScreen(
                 )
                 Spacer(modifier = Modifier.height(Tokens.Space.sm))
                 Text(
-                    text = "경비와 날짜만 알려주세요.\n항공·숙소·식당·동선을 한 번에 맞춰 드립니다.",
+                    text = stringResource(R.string.login_tagline),
                     style = MaterialTheme.typography.bodyLarge,
                     color = Tokens.Palette.TextSecondary,
                 )
@@ -99,7 +101,7 @@ fun LoginScreen(
             // Google 로고 이미지는 쓰지 않는다 — 브랜드 가이드라인이 따라붙고,
             // 비슷하게 그려 넣는 것은 더 나쁘다. 글자로만 표기한다.
             PrimaryButton(
-                text = "Google 계정으로 계속하기",
+                text = stringResource(R.string.login_google),
                 onClick = { viewModel.signInWithGoogle(context) },
                 loading = signingIn,
             )
@@ -107,7 +109,7 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(Tokens.Space.md))
 
             SecondaryButton(
-                text = "로그인 없이 둘러보기",
+                text = stringResource(R.string.login_guest),
                 onClick = {
                     viewModel.continueAsGuest()
                     onSignedIn()
@@ -117,7 +119,7 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(Tokens.Space.md))
 
             Text(
-                text = "둘러보기는 일정을 만들 수 있지만 저장되지 않습니다.",
+                text = stringResource(R.string.login_guest_note),
                 style = MaterialTheme.typography.labelMedium,
                 color = Tokens.Palette.TextSecondary,
                 textAlign = TextAlign.Center,

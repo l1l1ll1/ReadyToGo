@@ -20,8 +20,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.data.model.AuthState
 import kr.ac.baekseok.readytogo.data.model.SavedTrip
 import kr.ac.baekseok.readytogo.ui.component.EmptyState
@@ -60,14 +62,17 @@ fun HomeScreen(
             item { Greeting(state.authState) }
 
             item {
-                PrimaryButton(text = "새 여행 만들기", onClick = onCreateTrip)
+                PrimaryButton(
+                    text = stringResource(R.string.home_create_trip),
+                    onClick = onCreateTrip,
+                )
             }
 
             // 다가오는 여행이 없으면 카드를 아예 내린다. 빈 카드는 자리만 차지한다.
             state.upcoming?.let { trip ->
                 item {
                     Column(verticalArrangement = Arrangement.spacedBy(Tokens.Space.sm)) {
-                        SectionHeader(title = "다가오는 여행")
+                        SectionHeader(title = stringResource(R.string.home_upcoming))
                         UpcomingTripCard(
                             trip = trip,
                             today = state.today,
@@ -79,8 +84,9 @@ fun HomeScreen(
 
             item {
                 SectionHeader(
-                    title = "최근 일정",
-                    actionLabel = if (state.recent.isNotEmpty()) "모두 보기" else null,
+                    title = stringResource(R.string.home_recent),
+                    actionLabel = stringResource(R.string.common_see_all)
+                        .takeIf { state.recent.isNotEmpty() },
                     onAction = onSeeAllTrips.takeIf { state.recent.isNotEmpty() },
                 )
             }
@@ -89,13 +95,15 @@ fun HomeScreen(
                 item {
                     // 둘러보기 중이면 "만든 일정이 없다"가 아니라 "저장이 안 된다"가 맞는 설명이다.
                     EmptyState(
-                        title = if (state.authState is AuthState.Guest) {
-                            "저장은 로그인이 필요합니다"
-                        } else {
-                            "아직 만든 일정이 없습니다"
-                        },
-                        description = "경비와 날짜만 넣으면 항공·숙소·식당까지 한 번에 맞춰 드립니다.",
-                        actionLabel = "첫 일정 만들기",
+                        title = stringResource(
+                            if (state.authState is AuthState.Guest) {
+                                R.string.home_empty_guest_title
+                            } else {
+                                R.string.home_empty_title
+                            },
+                        ),
+                        description = stringResource(R.string.home_empty_body),
+                        actionLabel = stringResource(R.string.home_empty_action),
                         onAction = onCreateTrip,
                     )
                 }
@@ -118,12 +126,16 @@ private fun Greeting(authState: AuthState) {
 
     Column(verticalArrangement = Arrangement.spacedBy(Tokens.Space.xs)) {
         Text(
-            text = if (name != null) "$name 님, 어디로 갈까요?" else "어디로 갈까요?",
+            text = if (name != null) {
+                stringResource(R.string.home_greeting_named, name)
+            } else {
+                stringResource(R.string.home_greeting)
+            },
             style = MaterialTheme.typography.titleLarge,
         )
         if (authState is AuthState.Guest) {
             Text(
-                text = "둘러보기 중입니다. 로그인하면 일정을 저장할 수 있습니다.",
+                text = stringResource(R.string.home_guest_note),
                 style = MaterialTheme.typography.bodyMedium,
                 color = Tokens.Palette.TextSecondary,
             )
@@ -157,9 +169,9 @@ private fun UpcomingTripCard(trip: SavedTrip, today: LocalDate, onClick: () -> U
             Text(
                 // 출발일이 오늘이면 "D-0"이 아니라 "출발일"이 읽기 낫다.
                 text = when {
-                    daysLeft > 0 -> "D-$daysLeft"
-                    daysLeft == 0L -> "출발일"
-                    else -> "여행 중"
+                    daysLeft > 0 -> stringResource(R.string.home_dday, daysLeft.toInt())
+                    daysLeft == 0L -> stringResource(R.string.home_departure_day)
+                    else -> stringResource(R.string.home_travelling)
                 },
                 style = MaterialTheme.typography.labelLarge,
                 color = Tokens.Palette.Point,

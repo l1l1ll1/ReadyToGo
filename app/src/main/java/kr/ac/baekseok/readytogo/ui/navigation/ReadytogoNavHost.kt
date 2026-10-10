@@ -50,6 +50,7 @@ import kr.ac.baekseok.readytogo.ui.settings.AccountScreen
 import kr.ac.baekseok.readytogo.ui.settings.SettingsScreen
 import kr.ac.baekseok.readytogo.ui.settings.SupportScreen
 import kr.ac.baekseok.readytogo.ui.splash.SplashScreen
+import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 import kr.ac.baekseok.readytogo.ui.trips.TripsScreen
 
@@ -310,7 +311,7 @@ private fun TitledScreen(
     content: @Composable () -> Unit,
 ) {
     Scaffold(
-        containerColor = Tokens.Palette.Background,
+        containerColor = LocalPalette.current.Background,
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text(title) },
@@ -323,7 +324,7 @@ private fun TitledScreen(
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = Tokens.Palette.Background,
+                    containerColor = LocalPalette.current.Background,
                 ),
             )
         },

@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kr.ac.baekseok.readytogo.ui.component.PrimaryButton
+import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 import java.time.Instant
 import java.time.LocalDate
@@ -59,7 +60,7 @@ fun DateRangeSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = Tokens.Palette.Background,
+        containerColor = LocalPalette.current.Background,
         shape = Tokens.Radius.sheet,
     ) {
         Column(
@@ -87,9 +88,9 @@ fun DateRangeSheet(
                 },
                 style = MaterialTheme.typography.bodyLarge,
                 color = if (start != null && end != null) {
-                    Tokens.Palette.Point
+                    LocalPalette.current.Point
                 } else {
-                    Tokens.Palette.TextSecondary
+                    LocalPalette.current.TextSecondary
                 },
             )
 
@@ -99,7 +100,7 @@ fun DateRangeSheet(
                 title = null,
                 headline = null,
                 showModeToggle = false,
-                colors = DatePickerDefaults.colors(containerColor = Tokens.Palette.Background),
+                colors = DatePickerDefaults.colors(containerColor = LocalPalette.current.Background),
                 modifier = Modifier.weight(1f, fill = false),
             )
 

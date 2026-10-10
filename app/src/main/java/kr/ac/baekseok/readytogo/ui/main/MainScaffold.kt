@@ -26,6 +26,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import kr.ac.baekseok.readytogo.R
+import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 
 /** 하단 탭 네 개. */
@@ -64,14 +65,14 @@ fun MainScaffold(
         ?.any { route -> MainTab.entries.any { it.route == route.route } } == true
 
     Scaffold(
-        containerColor = Tokens.Palette.Background,
+        containerColor = LocalPalette.current.Background,
         // 상단 여백을 여기서 주지 않는다. 결과·입력·지도 화면은 자기 TopAppBar가 이미
         // 상태바 여백을 먹기 때문에, 바깥에서 한 번 더 주면 제목 위가 두 배로 벌어진다.
         // 상단 여백이 필요한 탭 화면은 ReadytogoNavHost가 statusBarsPadding으로 직접 준다.
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
             if (!onTab) return@Scaffold
-            NavigationBar(containerColor = Tokens.Palette.Background) {
+            NavigationBar(containerColor = LocalPalette.current.Background) {
                 MainTab.entries.forEach { tab ->
                     // hierarchy로 보는 이유: 탭 주소가 중첩 그래프 안에 있어도 선택 상태가 유지된다.
                     val selected = currentDestination?.hierarchy

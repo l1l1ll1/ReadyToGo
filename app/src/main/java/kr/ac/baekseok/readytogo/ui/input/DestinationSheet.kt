@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
 import kr.ac.baekseok.readytogo.data.model.Destination
 import kr.ac.baekseok.readytogo.ui.component.EmptyState
+import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 
 /** 시트가 무엇을 고르는 중인지. 제목과 목록이 갈린다. */
@@ -69,7 +70,7 @@ fun DestinationSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = Tokens.Palette.Background,
+        containerColor = LocalPalette.current.Background,
         shape = Tokens.Radius.sheet,
     ) {
         Column(
@@ -176,7 +177,7 @@ private fun DestinationList(
                     .clickable { onPicked(destination) }
                     .padding(vertical = Tokens.Space.md),
             ) {
-                Icon(icon, contentDescription = null, tint = Tokens.Palette.TextSecondary)
+                Icon(icon, contentDescription = null, tint = LocalPalette.current.TextSecondary)
                 Column(modifier = Modifier.weight(1f)) {
                     // 도시 이름만 큰 줄에 둔다. 공항 코드를 뒤에 붙이면
                     // "코타쿠알라무다(Kota Kuala Muda) (PEN)"처럼 괄호가 두 번 겹친다
@@ -192,7 +193,7 @@ private fun DestinationList(
                     Text(
                         text = destination.subtitleFor(query, showCountry),
                         style = MaterialTheme.typography.bodyMedium,
-                        color = Tokens.Palette.TextSecondary,
+                        color = LocalPalette.current.TextSecondary,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
@@ -237,7 +238,7 @@ private fun CountryList(countries: List<String>, onPicked: (String) -> Unit) {
                 Icon(
                     Icons.AutoMirrored.Outlined.KeyboardArrowRight,
                     contentDescription = null,
-                    tint = Tokens.Palette.TextSecondary,
+                    tint = LocalPalette.current.TextSecondary,
                 )
             }
         }

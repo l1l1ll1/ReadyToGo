@@ -35,6 +35,7 @@ import kr.ac.baekseok.readytogo.notification.canPostNotifications
 import kr.ac.baekseok.readytogo.data.model.AppLanguage
 import kr.ac.baekseok.readytogo.data.model.TextScale
 import kr.ac.baekseok.readytogo.ui.component.SectionHeader
+import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 
 /**
@@ -191,7 +192,7 @@ fun SettingsScreen(
 private fun SettingsSectionGap(title: String) {
     Column {
         HorizontalDivider(
-            color = Tokens.Palette.Divider,
+            color = LocalPalette.current.Divider,
             modifier = Modifier.padding(vertical = Tokens.Space.lg),
         )
         SectionHeader(title = title)
@@ -220,7 +221,7 @@ private fun NavigationRow(label: String, value: String? = null, onClick: () -> U
             Text(
                 text = value,
                 style = MaterialTheme.typography.bodyMedium,
-                color = Tokens.Palette.TextSecondary,
+                color = LocalPalette.current.TextSecondary,
             )
         }
     }
@@ -250,7 +251,7 @@ private fun ToggleRow(
                 Text(
                     text = description,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Tokens.Palette.TextSecondary,
+                    color = LocalPalette.current.TextSecondary,
                 )
             }
         }

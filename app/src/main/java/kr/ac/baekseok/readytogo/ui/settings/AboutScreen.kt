@@ -16,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import kr.ac.baekseok.readytogo.BuildConfig
 import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.ui.component.SectionHeader
+import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 
 /**
@@ -45,7 +46,7 @@ fun AboutScreen() {
         item {
             Column {
                 HorizontalDivider(
-                    color = Tokens.Palette.Divider,
+                    color = LocalPalette.current.Divider,
                     modifier = Modifier.padding(vertical = Tokens.Space.lg),
                 )
                 SectionHeader(title = stringResource(R.string.about_data_sources))
@@ -56,7 +57,7 @@ fun AboutScreen() {
         item {
             Column {
                 HorizontalDivider(
-                    color = Tokens.Palette.Divider,
+                    color = LocalPalette.current.Divider,
                     modifier = Modifier.padding(vertical = Tokens.Space.lg),
                 )
                 SectionHeader(title = stringResource(R.string.about_licenses))
@@ -74,7 +75,7 @@ fun AboutScreen() {
         item {
             Column {
                 HorizontalDivider(
-                    color = Tokens.Palette.Divider,
+                    color = LocalPalette.current.Divider,
                     modifier = Modifier.padding(vertical = Tokens.Space.lg),
                 )
                 SectionHeader(title = stringResource(R.string.about_privacy))
@@ -108,7 +109,7 @@ private fun InfoRow(label: String, value: String) {
         Text(
             text = value,
             style = MaterialTheme.typography.bodyMedium,
-            color = Tokens.Palette.TextSecondary,
+            color = LocalPalette.current.TextSecondary,
         )
     }
 }
@@ -118,7 +119,7 @@ private fun Paragraph(text: String) {
     Text(
         text = text,
         style = MaterialTheme.typography.bodyMedium,
-        color = Tokens.Palette.TextSecondary,
+        color = LocalPalette.current.TextSecondary,
         modifier = Modifier.padding(top = Tokens.Space.sm),
     )
 }

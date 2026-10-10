@@ -32,6 +32,7 @@ import kotlinx.coroutines.launch
 import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.ui.component.PhotoCard
 import kr.ac.baekseok.readytogo.ui.component.PrimaryButton
+import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 
 /** 온보딩 한 장. */
@@ -56,7 +57,7 @@ fun OnboardingScreen(onFinish: () -> Unit) {
     val scope = rememberCoroutineScope()
     val isLastPage = pagerState.currentPage == PAGES.lastIndex
 
-    Surface(color = Tokens.Palette.Background, modifier = Modifier.fillMaxSize()) {
+    Surface(color = LocalPalette.current.Background, modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.padding(Tokens.Space.screenHorizontal)) {
 
             // 건너뛰기는 오른쪽 위. 마지막 장에서는 "시작하기" 버튼과 겹쳐 의미가 없어 숨긴다.
@@ -102,7 +103,7 @@ fun OnboardingScreen(onFinish: () -> Unit) {
                     Text(
                         text = stringResource(page.bodyRes),
                         style = MaterialTheme.typography.bodyLarge,
-                        color = Tokens.Palette.TextSecondary,
+                        color = LocalPalette.current.TextSecondary,
                         textAlign = TextAlign.Center,
                     )
                 }
@@ -141,7 +142,7 @@ private fun PageIndicator(count: Int, current: Int, modifier: Modifier = Modifie
     ) {
         repeat(count) { index ->
             val color by animateColorAsState(
-                targetValue = if (index == current) Tokens.Palette.Point else Tokens.Palette.Divider,
+                targetValue = if (index == current) LocalPalette.current.Point else LocalPalette.current.Divider,
                 label = "indicator",
             )
             Box(

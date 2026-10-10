@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kr.ac.baekseok.readytogo.data.model.AuthState
 import kr.ac.baekseok.readytogo.ui.auth.AuthViewModel
+import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 
 /**
@@ -44,7 +45,7 @@ fun SplashScreen(
         if (authState !is AuthState.Unknown) onReady(authState)
     }
 
-    Surface(color = Tokens.Palette.Point, modifier = Modifier.fillMaxSize()) {
+    Surface(color = LocalPalette.current.Point, modifier = Modifier.fillMaxSize()) {
         Box(contentAlignment = Alignment.Center) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -53,18 +54,18 @@ fun SplashScreen(
                 // 로고 이미지가 없어 글자로 둔다. 로고를 만들면 이 자리만 바꾸면 된다.
                 Text(
                     text = "Readytogo",
-                    color = Tokens.Palette.Background,
+                    color = LocalPalette.current.Background,
                     fontSize = 36.sp,
                     fontWeight = FontWeight.Bold,
                 )
                 Text(
                     text = "조건만 넣으면 일정까지",
-                    color = Tokens.Palette.Background.copy(alpha = 0.85f),
+                    color = LocalPalette.current.Background.copy(alpha = 0.85f),
                     style = MaterialTheme.typography.bodyLarge,
                 )
                 CircularProgressIndicator(
                     modifier = Modifier.size(Tokens.Size.icon),
-                    color = Tokens.Palette.Background,
+                    color = LocalPalette.current.Background,
                     strokeWidth = Tokens.Size.loadingStroke,
                 )
             }

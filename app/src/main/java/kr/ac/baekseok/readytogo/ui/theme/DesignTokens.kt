@@ -14,43 +14,19 @@ import androidx.compose.ui.unit.sp
 object Tokens {
 
     /**
-     * 포인트 컬러 하나로만 끌고 간다. 여행 앱 느낌의 청록이고, 흰 배경에서 대비가 충분하다.
-     * 에어비앤비류 분위기를 참고하되 그쪽 코랄 계열은 쓰지 않는다 — 브랜드 색 모방은 금지다.
+     * 사진 자리를 채우는 그라데이션. 아직 실제 사진을 붙이지 않아 색으로 칸을 채운다.
+     * 카드마다 다른 조합이 나오도록 [placeholderGradient]가 골라 쓴다.
+     *
+     * 색 한 벌([AppPalette])과 달리 여기 있는 값은 고대비에서도 바뀌지 않는다 —
+     * 사진을 대신하는 자리라 글자를 얹지 않고, 대비를 따질 대상이 아니다.
      */
-    object Palette {
-        val Point = Color(0xFF0F766E)
-        val PointDark = Color(0xFF0B5A54)
-        val PointLight = Color(0xFFCCFBF1)
-
-        /** 배경은 흰색. 카드는 아주 옅은 회색으로 띄워 경계선 없이 구분한다. */
-        val Background = Color(0xFFFFFFFF)
-        val Surface = Color(0xFFFFFFFF)
-        val SurfaceMuted = Color(0xFFF4F5F7)
-
-        val TextPrimary = Color(0xFF1A1C1E)
-        val TextSecondary = Color(0xFF5F6368)
-
-        /** 선은 거의 안 보일 정도로만. 큰 사진 카드가 주인공이라 선이 끼면 지저분해진다. */
-        val Divider = Color(0xFFE8EAED)
-
-        val Danger = Color(0xFFB3261E)
-        val Warning = Color(0xFFB26B00)
-
-        /** 즐겨찾기 ♥ 채운 상태. 포인트 컬러와 구분돼야 눌린 게 보인다. */
-        val Heart = Color(0xFFE0245E)
-
-        /**
-         * 사진 자리를 채우는 그라데이션. 아직 실제 사진을 붙이지 않아 색으로 칸을 채운다.
-         * 카드마다 다른 조합이 나오도록 [placeholderGradient]가 골라 쓴다.
-         */
-        val PlaceholderGradients = listOf(
-            listOf(Color(0xFF0F766E), Color(0xFF14B8A6)),
-            listOf(Color(0xFF1E5A8A), Color(0xFF4FA3D1)),
-            listOf(Color(0xFF6B4E8F), Color(0xFFA78BC4)),
-            listOf(Color(0xFF8A5A2B), Color(0xFFD1A066)),
-            listOf(Color(0xFF2E6B4F), Color(0xFF6DBE94)),
-        )
-    }
+    val PlaceholderGradients = listOf(
+        listOf(Color(0xFF0F766E), Color(0xFF14B8A6)),
+        listOf(Color(0xFF1E5A8A), Color(0xFF4FA3D1)),
+        listOf(Color(0xFF6B4E8F), Color(0xFFA78BC4)),
+        listOf(Color(0xFF8A5A2B), Color(0xFFD1A066)),
+        listOf(Color(0xFF2E6B4F), Color(0xFF6DBE94)),
+    )
 
     /** 4dp 배수로만 쓴다. 눈대중으로 5, 7, 13을 섞으면 줄이 안 맞는다. */
     object Space {
@@ -128,7 +104,7 @@ object Tokens {
      */
     fun placeholderGradient(key: String): List<Color> {
         val mixed = key.foldIndexed(0) { index, acc, char -> acc + char.code * (index + 1) }
-        val index = mixed.mod(Palette.PlaceholderGradients.size)
-        return Palette.PlaceholderGradients[index]
+        val index = mixed.mod(PlaceholderGradients.size)
+        return PlaceholderGradients[index]
     }
 }

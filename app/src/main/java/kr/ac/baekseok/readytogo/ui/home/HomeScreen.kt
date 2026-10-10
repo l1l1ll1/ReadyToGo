@@ -30,6 +30,7 @@ import kr.ac.baekseok.readytogo.ui.component.EmptyState
 import kr.ac.baekseok.readytogo.ui.component.PhotoCard
 import kr.ac.baekseok.readytogo.ui.component.PrimaryButton
 import kr.ac.baekseok.readytogo.ui.component.SectionHeader
+import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -49,7 +50,7 @@ fun HomeScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
 
-    Surface(color = Tokens.Palette.Background) {
+    Surface(color = LocalPalette.current.Background) {
         LazyColumn(
             contentPadding = PaddingValues(
                 start = Tokens.Space.screenHorizontal,
@@ -137,7 +138,7 @@ private fun Greeting(authState: AuthState) {
             Text(
                 text = stringResource(R.string.home_guest_note),
                 style = MaterialTheme.typography.bodyMedium,
-                color = Tokens.Palette.TextSecondary,
+                color = LocalPalette.current.TextSecondary,
             )
         }
     }
@@ -160,7 +161,7 @@ private fun UpcomingTripCard(trip: SavedTrip, today: LocalDate, onClick: () -> U
         onClick = onClick,
     ) {
         Surface(
-            color = Tokens.Palette.Background,
+            color = LocalPalette.current.Background,
             shape = Tokens.Radius.chip,
             modifier = Modifier
                 .align(Alignment.TopEnd)
@@ -174,7 +175,7 @@ private fun UpcomingTripCard(trip: SavedTrip, today: LocalDate, onClick: () -> U
                     else -> stringResource(R.string.home_travelling)
                 },
                 style = MaterialTheme.typography.labelLarge,
-                color = Tokens.Palette.Point,
+                color = LocalPalette.current.Point,
                 modifier = Modifier.padding(
                     horizontal = Tokens.Space.md,
                     vertical = Tokens.Space.sm,
@@ -194,7 +195,7 @@ private fun RecentTripRow(trip: SavedTrip, onClick: () -> Unit) {
             .fillMaxWidth()
             .clip(Tokens.Radius.card)
             .clickable(onClick = onClick)
-            .background(Tokens.Palette.SurfaceMuted)
+            .background(LocalPalette.current.SurfaceMuted)
             .padding(Tokens.Space.md),
     ) {
         PhotoCard(
@@ -217,7 +218,7 @@ private fun RecentTripRow(trip: SavedTrip, onClick: () -> Unit) {
                 text = "${trip.destinationName} · ${trip.dayCount}일 · " +
                     trip.departureDate.format(DATE_FORMAT),
                 style = MaterialTheme.typography.bodyMedium,
-                color = Tokens.Palette.TextSecondary,
+                color = LocalPalette.current.TextSecondary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )

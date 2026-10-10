@@ -31,6 +31,7 @@ import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.data.model.AuthState
 import kr.ac.baekseok.readytogo.ui.component.PrimaryButton
 import kr.ac.baekseok.readytogo.ui.component.SecondaryButton
+import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 
 /**
@@ -65,7 +66,7 @@ fun LoginScreen(
         if (authState is AuthState.SignedIn) onSignedIn()
     }
 
-    Surface(color = Tokens.Palette.Background, modifier = Modifier.fillMaxSize()) {
+    Surface(color = LocalPalette.current.Background, modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -77,13 +78,13 @@ fun LoginScreen(
                 Text(
                     text = "Readytogo",
                     style = MaterialTheme.typography.displaySmall,
-                    color = Tokens.Palette.Point,
+                    color = LocalPalette.current.Point,
                 )
                 Spacer(modifier = Modifier.height(Tokens.Space.sm))
                 Text(
                     text = stringResource(R.string.login_tagline),
                     style = MaterialTheme.typography.bodyLarge,
-                    color = Tokens.Palette.TextSecondary,
+                    color = LocalPalette.current.TextSecondary,
                 )
             }
 
@@ -93,7 +94,7 @@ fun LoginScreen(
                 Text(
                     text = error.orEmpty(),
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Tokens.Palette.Danger,
+                    color = LocalPalette.current.Danger,
                     modifier = Modifier.padding(bottom = Tokens.Space.md),
                 )
             }
@@ -121,7 +122,7 @@ fun LoginScreen(
             Text(
                 text = stringResource(R.string.login_guest_note),
                 style = MaterialTheme.typography.labelMedium,
-                color = Tokens.Palette.TextSecondary,
+                color = LocalPalette.current.TextSecondary,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth(),
             )
@@ -142,12 +143,12 @@ fun InitialAvatar(
         modifier = modifier
             .size(Tokens.Size.avatar)
             .clip(CircleShape)
-            .background(Tokens.Palette.PointLight),
+            .background(LocalPalette.current.PointLight),
     ) {
         Text(
             // 한글은 첫 글자, 영문도 첫 글자. 두 글자를 쓰면 한글에서 "여행"처럼 단어가 되어 어색하다.
             text = name.take(1).ifBlank { "?" },
-            color = Tokens.Palette.PointDark,
+            color = LocalPalette.current.PointDark,
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
         )

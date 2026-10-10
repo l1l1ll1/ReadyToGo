@@ -30,6 +30,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import kr.ac.baekseok.readytogo.domain.budget.BudgetRange
+import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 import kotlin.math.ln
 import kotlin.math.pow
@@ -88,12 +89,12 @@ fun BudgetSection(
                         text = formatWon(budgetWon),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Tokens.Palette.Point,
+                        color = LocalPalette.current.Point,
                     )
                     Icon(
                         imageVector = Icons.Outlined.Edit,
                         contentDescription = "예산 직접 입력",
-                        tint = Tokens.Palette.Point,
+                        tint = LocalPalette.current.Point,
                     )
                 }
                 // 여러 명이면 총액만 보고는 넉넉한지 알 수 없다. 1인당 몫을 같이 보여준다.
@@ -101,7 +102,7 @@ fun BudgetSection(
                     Text(
                         text = "1인당 약 ${formatWonShort(perAdult(budgetWon, adults))}",
                         style = MaterialTheme.typography.labelMedium,
-                        color = Tokens.Palette.TextSecondary,
+                        color = LocalPalette.current.TextSecondary,
                     )
                 }
             }
@@ -125,7 +126,7 @@ fun BudgetSection(
             Text(
                 text = formatWonShort(minWon),
                 style = MaterialTheme.typography.labelMedium,
-                color = Tokens.Palette.TextSecondary,
+                color = LocalPalette.current.TextSecondary,
             )
             Text(
                 // 슬라이더 최댓값을 넘는 금액은 직접 입력으로만 넣을 수 있다. 그걸 알려준다.
@@ -135,7 +136,7 @@ fun BudgetSection(
                     formatWonShort(maxWon)
                 },
                 style = MaterialTheme.typography.labelMedium,
-                color = Tokens.Palette.TextSecondary,
+                color = LocalPalette.current.TextSecondary,
             )
         }
 
@@ -209,7 +210,7 @@ private fun BudgetInputDialog(
                         }
                     } ?: "숫자를 입력하세요",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Tokens.Palette.TextSecondary,
+                    color = LocalPalette.current.TextSecondary,
                 )
             }
         },

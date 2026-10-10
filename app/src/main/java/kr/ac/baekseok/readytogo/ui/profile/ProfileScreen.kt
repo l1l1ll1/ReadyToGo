@@ -33,6 +33,7 @@ import kr.ac.baekseok.readytogo.data.model.AuthState
 import kr.ac.baekseok.readytogo.ui.auth.AuthViewModel
 import kr.ac.baekseok.readytogo.ui.auth.InitialAvatar
 import kr.ac.baekseok.readytogo.ui.component.SecondaryButton
+import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 
 /**
@@ -52,7 +53,7 @@ fun ProfileScreen(
 ) {
     val authState by viewModel.authState.collectAsState()
 
-    Surface(color = Tokens.Palette.Background) {
+    Surface(color = LocalPalette.current.Background) {
         LazyColumn(
             contentPadding = PaddingValues(
                 start = Tokens.Space.screenHorizontal,
@@ -112,7 +113,7 @@ private fun SignedInHeader(name: String, email: String) {
         modifier = Modifier
             .fillMaxWidth()
             .clip(Tokens.Radius.card)
-            .background(Tokens.Palette.SurfaceMuted)
+            .background(LocalPalette.current.SurfaceMuted)
             .padding(Tokens.Space.lg),
     ) {
         InitialAvatar(name = name)
@@ -121,7 +122,7 @@ private fun SignedInHeader(name: String, email: String) {
             Text(
                 text = email,
                 style = MaterialTheme.typography.bodyMedium,
-                color = Tokens.Palette.TextSecondary,
+                color = LocalPalette.current.TextSecondary,
             )
         }
     }
@@ -134,7 +135,7 @@ private fun GuestHeader(onSignIn: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .clip(Tokens.Radius.card)
-            .background(Tokens.Palette.SurfaceMuted)
+            .background(LocalPalette.current.SurfaceMuted)
             .padding(Tokens.Space.lg),
     ) {
         Text(
@@ -144,7 +145,7 @@ private fun GuestHeader(onSignIn: () -> Unit) {
         Text(
             text = stringResource(R.string.profile_guest_body),
             style = MaterialTheme.typography.bodyMedium,
-            color = Tokens.Palette.TextSecondary,
+            color = LocalPalette.current.TextSecondary,
         )
         SecondaryButton(text = stringResource(R.string.common_sign_in), onClick = onSignIn)
     }
@@ -162,7 +163,7 @@ private fun MenuRow(icon: ImageVector, label: String, onClick: () -> Unit) {
             .clickable(onClick = onClick)
             .padding(Tokens.Space.lg),
     ) {
-        Icon(imageVector = icon, contentDescription = null, tint = Tokens.Palette.TextSecondary)
+        Icon(imageVector = icon, contentDescription = null, tint = LocalPalette.current.TextSecondary)
         Text(
             text = label,
             style = MaterialTheme.typography.bodyLarge,
@@ -171,7 +172,7 @@ private fun MenuRow(icon: ImageVector, label: String, onClick: () -> Unit) {
         Icon(
             imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
             contentDescription = null,
-            tint = Tokens.Palette.TextSecondary,
+            tint = LocalPalette.current.TextSecondary,
         )
     }
 }

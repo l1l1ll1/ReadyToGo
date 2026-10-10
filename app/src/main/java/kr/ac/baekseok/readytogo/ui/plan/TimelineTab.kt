@@ -46,6 +46,7 @@ import kr.ac.baekseok.readytogo.domain.plan.formatDuration
 import kr.ac.baekseok.readytogo.domain.plan.toTimeline
 import kr.ac.baekseok.readytogo.ui.component.EmptyState
 import kr.ac.baekseok.readytogo.ui.component.FavoriteButton
+import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 
 /**
@@ -158,7 +159,7 @@ private fun DayHeader(day: DayPlan, totalMinutes: Int, onOpenMap: () -> Unit) {
                 Text(
                     text = "이동 포함 ${formatDuration(totalMinutes)}",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Tokens.Palette.TextSecondary,
+                    color = LocalPalette.current.TextSecondary,
                 )
             }
         }
@@ -229,12 +230,12 @@ private fun TimelineRail(icon: ImageVector) {
             modifier = Modifier
                 .size(Tokens.Space.xxl)
                 .clip(CircleShape)
-                .background(Tokens.Palette.PointLight),
+                .background(LocalPalette.current.PointLight),
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = Tokens.Palette.PointDark,
+                tint = LocalPalette.current.PointDark,
                 modifier = Modifier.size(Tokens.Space.lg),
             )
         }
@@ -243,7 +244,7 @@ private fun TimelineRail(icon: ImageVector) {
             modifier = Modifier
                 .width(Tokens.Size.timelineLineWidth)
                 .height(Tokens.Size.timelineLineHeight)
-                .background(Tokens.Palette.Divider),
+                .background(LocalPalette.current.Divider),
         )
     }
 }
@@ -261,12 +262,12 @@ private fun VisitContent(item: TimelineItem.Visit) {
         text = "관광지 · ★${attraction.rating}" +
             if (attraction.reviewCount > 0) " (리뷰 ${"%,d".format(attraction.reviewCount)})" else "",
         style = MaterialTheme.typography.bodyMedium,
-        color = Tokens.Palette.TextSecondary,
+        color = LocalPalette.current.TextSecondary,
     )
     Text(
         text = formatDuration(item.stayMinutes),
         style = MaterialTheme.typography.labelMedium,
-        color = Tokens.Palette.TextSecondary,
+        color = LocalPalette.current.TextSecondary,
     )
 }
 
@@ -280,7 +281,7 @@ private fun VisitContent(item: TimelineItem.Visit) {
 private fun MealContent(item: TimelineItem.Meal) {
     val restaurant = item.restaurant
     val overBudget = item.shown.overBudget
-    val accent = if (overBudget) MaterialTheme.colorScheme.error else Tokens.Palette.Point
+    val accent = if (overBudget) MaterialTheme.colorScheme.error else LocalPalette.current.Point
 
     Row(verticalAlignment = Alignment.CenterVertically) {
         Text(
@@ -306,19 +307,19 @@ private fun MealContent(item: TimelineItem.Meal) {
     Text(
         text = restaurant.detailLine(),
         style = MaterialTheme.typography.bodyMedium,
-        color = Tokens.Palette.TextSecondary,
+        color = LocalPalette.current.TextSecondary,
     )
     Text(
         // priceText()가 원화와 현지 통화를 줄바꿈으로 함께 돌려준다.
         text = restaurant.priceText(),
         style = MaterialTheme.typography.bodyMedium,
-        color = if (overBudget) accent else Tokens.Palette.TextPrimary,
+        color = if (overBudget) accent else LocalPalette.current.TextPrimary,
         fontWeight = FontWeight.Bold,
     )
     Text(
         text = formatDuration(item.stayMinutes),
         style = MaterialTheme.typography.labelMedium,
-        color = Tokens.Palette.TextSecondary,
+        color = LocalPalette.current.TextSecondary,
     )
 }
 
@@ -333,18 +334,18 @@ private fun NoMealContent(item: TimelineItem.NoMeal) {
     Text(
         text = item.meal.label,
         style = MaterialTheme.typography.labelMedium,
-        color = Tokens.Palette.TextSecondary,
+        color = LocalPalette.current.TextSecondary,
         fontWeight = FontWeight.Bold,
     )
     Text(
         text = "근처 추천 식당 없음",
         style = MaterialTheme.typography.titleSmall,
-        color = Tokens.Palette.TextSecondary,
+        color = LocalPalette.current.TextSecondary,
     )
     Text(
         text = "이 동네에서 조건에 맞는 곳을 찾지 못했습니다.",
         style = MaterialTheme.typography.bodyMedium,
-        color = Tokens.Palette.TextSecondary,
+        color = LocalPalette.current.TextSecondary,
     )
 }
 
@@ -367,14 +368,14 @@ private fun TravelRow(leg: TravelLeg) {
                     TravelMode.TRANSIT -> Icons.Outlined.DirectionsBus
                 },
                 contentDescription = null,
-                tint = Tokens.Palette.TextSecondary,
+                tint = LocalPalette.current.TextSecondary,
                 modifier = Modifier.size(Tokens.Space.lg),
             )
         }
         Text(
             text = "${leg.label} · ${"%.1f".format(leg.distanceKm)}km",
             style = MaterialTheme.typography.labelMedium,
-            color = Tokens.Palette.TextSecondary,
+            color = LocalPalette.current.TextSecondary,
             modifier = Modifier.padding(start = Tokens.Space.md),
         )
     }

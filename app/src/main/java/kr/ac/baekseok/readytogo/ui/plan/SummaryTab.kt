@@ -18,6 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import kr.ac.baekseok.readytogo.data.model.TripPlan
+import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 
 /**
@@ -36,7 +37,7 @@ fun SummaryHeader(plan: TripPlan) {
         modifier = Modifier
             .fillMaxWidth()
             .clip(Tokens.Radius.card)
-            .background(Tokens.Palette.SurfaceMuted)
+            .background(LocalPalette.current.SurfaceMuted)
             .padding(Tokens.Space.lg),
     ) {
         Text(
@@ -54,13 +55,13 @@ fun SummaryHeader(plan: TripPlan) {
                 "성인 ${c.adults}명" + if (c.roomCount > 1) " · ${c.roomCount}실" else "",
             ).joinToString(" · "),
             style = MaterialTheme.typography.bodyMedium,
-            color = Tokens.Palette.TextSecondary,
+            color = LocalPalette.current.TextSecondary,
         )
         if (c.purposes.isNotEmpty()) {
             Text(
                 text = c.purposes.joinToString(" · ") { it.label },
                 style = MaterialTheme.typography.bodyMedium,
-                color = Tokens.Palette.Point,
+                color = LocalPalette.current.Point,
             )
         }
 
@@ -68,7 +69,7 @@ fun SummaryHeader(plan: TripPlan) {
         val planned = plan.plannedSpendWon()
         if (total != null) {
             HorizontalDivider(
-                color = Tokens.Palette.Divider,
+                color = LocalPalette.current.Divider,
                 modifier = Modifier.padding(vertical = Tokens.Space.sm),
             )
             BudgetUsageBar(totalWon = total, plannedWon = planned)
@@ -104,7 +105,7 @@ private fun TightMealBudgetNotice(plan: TripPlan) {
         text = "이 예산으로는 식비가 1인 1끼 약 ${formatRoughWon(mealCap)}이라 빠듯해요. " +
             "예산을 올리거나 일정을 줄이면 선택지가 넓어집니다.",
         style = MaterialTheme.typography.labelMedium,
-        color = Tokens.Palette.TextSecondary,
+        color = LocalPalette.current.TextSecondary,
         modifier = Modifier.padding(top = Tokens.Space.sm),
     )
 }
@@ -126,14 +127,14 @@ private fun formatRoughWon(won: Long): String = ((won + 50) / 100 * 100).won()
 private fun BudgetUsageBar(totalWon: Long, plannedWon: Long) {
     val ratio = (plannedWon.toFloat() / totalWon).coerceAtLeast(0f)
     val overBudget = ratio > 1f
-    val color = if (overBudget) MaterialTheme.colorScheme.error else Tokens.Palette.Point
+    val color = if (overBudget) MaterialTheme.colorScheme.error else LocalPalette.current.Point
 
     Column(verticalArrangement = Arrangement.spacedBy(Tokens.Space.xs)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = "예산 사용",
                 style = MaterialTheme.typography.labelMedium,
-                color = Tokens.Palette.TextSecondary,
+                color = LocalPalette.current.TextSecondary,
                 modifier = Modifier.weight(1f),
             )
             Text(
@@ -149,7 +150,7 @@ private fun BudgetUsageBar(totalWon: Long, plannedWon: Long) {
                 .fillMaxWidth()
                 .height(Tokens.Space.sm)
                 .clip(Tokens.Radius.chip)
-                .background(Tokens.Palette.Divider),
+                .background(LocalPalette.current.Divider),
         ) {
             Box(
                 modifier = Modifier
@@ -191,7 +192,7 @@ fun ItineraryHighlights(plan: TripPlan) {
                 Text(
                     text = "${index + 1}",
                     style = MaterialTheme.typography.titleMedium,
-                    color = Tokens.Palette.Point,
+                    color = LocalPalette.current.Point,
                 )
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
@@ -208,7 +209,7 @@ fun ItineraryHighlights(plan: TripPlan) {
                                 ""
                             },
                         style = MaterialTheme.typography.bodyMedium,
-                        color = Tokens.Palette.TextSecondary,
+                        color = LocalPalette.current.TextSecondary,
                     )
                 }
             }

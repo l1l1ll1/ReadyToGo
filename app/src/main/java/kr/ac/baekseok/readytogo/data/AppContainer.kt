@@ -37,6 +37,15 @@ object AppContainer {
     private lateinit var appContext: Context
 
     /**
+     * [initialize]가 끝났는지.
+     *
+     * 안드로이드 스튜디오의 **미리보기**는 Application을 거치지 않고 화면만 그린다.
+     * 테마가 설정을 읽으려 하면 그때 터지므로, 준비되지 않았으면 기본값으로 그린다.
+     */
+    val isReady: Boolean
+        get() = ::appContext.isInitialized
+
+    /**
      * 화면보다 오래 살아야 하는 일을 돌리는 범위.
      *
      * **왜 필요한가**: 보류 중인 저장은 로그인 화면이 사라진 **뒤에** 끝난다.

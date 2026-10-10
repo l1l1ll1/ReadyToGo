@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import kr.ac.baekseok.readytogo.domain.plan.TimelineItem
 import kr.ac.baekseok.readytogo.domain.plan.formatDuration
+import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 
 /**
@@ -48,7 +49,7 @@ fun PlaceDetailSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = Tokens.Palette.Background,
+        containerColor = LocalPalette.current.Background,
         shape = Tokens.Radius.sheet,
     ) {
         Column(
@@ -69,7 +70,7 @@ fun PlaceDetailSheet(
                 )
             }
 
-            HorizontalDivider(color = Tokens.Palette.Divider)
+            HorizontalDivider(color = LocalPalette.current.Divider)
 
             val mapUrl = item.mapUrl
             if (mapUrl.isNotBlank()) {
@@ -97,7 +98,7 @@ fun PlaceDetailSheet(
             SheetAction(
                 icon = Icons.Outlined.Delete,
                 label = "일정에서 빼기",
-                tint = Tokens.Palette.Danger,
+                tint = LocalPalette.current.Danger,
                 onClick = {
                     onDelete()
                     onDismiss()
@@ -120,19 +121,19 @@ private fun VisitDetail(item: TimelineItem.Visit) {
                     ""
                 },
             style = MaterialTheme.typography.bodyLarge,
-            color = Tokens.Palette.TextSecondary,
+            color = LocalPalette.current.TextSecondary,
         )
         if (attraction.address.isNotBlank()) {
             Text(
                 text = attraction.address,
                 style = MaterialTheme.typography.bodyMedium,
-                color = Tokens.Palette.TextSecondary,
+                color = LocalPalette.current.TextSecondary,
             )
         }
         Text(
             text = "머무는 시간 ${formatDuration(item.stayMinutes)}",
             style = MaterialTheme.typography.bodyMedium,
-            color = Tokens.Palette.TextSecondary,
+            color = LocalPalette.current.TextSecondary,
         )
     }
 }
@@ -147,14 +148,14 @@ private fun MealDetail(item: TimelineItem.Meal) {
             Text(
                 text = item.meal.label,
                 style = MaterialTheme.typography.labelLarge,
-                color = if (overBudget) Tokens.Palette.Danger else Tokens.Palette.Point,
+                color = if (overBudget) LocalPalette.current.Danger else LocalPalette.current.Point,
                 fontWeight = FontWeight.Bold,
             )
             if (overBudget) {
                 Text(
                     text = " · 예산 초과",
                     style = MaterialTheme.typography.labelLarge,
-                    color = Tokens.Palette.Danger,
+                    color = LocalPalette.current.Danger,
                 )
             }
         }
@@ -163,13 +164,13 @@ private fun MealDetail(item: TimelineItem.Meal) {
         Text(
             text = restaurant.detailLine(),
             style = MaterialTheme.typography.bodyLarge,
-            color = Tokens.Palette.TextSecondary,
+            color = LocalPalette.current.TextSecondary,
         )
         Text(
             text = restaurant.priceText(),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
-            color = if (overBudget) Tokens.Palette.Danger else Tokens.Palette.TextPrimary,
+            color = if (overBudget) LocalPalette.current.Danger else LocalPalette.current.TextPrimary,
         )
 
         // 교체하면 무엇으로 바뀌는지 미리 알려준다. 누르고 나서 알게 하면 되돌리게 된다.
@@ -178,7 +179,7 @@ private fun MealDetail(item: TimelineItem.Meal) {
                 text = "교체하면 → ${alternative.item.name} (${alternative.item.priceText()
                     .replace("\n", " · ")})",
                 style = MaterialTheme.typography.bodyMedium,
-                color = Tokens.Palette.TextSecondary,
+                color = LocalPalette.current.TextSecondary,
             )
         }
     }
@@ -188,7 +189,7 @@ private fun MealDetail(item: TimelineItem.Meal) {
 private fun SheetAction(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     label: String,
-    tint: Color = Tokens.Palette.TextPrimary,
+    tint: Color = LocalPalette.current.TextPrimary,
     onClick: () -> Unit,
 ) {
     TextButton(onClick = onClick, modifier = Modifier.fillMaxWidth()) {

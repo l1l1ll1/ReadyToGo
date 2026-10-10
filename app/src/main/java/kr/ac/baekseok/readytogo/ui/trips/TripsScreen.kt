@@ -26,6 +26,7 @@ import kr.ac.baekseok.readytogo.data.model.SavedTrip
 import kr.ac.baekseok.readytogo.ui.component.EmptyState
 import kr.ac.baekseok.readytogo.ui.component.PhotoCard
 import kr.ac.baekseok.readytogo.ui.component.SectionHeader
+import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -45,7 +46,7 @@ fun TripsScreen(
     val state by viewModel.uiState.collectAsState()
     var pendingDelete by remember { mutableStateOf<SavedTrip?>(null) }
 
-    Surface(color = Tokens.Palette.Background) {
+    Surface(color = LocalPalette.current.Background) {
         if (state.upcoming.isEmpty() && state.past.isEmpty()) {
             Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
                 // 비어 있는 이유가 "아직 안 만들었다"와 "로그인을 안 했다" 두 가지다.
@@ -81,7 +82,7 @@ fun TripsScreen(
                     Text(
                         text = "카드를 길게 누르면 삭제할 수 있습니다.",
                         style = MaterialTheme.typography.labelMedium,
-                        color = Tokens.Palette.TextSecondary,
+                        color = LocalPalette.current.TextSecondary,
                     )
                 }
 
@@ -128,7 +129,7 @@ fun TripsScreen(
                     viewModel.delete(trip.id)
                     pendingDelete = null
                 }) {
-                    Text("삭제", color = Tokens.Palette.Danger)
+                    Text("삭제", color = LocalPalette.current.Danger)
                 }
             },
             dismissButton = {
@@ -164,7 +165,7 @@ private fun TripCard(
     ) {
         if (daysLeft >= 0) {
             Surface(
-                color = Tokens.Palette.Background,
+                color = LocalPalette.current.Background,
                 shape = Tokens.Radius.chip,
                 modifier = Modifier
                     .align(Alignment.TopEnd)
@@ -173,7 +174,7 @@ private fun TripCard(
                 Text(
                     text = if (daysLeft == 0L) "출발일" else "D-$daysLeft",
                     style = MaterialTheme.typography.labelLarge,
-                    color = Tokens.Palette.Point,
+                    color = LocalPalette.current.Point,
                     modifier = Modifier.padding(
                         horizontal = Tokens.Space.md,
                         vertical = Tokens.Space.sm,

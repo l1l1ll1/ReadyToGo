@@ -31,6 +31,7 @@ import kr.ac.baekseok.readytogo.ui.auth.AuthViewModel
 import kr.ac.baekseok.readytogo.ui.auth.InitialAvatar
 import kr.ac.baekseok.readytogo.ui.component.EmptyState
 import kr.ac.baekseok.readytogo.ui.component.SecondaryButton
+import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 
 /**
@@ -69,7 +70,7 @@ fun AccountScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(Tokens.Radius.card)
-                        .background(Tokens.Palette.SurfaceMuted)
+                        .background(LocalPalette.current.SurfaceMuted)
                         .padding(Tokens.Space.lg),
                 ) {
                     InitialAvatar(name = state.user.displayName)
@@ -81,7 +82,7 @@ fun AccountScreen(
                         Text(
                             text = state.user.email,
                             style = MaterialTheme.typography.bodyMedium,
-                            color = Tokens.Palette.TextSecondary,
+                            color = LocalPalette.current.TextSecondary,
                         )
                     }
                 }
@@ -101,7 +102,7 @@ fun AccountScreen(
                     Text(
                         text = stringResource(R.string.account_delete),
                         style = MaterialTheme.typography.labelMedium,
-                        color = Tokens.Palette.Danger,
+                        color = LocalPalette.current.Danger,
                     )
                 }
                 Spacer(modifier = Modifier.height(Tokens.Space.xl))
@@ -126,7 +127,7 @@ fun AccountScreen(
                 }) {
                     Text(
                         text = stringResource(R.string.account_delete_confirm_action),
-                        color = Tokens.Palette.Danger,
+                        color = LocalPalette.current.Danger,
                     )
                 }
             },

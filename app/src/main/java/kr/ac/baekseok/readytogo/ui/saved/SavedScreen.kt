@@ -31,6 +31,7 @@ import kr.ac.baekseok.readytogo.data.model.FavoritePlace
 import kr.ac.baekseok.readytogo.ui.component.EmptyState
 import kr.ac.baekseok.readytogo.ui.component.FavoriteButton
 import kr.ac.baekseok.readytogo.ui.component.PhotoCard
+import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 
 /**
@@ -46,7 +47,7 @@ fun SavedScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
 
-    Surface(color = Tokens.Palette.Background) {
+    Surface(color = LocalPalette.current.Background) {
         if (state.all.isEmpty()) {
             Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
                 // 둘러보기 중에는 ♥ 자체를 쓸 수 없으므로 "♥를 누르면 모인다"는 안내가 거짓이 된다.
@@ -145,7 +146,7 @@ private fun FavoriteRow(
             .fillMaxWidth()
             .clip(Tokens.Radius.card)
             .clickable(onClick = onClick)
-            .background(Tokens.Palette.SurfaceMuted)
+            .background(LocalPalette.current.SurfaceMuted)
             .padding(Tokens.Space.md),
     ) {
         PhotoCard(
@@ -167,7 +168,7 @@ private fun FavoriteRow(
             Text(
                 text = "${place.category} · ${place.cityName}",
                 style = MaterialTheme.typography.bodyMedium,
-                color = Tokens.Palette.TextSecondary,
+                color = LocalPalette.current.TextSecondary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )

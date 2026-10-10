@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import kr.ac.baekseok.readytogo.R
+import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 
 /**
@@ -94,8 +95,8 @@ fun SecondaryButton(
         onClick = onClick,
         shape = Tokens.Radius.button,
         colors = ButtonDefaults.buttonColors(
-            containerColor = Tokens.Palette.SurfaceMuted,
-            contentColor = Tokens.Palette.TextPrimary,
+            containerColor = LocalPalette.current.SurfaceMuted,
+            contentColor = LocalPalette.current.TextPrimary,
         ),
         modifier = modifier
             .fillMaxWidth()
@@ -130,7 +131,7 @@ fun FavoriteButton(
                 contentDescription = stringResource(
                     if (favorite) R.string.common_favorite_remove else R.string.common_favorite_add,
                 ),
-                tint = if (favorite) Tokens.Palette.Heart else Tokens.Palette.TextSecondary,
+                tint = if (favorite) LocalPalette.current.Heart else LocalPalette.current.TextSecondary,
             )
         }
     }
@@ -164,7 +165,7 @@ fun EmptyState(
         Text(
             text = description,
             style = MaterialTheme.typography.bodyMedium,
-            color = Tokens.Palette.TextSecondary,
+            color = LocalPalette.current.TextSecondary,
             textAlign = TextAlign.Center,
         )
         if (actionLabel != null && onAction != null) {

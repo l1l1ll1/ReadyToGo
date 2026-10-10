@@ -28,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.ui.component.SecondaryButton
 import kr.ac.baekseok.readytogo.ui.component.SectionHeader
+import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 
 /** FAQ 한 항목. */
@@ -58,7 +59,7 @@ fun SupportScreen() {
                 Text(
                     text = stringResource(R.string.support_intro),
                     style = MaterialTheme.typography.bodyLarge,
-                    color = Tokens.Palette.TextSecondary,
+                    color = LocalPalette.current.TextSecondary,
                 )
 
                 val subject = stringResource(R.string.support_mail_subject)
@@ -107,10 +108,10 @@ fun SupportScreen() {
                     Text(
                         text = stringResource(item.answerRes),
                         style = MaterialTheme.typography.bodyMedium,
-                        color = Tokens.Palette.TextSecondary,
+                        color = LocalPalette.current.TextSecondary,
                     )
                 }
-                HorizontalDivider(color = Tokens.Palette.Divider)
+                HorizontalDivider(color = LocalPalette.current.Divider)
             }
         }
     }

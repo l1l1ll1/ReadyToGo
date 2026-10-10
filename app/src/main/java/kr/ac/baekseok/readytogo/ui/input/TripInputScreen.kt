@@ -53,6 +53,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import kr.ac.baekseok.readytogo.data.model.TravelPurpose
 import kr.ac.baekseok.readytogo.data.model.TripCondition
 import kr.ac.baekseok.readytogo.ui.component.PrimaryButton
+import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 
 /**
@@ -85,7 +86,7 @@ fun TripInputScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        containerColor = Tokens.Palette.Background,
+        containerColor = LocalPalette.current.Background,
         topBar = {
             TopAppBar(
                 title = { Text("새 여행") },
@@ -95,7 +96,7 @@ fun TripInputScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Tokens.Palette.Background,
+                    containerColor = LocalPalette.current.Background,
                 ),
             )
         },
@@ -205,7 +206,7 @@ private fun RouteCard(
         modifier = Modifier
             .fillMaxWidth()
             .clip(Tokens.Radius.card)
-            .background(Tokens.Palette.SurfaceMuted)
+            .background(LocalPalette.current.SurfaceMuted)
             .padding(vertical = Tokens.Space.lg),
     ) {
         RouteEnd(
@@ -218,7 +219,7 @@ private fun RouteCard(
         Icon(
             imageVector = Icons.AutoMirrored.Filled.ArrowForward,
             contentDescription = null,
-            tint = Tokens.Palette.TextSecondary,
+            tint = LocalPalette.current.TextSecondary,
             modifier = Modifier.size(Tokens.Size.icon),
         )
         RouteEnd(
@@ -249,13 +250,13 @@ private fun RouteEnd(
         Text(
             text = label,
             style = MaterialTheme.typography.labelMedium,
-            color = Tokens.Palette.TextSecondary,
+            color = LocalPalette.current.TextSecondary,
         )
         Text(
             text = value ?: placeholder,
             style = MaterialTheme.typography.titleLarge,
             // 아직 안 고른 자리는 흐리게 둬서 "눌러야 하는 곳"으로 보이게 한다.
-            color = if (value != null) Tokens.Palette.TextPrimary else Tokens.Palette.TextSecondary,
+            color = if (value != null) LocalPalette.current.TextPrimary else LocalPalette.current.TextSecondary,
             textAlign = TextAlign.Center,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -276,19 +277,19 @@ private fun DateCard(
             .fillMaxWidth()
             .clip(Tokens.Radius.card)
             .clickable(onClick = onClick)
-            .background(Tokens.Palette.SurfaceMuted)
+            .background(LocalPalette.current.SurfaceMuted)
             .padding(Tokens.Space.lg),
     ) {
         Icon(
             imageVector = Icons.Outlined.CalendarMonth,
             contentDescription = null,
-            tint = Tokens.Palette.TextSecondary,
+            tint = LocalPalette.current.TextSecondary,
         )
         Column(verticalArrangement = Arrangement.spacedBy(Tokens.Space.xs)) {
             Text(
                 text = "여행 날짜",
                 style = MaterialTheme.typography.labelMedium,
-                color = Tokens.Palette.TextSecondary,
+                color = LocalPalette.current.TextSecondary,
             )
             Text(
                 text = if (departure != null && returnDate != null) {
@@ -298,9 +299,9 @@ private fun DateCard(
                 },
                 style = MaterialTheme.typography.titleSmall,
                 color = if (departure != null && returnDate != null) {
-                    Tokens.Palette.TextPrimary
+                    LocalPalette.current.TextPrimary
                 } else {
-                    Tokens.Palette.TextSecondary
+                    LocalPalette.current.TextSecondary
                 },
             )
         }
@@ -356,7 +357,7 @@ private fun PartySection(
         Text(
             text = "성인 기준입니다. 숙소는 2인 1실로 ${roomCount}개 방을 잡습니다.",
             style = MaterialTheme.typography.bodyMedium,
-            color = Tokens.Palette.TextSecondary,
+            color = LocalPalette.current.TextSecondary,
         )
     }
 }
@@ -371,7 +372,7 @@ private fun PurposeSection(
         Text(
             text = "고른 목적에 따라 예산 배분과 하루 일정 밀도가 달라집니다. 여러 개 고를 수 있습니다.",
             style = MaterialTheme.typography.bodyMedium,
-            color = Tokens.Palette.TextSecondary,
+            color = LocalPalette.current.TextSecondary,
         )
         // FlowRow를 쓰는 이유: 칩 네 개를 Row로 균등 분할하면 "액티비티"가 "액티"로 잘린다.
         // 글자 길이에 맞춰 두고, 한 줄에 안 들어가면 다음 줄로 넘긴다.
@@ -415,7 +416,7 @@ private fun CreatePlanBar(
     missingHint: String?,
     onClick: () -> Unit,
 ) {
-    Surface(color = Tokens.Palette.Background) {
+    Surface(color = LocalPalette.current.Background) {
         Column(
             modifier = Modifier.padding(
                 start = Tokens.Space.screenHorizontal,
@@ -429,7 +430,7 @@ private fun CreatePlanBar(
                 Text(
                     text = missingHint,
                     style = MaterialTheme.typography.labelMedium,
-                    color = Tokens.Palette.TextSecondary,
+                    color = LocalPalette.current.TextSecondary,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth(),
                 )

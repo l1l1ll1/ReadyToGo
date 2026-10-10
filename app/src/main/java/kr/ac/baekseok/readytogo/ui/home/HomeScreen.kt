@@ -60,7 +60,7 @@ fun HomeScreen(
             ),
             verticalArrangement = Arrangement.spacedBy(Tokens.Space.lg),
         ) {
-            item { Greeting(state.authState) }
+            item { Greeting(state.authState, state.nickname) }
 
             item {
                 PrimaryButton(
@@ -118,9 +118,10 @@ fun HomeScreen(
 }
 
 @Composable
-private fun Greeting(authState: AuthState) {
+private fun Greeting(authState: AuthState, nickname: String?) {
     val name = when (authState) {
-        is AuthState.SignedIn -> authState.user.displayName
+        // 사용자가 정한 닉네임이 먼저다. 아직 없으면(옛 계정) Google 계정 이름으로 부른다.
+        is AuthState.SignedIn -> nickname ?: authState.user.displayName
         // 둘러보기 중에는 이름이 없다. "여행자님"처럼 부르면 로그인한 것처럼 보여 혼란스럽다.
         else -> null
     }

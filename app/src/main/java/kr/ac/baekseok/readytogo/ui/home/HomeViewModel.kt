@@ -19,6 +19,8 @@ import java.time.LocalDate
  */
 data class HomeUiState(
     val authState: AuthState = AuthState.Unknown,
+    /** 사용자가 정한 이름. 아직 없으면 null — 인사말이 Google 계정 이름으로 내려간다. */
+    val nickname: String? = null,
     val upcoming: SavedTrip? = null,
     val recent: List<SavedTrip> = emptyList(),
     val today: LocalDate = LocalDate.now(),
@@ -29,10 +31,12 @@ class HomeViewModel : ViewModel() {
     val uiState: StateFlow<HomeUiState> = combine(
         AppContainer.auth.authState,
         AppContainer.savedTrips.observeAll(),
-    ) { auth, trips ->
+        AppContainer.userProfile.observeNickname(),
+    ) { auth, trips, nickname ->
         val today = LocalDate.now()
         HomeUiState(
             authState = auth,
+            nickname = nickname,
             // 다가오는 여행이 여럿이면 가장 가까운 것 하나만 보여준다.
             // 카드를 여러 개 쌓으면 "다음에 갈 곳"이라는 의미가 흐려진다.
             upcoming = trips.filter { it.isUpcoming(today) }.minByOrNull { it.departureDate },

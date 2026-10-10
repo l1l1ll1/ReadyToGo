@@ -14,6 +14,7 @@ import androidx.compose.material.icons.outlined.MailOutline
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -29,6 +30,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kr.ac.baekseok.readytogo.R
+import kr.ac.baekseok.readytogo.data.AppContainer
 import kr.ac.baekseok.readytogo.data.model.AuthState
 import kr.ac.baekseok.readytogo.ui.auth.AuthViewModel
 import kr.ac.baekseok.readytogo.ui.auth.InitialAvatar
@@ -48,10 +50,13 @@ fun ProfileScreen(
     onOpenSupport: () -> Unit,
     onOpenAbout: () -> Unit,
     onOpenSaved: () -> Unit,
+    onOpenNickname: () -> Unit,
     onSignIn: () -> Unit,
     viewModel: AuthViewModel = viewModel(),
 ) {
     val authState by viewModel.authState.collectAsState()
+    val nickname by AppContainer.userProfile.observeNickname()
+        .collectAsState(initial = null)
 
     Surface(color = LocalPalette.current.Background) {
         LazyColumn(
@@ -66,10 +71,23 @@ fun ProfileScreen(
             item {
                 when (val state = authState) {
                     is AuthState.SignedIn -> SignedInHeader(
-                        name = state.user.displayName,
+                        // 닉네임이 있으면 그 이름으로 보여준다. 홈 인사말과 같은 이름이어야
+                        // "내가 정한 이름"이라는 게 분명해진다.
+                        name = nickname ?: state.user.displayName,
                         email = state.user.email,
                     )
                     else -> GuestHeader(onSignIn = onSignIn)
+                }
+            }
+
+            // 닉네임 변경은 로그인한 사람에게만 의미가 있다.
+            if (authState is AuthState.SignedIn) {
+                item {
+                    MenuRow(
+                        icon = Icons.Outlined.Person,
+                        label = stringResource(R.string.profile_nickname),
+                        onClick = onOpenNickname,
+                    )
                 }
             }
 

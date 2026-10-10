@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -15,6 +16,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
+import kotlinx.coroutines.flow.first
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,6 +35,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import kr.ac.baekseok.readytogo.data.AppContainer
 import kr.ac.baekseok.readytogo.data.model.AuthState
+import kr.ac.baekseok.readytogo.data.model.canSave
 import kr.ac.baekseok.readytogo.data.model.TripCondition
 import kr.ac.baekseok.readytogo.ui.auth.LoginScreen
 import kr.ac.baekseok.readytogo.ui.home.HomeScreen
@@ -43,6 +47,8 @@ import kr.ac.baekseok.readytogo.ui.onboarding.OnboardingScreen
 import kr.ac.baekseok.readytogo.ui.plan.TripPlanScreen
 import kr.ac.baekseok.readytogo.ui.plan.TripPlanUiState
 import kr.ac.baekseok.readytogo.ui.plan.TripPlanViewModel
+import kr.ac.baekseok.readytogo.ui.profile.EditNicknameScreen
+import kr.ac.baekseok.readytogo.ui.profile.FirstNicknameScreen
 import kr.ac.baekseok.readytogo.ui.profile.ProfileScreen
 import kr.ac.baekseok.readytogo.ui.saved.SavedScreen
 import kr.ac.baekseok.readytogo.ui.settings.AboutScreen
@@ -60,6 +66,11 @@ object Routes {
     const val SPLASH = "splash"
     const val ONBOARDING = "onboarding"
     const val LOGIN = "login"
+
+    /** 로그인 직후 닉네임이 있는지 확인하는 중간 지점. [NICKNAME_FIRST] 또는 홈으로 보낸다. */
+    const val AFTER_LOGIN = "after-login"
+    const val NICKNAME_FIRST = "nickname-first"
+    const val NICKNAME = "nickname"
 
     /** 탭 주소는 MainTab이 들고 있다 — 바와 그래프가 같은 값을 봐야 어긋나지 않는다. */
     val HOME = MainTab.HOME.route
@@ -138,12 +149,63 @@ private fun NavGraphBuilder.entryGraph(navController: NavHostController) {
         TabScreen {
             LoginScreen(
                 onSignedIn = {
-                    navController.navigate(Routes.HOME) {
+                    // 둘러보기는 닉네임이 없으므로 바로 홈으로, 로그인은 확인을 거친다.
+                    val next = if (AppContainer.auth.authState.value.canSave) {
+                        Routes.AFTER_LOGIN
+                    } else {
+                        Routes.HOME
+                    }
+                    navController.navigate(next) {
                         popUpTo(Routes.LOGIN) { inclusive = true }
                     }
                 },
             )
         }
+    }
+
+    composable(Routes.AFTER_LOGIN) {
+        NicknameGate(
+            onReady = { hasNickname ->
+                val next = if (hasNickname) Routes.HOME else Routes.NICKNAME_FIRST
+                navController.navigate(next) {
+                    popUpTo(Routes.AFTER_LOGIN) { inclusive = true }
+                }
+            },
+        )
+    }
+
+    composable(Routes.NICKNAME_FIRST) {
+        TabScreen {
+            FirstNicknameScreen(
+                onDone = {
+                    navController.navigate(Routes.HOME) {
+                        popUpTo(Routes.NICKNAME_FIRST) { inclusive = true }
+                    }
+                },
+            )
+        }
+    }
+}
+
+/**
+ * 로그인 직후 닉네임이 있는지 한 번 읽는다.
+ *
+ * **중간 화면을 두는 이유**: 읽기는 네트워크를 타므로 그 자리에서 알 수 없다.
+ * 홈으로 먼저 보내고 나중에 닉네임 화면을 띄우면 홈이 한 번 깜빡이고,
+ * 로그인 화면에서 기다리게 하면 로그인이 안 끝난 것처럼 보인다.
+ */
+@Composable
+private fun NicknameGate(onReady: (Boolean) -> Unit) {
+    LaunchedEffect(Unit) {
+        val nickname = AppContainer.userProfile.observeNickname().first()
+        onReady(!nickname.isNullOrBlank())
+    }
+
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.fillMaxSize(),
+    ) {
+        CircularProgressIndicator()
     }
 }
 
@@ -187,6 +249,7 @@ private fun NavGraphBuilder.tabGraph(navController: NavHostController) {
                 onOpenSupport = { navController.navigate(Routes.SUPPORT) },
                 onOpenAbout = { navController.navigate(Routes.ABOUT) },
                 onOpenSaved = { navController.navigate(MainTab.SAVED.route) },
+                onOpenNickname = { navController.navigate(Routes.NICKNAME) },
                 onSignIn = { navController.navigate(Routes.LOGIN) },
             )
         }
@@ -296,6 +359,15 @@ private fun NavGraphBuilder.settingsGraph(navController: NavHostController) {
             onBack = { navController.popBackStack() },
         ) {
             AboutScreen(onOpenPrivacy = { navController.navigate(Routes.PRIVACY) })
+        }
+    }
+
+    composable(Routes.NICKNAME) {
+        TitledScreen(
+            title = stringResource(R.string.nickname_title),
+            onBack = { navController.popBackStack() },
+        ) {
+            EditNicknameScreen(onDone = { navController.popBackStack() })
         }
     }
 

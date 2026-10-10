@@ -65,10 +65,21 @@
     <!-- 프로필 -->
     <string name="profile_guest_title">Not signed in</string>
     <string name="profile_guest_body">Sign in and your plans and saved places follow you to a new device.</string>
+    <string name="profile_nickname">Change nickname</string>
     <string name="profile_saved_places">Saved places</string>
     <string name="profile_settings">Settings</string>
     <string name="profile_support">Help</string>
     <string name="profile_about">About</string>
+
+    <!-- 닉네임 -->
+    <string name="nickname_title">Nickname</string>
+    <string name="nickname_welcome">What should we call you?</string>
+    <string name="nickname_change">Change nickname</string>
+    <string name="nickname_body">We\'ll greet you by this name on the home screen. You can change it later in your profile.</string>
+    <string name="nickname_label">Nickname</string>
+    <string name="nickname_counter">%1$d / %2$d</string>
+    <string name="nickname_start">Get started</string>
+    <string name="nickname_save">Save</string>
 
     <!-- 설정 -->
     <string name="settings_title">Settings</string>

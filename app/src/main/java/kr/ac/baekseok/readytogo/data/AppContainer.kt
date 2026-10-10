@@ -6,6 +6,8 @@ import kr.ac.baekseok.readytogo.data.model.AuthState
 import kr.ac.baekseok.readytogo.data.model.SavedTrip
 import kr.ac.baekseok.readytogo.data.repository.FavoriteRepository
 import kr.ac.baekseok.readytogo.data.repository.SavedTripRepository
+import kr.ac.baekseok.readytogo.data.repository.UserProfileRepository
+import kr.ac.baekseok.readytogo.data.repository.firebase.FirestoreUserProfileRepository
 import kr.ac.baekseok.readytogo.data.locale.AppLocale
 import kr.ac.baekseok.readytogo.data.repository.prefs.PreferencesSettingsRepository
 import kr.ac.baekseok.readytogo.data.repository.firebase.FirebaseAuthRepository
@@ -108,6 +110,11 @@ object AppContainer {
     // AuthRepository 전체가 아니라 상태 Flow만 넘겨 서로를 참조하지 않게 한다.
     val savedTrips: SavedTripRepository by lazy { FirestoreSavedTripRepository(auth.authState) }
     val favorites: FavoriteRepository by lazy { FirestoreFavoriteRepository(auth.authState) }
+
+    /** 닉네임처럼 계정에 딸린 값. 이름·이메일은 Google이 주지만 닉네임은 우리가 저장한다. */
+    val userProfile: UserProfileRepository by lazy {
+        FirestoreUserProfileRepository(auth.authState)
+    }
 
     /** 설정은 계정이 아니라 기기에 딸린 값이라 Firestore를 쓰지 않는다. */
     val settings: PreferencesSettingsRepository by lazy {

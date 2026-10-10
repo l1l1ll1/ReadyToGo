@@ -81,6 +81,7 @@ class AuthViewModel : ViewModel() {
 
             val dataDeleted = AppContainer.savedTrips.deleteAll()
                 .mapCatching { AppContainer.favorites.deleteAll().getOrThrow() }
+                .mapCatching { AppContainer.userProfile.delete().getOrThrow() }
 
             dataDeleted
                 .onFailure {

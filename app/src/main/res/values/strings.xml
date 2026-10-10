@@ -69,10 +69,22 @@
     <!-- 프로필 -->
     <string name="profile_guest_title">로그인하지 않았습니다</string>
     <string name="profile_guest_body">로그인하면 만든 일정과 저장한 장소가 기기를 바꿔도 남습니다.</string>
+    <string name="profile_nickname">닉네임 변경</string>
     <string name="profile_saved_places">저장한 장소</string>
     <string name="profile_settings">설정</string>
     <string name="profile_support">고객센터</string>
     <string name="profile_about">정보</string>
+
+    <!-- 닉네임 -->
+    <string name="nickname_title">닉네임</string>
+    <string name="nickname_welcome">어떻게 불러 드릴까요?</string>
+    <string name="nickname_change">닉네임 변경</string>
+    <string name="nickname_body">홈 화면에서 이 이름으로 인사합니다. 나중에 프로필에서 바꿀 수 있습니다.</string>
+    <string name="nickname_label">닉네임</string>
+    <!-- 예: "3 / 12" -->
+    <string name="nickname_counter">%1$d / %2$d</string>
+    <string name="nickname_start">시작하기</string>
+    <string name="nickname_save">저장</string>
 
     <!-- 설정 -->
     <string name="settings_title">설정</string>

@@ -32,8 +32,11 @@
     <string name="onboarding_3_title">See it all on the map</string>
     <string name="onboarding_3_body">View each day\'s route on a map and\nsave the places you like.</string>
 
+    <!-- 스플래시 -->
+    <string name="splash_tagline">Pick your conditions. The trip is ready.</string>
+
     <!-- 로그인 -->
-    <string name="login_tagline">Tell us your budget and dates.\nWe\'ll plan the flights, stays, food and route.</string>
+    <string name="login_tagline">Pick a budget and dates —\nflights, stays, food and route, all at once</string>
     <string name="login_google">Continue with Google</string>
     <string name="login_guest">Browse without signing in</string>
     <string name="login_guest_note">You can build a plan while browsing, but it won\'t be saved.</string>

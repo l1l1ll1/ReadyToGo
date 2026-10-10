@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.Readytogo" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.Readytogo" parent="android:Theme.Material.Light.NoActionBar">
+        <!-- 앱이 뜨는 동안 깔리는 배경. 흰 화면이 번쩍이지 않게 한다(splash_background 주석 참고). -->
+        <item name="android:windowBackground">@drawable/splash_background</item>
+        <!-- 노을 위에 흰 상태바 글자는 안 보인다. 어두운 글자로 둔다. -->
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
 </resources>

@@ -25,18 +25,27 @@ data class AppPalette(
     val Danger: Color,
     val Warning: Color,
     val Heart: Color,
+    /**
+     * 노을 그라데이션. 스플래시·로그인 상단·홈의 다가오는 여행 카드처럼 **큰 면**에만 쓴다.
+     *
+     * 작은 요소(버튼, 칩)에 쓰지 않는 이유: 면이 작으면 세 색이 다 보이지 않아 그냥
+     * 탁한 주황이 되고, 포인트 컬러와도 구분되지 않는다.
+     *
+     * 위에 흰 글자가 올라가므로 고대비에서는 한 단 어두운 조합을 쓴다.
+     */
+    val Sunset: List<Color>,
 )
 
 /**
  * 기본 한 벌.
  *
- * 포인트 컬러 하나로만 끌고 간다. 여행 앱 느낌의 청록이고, 흰 배경에서 대비가 충분하다.
+ * 포인트 컬러 하나로만 끌고 간다. 노을 주황이고, 흰 배경에서 대비가 충분하다.
  * 에어비앤비류 분위기를 참고하되 그쪽 코랄 계열은 쓰지 않는다 — 브랜드 색 모방은 금지다.
  */
 val LightPalette = AppPalette(
-    Point = Color(0xFF0F766E),
-    PointDark = Color(0xFF0B5A54),
-    PointLight = Color(0xFFCCFBF1),
+    Point = Color(0xFFF97316),
+    PointDark = Color(0xFFC2410C),
+    PointLight = Color(0xFFFFEDD5),
 
     // 배경은 흰색. 카드는 아주 옅은 회색으로 띄워 경계선 없이 구분한다.
     Background = Color(0xFFFFFFFF),
@@ -54,6 +63,12 @@ val LightPalette = AppPalette(
 
     // 즐겨찾기 ♥ 채운 상태. 포인트 컬러와 구분돼야 눌린 게 보인다.
     Heart = Color(0xFFE0245E),
+
+    Sunset = listOf(
+        Color(0xFFFDE68A),
+        Color(0xFFFB923C),
+        Color(0xFFF43F5E),
+    ),
 )
 
 /**
@@ -67,9 +82,9 @@ val LightPalette = AppPalette(
  * 넘지만 작은 글씨(13sp)에서 읽기 어렵다. 거의 검정에 가깝게 내려 11:1 이상으로 올린다.
  */
 val HighContrastPalette = LightPalette.copy(
-    Point = Color(0xFF0A4F49),
-    PointDark = Color(0xFF063B36),
-    PointLight = Color(0xFFB7F0E4),
+    Point = Color(0xFF9A3412),
+    PointDark = Color(0xFF7C2D12),
+    PointLight = Color(0xFFFFE0C2),
 
     SurfaceMuted = Color(0xFFE9ECEF),
 
@@ -82,6 +97,14 @@ val HighContrastPalette = LightPalette.copy(
     Danger = Color(0xFF8C1D18),
     Warning = Color(0xFF6E4200),
     Heart = Color(0xFFB0124C),
+
+    // 기본 노을의 첫 색(#FDE68A)은 흰 글자와 대비가 2:1이 안 된다. 큰 글자라 기본에서는
+    // 그림자로 버티지만, 고대비에서는 세 색을 한 단씩 내려 흰 글자가 분명히 읽히게 한다.
+    Sunset = listOf(
+        Color(0xFFF59E0B),
+        Color(0xFFEA580C),
+        Color(0xFFBE123C),
+    ),
 )
 
 /**

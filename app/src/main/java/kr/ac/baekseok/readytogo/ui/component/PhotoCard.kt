@@ -48,17 +48,24 @@ fun PhotoCard(
      * 버튼으로 카드 위에 올려두면 카드를 열려다 누르게 된다.
      */
     onLongClick: (() -> Unit)? = null,
+    /**
+     * 배경 색을 직접 정하고 싶을 때. 기본은 [key]로 고른 사진 대용 그라데이션이다.
+     *
+     * 홈의 "다가오는 여행" 카드가 노을을 쓰려고 열어 둔 구멍이다 — 그 카드는 목적지가
+     * 무엇이든 브랜드 색으로 보여야 한다.
+     */
+    colors: List<Color>? = null,
     modifier: Modifier = Modifier,
     overlay: @Composable (BoxScope.() -> Unit)? = null,
 ) {
-    val colors = Tokens.placeholderGradient(key)
+    val fill = colors ?: Tokens.placeholderGradient(key)
 
     Box(
         modifier = modifier
             .fillMaxWidth()
             .height(height)
             .clip(shape)
-            .background(Brush.linearGradient(colors))
+            .background(Brush.linearGradient(fill))
             .then(
                 if (onClick != null || onLongClick != null) {
                     Modifier.combinedClickable(

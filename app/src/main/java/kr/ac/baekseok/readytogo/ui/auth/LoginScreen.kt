@@ -21,6 +21,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -31,6 +33,7 @@ import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.data.model.AuthState
 import kr.ac.baekseok.readytogo.ui.component.PrimaryButton
 import kr.ac.baekseok.readytogo.ui.component.SecondaryButton
+import kr.ac.baekseok.readytogo.ui.component.Wordmark
 import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 
@@ -67,70 +70,90 @@ fun LoginScreen(
     }
 
     Surface(color = LocalPalette.current.Background, modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = Tokens.Space.screenHorizontal),
-        ) {
-            Spacer(modifier = Modifier.weight(1f))
+        Column(modifier = Modifier.fillMaxSize()) {
 
-            Column(horizontalAlignment = Alignment.Start) {
-                Text(
-                    text = "Readytogo",
-                    style = MaterialTheme.typography.displaySmall,
-                    color = LocalPalette.current.Point,
-                )
-                Spacer(modifier = Modifier.height(Tokens.Space.sm))
+            // 위 2/3 — 노을. 앱을 열자마자 보이는 면이라 여기서 분위기를 다 정한다.
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .weight(LOGO_AREA_WEIGHT)
+                    .fillMaxWidth()
+                    .background(Brush.linearGradient(LocalPalette.current.Sunset))
+                    .padding(horizontal = Tokens.Space.screenHorizontal),
+            ) {
+                Wordmark(width = Tokens.Size.loginWordmark)
+
+                Spacer(modifier = Modifier.height(Tokens.Space.xl))
+
                 Text(
                     text = stringResource(R.string.login_tagline),
                     style = MaterialTheme.typography.bodyLarge,
-                    color = LocalPalette.current.TextSecondary,
+                    color = Color.White.copy(alpha = 0.95f),
+                    textAlign = TextAlign.Center,
                 )
             }
 
-            Spacer(modifier = Modifier.weight(1f))
+            // 아래 1/3 — 흰 바탕에 할 일만. 버튼을 노을 위에 올리면 주황 버튼이 묻힌다.
+            Column(
+                modifier = Modifier
+                    .weight(ACTION_AREA_WEIGHT)
+                    .fillMaxWidth()
+                    .padding(horizontal = Tokens.Space.screenHorizontal),
+            ) {
+                Spacer(modifier = Modifier.weight(1f))
 
-            if (error != null) {
+                if (error != null) {
+                    Text(
+                        text = error.orEmpty(),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = LocalPalette.current.Danger,
+                        modifier = Modifier.padding(bottom = Tokens.Space.md),
+                    )
+                }
+
+                // Google 로고 이미지는 쓰지 않는다 — 브랜드 가이드라인이 따라붙고,
+                // 비슷하게 그려 넣는 것은 더 나쁘다. 글자로만 표기한다.
+                PrimaryButton(
+                    text = stringResource(R.string.login_google),
+                    onClick = { viewModel.signInWithGoogle(context) },
+                    loading = signingIn,
+                )
+
+                Spacer(modifier = Modifier.height(Tokens.Space.md))
+
+                SecondaryButton(
+                    text = stringResource(R.string.login_guest),
+                    onClick = {
+                        viewModel.continueAsGuest()
+                        onSignedIn()
+                    },
+                )
+
+                Spacer(modifier = Modifier.height(Tokens.Space.lg))
+
                 Text(
-                    text = error.orEmpty(),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = LocalPalette.current.Danger,
-                    modifier = Modifier.padding(bottom = Tokens.Space.md),
+                    text = stringResource(R.string.login_guest_note),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = LocalPalette.current.TextSecondary,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth(),
                 )
+
+                Spacer(modifier = Modifier.height(Tokens.Space.xxl))
             }
-
-            // Google 로고 이미지는 쓰지 않는다 — 브랜드 가이드라인이 따라붙고,
-            // 비슷하게 그려 넣는 것은 더 나쁘다. 글자로만 표기한다.
-            PrimaryButton(
-                text = stringResource(R.string.login_google),
-                onClick = { viewModel.signInWithGoogle(context) },
-                loading = signingIn,
-            )
-
-            Spacer(modifier = Modifier.height(Tokens.Space.md))
-
-            SecondaryButton(
-                text = stringResource(R.string.login_guest),
-                onClick = {
-                    viewModel.continueAsGuest()
-                    onSignedIn()
-                },
-            )
-
-            Spacer(modifier = Modifier.height(Tokens.Space.md))
-
-            Text(
-                text = stringResource(R.string.login_guest_note),
-                style = MaterialTheme.typography.labelMedium,
-                color = LocalPalette.current.TextSecondary,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth(),
-            )
-
-            Spacer(modifier = Modifier.height(Tokens.Space.xxl))
         }
     }
 }
+
+/**
+ * 위아래 영역 비율. 2 : 1이다.
+ *
+ * 노을을 절반만 쓰면 배경 사진이 아니라 머리띠처럼 보이고, 전부 채우면 버튼이 그 위에 올라가
+ * 주황 버튼이 배경에 묻힌다.
+ */
+private const val LOGO_AREA_WEIGHT = 2f
+private const val ACTION_AREA_WEIGHT = 1f
 
 /** 프로필 사진이 없을 때 쓰는 이니셜 원. 설정·프로필 화면이 같이 쓴다. */
 @Composable

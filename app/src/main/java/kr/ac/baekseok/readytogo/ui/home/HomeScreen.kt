@@ -1,16 +1,24 @@
 package kr.ac.baekseok.readytogo.ui.home
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -20,6 +28,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -51,49 +62,86 @@ fun HomeScreen(
     val state by viewModel.uiState.collectAsState()
 
     Surface(color = LocalPalette.current.Background) {
-        LazyColumn(
-            contentPadding = PaddingValues(
-                start = Tokens.Space.screenHorizontal,
-                end = Tokens.Space.screenHorizontal,
-                top = Tokens.Space.lg,
-                bottom = Tokens.Space.xxl,
-            ),
-            verticalArrangement = Arrangement.spacedBy(Tokens.Space.lg),
-        ) {
-            item { Greeting(state.authState, state.nickname) }
+        Box(modifier = Modifier.fillMaxSize()) {
+            HomeList(
+                state = state,
+                onCreateTrip = onCreateTrip,
+                onOpenTrip = onOpenTrip,
+                onSeeAllTrips = onSeeAllTrips,
+            )
 
+            // 새 여행 만들기는 이 화면에서 가장 자주 하는 일이라 목록과 같이 스크롤되면 안 된다.
+            // 목록 맨 위 버튼을 FAB로 옮겨 어디까지 내려가도 손에 닿게 한다.
+            ExtendedFloatingActionButton(
+                onClick = onCreateTrip,
+                containerColor = LocalPalette.current.Point,
+                contentColor = Color.White,
+                icon = { Icon(Icons.Filled.Add, contentDescription = null) },
+                text = { Text(stringResource(R.string.home_create_trip)) },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(Tokens.Space.lg),
+            )
+        }
+    }
+}
+
+@Composable
+private fun HomeList(
+    state: HomeUiState,
+    onCreateTrip: () -> Unit,
+    onOpenTrip: (SavedTrip) -> Unit,
+    onSeeAllTrips: () -> Unit,
+) {
+    LazyColumn(
+        contentPadding = PaddingValues(
+            start = Tokens.Space.screenHorizontal,
+            end = Tokens.Space.screenHorizontal,
+            top = Tokens.Space.lg,
+            // FAB에 가려지지 않게 아래를 더 비운다.
+            bottom = Tokens.Space.xxl * 2,
+        ),
+        verticalArrangement = Arrangement.spacedBy(Tokens.Space.lg),
+    ) {
+        item { Greeting(state.authState, state.nickname) }
+
+        // 다가오는 여행이 없으면 카드를 아예 내린다. 빈 카드는 자리만 차지한다.
+        state.upcoming?.let { trip ->
             item {
-                PrimaryButton(
-                    text = stringResource(R.string.home_create_trip),
-                    onClick = onCreateTrip,
-                )
-            }
-
-            // 다가오는 여행이 없으면 카드를 아예 내린다. 빈 카드는 자리만 차지한다.
-            state.upcoming?.let { trip ->
-                item {
-                    Column(verticalArrangement = Arrangement.spacedBy(Tokens.Space.sm)) {
-                        SectionHeader(title = stringResource(R.string.home_upcoming))
-                        UpcomingTripCard(
-                            trip = trip,
-                            today = state.today,
-                            onClick = { onOpenTrip(trip) },
-                        )
-                    }
+                Column(verticalArrangement = Arrangement.spacedBy(Tokens.Space.sm)) {
+                    SectionHeader(title = stringResource(R.string.home_upcoming))
+                    UpcomingTripCard(
+                        trip = trip,
+                        today = state.today,
+                        onClick = { onOpenTrip(trip) },
+                    )
                 }
             }
+        }
 
+        item {
+            SectionHeader(
+                title = stringResource(R.string.home_recent),
+                actionLabel = stringResource(R.string.common_see_all)
+                    .takeIf { state.recent.isNotEmpty() },
+                onAction = onSeeAllTrips.takeIf { state.recent.isNotEmpty() },
+            )
+        }
+
+        if (state.recent.isEmpty()) {
             item {
-                SectionHeader(
-                    title = stringResource(R.string.home_recent),
-                    actionLabel = stringResource(R.string.common_see_all)
-                        .takeIf { state.recent.isNotEmpty() },
-                    onAction = onSeeAllTrips.takeIf { state.recent.isNotEmpty() },
-                )
-            }
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    // 빈 화면에 글자만 있으면 로딩이 덜 끝난 것처럼 보인다.
+                    // 앱 아이콘 심볼을 옅게 깔아 "아직 아무것도 없는 자리"로 읽히게 한다.
+                    Image(
+                        painter = painterResource(R.drawable.ic_launcher_monochrome),
+                        contentDescription = null,
+                        colorFilter = ColorFilter.tint(LocalPalette.current.PointLight),
+                        modifier = Modifier
+                            .padding(top = Tokens.Space.xl)
+                            .size(Tokens.Size.emptyStateSymbol),
+                    )
 
-            if (state.recent.isEmpty()) {
-                item {
                     // 둘러보기 중이면 "만든 일정이 없다"가 아니라 "저장이 안 된다"가 맞는 설명이다.
                     EmptyState(
                         title = stringResource(
@@ -108,10 +156,10 @@ fun HomeScreen(
                         onAction = onCreateTrip,
                     )
                 }
-            } else {
-                items(state.recent, key = { it.id }) { trip ->
-                    RecentTripRow(trip = trip, onClick = { onOpenTrip(trip) })
-                }
+            }
+        } else {
+            items(state.recent, key = { it.id }) { trip ->
+                RecentTripRow(trip = trip, onClick = { onOpenTrip(trip) })
             }
         }
     }
@@ -159,6 +207,9 @@ private fun UpcomingTripCard(trip: SavedTrip, today: LocalDate, onClick: () -> U
         title = trip.title,
         subtitle = "${trip.departureDate.format(DATE_FORMAT)} – " +
             "${trip.returnDate.format(DATE_FORMAT)} · ${trip.dayCount}일",
+        // 목적지가 어디든 이 카드만은 브랜드 색으로 둔다. 홈에서 가장 먼저 보이는 면이다.
+        colors = LocalPalette.current.Sunset,
+        height = Tokens.Size.heroCardHeight,
         onClick = onClick,
     ) {
         Surface(

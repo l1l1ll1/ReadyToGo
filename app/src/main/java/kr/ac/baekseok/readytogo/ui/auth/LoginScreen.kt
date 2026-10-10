@@ -53,9 +53,14 @@ fun LoginScreen(
     // 계정 선택창은 이 화면의 Context로 띄운다 — AuthViewModel.signInWithGoogle 주석 참고.
     val context = LocalContext.current
 
-    // 로그인·둘러보기 중 무엇이든 "들어갈 수 있는 상태"가 되면 넘긴다.
+    // 로그인이 끝나면 넘긴다.
+    //
+    // **둘러보기(Guest)는 여기서 보지 않는다.** 전에는 Guest도 "들어갈 수 있는 상태"로 보고
+    // 넘겼는데, 그러면 둘러보기 중인 사용자가 로그인하러 이 화면에 와도 화면이 뜨자마자
+    // 다시 홈으로 튕겨서 로그인할 방법이 없었다(결과 화면의 "로그인" 스낵바, 프로필의 로그인 버튼).
+    // 둘러보기로 들어가는 것은 아래 버튼이 직접 처리한다.
     LaunchedEffect(authState) {
-        if (authState is AuthState.SignedIn || authState is AuthState.Guest) onSignedIn()
+        if (authState is AuthState.SignedIn) onSignedIn()
     }
 
     Surface(color = Tokens.Palette.Background, modifier = Modifier.fillMaxSize()) {
@@ -103,7 +108,10 @@ fun LoginScreen(
 
             SecondaryButton(
                 text = "로그인 없이 둘러보기",
-                onClick = viewModel::continueAsGuest,
+                onClick = {
+                    viewModel.continueAsGuest()
+                    onSignedIn()
+                },
             )
 
             Spacer(modifier = Modifier.height(Tokens.Space.md))

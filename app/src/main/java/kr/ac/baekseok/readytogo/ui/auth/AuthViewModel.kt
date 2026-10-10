@@ -1,6 +1,7 @@
 package kr.ac.baekseok.readytogo.ui.auth
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kr.ac.baekseok.readytogo.data.AppContainer
@@ -73,21 +74,33 @@ class AuthViewModel : ViewModel() {
      */
     fun deleteAccount() {
         viewModelScope.launch {
+            // 지울 uid를 남긴다. 계정이 사라진 뒤에는 어느 경로의 데이터였는지 알 방법이 없어서,
+            // 데이터가 남았다는 신고가 들어오면 이 줄이 유일한 단서다.
+            val uid = (authState.value as? AuthState.SignedIn)?.user?.id
+            Log.d(TAG, "탈퇴 시작: users/$uid")
+
             val dataDeleted = AppContainer.savedTrips.deleteAll()
                 .mapCatching { AppContainer.favorites.deleteAll().getOrThrow() }
 
             dataDeleted
                 .onFailure {
+                    Log.w(TAG, "데이터 삭제 실패 — 계정은 그대로 둔다", it)
                     _error.value = "저장된 데이터를 지우지 못해 탈퇴를 멈췄습니다. 다시 시도해 주세요."
                     return@launch
                 }
+            Log.d(TAG, "데이터 삭제 완료: users/$uid")
 
             repository.deleteAccount()
+                .onSuccess { Log.d(TAG, "계정 삭제 완료") }
                 .onFailure { _error.value = it.message ?: "탈퇴에 실패했습니다." }
         }
     }
 
     fun clearError() {
         _error.value = null
+    }
+
+    private companion object {
+        const val TAG = "Auth"
     }
 }

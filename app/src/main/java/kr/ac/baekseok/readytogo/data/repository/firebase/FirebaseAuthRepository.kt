@@ -3,12 +3,9 @@ package kr.ac.baekseok.readytogo.data.repository.firebase
 import android.content.Context
 import android.util.Log
 import androidx.credentials.CredentialManager
-import androidx.credentials.CredentialOption
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.exceptions.GetCredentialCancellationException
 import androidx.credentials.exceptions.GetCredentialException
-import androidx.credentials.exceptions.NoCredentialException
-import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.firebase.auth.FirebaseAuth
@@ -102,29 +99,30 @@ class FirebaseAuthRepository(
      * @param activityContext 계정 선택창을 띄울 Activity의 Context.
      */
     suspend fun signInWithGoogle(activityContext: Context): Result<Unit> = runCatching {
+        // google-services.json의 client_type 3(웹 클라이언트) ID.
+        // 플러그인이 이 문자열 리소스를 자동으로 만들어 준다 — 소스에 적지 않는다.
         val serverClientId = appContext.getString(R.string.default_web_client_id)
 
-        val savedAccounts = GetGoogleIdOption.Builder()
-            // false로 두는 이유: 기기에 Google 계정이 여러 개일 때 전부 보여줘야 한다.
-            // true면 이미 이 앱에 로그인한 적 있는 계정만 나와, 첫 로그인에서 목록이 빈다.
-            .setFilterByAuthorizedAccounts(false)
-            // google-services.json의 client_type 3(웹 클라이언트) ID.
-            // 플러그인이 이 문자열 리소스를 자동으로 만들어 준다 — 소스에 적지 않는다.
-            .setServerClientId(serverClientId)
+        // **GetGoogleIdOption이 아니라 GetSignInWithGoogleOption을 쓴다.**
+        //
+        // GetGoogleIdOption은 기기에 이미 있는 계정만 목록에 올린다. 계정이 하나뿐이면
+        // 그 하나만 뜨고 "다른 계정 사용"이 없어서, 계정을 바꾸려는 사용자가 앱 안에서
+        // 갈 길이 막힌다(설정에서 계정을 추가하고 돌아와야 한다).
+        //
+        // 이쪽은 Google 로그인 창이라 기존 계정 목록과 계정 추가가 같이 나온다.
+        // 계정이 하나뿐인 사용자도 창을 한 번 거치지만, 막히는 것보다는 낫다.
+        val option = GetSignInWithGoogleOption.Builder(serverClientId).build()
+
+        val request = GetCredentialRequest.Builder()
+            .addCredentialOption(option)
             .build()
 
-        val googleIdToken = try {
-            requestGoogleIdToken(activityContext, savedAccounts)
-        } catch (noAccount: NoCredentialException) {
-            // 기기에 쓸 수 있는 계정이 하나도 없을 때.
-            //
-            // 여기서 "설정에서 계정을 추가하세요"라고 끝내면 사용자를 앱 밖으로 내보내는 셈이고,
-            // 돌아와서 다시 버튼을 눌러야 한다. GetSignInWithGoogleOption은 계정 추가까지
-            // 포함된 Google 로그인 창을 앱 안에서 바로 띄우므로 그 흐름이 끊기지 않는다.
-            Log.d(TAG, "저장된 계정이 없어 Google 로그인 창으로 넘어간다", noAccount)
-            val signInWithGoogle = GetSignInWithGoogleOption.Builder(serverClientId).build()
-            requestGoogleIdToken(activityContext, signInWithGoogle)
-        }
+        val response = CredentialManager.create(activityContext)
+            .getCredential(activityContext, request)
+
+        val googleIdToken = GoogleIdTokenCredential
+            .createFrom(response.credential.data)
+            .idToken
 
         // 2단계 — Google 토큰을 Firebase 계정으로 바꾼다.
         val credential = GoogleAuthProvider.getCredential(googleIdToken, null)
@@ -137,26 +135,6 @@ class FirebaseAuthRepository(
             return@recoverCatching Unit
         }
         throw IllegalStateException(error.userMessage(), error)
-    }
-
-    /**
-     * 계정 선택창을 띄우고 Google ID 토큰을 받아 온다.
-     *
-     * 두 가지 option(저장된 계정 / 계정 추가 포함 로그인)이 같은 절차를 타기 때문에
-     * option만 바꿔 두 번 부를 수 있게 떼어 둔다.
-     */
-    private suspend fun requestGoogleIdToken(
-        activityContext: Context,
-        option: CredentialOption,
-    ): String {
-        val request = GetCredentialRequest.Builder()
-            .addCredentialOption(option)
-            .build()
-
-        val response = CredentialManager.create(activityContext)
-            .getCredential(activityContext, request)
-
-        return GoogleIdTokenCredential.createFrom(response.credential.data).idToken
     }
 
     override fun continueAsGuest() {
@@ -196,8 +174,8 @@ class FirebaseAuthRepository(
     /**
      * 사용자에게 보여줄 문구.
      *
-     * 계정이 없는 경우를 따로 안내하지 않는 이유: 그 상황은 위에서 Google 로그인 창으로
-     * 넘겨 이미 처리한다. 여기까지 왔다면 창에서도 실패한 것이라 설명할 거리가 없다.
+     * 계정이 없는 경우를 따로 안내하지 않는 이유: Google 로그인 창이 계정 추가까지 품고 있어서
+     * "계정이 없다"로 끝나는 길이 없다. 여기까지 왔다면 창 안에서 실패한 것이다.
      */
     private fun Throwable.userMessage(): String = when (this) {
         is GetCredentialException ->

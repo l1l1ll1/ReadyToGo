@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <!--
+      시스템 스플래시 배경.
+
+      **왜 단색인가**: 안드로이드 12부터 앱 시작 화면은 시스템이 그린다. 거기에 넣을 수 있는
+      것은 배경 "색" 하나와 아이콘뿐이라, windowBackground에 그라데이션을 걸어도
+      납작한 한 색으로 눌린다. 그래서 노을 가운데 색을 골라 명시한다 —
+      무엇이 나올지 모르는 채로 두는 것보다 낫다.
+
+      노을 그라데이션 자체는 그 뒤에 이어지는 Compose 스플래시가 보여준다.
+    -->
+    <color name="splash_background">#FB923C</color>
 </resources>

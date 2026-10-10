@@ -78,17 +78,22 @@ fun PhotoCard(
             ),
     ) {
         // 아래쪽을 어둡게 덮는다. 그라데이션 색에 따라 흰 글자가 안 보이는 경우를 막는다.
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        0f to Color.Transparent,
-                        0.55f to Color.Transparent,
-                        1f to Color.Black.copy(alpha = 0.55f),
+        //
+        // **글자가 없으면 깔지 않는다.** 온보딩처럼 제목 없이 그림 자리로만 쓰는 카드에서는
+        // 지킬 글자가 없는데, 노을 그라데이션 위에 검은 덮개가 겹쳐 아래쪽이 탁해졌다.
+        if (title.isNotEmpty() || subtitle != null) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        Brush.verticalGradient(
+                            0f to Color.Transparent,
+                            0.55f to Color.Transparent,
+                            1f to Color.Black.copy(alpha = 0.55f),
+                        ),
                     ),
-                ),
-        )
+            )
+        }
 
         Column(
             modifier = Modifier

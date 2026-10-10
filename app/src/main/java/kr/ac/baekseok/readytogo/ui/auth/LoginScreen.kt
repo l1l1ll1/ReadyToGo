@@ -84,7 +84,9 @@ fun LoginScreen(
             ) {
                 Wordmark(width = Tokens.Size.loginWordmark)
 
-                Spacer(modifier = Modifier.height(Tokens.Space.xl))
+                // 워드마크는 궤적이 글자 위로 지나가 윗변이 꽉 찬 모양이다. 문구를 가까이 붙이면
+                // 한 덩어리로 보여 로고가 아니라 제목처럼 읽힌다.
+                Spacer(modifier = Modifier.height(Tokens.Space.xxl))
 
                 Text(
                     text = stringResource(R.string.login_tagline),

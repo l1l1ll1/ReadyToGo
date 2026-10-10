@@ -2,8 +2,16 @@
 <resources>
 
     <style name="Theme.Readytogo" parent="android:Theme.Material.Light.NoActionBar">
-        <!-- 앱이 뜨는 동안 깔리는 배경. 흰 화면이 번쩍이지 않게 한다(splash_background 주석 참고). -->
+        <!--
+          안드로이드 12+의 시작 화면 배경색. 여기 적지 않으면 시스템이 windowBackground에서
+          색을 뽑아 쓰는데, 그 결과가 무엇일지는 드로어블에 달려 있어 예측이 안 된다.
+          colors.xml 주석 참고.
+        -->
+        <item name="android:windowSplashScreenBackground">@color/splash_background</item>
+
+        <!-- 시작 화면이 내려간 뒤 Compose가 그려지기 전까지 깔리는 배경(splash_background.xml). -->
         <item name="android:windowBackground">@drawable/splash_background</item>
+
         <!-- 노을 위에 흰 상태바 글자는 안 보인다. 어두운 글자로 둔다. -->
         <item name="android:windowLightStatusBar">true</item>
     </style>

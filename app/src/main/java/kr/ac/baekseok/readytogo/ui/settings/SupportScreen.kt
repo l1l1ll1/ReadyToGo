@@ -67,13 +67,18 @@ fun SupportScreen() {
                 SecondaryButton(
                     text = stringResource(R.string.support_send_mail),
                     onClick = {
+                        // **제목을 mailto 주소 안에 넣는다.** EXTRA_SUBJECT로 넘겼더니
+                        // Gmail이 무시하고 제목 칸을 비워 둔 채 열었다. 주소에 넣으면
+                        // 메일 앱 종류와 상관없이 채워진다.
+                        val uri = Uri.parse(
+                            "mailto:$SUPPORT_EMAIL?subject=${Uri.encode(subject)}",
+                        )
+
                         // 메일 앱이 없는 기기도 있다. 예외를 던지면 앱이 죽으므로
                         // 토스트로 알리고 넘어간다 — 아무 일도 안 일어나면 버튼이 고장난 줄 안다.
-                        val intent = Intent(Intent.ACTION_SENDTO).apply {
-                            data = Uri.parse("mailto:$SUPPORT_EMAIL")
-                            putExtra(Intent.EXTRA_SUBJECT, subject)
-                        }
-                        runCatching { context.startActivity(intent) }.onFailure {
+                        runCatching {
+                            context.startActivity(Intent(Intent.ACTION_SENDTO, uri))
+                        }.onFailure {
                             Toast.makeText(context, noMailApp, Toast.LENGTH_SHORT).show()
                         }
                     },
@@ -117,8 +122,8 @@ fun SupportScreen() {
     }
 }
 
-/** 문의 받을 주소. 실제 주소를 넣기 전까지 예시로 둔다. */
-private const val SUPPORT_EMAIL = "support@readytogo.app"
+/** 문의 받을 주소. 개인정보 처리 방침(hosting/privacy.html)에 적은 주소와 같아야 한다. */
+private const val SUPPORT_EMAIL = "rudgus6109@gmail.com"
 
 private val FAQ = listOf(
     FaqItem(R.string.faq_1_q, R.string.faq_1_a),

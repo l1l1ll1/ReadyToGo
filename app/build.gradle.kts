@@ -65,6 +65,15 @@ android {
         buildConfig = true
     }
 
+    /**
+     * 개인정보 처리 방침 HTML을 저장소의 hosting/ 폴더에서 그대로 읽는다.
+     *
+     * **복사하지 않고 에셋 폴더로 추가하는 이유**: 같은 파일을 두 곳에 두면 반드시 한쪽만
+     * 고치게 된다. hosting/은 나중에 Firebase Hosting에 그대로 올릴 폴더이고,
+     * 앱은 같은 파일을 file:///android_asset/privacy.html로 띄운다.
+     */
+    sourceSets["main"].assets.srcDir(rootProject.file("hosting"))
+
     testOptions {
         unitTests {
             // 단위 테스트에는 android.util.Log 같은 프레임워크 구현이 없어 호출하면 예외가 난다.

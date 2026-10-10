@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<!--
+  개인정보 처리 방침.
+
+  이 파일 한 장이 두 곳에서 쓰인다:
+  1) 앱 안 WebView (file:///android_asset/privacy.html) — app/build.gradle.kts가
+     이 폴더를 에셋 폴더로 추가해 둔다. 복사본을 만들지 않는 이유는 두 벌을 두면
+     반드시 한쪽만 고치기 때문이다.
+  2) 나중에 Firebase Hosting에 올릴 공개 주소 — 스토어 등록에 외부 URL이 필요하다.
+
+  스타일을 따로 파일로 빼지 않고 여기 둔 이유: 한 장짜리 문서이고, 파일이 늘면
+  에셋과 호스팅 양쪽에서 경로를 맞춰야 한다.
+-->
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Readytogo 개인정보 처리 방침</title>
+    <style>
+        :root {
+            --text: #1a1c1e;
+            --muted: #5f6368;
+            --point: #0f766e;
+            --divider: #e8eaed;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px 20px 48px;
+            background: #ffffff;
+            color: var(--text);
+            font-family: system-ui, -apple-system, "Noto Sans KR", sans-serif;
+            font-size: 15px;
+            line-height: 1.7;
+            word-break: keep-all;
+        }
+
+        h1 {
+            margin: 0 0 4px;
+            font-size: 22px;
+            line-height: 1.4;
+        }
+
+        .updated {
+            margin: 0 0 24px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        h2 {
+            margin: 32px 0 8px;
+            padding-top: 16px;
+            border-top: 1px solid var(--divider);
+            font-size: 17px;
+            line-height: 1.4;
+        }
+
+        h2:first-of-type {
+            border-top: none;
+            padding-top: 0;
+        }
+
+        p, li {
+            margin: 8px 0;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        strong {
+            color: var(--point);
+        }
+
+        a {
+            color: var(--point);
+        }
+
+        /* 기기가 어두운 테마면 따라간다. 앱 화면은 흰 배경 고정이지만,
+           이 문서는 브라우저로도 열리므로 그쪽 설정을 존중한다. */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --text: #e6e8ea;
+                --muted: #9aa0a6;
+                --point: #5eead4;
+                --divider: #3c4043;
+            }
+
+            body {
+                background: #16181a;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<h1>개인정보 처리 방침</h1>
+<p class="updated">최종 수정일: 2026년 10월 11일</p>
+
+<p>
+    Readytogo(이하 "앱")는 여행 일정을 만들어 주는 앱입니다. 이 문서는 앱이 어떤 정보를
+    모으고, 어디에 쓰고, 언제 지우는지를 적은 것입니다.
+</p>
+
+<h2>1. 모으는 정보</h2>
+<ul>
+    <li>
+        <strong>여행 조건</strong> — 출발지, 목적지, 여행 날짜, 인원수, 예산, 여행 목적.
+        일정을 만들고 저장하는 데 씁니다.
+    </li>
+    <li>
+        <strong>계정 정보</strong> — Google 계정으로 로그인할 때 이메일 주소, 이름,
+        프로필 사진 주소를 받습니다. 저장한 일정을 그 계정에 연결하는 데만 씁니다.
+    </li>
+    <li>
+        <strong>즐겨찾기</strong> — 사용자가 ♥를 누른 장소의 이름과 위치.
+    </li>
+</ul>
+<p>
+    로그인하지 않고 "둘러보기"로 쓰면 아무것도 저장되지 않습니다.
+</p>
+
+<h2>2. 모으지 않는 정보</h2>
+<ul>
+    <li><strong>기기의 현재 위치</strong> — 위치 권한을 요청하지도, 사용하지도 않습니다.</li>
+    <li><strong>연락처, 사진, 통화 기록</strong> — 접근하지 않습니다.</li>
+    <li><strong>결제 정보</strong> — 앱에서 결제를 하지 않습니다. 항공권과 숙소는 가격과
+        링크만 보여 주며, 예약은 해당 업체 사이트에서 이루어집니다.
+    </li>
+    <li><strong>광고 식별자</strong> — 광고를 넣지 않으며 추적하지 않습니다.</li>
+</ul>
+
+<h2>3. 어디에 보관하나요</h2>
+<p>
+    저장한 일정과 즐겨찾기는 <strong>Google Firebase(Cloud Firestore)</strong>에 보관됩니다.
+    서버는 <strong>asia-northeast3(서울)</strong> 지역에 있습니다.
+</p>
+<p>
+    데이터는 로그인한 계정의 고유 번호 아래에만 저장되고, 보안 규칙으로
+    <strong>본인만 읽고 쓸 수 있게</strong> 막아 두었습니다. 다른 사용자에게 공개되지 않습니다.
+</p>
+<p>
+    앱 설정(언어, 글자 크기, 고대비, 알림)은 서버로 보내지 않고 기기 안에만 저장합니다.
+</p>
+
+<h2>4. 외부에 전달되는 정보</h2>
+<p>일정을 만들려면 아래 서비스에 검색 조건이 전달됩니다.</p>
+<ul>
+    <li>
+        <strong>Google Places API</strong> — 목적지의 좌표와 검색 반경을 보내 식당·관광지·숙소를
+        받아옵니다.
+    </li>
+    <li>
+        <strong>SerpApi (Google Flights)</strong> — 출발·도착 공항 코드, 날짜, 인원수를 보내
+        항공권 가격을 받아옵니다.
+    </li>
+    <li>
+        <strong>open.er-api.com</strong> — 환율을 받아옵니다. 개인 정보는 보내지 않습니다.
+    </li>
+</ul>
+<p>
+    세 곳 모두에 <strong>계정 정보나 이름은 보내지 않습니다.</strong> 도시와 날짜처럼
+    검색에 필요한 값만 나갑니다.
+</p>
+
+<h2>5. 얼마나 보관하나요</h2>
+<ul>
+    <li>저장한 일정과 즐겨찾기는 사용자가 지우기 전까지 보관합니다.</li>
+    <li>
+        <strong>회원 탈퇴</strong>를 하면 저장한 일정과 즐겨찾기를 먼저 모두 지운 뒤
+        계정을 삭제합니다. 되돌릴 수 없습니다.
+    </li>
+    <li>
+        앱을 지우면 기기에 있던 설정과 검색 캐시가 함께 사라집니다. 다만 서버에 저장한
+        일정은 남으므로, 완전히 지우려면 탈퇴를 해 주세요.
+    </li>
+</ul>
+
+<h2>6. 사용자가 할 수 있는 일</h2>
+<ul>
+    <li>저장한 일정 삭제 — 여행 탭에서 카드를 길게 누릅니다.</li>
+    <li>즐겨찾기 해제 — 저장 탭에서 ♥를 다시 누릅니다.</li>
+    <li>계정과 데이터 전체 삭제 — 설정 &gt; 계정 관리 &gt; 회원 탈퇴.</li>
+    <li>알림 끄기 — 설정 &gt; 알림. 기기 설정에서 권한을 거두어도 됩니다.</li>
+</ul>
+
+<h2>7. 만 14세 미만 아동</h2>
+<p>
+    이 앱은 만 14세 미만 아동을 대상으로 하지 않으며, 해당 연령대의 정보를 의도적으로
+    모으지 않습니다.
+</p>
+
+<h2>8. 문의</h2>
+<p>
+    개인정보와 관련해 궁금한 점이 있으면
+    <a href="mailto:rudgus6109@gmail.com">rudgus6109@gmail.com</a>으로 알려 주세요.
+</p>
+
+<h2>9. 변경</h2>
+<p>
+    이 방침이 바뀌면 앱 안의 이 문서를 고치고 위의 최종 수정일을 바꿉니다. 중요한 변경은
+    앱 안에서 따로 알려 드립니다.
+</p>
+
+</body>
+</html>

@@ -47,6 +47,7 @@ import kr.ac.baekseok.readytogo.ui.profile.ProfileScreen
 import kr.ac.baekseok.readytogo.ui.saved.SavedScreen
 import kr.ac.baekseok.readytogo.ui.settings.AboutScreen
 import kr.ac.baekseok.readytogo.ui.settings.AccountScreen
+import kr.ac.baekseok.readytogo.ui.settings.PrivacyScreen
 import kr.ac.baekseok.readytogo.ui.settings.SettingsScreen
 import kr.ac.baekseok.readytogo.ui.settings.SupportScreen
 import kr.ac.baekseok.readytogo.ui.splash.SplashScreen
@@ -70,6 +71,7 @@ object Routes {
     const val ACCOUNT = "account"
     const val SUPPORT = "support"
     const val ABOUT = "about"
+    const val PRIVACY = "privacy"
 
     // 지도 주소는 없다 — 결과 화면의 탭이라 별도 화면이 아니다.
 }
@@ -293,7 +295,16 @@ private fun NavGraphBuilder.settingsGraph(navController: NavHostController) {
             title = stringResource(R.string.about_title),
             onBack = { navController.popBackStack() },
         ) {
-            AboutScreen()
+            AboutScreen(onOpenPrivacy = { navController.navigate(Routes.PRIVACY) })
+        }
+    }
+
+    composable(Routes.PRIVACY) {
+        TitledScreen(
+            title = stringResource(R.string.about_privacy),
+            onBack = { navController.popBackStack() },
+        ) {
+            PrivacyScreen()
         }
     }
 }

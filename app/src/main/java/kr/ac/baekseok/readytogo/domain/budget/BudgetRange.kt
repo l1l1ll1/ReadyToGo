@@ -21,18 +21,44 @@ object BudgetRange {
     private const val MIN_PER_ADULT = 300_000L
     private const val MAX_PER_ADULT = 5_000_000L
 
-    /** 슬라이더가 끊는 단위. 1원 단위로 움직이면 "1,237,419원" 같은 값이 나온다. */
-    const val STEP_WON = 100_000L
+    /**
+     * 달러로 보여줄 때 쓰는 1인당 범위와 눈금.
+     *
+     * 원화 값을 그대로 환산하면 "$217 ~ $3,623", 칩은 "$362"처럼 어정쩡한 수가 나온다.
+     * 보여줄 돈이 달러면 **달러 기준으로 떨어지는 수**를 먼저 정하고 원화로 되돌린다.
+     */
+    private const val MIN_PER_ADULT_USD = 200L
+    private const val MAX_PER_ADULT_USD = 3_600L
+    private const val STEP_USD = 100L
+    private val QUICK_PER_ADULT_USD = listOf(400L, 800L, 1_200L, 1_600L)
+
+    /**
+     * 슬라이더가 끊는 단위. 1원 단위로 움직이면 "1,237,419원" 같은 값이 나온다.
+     * 달러로 보여줄 때는 $100씩 움직여야 눈금도 떨어진다.
+     */
+    val stepWon: Long
+        get() = if (MoneyDisplay.isUsd) MoneyDisplay.wonOfUsd(STEP_USD) else STEP_WON
+
+    private const val STEP_WON = 100_000L
 
     /** 빠른 선택 칩의 1인당 금액. */
     private val QUICK_PER_ADULT = listOf(500_000L, 1_000_000L, 1_500_000L, 2_000_000L)
 
-    fun minFor(adults: Int): Long = MIN_PER_ADULT * adults
+    fun minFor(adults: Int): Long = perAdultMin() * adults
 
-    fun maxFor(adults: Int): Long = MAX_PER_ADULT * adults
+    fun maxFor(adults: Int): Long = perAdultMax() * adults
 
     /** 빠른 선택 칩 금액. 인원을 곱해 "3명이면 300만원" 같은 실제 총액이 나온다. */
-    fun quickOptionsFor(adults: Int): List<Long> = QUICK_PER_ADULT.map { it * adults }
+    fun quickOptionsFor(adults: Int): List<Long> = quickPerAdult().map { it * adults }
+
+    private fun perAdultMin(): Long =
+        if (MoneyDisplay.isUsd) MoneyDisplay.wonOfUsd(MIN_PER_ADULT_USD) else MIN_PER_ADULT
+
+    private fun perAdultMax(): Long =
+        if (MoneyDisplay.isUsd) MoneyDisplay.wonOfUsd(MAX_PER_ADULT_USD) else MAX_PER_ADULT
+
+    private fun quickPerAdult(): List<Long> =
+        if (MoneyDisplay.isUsd) QUICK_PER_ADULT_USD.map { MoneyDisplay.wonOfUsd(it) } else QUICK_PER_ADULT
 
     /**
      * 금액을 범위 안으로 되돌린다.

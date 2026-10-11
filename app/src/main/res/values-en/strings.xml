@@ -147,9 +147,9 @@
     <string name="notification_body">%1$s departs in %2$d days.</string>
 
     <!-- 공통 표기 -->
-    <string name="fmt_money">KRW %s</string>
-    <!-- "만원"은 한국어에만 있는 단위다. 영어는 money_short_uses_man이 false라 이 값을 쓰지 않는다. -->
-    <string name="fmt_money_man">KRW %s</string>
+    <string name="fmt_money">$%s</string>
+    <!-- "만원"은 한국어에만 있는 단위다. 영어는 이 값을 쓰지 않는다. -->
+    <string name="fmt_money_man">$%s</string>
     <string name="fmt_date_md">MMM d</string>
     <string name="fmt_date_md_e">MMM d (E)</string>
     <string name="fmt_nights_days">%1$s, %2$s</string>
@@ -317,6 +317,7 @@
     <string name="budget_over_max">Over %1$s</string>
     <string name="budget_dialog_title">Enter budget</string>
     <string name="budget_dialog_unit">KRW</string>
+    <string name="budget_dialog_unit_usd">USD</string>
     <string name="budget_dialog_summary">%1$s · about %2$s per person</string>
     <string name="budget_dialog_hint">Enter a number</string>
 

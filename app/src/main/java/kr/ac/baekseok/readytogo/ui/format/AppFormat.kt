@@ -2,10 +2,10 @@ package kr.ac.baekseok.readytogo.ui.format
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import kr.ac.baekseok.readytogo.R
+import kr.ac.baekseok.readytogo.domain.budget.MoneyDisplay
 import kr.ac.baekseok.readytogo.domain.plan.TravelLeg
 import kr.ac.baekseok.readytogo.domain.plan.splitDuration
 import java.time.LocalDate
@@ -23,9 +23,15 @@ import java.util.Locale
  * 자리가 필요하다. 화면 밖(ViewModel, 도메인)에서는 쓰지 않는다 — 그쪽은 숫자를 넘긴다.
  */
 
-/** "339,944원" / "KRW 339,944" */
+/**
+ * "339,944원" / "$246"
+ *
+ * 영어에서는 달러로 환산해 보여준다. 환산은 여기서만 한다 — 계산은 끝까지 원화다
+ * ([MoneyDisplay] 주석 참고).
+ */
 @Composable
-fun money(won: Long): String = stringResource(R.string.fmt_money, "%,d".format(won))
+fun money(won: Long): String =
+    stringResource(R.string.fmt_money, "%,d".format(MoneyDisplay.amountFor(won)))
 
 /**
  * "150만원" / "KRW 1,500,000" — 칩이나 슬라이더 눈금처럼 좁은 자리.
@@ -34,14 +40,13 @@ fun money(won: Long): String = stringResource(R.string.fmt_money, "%,d".format(w
  * 만 단위로 떨어지지 않는 금액도 마찬가지다 — "15.3만원"은 읽기 더 어렵다.
  */
 @Composable
-fun moneyShort(won: Long): String {
-    val useMan = booleanResource(R.bool.money_short_uses_man)
-    return if (useMan && won >= MAN && won % MAN == 0L) {
+fun moneyShort(won: Long): String =
+    if (!MoneyDisplay.isUsd && won >= MAN && won % MAN == 0L) {
         stringResource(R.string.fmt_money_man, "%,d".format(won / MAN))
     } else {
+        // 달러는 자릿수가 원화의 1/1000이라 줄일 것이 없다. "$1,600"이 이미 짧다.
         money(won)
     }
-}
 
 /** "약 1시간 30분" / "About 1 hr 30 min" */
 @Composable

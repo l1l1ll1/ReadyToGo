@@ -32,6 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import kr.ac.baekseok.readytogo.domain.budget.BudgetRange
 import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
+import kr.ac.baekseok.readytogo.domain.budget.MoneyDisplay
 import kr.ac.baekseok.readytogo.ui.format.money
 import kr.ac.baekseok.readytogo.ui.format.moneyShort
 import kr.ac.baekseok.readytogo.R
@@ -190,8 +191,11 @@ private fun BudgetInputDialog(
 ) {
     // 다이얼로그 안에서만 쓰는 글자. 확인을 누를 때까지 밖의 값을 바꾸지 않는다 —
     // 지우는 동안 슬라이더가 최솟값으로 튀어다니면 어지럽다.
-    var text by remember { mutableStateOf(initialWon.toString()) }
-    val typed = text.toLongOrNull()
+    // **보여주는 돈으로 입력받는다.** 화면이 전부 달러인데 입력칸만 원화로 받으면
+    // 사용자가 "2000"을 넣고 2천원이 되는 일이 생긴다. 들어온 값은 바로 원화로 되돌린다.
+    val inUsd = MoneyDisplay.isUsd
+    var text by remember { mutableStateOf(MoneyDisplay.amountFor(initialWon).toString()) }
+    val typedWon = text.toLongOrNull()?.let { if (inUsd) MoneyDisplay.wonOfUsd(it) else it }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -201,7 +205,17 @@ private fun BudgetInputDialog(
                 OutlinedTextField(
                     value = text,
                     onValueChange = { input -> text = input.filter { it.isDigit() } },
-                    label = { Text(stringResource(R.string.budget_dialog_unit)) },
+                    label = {
+                        Text(
+                            stringResource(
+                                if (inUsd) {
+                                    R.string.budget_dialog_unit_usd
+                                } else {
+                                    R.string.budget_dialog_unit
+                                },
+                            ),
+                        )
+                    },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     singleLine = true,
                     shape = Tokens.Radius.button,
@@ -209,7 +223,7 @@ private fun BudgetInputDialog(
                 )
                 Text(
                     // 숫자를 세지 않아도 되게 천 단위로 끊어 보여준다.
-                    text = typed?.let { won ->
+                    text = typedWon?.let { won ->
                         if (adults > 1) {
                             stringResource(
                                 R.string.budget_dialog_summary,
@@ -227,8 +241,8 @@ private fun BudgetInputDialog(
         },
         confirmButton = {
             TextButton(
-                onClick = { onConfirm(text) },
-                enabled = (typed ?: 0L) > 0L,
+                onClick = { onConfirm((typedWon ?: 0L).toString()) },
+                enabled = (typedWon ?: 0L) > 0L,
             ) { Text(stringResource(R.string.common_confirm)) }
         },
         dismissButton = {
@@ -268,6 +282,7 @@ private fun Long.toSliderPosition(minWon: Long, maxWon: Long): Float {
 private fun Float.toBudgetWon(minWon: Long, maxWon: Long): Long {
     val raw = minWon * (maxWon.toDouble() / minWon).pow(toDouble())
     // 10만원 단위로 끊는다. 끊지 않으면 "1,237,419원" 같은 값이 나온다.
-    val snapped = (raw / BudgetRange.STEP_WON).roundToLong() * BudgetRange.STEP_WON
+    val step = BudgetRange.stepWon
+    val snapped = (raw / step).roundToLong() * step
     return snapped.coerceIn(minWon, maxWon)
 }

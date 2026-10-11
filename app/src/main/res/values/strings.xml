@@ -163,7 +163,7 @@
         ("339,944원" vs "KRW 339,944")
     -->
     <string name="fmt_money">%s원</string>
-    <!-- 칩·슬라이더처럼 좁은 자리. money_short_uses_man이 false면 쓰이지 않는다. -->
+    <!-- 칩·슬라이더처럼 좁은 자리. 달러로 보여줄 때는 쓰지 않는다(이미 짧다). -->
     <string name="fmt_money_man">%s만원</string>
     <string name="fmt_date_md">M.d</string>
     <string name="fmt_date_md_e">M.d(E)</string>
@@ -337,6 +337,7 @@
     <string name="budget_over_max">%1$s 초과</string>
     <string name="budget_dialog_title">예산 입력</string>
     <string name="budget_dialog_unit">원</string>
+    <string name="budget_dialog_unit_usd">달러</string>
     <string name="budget_dialog_summary">%1$s · 1인당 약 %2$s</string>
     <string name="budget_dialog_hint">숫자를 입력하세요</string>
 

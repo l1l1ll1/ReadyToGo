@@ -83,6 +83,25 @@ fun TagChip(
     )
 }
 
+/**
+ * 다녀온 여행 표식.
+ *
+ * **여행 탭 카드와 홈의 "최근 일정"이 같은 칩을 쓴다.** 같은 뜻을 두 가지 모양으로
+ * 보여주면 두 화면이 서로 다른 것을 말하는 것처럼 읽힌다.
+ *
+ * 포인트 색을 쓰지 않는다 — 끝난 일정은 눈에 걸릴 이유가 없다. D-day가 코랄인 것과
+ * 대비되어야 "아직 안 간 것 / 다녀온 것"이 색만으로 갈린다.
+ */
+@Composable
+fun PastTripChip(modifier: Modifier = Modifier) {
+    TagChip(
+        text = stringResource(R.string.trips_past_done),
+        modifier = modifier,
+        container = LocalPalette.current.Surface,
+        content = LocalPalette.current.TextSecondary,
+    )
+}
+
 /** 화면의 주요 동작 버튼. 포인트 컬러를 쓰는 곳은 화면당 하나만 둔다. */
 @Composable
 fun PrimaryButton(

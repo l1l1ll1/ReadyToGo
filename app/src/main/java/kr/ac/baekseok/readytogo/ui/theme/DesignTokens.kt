@@ -72,6 +72,9 @@ object Tokens {
     object Size {
         /** 홈의 큰 사진 카드. 화면 폭에 비해 너무 낮으면 "큰 카드" 느낌이 안 난다. */
         val photoCardHeight = 180.dp
+
+        /** 지난 여행 카드. 끝난 일정이 현재 일정과 같은 자리를 차지하지 않게 낮춘다. */
+        val pastTripCardHeight = 110.dp
         val photoThumbHeight = 96.dp
         val avatar = 56.dp
         val icon = 24.dp

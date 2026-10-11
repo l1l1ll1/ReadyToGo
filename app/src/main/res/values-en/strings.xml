@@ -359,7 +359,10 @@
     <string name="trips_guest_title">You\'re just browsing</string>
     <string name="trips_guest_body">You can still build plans, but saving one needs an account.</string>
     <string name="trips_long_press_hint">Long-press a card to delete it.</string>
-    <string name="trips_past">Past trips</string>
+    <string name="trips_past">Past trips %1$d</string>
+    <string name="trips_past_done">Done</string>
+    <string name="trips_past_expand">Show</string>
+    <string name="trips_past_collapse">Hide</string>
     <string name="trips_delete_title">Delete this trip?</string>
     <string name="trips_delete_body">\"%1$s\" will be deleted. This can\'t be undone.</string>
     <string name="trips_subtitle">%1$s · %2$s – %3$s · %4$s</string>

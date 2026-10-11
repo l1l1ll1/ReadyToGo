@@ -38,6 +38,7 @@ import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.data.model.AuthState
 import kr.ac.baekseok.readytogo.data.model.SavedTrip
 import kr.ac.baekseok.readytogo.ui.component.EmptyState
+import kr.ac.baekseok.readytogo.ui.component.PastTripChip
 import kr.ac.baekseok.readytogo.ui.component.PhotoCard
 import kr.ac.baekseok.readytogo.ui.component.PrimaryButton
 import kr.ac.baekseok.readytogo.ui.component.SectionHeader
@@ -169,7 +170,7 @@ private fun HomeList(
             }
         } else {
             items(state.recent, key = { it.id }) { trip ->
-                RecentTripRow(trip = trip, onClick = { onOpenTrip(trip) })
+                RecentTripRow(trip = trip, today = state.today, onClick = { onOpenTrip(trip) })
             }
         }
     }
@@ -255,9 +256,14 @@ private fun UpcomingTripCard(trip: SavedTrip, today: LocalDate, onClick: () -> U
     }
 }
 
-/** 최근 일정 한 줄. 작은 사진 + 제목·날짜. */
+/**
+ * 최근 일정 한 줄. 작은 사진 + 제목·날짜.
+ *
+ * **지난 여행도 섞어 둔다.** "최근"은 최근에 저장한 것이지 앞으로 갈 것이 아니다 —
+ * 다녀온 일정을 다시 열어보는 경우가 많다. 대신 다녀온 것에는 칩을 붙여 구분한다.
+ */
 @Composable
-private fun RecentTripRow(trip: SavedTrip, onClick: () -> Unit) {
+private fun RecentTripRow(trip: SavedTrip, today: LocalDate, onClick: () -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Tokens.Space.md),
@@ -305,6 +311,9 @@ private fun RecentTripRow(trip: SavedTrip, onClick: () -> Unit) {
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
+        }
+        if (!trip.isUpcoming(today)) {
+            PastTripChip()
         }
     }
 }

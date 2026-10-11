@@ -60,6 +60,14 @@ data class AppPalette(
      * 그냥 터쿼이즈 한 색이 되고, 포인트 컬러와 겹쳐 보인다.
      */
     val HeroGradient: List<Color>,
+
+    /**
+     * 끝난 일정에 까는 회색 그라데이션. 여행 탭의 "지난 여행" 카드가 쓴다.
+     *
+     * 색을 빼는 이유는 순서가 아니라 무게다 — 지난 여행이 다가오는 여행과 같은 색으로
+     * 서 있으면 목록에서 무엇이 먼저인지 읽히지 않는다. 흰 글자가 얹히므로 밝게 두지 않는다.
+     */
+    val MutedGradient: List<Color>,
 )
 
 /**
@@ -102,6 +110,11 @@ val LightPalette = AppPalette(
         Color(0xFF20B8C4),
         Color(0xFF178F99),
     ),
+
+    MutedGradient = listOf(
+        Color(0xFF97A3B0),
+        Color(0xFF6E7B8A),
+    ),
 )
 
 /**
@@ -140,6 +153,12 @@ val HighContrastPalette = LightPalette.copy(
     HeroGradient = listOf(
         Color(0xFF0E6E76),
         Color(0xFF0A5056),
+    ),
+
+    // 고대비에서는 더 어둡게. 회색 위 흰 글자가 가장 먼저 무너지는 조합이다.
+    MutedGradient = listOf(
+        Color(0xFF5A6773),
+        Color(0xFF33404D),
     ),
 )
 

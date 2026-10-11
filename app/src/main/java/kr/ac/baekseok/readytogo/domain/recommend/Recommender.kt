@@ -18,6 +18,14 @@ import kr.ac.baekseok.readytogo.data.model.ScoredCandidate
 const val QUALITY_PRICE_MULTIPLIER = 2.0
 
 /**
+ * 사용자가 직접 고를 수 있게 들고 가는 대안 수.
+ *
+ * 다섯으로 잡은 이유: 목록이 한 화면에 들어오고, 고르는 데 망설이지 않을 만큼이다.
+ * 더 늘리면 점수가 낮아 추천할 이유가 없던 곳까지 올라온다.
+ */
+const val ALTERNATIVE_COUNT = 5
+
+/**
  * 후보들 중에서 "품질 우선"과 "예산 내" 두 가지를 고른다(CLAUDE.md 추천 로직).
  *
  * @param anchors 동선 점수의 기준 장소들. 숙소는 여행 전체 관광지, 식당은 그날 관광지를 넘긴다.
@@ -83,6 +91,12 @@ fun <T : ScoredCandidate> recommendPair(
         qualityFirst = best.toRecommendation(maxPriceWon, anchors),
         withinBudget = runnerUp?.toRecommendation(maxPriceWon, anchors),
         alternativeKind = kind,
+        // 사용자가 직접 고를 수 있게 상위 후보를 더 들고 간다(로드맵 6, 대안 교체).
+        // 추천 두 칸에 이미 나온 곳은 뺀다 — 같은 곳이 목록에 또 있으면 고를 것이 없다.
+        alternatives = others
+            .filter { runnerUp == null || it.first !== runnerUp.first }
+            .take(ALTERNATIVE_COUNT)
+            .map { it.toRecommendation(maxPriceWon, anchors) },
     )
 }
 

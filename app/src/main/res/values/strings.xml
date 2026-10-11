@@ -299,7 +299,8 @@
     <!-- 장소 상세 시트 -->
     <string name="plan_sheet_no_restaurant">추천할 식당을 찾지 못했습니다.</string>
     <string name="plan_sheet_open_map">지도에서 열기</string>
-    <string name="plan_sheet_swap">대안으로 교체</string>
+    <string name="plan_sheet_other_options">다른 선택지</string>
+    <string name="plan_sheet_chosen">지금 고른 곳</string>
     <string name="plan_sheet_remove">일정에서 빼기</string>
     <string name="plan_sheet_stay_time">머무는 시간 %1$s</string>
 
@@ -425,4 +426,5 @@
     <!-- 예: "이번 달 사진    123 / 800장" -->
     <string name="settings_photo_usage">이번 달 사진</string>
     <string name="settings_photo_usage_value">%1$d / %2$d장</string>
+    <string name="plan_drag_to_delete">여기 놓으면 일정에서 빠집니다</string>
 </resources>

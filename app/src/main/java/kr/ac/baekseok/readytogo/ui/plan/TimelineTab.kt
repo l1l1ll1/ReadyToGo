@@ -1,5 +1,8 @@
 package kr.ac.baekseok.readytogo.ui.plan
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -8,15 +11,18 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.DirectionsBus
 import androidx.compose.material.icons.outlined.DirectionsWalk
 import androidx.compose.material.icons.outlined.HelpOutline
@@ -29,15 +35,26 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.boundsInWindow
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.rememberReorderableLazyListState
 import kr.ac.baekseok.readytogo.R
+import kr.ac.baekseok.readytogo.data.model.TimelineEdits
 import kr.ac.baekseok.readytogo.data.model.DayPlan
 import kr.ac.baekseok.readytogo.data.model.FavoritePlace
 import kr.ac.baekseok.readytogo.data.model.TravelPurpose
@@ -79,6 +96,8 @@ fun TimelineTab(
     onOpenMapForDay: (Int) -> Unit,
     onItemClick: (Int, TimelineItem) -> Unit,
     onToggleFavorite: (FavoritePlace) -> Unit,
+    onReorder: (Int, List<String>) -> Unit,
+    onDelete: (Int, String) -> Unit,
 ) {
     val day = plan.dailyPlans.firstOrNull { it.dayNumber == selectedDayNumber }
         ?: plan.dailyPlans.firstOrNull()
@@ -106,54 +125,177 @@ fun TimelineTab(
 
         val entries = day.toTimeline(
             deletedKeys = edits.deletedIn(day.dayNumber),
-            swappedMealKeys = edits.swappedIn(day.dayNumber),
+            pickedMeals = edits.pickedIn(day.dayNumber),
+            customOrder = edits.orderIn(day.dayNumber),
         )
 
-        LazyColumn(
-            contentPadding = PaddingValues(
-                start = Tokens.Space.lg,
-                end = Tokens.Space.lg,
-                top = Tokens.Space.md,
-                bottom = Tokens.Space.xxl,
-            ),
-        ) {
-            item {
-                DayHeader(
-                    day = day,
-                    totalMinutes = entries.sumOf { entry ->
-                        entry.item.stayMinutes + (entry.travelFromPrevious?.minutes ?: 0)
-                    },
-                    onOpenMap = { onOpenMapForDay(day.dayNumber) },
-                )
-            }
+        val listState = rememberLazyListState()
 
-            if (entries.isEmpty()) {
+        // 끌리는 항목과 휴지통 영역이 겹치는지 보려고 둘의 화면 좌표를 들고 있는다.
+        // 라이브러리는 순서 바꾸기까지만 해주고, 목록 밖으로 끌어다 놓는 것은 직접 봐야 한다.
+        var trashBounds by remember { mutableStateOf<Rect?>(null) }
+        var draggedBounds by remember { mutableStateOf<Rect?>(null) }
+        var draggingKey by remember { mutableStateOf<String?>(null) }
+        val overTrash = draggingKey != null &&
+            trashBounds?.let { trash -> draggedBounds?.overlaps(trash) } == true
+
+        // 옮길 수 없는 이동(끼니 자리로 밀어 넣기)이면 null이 와서 아무것도 하지 않는다.
+        val reorderState = rememberReorderableLazyListState(listState) { from, to ->
+            moveWithinMealSlots(entries, from.index, to.index)?.let { keys ->
+                onReorder(day.dayNumber, keys)
+            }
+        }
+
+        Box(modifier = Modifier.fillMaxSize()) {
+            LazyColumn(
+                state = listState,
+                contentPadding = PaddingValues(
+                    start = Tokens.Space.lg,
+                    end = Tokens.Space.lg,
+                    top = Tokens.Space.md,
+                    bottom = Tokens.Space.xxl,
+                ),
+            ) {
                 item {
-                    EmptyState(
-                        title = stringResource(R.string.plan_day_empty_title),
-                        description = stringResource(R.string.plan_day_empty_body),
+                    DayHeader(
+                        day = day,
+                        totalMinutes = entries.sumOf { entry ->
+                            entry.item.stayMinutes + (entry.travelFromPrevious?.minutes ?: 0)
+                        },
+                        onOpenMap = { onOpenMapForDay(day.dayNumber) },
                     )
+                }
+
+                if (entries.isEmpty()) {
+                    item {
+                        EmptyState(
+                            title = stringResource(R.string.plan_day_empty_title),
+                            description = stringResource(R.string.plan_day_empty_body),
+                        )
+                    }
+                }
+
+                items(entries, key = { it.item.key }) { entry ->
+                    // **관광지만 끌 수 있다.** 끼니는 하루의 뼈대라 자리가 고정이고,
+                    // 식당을 바꾸는 일은 상세 시트의 "다른 선택지"가 맡는다.
+                    val draggable = entry.item is TimelineItem.Visit
+
+                    ReorderableItem(reorderState, key = entry.item.key) { isDragging ->
+                        val handle = if (draggable) {
+                            Modifier.longPressDraggableHandle(
+                                onDragStarted = { draggingKey = entry.item.key },
+                                onDragStopped = {
+                                    if (overTrash) onDelete(day.dayNumber, entry.item.key)
+                                    draggingKey = null
+                                    draggedBounds = null
+                                },
+                            )
+                        } else {
+                            Modifier
+                        }
+
+                        TimelineRow(
+                            entry = entry,
+                            favoriteIds = favoriteIds,
+                            cityName = plan.condition.destination?.city.orEmpty(),
+                            purposes = plan.condition.purposes,
+                            // 추천이 없는 끼니는 보여줄 상세가 없다. 시트를 띄우지 않는다.
+                            onClick = if (entry.item is TimelineItem.NoMeal) {
+                                null
+                            } else {
+                                { onItemClick(day.dayNumber, entry.item) }
+                            },
+                            onToggleFavorite = onToggleFavorite,
+                            dragging = isDragging,
+                            modifier = handle.then(
+                                if (isDragging) {
+                                    Modifier.onGloballyPositioned {
+                                        draggedBounds = it.boundsInWindow()
+                                    }
+                                } else {
+                                    Modifier
+                                },
+                            ),
+                        )
+                    }
                 }
             }
 
-            items(entries, key = { it.item.key }) { entry ->
-                TimelineRow(
-                    entry = entry,
-                    favoriteIds = favoriteIds,
-                    cityName = plan.condition.destination?.city.orEmpty(),
-                    purposes = plan.condition.purposes,
-                    // 추천이 없는 끼니는 보여줄 상세가 없다. 시트를 띄우지 않는다.
-                    onClick = if (entry.item is TimelineItem.NoMeal) {
-                        null
-                    } else {
-                        { onItemClick(day.dayNumber, entry.item) }
-                    },
-                    onToggleFavorite = onToggleFavorite,
-                )
-            }
+            TrashTarget(
+                visible = draggingKey != null,
+                active = overTrash,
+                onBounds = { trashBounds = it },
+                modifier = Modifier.align(Alignment.BottomCenter),
+            )
         }
     }
 }
+
+/**
+ * 끌어서 옮긴 결과 순서. 옮길 수 없으면 null.
+ *
+ * **끼니는 자리가 고정이다.** 놓으려는 자리가 끼니면 그 끼니를 넘어 가장 가까운 관광지
+ * 자리까지 밀어 준다 — 거기서 멈추면 끼니 사이를 영영 넘어갈 수 없다.
+ *
+ * 목록 맨 앞의 날짜 머리글(LazyColumn의 첫 item) 때문에 인덱스가 하나씩 밀려 있다.
+ */
+private fun moveWithinMealSlots(
+    entries: List<TimelineEntry>,
+    fromIndex: Int,
+    toIndex: Int,
+): List<String>? {
+    val from = fromIndex - HEADER_ITEM_COUNT
+    if (from !in entries.indices || entries[from].item !is TimelineItem.Visit) return null
+
+    var to = toIndex - HEADER_ITEM_COUNT
+    val step = if (to > from) 1 else -1
+    while (to in entries.indices && entries[to].item !is TimelineItem.Visit) to += step
+    if (to !in entries.indices || to == from) return null
+
+    return entries.map { it.item.key }.toMutableList().apply { add(to, removeAt(from)) }
+}
+
+/**
+ * 끌어다 놓으면 지우는 자리.
+ *
+ * **끌기 전에는 보이지 않는다.** 늘 떠 있으면 화면 아래를 가리기만 하고, 끌기 시작할 때
+ * 나타나야 "여기 놓으면 지워진다"가 읽힌다.
+ *
+ * 닿으면 코랄로 바뀐다. 색이 바뀌지 않으면 놓아도 되는지 알 수 없어 손을 떼지 못한다.
+ */
+@Composable
+private fun TrashTarget(
+    visible: Boolean,
+    active: Boolean,
+    onBounds: (Rect) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    AnimatedVisibility(
+        visible = visible,
+        enter = fadeIn(),
+        exit = fadeOut(),
+        modifier = modifier.padding(bottom = Tokens.Space.xl),
+    ) {
+        val palette = LocalPalette.current
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .size(Tokens.Size.trashTarget)
+                .clip(CircleShape)
+                .background(if (active) palette.Accent else palette.SurfaceMuted)
+                .onGloballyPositioned { onBounds(it.boundsInWindow()) },
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Delete,
+                contentDescription = stringResource(R.string.plan_drag_to_delete),
+                tint = if (active) palette.Surface else palette.TextSecondary,
+            )
+        }
+    }
+}
+
+/** LazyColumn 맨 앞의 날짜 머리글. 끌기 인덱스를 항목 인덱스로 바꿀 때 빼야 한다. */
+private const val HEADER_ITEM_COUNT = 1
 
 @Composable
 private fun DayHeader(day: DayPlan, totalMinutes: Int, onOpenMap: () -> Unit) {
@@ -199,8 +341,17 @@ private fun TimelineRow(
     purposes: Set<TravelPurpose>,
     onClick: (() -> Unit)?,
     onToggleFavorite: (FavoritePlace) -> Unit,
+    /** 지금 끌리고 있는지. 들어 올린 티를 내려고 배경을 깐다. */
+    dragging: Boolean = false,
+    modifier: Modifier = Modifier,
 ) {
-    Column {
+    Column(
+        modifier = modifier
+            .clip(Tokens.Radius.card)
+            .background(
+                if (dragging) LocalPalette.current.PointLight else Color.Transparent,
+            ),
+    ) {
         entry.travelFromPrevious?.let { TravelRow(it) }
 
         Row(modifier = Modifier.fillMaxWidth()) {

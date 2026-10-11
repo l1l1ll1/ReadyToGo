@@ -56,6 +56,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kr.ac.baekseok.readytogo.R
+import kr.ac.baekseok.readytogo.data.model.TimelineEdits
 import kr.ac.baekseok.readytogo.data.model.Attraction
 import kr.ac.baekseok.readytogo.data.model.DayPlan
 import kr.ac.baekseok.readytogo.data.model.FavoriteKind
@@ -137,7 +138,8 @@ fun TripPlanScreen(
         onToggleFavorite = viewModel::toggleFavorite,
         onMessageShown = viewModel::clearMessage,
         onDeleteItem = viewModel::deleteTimelineItem,
-        onSwapMeal = viewModel::toggleMealSwap,
+        onReorder = viewModel::reorderDay,
+        onPickMeal = viewModel::pickMeal,
         onUndoDelete = viewModel::undoDelete,
         onUndoExpired = viewModel::clearLastDeleted,
         modifier = modifier,
@@ -162,7 +164,8 @@ private fun TripPlanContent(
     onToggleFavorite: (FavoritePlace) -> Unit = {},
     onMessageShown: () -> Unit = {},
     onDeleteItem: (Int, String) -> Unit = { _, _ -> },
-    onSwapMeal: (Int, String) -> Unit = { _, _ -> },
+    onReorder: (Int, List<String>) -> Unit = { _, _ -> },
+    onPickMeal: (Int, String, String?) -> Unit = { _, _, _ -> },
     onUndoDelete: () -> Unit = {},
     onUndoExpired: () -> Unit = {},
     modifier: Modifier = Modifier,
@@ -287,6 +290,8 @@ private fun TripPlanContent(
                     onTimelineItemClick = { dayNumber, item ->
                         openedItem = dayNumber to item
                     },
+                    onReorder = onReorder,
+                    onDeleteItem = onDeleteItem,
                 )
             }
         }
@@ -301,10 +306,10 @@ private fun TripPlanContent(
                     context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
                 }
             },
-            // 대안이 없는 끼니와 관광지는 교체할 것이 없다. 버튼을 숨긴다.
-            onSwap = (item as? TimelineItem.Meal)
-                ?.takeIf { it.other != null }
-                ?.let { meal -> { onSwapMeal(dayNumber, meal.key) } },
+            // 후보가 하나뿐인 끼니와 관광지는 고를 것이 없다. 목록을 숨긴다.
+            onPick = (item as? TimelineItem.Meal)
+                ?.takeIf { it.options.size > 1 }
+                ?.let { meal -> { placeId: String -> onPickMeal(dayNumber, meal.key, placeId) } },
             onDelete = { onDeleteItem(dayNumber, item.key) },
             onDismiss = { openedItem = null },
         )
@@ -322,6 +327,8 @@ private fun PlanTabContent(
     onOpenMapForDay: (Int) -> Unit,
     onSelectMapDay: (Int) -> Unit,
     onTimelineItemClick: (Int, TimelineItem) -> Unit,
+    onReorder: (Int, List<String>) -> Unit,
+    onDeleteItem: (Int, String) -> Unit,
 ) {
     when (tab) {
         PlanTab.SUMMARY -> TabColumn {
@@ -380,6 +387,8 @@ private fun PlanTabContent(
             onSelectDay = onSelectMapDay,
             onOpenMapForDay = onOpenMapForDay,
             onItemClick = onTimelineItemClick,
+            onReorder = onReorder,
+            onDelete = onDeleteItem,
             onToggleFavorite = onToggleFavorite,
         )
 

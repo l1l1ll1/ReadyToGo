@@ -10,6 +10,7 @@ import kr.ac.baekseok.readytogo.data.AppContainer
 import kr.ac.baekseok.readytogo.data.USE_REAL_API
 import kr.ac.baekseok.readytogo.data.model.FavoritePlace
 import kr.ac.baekseok.readytogo.data.model.SavedTrip
+import kr.ac.baekseok.readytogo.data.model.TimelineEdits
 import kr.ac.baekseok.readytogo.data.model.TripCondition
 import kr.ac.baekseok.readytogo.data.model.TripPlan
 import kr.ac.baekseok.readytogo.data.model.canSave
@@ -26,25 +27,13 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
-
-/**
- * 사용자가 타임라인에서 손본 것. 일차 번호 → 항목 키 집합.
- *
- * 계획 자체는 그대로 두고 이 두 집합만 바꿔서 화면을 다시 그린다.
- */
-data class TimelineEdits(
-    val deleted: Map<Int, Set<String>> = emptyMap(),
-    val swappedMeals: Map<Int, Set<String>> = emptyMap(),
-) {
-    fun deletedIn(dayNumber: Int): Set<String> = deleted[dayNumber].orEmpty()
-    fun swappedIn(dayNumber: Int): Set<String> = swappedMeals[dayNumber].orEmpty()
-}
 
 /** 결과 화면의 상태. Repository가 실제 API처럼 시간이 걸리므로 로딩과 실패를 구분해 들고 있어야 한다. */
 sealed interface TripPlanUiState {
@@ -157,6 +146,10 @@ class TripPlanViewModel(
         viewModelScope.launch {
             _uiState.value = TripPlanUiState.Loading
 
+            // 저장해 둔 편집이 있으면 먼저 꺼내 온다. 계획을 그리기 전에 넣어야
+            // 지운 항목이 한 번 보였다 사라지는 깜빡임이 없다.
+            _edits.value = restoreEdits(condition)
+
             // 계획 하나를 만드는 데 걸리는 시간. 검색을 병렬로 바꾸는 등의 개선 효과를
             // 눈이 아니라 숫자로 확인하기 위해 남긴다.
             val startedAt = SystemClock.elapsedRealtime()
@@ -208,6 +201,8 @@ class TripPlanViewModel(
                 returnDate = returnDate,
                 condition = condition,
                 savedAt = LocalDate.now(),
+                // 지금까지 손본 것을 같이 올린다. 편집하고 나서 저장하는 순서가 흔하다.
+                edits = _edits.value,
             )
 
             // 둘러보기 중이면 저장할 곳이 없다. 일정을 기억해 두고 로그인을 권한다 —
@@ -251,7 +246,7 @@ class TripPlanViewModel(
      * 계획을 처음부터 다시 만들어야 하고, 그건 Places·SerpApi 호출이 또 나가는 일이다.
      */
     fun deleteTimelineItem(dayNumber: Int, key: String) {
-        _edits.update { edits ->
+        updateEdits { edits ->
             edits.copy(deleted = edits.deleted.plusKey(dayNumber, key))
         }
         _lastDeleted.value = dayNumber to key
@@ -264,7 +259,7 @@ class TripPlanViewModel(
 
     fun undoDelete() {
         val (dayNumber, key) = _lastDeleted.value ?: return
-        _edits.update { edits ->
+        updateEdits { edits ->
             edits.copy(deleted = edits.deleted.minusKey(dayNumber, key))
         }
         _lastDeleted.value = null
@@ -275,16 +270,71 @@ class TripPlanViewModel(
         _lastDeleted.value = null
     }
 
-    /** 끼니를 대안으로 교체한다. 다시 누르면 원래 추천으로 돌아온다. */
-    fun toggleMealSwap(dayNumber: Int, key: String) {
-        _edits.update { edits ->
-            val current = edits.swappedIn(dayNumber)
-            val next = if (key in current) {
-                edits.swappedMeals.minusKey(dayNumber, key)
-            } else {
-                edits.swappedMeals.plusKey(dayNumber, key)
-            }
-            edits.copy(swappedMeals = next)
+    /**
+     * 끼니를 다른 후보로 바꾼다.
+     *
+     * 추천(점수 1등)을 다시 고르면 기록에서 지운다 — 기본값과 같은 값을 들고 있을 이유가 없고,
+     * 저장할 때도 쓸데없는 항목이 남지 않는다.
+     */
+    fun pickMeal(dayNumber: Int, mealKey: String, placeId: String?) {
+        updateEdits { edits ->
+            val current = edits.pickedIn(dayNumber)
+            val next = if (placeId == null) current - mealKey else current + (mealKey to placeId)
+            edits.copy(pickedMeals = edits.pickedMeals + (dayNumber to next))
+        }
+    }
+
+    /**
+     * 끌어서 바뀐 순서를 기록한다.
+     *
+     * 화면이 이미 제약(끼니는 고정, 관광지만 이동)을 지켜 만든 순서를 그대로 받는다.
+     * 여기서 다시 검사하지 않는 이유: 규칙이 두 곳에 생기면 어긋난다.
+     */
+    fun reorderDay(dayNumber: Int, keys: List<String>) {
+        updateEdits { it.copy(order = it.order + (dayNumber to keys)) }
+    }
+
+    /**
+     * 편집을 저장된 일정에 붙인다.
+     *
+     * **저장해 둔 일정일 때만 올린다.** 저장하지 않은 계획에 편집만 올려 둘 곳이 없다.
+     * 편집할 때마다 쓰기가 한 번 나가지만, 일정 문서 하나를 덮어쓰는 것이라 가볍다.
+     */
+    /**
+     * 편집을 바꾸고 저장까지 한다.
+     *
+     * 바꾸는 곳마다 저장을 잊지 않도록 한 군데로 묶었다 — 삭제는 저장되는데 순서는 안 되는
+     * 식의 어긋남이 생기기 쉽다.
+     */
+    private fun updateEdits(transform: (TimelineEdits) -> TimelineEdits) {
+        val next = transform(_edits.value)
+        _edits.value = next
+        persistEdits(next)
+    }
+
+    /**
+     * 저장된 일정에 붙어 있는 편집. 저장한 적 없으면 빈 값.
+     *
+     * 둘러보기 중이거나 아직 저장하지 않은 계획은 꺼낼 곳이 없다. 그때는 이번 화면에서만
+     * 사는 편집이 된다.
+     */
+    private suspend fun restoreEdits(condition: TripCondition): TimelineEdits {
+        val id = SavedTrip.idFor(condition) ?: return TimelineEdits()
+        return AppContainer.savedTrips.observeAll().first()
+            .firstOrNull { it.id == id }
+            ?.edits
+            ?: TimelineEdits()
+    }
+
+    private fun persistEdits(edits: TimelineEdits) {
+        val condition = loadedCondition ?: return
+        val id = SavedTrip.idFor(condition) ?: return
+        if (!saved.value) return
+
+        viewModelScope.launch {
+            val trip = AppContainer.savedTrips.observeAll().first().firstOrNull { it.id == id }
+                ?: return@launch
+            AppContainer.savedTrips.save(trip.copy(edits = edits))
         }
     }
 

@@ -27,6 +27,8 @@ googleid = "1.1.1"
 # Compose용 이미지 로더. Places 사진을 URL로 받아 그리는 데 쓴다(로드맵 5).
 # 메모리·디스크 캐시와 지연 로드를 직접 짜지 않으려고 넣었다.
 coil = "3.0.4"
+# 끌어서 순서 바꾸기(로드맵 6). 자동 스크롤과 이동 애니메이션을 내장한다.
+reorderable = "3.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -43,6 +45,7 @@ maps-compose = { group = "com.google.maps.android", name = "maps-compose", versi
 places = { group = "com.google.android.libraries.places", name = "places", version.ref = "places" }
 coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
 coil-network-okhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil" }
+reorderable = { group = "sh.calvin.reorderable", name = "reorderable", version.ref = "reorderable" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }

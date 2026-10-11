@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.data.AppContainer
+import kr.ac.baekseok.readytogo.data.model.TimelineEdits
 import kr.ac.baekseok.readytogo.data.model.AuthState
 import kr.ac.baekseok.readytogo.data.model.SavedTrip
 import kr.ac.baekseok.readytogo.data.repository.SavedTripRepository
@@ -122,6 +123,8 @@ private fun SavedTrip.toMap(): Map<String, Any?> = mapOf(
     "returnDate" to returnDate.toString(),
     "savedAt" to savedAt.toString(),
     "condition" to condition.toMap(),
+    // 편집이 없으면 필드를 만들지 않는다. 빈 맵 셋이 모든 문서에 붙을 이유가 없다.
+    "edits" to edits.takeUnless { it.isEmpty }?.toMap(),
 )
 
 /**
@@ -144,6 +147,7 @@ private fun Map<String, Any?>.toSavedTrip(id: String): SavedTrip? {
         condition = condition,
         // 저장 시각이 없으면 오늘로 본다. 목록 정렬에만 쓰여서 틀려도 피해가 작다.
         savedAt = localDate("savedAt") ?: LocalDate.now(),
+        edits = childMap("edits")?.toTimelineEdits() ?: TimelineEdits(),
     )
 }
 

@@ -279,7 +279,8 @@
     <!-- 장소 상세 시트 -->
     <string name="plan_sheet_no_restaurant">We couldn\'t find a restaurant to recommend.</string>
     <string name="plan_sheet_open_map">Open in Maps</string>
-    <string name="plan_sheet_swap">Swap for the alternative</string>
+    <string name="plan_sheet_other_options">Other options</string>
+    <string name="plan_sheet_chosen">Currently chosen</string>
     <string name="plan_sheet_remove">Remove from itinerary</string>
     <string name="plan_sheet_stay_time">Stay %1$s</string>
 
@@ -394,4 +395,5 @@
     <string name="settings_place_photos_body">Uses more data.</string>
     <string name="settings_photo_usage">Photos this month</string>
     <string name="settings_photo_usage_value">%1$d / %2$d</string>
+    <string name="plan_drag_to_delete">Drop here to remove from the itinerary</string>
 </resources>

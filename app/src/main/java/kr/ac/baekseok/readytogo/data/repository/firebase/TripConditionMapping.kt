@@ -2,6 +2,7 @@ package kr.ac.baekseok.readytogo.data.repository.firebase
 
 import kr.ac.baekseok.readytogo.data.model.Destination
 import kr.ac.baekseok.readytogo.data.model.LatLng
+import kr.ac.baekseok.readytogo.data.model.TimelineEdits
 import kr.ac.baekseok.readytogo.data.model.TravelPurpose
 import kr.ac.baekseok.readytogo.data.model.TripCondition
 import java.time.LocalDate
@@ -87,3 +88,43 @@ internal fun Map<String, Any?>.localDate(key: String): LocalDate? {
     val text = this[key] as? String ?: return null
     return runCatching { LocalDate.parse(text) }.getOrNull()
 }
+
+/**
+ * 타임라인 편집을 Firestore 모양으로.
+ *
+ * **일차 번호를 글자로 바꾼다.** Firestore 맵의 키는 문자열만 된다.
+ */
+internal fun TimelineEdits.toMap(): Map<String, Any?> = mapOf(
+    "deleted" to deleted.mapKeys { it.key.toString() }.mapValues { it.value.toList() },
+    "pickedMeals" to pickedMeals.mapKeys { it.key.toString() },
+    "order" to order.mapKeys { it.key.toString() },
+)
+
+internal fun Map<String, Any?>.toTimelineEdits(): TimelineEdits = TimelineEdits(
+    deleted = childMap("deleted")
+        ?.mapNotNull { (day, value) ->
+            val keys = (value as? List<*>)?.filterIsInstance<String>()?.toSet() ?: return@mapNotNull null
+            day.toIntOrNull()?.let { it to keys }
+        }
+        ?.toMap()
+        .orEmpty(),
+    pickedMeals = childMap("pickedMeals")
+        ?.mapNotNull { (day, value) ->
+            val picks = (value as? Map<*, *>)
+                ?.mapNotNull { (k, v) ->
+                    if (k is String && v is String) k to v else null
+                }
+                ?.toMap()
+                ?: return@mapNotNull null
+            day.toIntOrNull()?.let { it to picks }
+        }
+        ?.toMap()
+        .orEmpty(),
+    order = childMap("order")
+        ?.mapNotNull { (day, value) ->
+            val keys = (value as? List<*>)?.filterIsInstance<String>() ?: return@mapNotNull null
+            day.toIntOrNull()?.let { it to keys }
+        }
+        ?.toMap()
+        .orEmpty(),
+)

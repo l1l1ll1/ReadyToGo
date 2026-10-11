@@ -52,6 +52,15 @@ data class RecommendationPair<T>(
      */
     val withinBudget: Recommendation<T>?,
     val alternativeKind: AlternativeKind,
+    /**
+     * 사용자가 직접 고를 수 있는 다른 후보들. 점수 높은 순.
+     *
+     * 위 두 칸에 이미 나온 곳은 들어 있지 않다. 비어 있을 수 있다 — 후보가 둘뿐이면
+     * 추천과 대안으로 다 쓰여서 남는 것이 없다.
+     *
+     * 기본값을 둔 이유: 이 목록이 생기기 전에 저장된 일정을 읽을 때 필요하다.
+     */
+    val alternatives: List<Recommendation<T>> = emptyList(),
 )
 
 /** 끼니. 화면에서 MealTime.entries 순서대로 돌리면 아침→점심→저녁이 된다. */

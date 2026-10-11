@@ -103,6 +103,9 @@ dependencies {
     // network-okhttp가 따로 있는 이유: coil-compose만으로는 http로 못 받는다.
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
+    // 타임라인 항목 끌기(로드맵 6). 자동 스크롤·이동 애니메이션을 직접 짜면 200줄이 넘고,
+    // 끌기 중 목록이 재구성될 때 어긋나는 버그까지 떠안게 된다.
+    implementation(libs.reorderable)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)

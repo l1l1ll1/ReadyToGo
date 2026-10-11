@@ -23,6 +23,15 @@ data class SavedTrip(
     val returnDate: LocalDate,
     val condition: TripCondition,
     val savedAt: LocalDate,
+    /**
+     * 사용자가 타임라인에서 손본 것.
+     *
+     * 계획 자체가 아니라 편집만 저장한다 — 계획은 조건으로 다시 만들 수 있고,
+     * 장소 목록을 통째로 올리면 문서가 커지는 데다 가격·평점이 굳어 버린다.
+     *
+     * 기본값을 둔 이유: 이 필드가 생기기 전에 저장된 일정에는 없다.
+     */
+    val edits: TimelineEdits = TimelineEdits(),
 ) {
     /** 며칠짜리 여행인지. 출발일과 귀국일을 모두 포함해 센다. */
     val dayCount: Int

@@ -4,6 +4,7 @@ import kr.ac.baekseok.readytogo.data.model.Attraction
 import kr.ac.baekseok.readytogo.data.model.DayPlan
 import kr.ac.baekseok.readytogo.data.model.LatLng
 import kr.ac.baekseok.readytogo.data.model.MealTime
+import kr.ac.baekseok.readytogo.data.model.Recommendation
 import kr.ac.baekseok.readytogo.data.model.RecommendationPair
 import kr.ac.baekseok.readytogo.data.model.Restaurant
 
@@ -37,21 +38,29 @@ sealed interface TimelineItem {
     }
 
     /**
-     * 한 끼. 두 선택지를 함께 들고 있어야 시트에서 "대안으로 교체"를 할 수 있다.
+     * 한 끼. 후보를 전부 들고 있어야 시트에서 다른 곳으로 바꿀 수 있다.
      *
-     * @param swapped true면 추천과 대안의 자리를 바꿔 보여준다. 계획을 다시 만들지 않고
-     *        화면에서만 뒤집는다 — 다시 만들면 Places 호출이 또 나간다.
+     * **계획을 다시 만들지 않고 보여줄 것만 바꾼다.** 다시 만들면 Places 호출이 또 나간다.
+     *
+     * @param pickedPlaceId 사용자가 고른 곳의 id. null이면 추천(점수 1등)을 보여준다.
+     *        고른 곳이 후보에 없으면(저장된 편집을 읽었는데 계획이 바뀐 경우) 추천으로 돌아간다.
      */
     data class Meal(
         val meal: MealTime,
         val pair: RecommendationPair<Restaurant>,
-        val swapped: Boolean = false,
+        val pickedPlaceId: String? = null,
     ) : TimelineItem {
-        /** 지금 보여줄 쪽. [swapped]면 대안이 앞으로 온다. */
-        val shown get() = if (swapped) pair.withinBudget ?: pair.qualityFirst else pair.qualityFirst
+        /**
+         * 고를 수 있는 전부. 추천 → 대안 → 나머지 순이고, 같은 곳이 두 번 들어가지 않는다.
+         *
+         * 시트의 목록이 이 순서를 그대로 쓴다. 점수 순이라 위에 있을수록 더 추천하는 곳이다.
+         */
+        val options: List<Recommendation<Restaurant>>
+            get() = (listOf(pair.qualityFirst) + listOfNotNull(pair.withinBudget) + pair.alternatives)
+                .distinctBy { it.item.id }
 
-        /** 교체 대상. 없으면 교체 버튼을 숨긴다. */
-        val other get() = if (swapped) pair.qualityFirst else pair.withinBudget
+        /** 지금 보여줄 쪽. */
+        val shown get() = options.firstOrNull { it.item.id == pickedPlaceId } ?: pair.qualityFirst
 
         val restaurant: Restaurant get() = shown.item
 
@@ -87,11 +96,13 @@ data class TimelineEntry(
  * 시각을 적으면 틀린 정보가 된다. 순서와 소요시간만 알려주고 시각은 사용자가 정한다.
  *
  * @param deletedKeys 사용자가 지운 항목. 계획을 다시 만들지 않고 여기서 걸러낸다.
- * @param swappedMealKeys 사용자가 대안으로 교체한 끼니.
+ * @param pickedMeals 사용자가 직접 고른 끼니. 끼니 키 → 고른 장소 id.
+ * @param customOrder 끌어서 바꾼 순서. 비어 있거나 키가 맞지 않으면 기본 순서를 쓴다.
  */
 fun DayPlan.toTimeline(
     deletedKeys: Set<String> = emptySet(),
-    swappedMealKeys: Set<String> = emptySet(),
+    pickedMeals: Map<String, String> = emptyMap(),
+    customOrder: List<String> = emptyList(),
 ): List<TimelineEntry> {
     val visits = attractions.map { TimelineItem.Visit(it) }
 
@@ -99,7 +110,7 @@ fun DayPlan.toTimeline(
     fun mealItem(meal: MealTime): TimelineItem {
         val pair = meals[meal] ?: return TimelineItem.NoMeal(meal)
         val item = TimelineItem.Meal(meal, pair)
-        return item.copy(swapped = item.key in swappedMealKeys)
+        return item.copy(pickedPlaceId = pickedMeals[item.key])
     }
 
     // 관광지를 점심 전후로 나눈다. 한 곳뿐이면 점심 뒤에 둔다 — 아침 먹고 바로 나가는 것보다
@@ -114,9 +125,20 @@ fun DayPlan.toTimeline(
         add(mealItem(MealTime.DINNER))
     }
 
-    // 이동 시간은 **지운 항목을 걸러낸 뒤에** 계산해야 한다.
-    // 먼저 계산하면 지운 항목까지 거쳐 가는 시간이 남는다.
-    val remaining = ordered.filterNot { it.key in deletedKeys }
+    // 사용자가 끌어서 바꾼 순서가 있으면 그것을 따른다.
+    //
+    // **키가 맞지 않으면 기본 순서로 돌아간다.** 저장해 둔 순서를 읽었는데 그 사이 계획이
+    // 바뀌었을 수 있다(관광지가 달라지면 키도 달라진다). 어긋난 순서를 억지로 적용하면
+    // 항목이 사라지거나 중복된다.
+    val sorted = if (customOrder.isEmpty() || customOrder.toSet() != ordered.map { it.key }.toSet()) {
+        ordered
+    } else {
+        ordered.sortedBy { customOrder.indexOf(it.key) }
+    }
+
+    // 이동 시간은 **순서를 정하고 지운 항목을 걸러낸 뒤에** 계산해야 한다.
+    // 먼저 계산하면 지운 항목까지 거쳐 가는 시간이 남고, 순서를 바꿔도 "도보 17분"이 그대로다.
+    val remaining = sorted.filterNot { it.key in deletedKeys }
 
     // 좌표가 없는 항목(추천 못 찾은 끼니)은 건너뛰고 **마지막 좌표**에서 거리를 잰다.
     // 그러지 않으면 빈 끼니가 끼는 순간 앞뒤 이동시간이 사라진다.

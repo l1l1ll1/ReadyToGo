@@ -1,14 +1,15 @@
 package kr.ac.baekseok.readytogo.ui.plan
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Map
-import androidx.compose.material.icons.outlined.SwapHoriz
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -20,11 +21,17 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import kr.ac.baekseok.readytogo.R
+import kr.ac.baekseok.readytogo.data.model.Recommendation
+import kr.ac.baekseok.readytogo.data.model.Restaurant
 import kr.ac.baekseok.readytogo.domain.plan.TimelineItem
+import kr.ac.baekseok.readytogo.ui.component.PlacePhotoThumb
+import kr.ac.baekseok.readytogo.ui.component.rememberPlacePhoto
 import kr.ac.baekseok.readytogo.ui.format.durationText
 import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
@@ -35,14 +42,15 @@ import kr.ac.baekseok.readytogo.ui.theme.Tokens
  * 세 가지를 할 수 있다 — 지도에서 열기, 대안으로 교체, 일정에서 빼기.
  * 별도 화면으로 만들지 않은 이유: 하루에 항목이 대여섯 개라 들어갔다 나오는 일이 잦다.
  *
- * @param onSwap 대안이 없으면 null. 버튼을 숨겨야 한다 — 눌려도 아무 일이 없으면 고장으로 보인다.
+ * @param onPick 끼니를 다른 후보로 바꾼다. 관광지이거나 후보가 하나뿐이면 null이라
+ *        목록 자체가 나오지 않는다 — 고를 것이 없는데 목록을 보여주면 고장으로 보인다.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlaceDetailSheet(
     item: TimelineItem,
     onOpenMap: (String) -> Unit,
-    onSwap: (() -> Unit)?,
+    onPick: ((String) -> Unit)?,
     onDelete: () -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -86,17 +94,6 @@ fun PlaceDetailSheet(
                 )
             }
 
-            if (onSwap != null) {
-                SheetAction(
-                    icon = Icons.Outlined.SwapHoriz,
-                    label = stringResource(R.string.plan_sheet_swap),
-                    onClick = {
-                        onSwap()
-                        onDismiss()
-                    },
-                )
-            }
-
             SheetAction(
                 icon = Icons.Outlined.Delete,
                 label = stringResource(R.string.plan_sheet_remove),
@@ -105,6 +102,107 @@ fun PlaceDetailSheet(
                     onDelete()
                     onDismiss()
                 },
+            )
+
+            if (onPick != null && item is TimelineItem.Meal) {
+                MealOptions(item = item, onPick = onPick, onDismiss = onDismiss)
+            }
+        }
+    }
+}
+
+/**
+ * 같은 끼니의 다른 후보들.
+ *
+ * **버튼 하나로 뒤집는 대신 목록에서 고르게 한다.** 전에는 "대안으로 교체"가 추천과
+ * 대안 둘 사이를 오갈 뿐이라, 마음에 드는 곳이 셋째였으면 닿을 방법이 없었다.
+ *
+ * 지금 보여주는 곳은 목록에서 빼지 않고 **고른 표시**를 해 둔다. 빼 버리면 뭘 고른
+ * 상태인지 목록만 보고는 알 수 없고, 추천으로 되돌릴 방법도 없어진다.
+ */
+@Composable
+private fun MealOptions(
+    item: TimelineItem.Meal,
+    onPick: (String) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val options = item.options
+    if (options.size <= 1) return
+
+    HorizontalDivider(color = LocalPalette.current.Divider)
+
+    Text(
+        text = stringResource(R.string.plan_sheet_other_options),
+        style = MaterialTheme.typography.labelLarge,
+        color = LocalPalette.current.TextSecondary,
+        modifier = Modifier.padding(top = Tokens.Space.sm),
+    )
+
+    options.forEach { option ->
+        val chosen = option.item.id == item.restaurant.id
+        MealOptionRow(
+            option = option,
+            chosen = chosen,
+            onClick = {
+                onPick(option.item.id)
+                onDismiss()
+            },
+        )
+    }
+}
+
+@Composable
+private fun MealOptionRow(
+    option: Recommendation<Restaurant>,
+    chosen: Boolean,
+    onClick: () -> Unit,
+) {
+    val restaurant = option.item
+    val photo = rememberPlacePhoto(restaurant.id)
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(Tokens.Space.md),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(Tokens.Radius.card)
+            .clickable(onClick = onClick)
+            .padding(vertical = Tokens.Space.sm),
+    ) {
+        PlacePhotoThumb(placeId = restaurant.id, photo = photo, size = Tokens.Size.placeThumb)
+
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = restaurant.name,
+                style = MaterialTheme.typography.titleSmall,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                text = restaurant.detailLine(),
+                style = MaterialTheme.typography.bodySmall,
+                color = LocalPalette.current.TextSecondary,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                text = restaurant.priceText().replace("\n", " · "),
+                style = MaterialTheme.typography.bodySmall,
+                // 예산 초과는 코랄. 붉은 Danger는 되돌릴 수 없는 일에만 쓴다.
+                color = if (option.overBudget) {
+                    LocalPalette.current.Accent
+                } else {
+                    LocalPalette.current.TextSecondary
+                },
+            )
+        }
+
+        // 지금 고른 곳. 체크 하나로 표시한다 — 목록에서 빼면 되돌릴 방법이 없어진다.
+        if (chosen) {
+            Icon(
+                imageVector = Icons.Outlined.Check,
+                contentDescription = stringResource(R.string.plan_sheet_chosen),
+                tint = LocalPalette.current.Point,
             )
         }
     }
@@ -179,15 +277,8 @@ private fun MealDetail(item: TimelineItem.Meal) {
             color = if (overBudget) LocalPalette.current.Accent else LocalPalette.current.TextPrimary,
         )
 
-        // 교체하면 무엇으로 바뀌는지 미리 알려준다. 누르고 나서 알게 하면 되돌리게 된다.
-        item.other?.let { alternative ->
-            Text(
-                text = "교체하면 → ${alternative.item.name} (${alternative.item.priceText()
-                    .replace("\n", " · ")})",
-                style = MaterialTheme.typography.bodyMedium,
-                color = LocalPalette.current.TextSecondary,
-            )
-        }
+        // 무엇으로 바꿀 수 있는지는 아래 "다른 선택지" 목록이 전부 보여준다.
+        // 전에는 바뀔 한 곳만 미리 적었는데, 고를 수 있는 곳이 늘면서 쓸모가 없어졌다.
     }
 }
 

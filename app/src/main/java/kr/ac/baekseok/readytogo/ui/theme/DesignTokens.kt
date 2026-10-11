@@ -111,6 +111,14 @@ object Tokens {
          */
         val placeThumb = 64.dp
 
+        /**
+         * 끌어다 놓아 지우는 자리.
+         *
+         * 손가락이 가리고도 남을 만큼은 돼야 닿았는지 보인다. 48dp로 두면 끌던 항목에
+         * 완전히 묻혀서 색이 바뀌는 것을 못 본다.
+         */
+        val trashTarget = 72.dp
+
         /** 타임라인 왼쪽 세로줄. 점(32dp) 폭에 맞춰야 선과 점의 중심이 어긋나지 않는다. */
         val timelineRailWidth = 32.dp
         val timelineLineWidth = 2.dp

@@ -42,9 +42,9 @@ import kr.ac.baekseok.readytogo.ui.component.PhotoCard
 import kr.ac.baekseok.readytogo.ui.component.PrimaryButton
 import kr.ac.baekseok.readytogo.ui.component.SectionHeader
 import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
+import kr.ac.baekseok.readytogo.ui.format.dateShort
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 /**
  * 홈 — 새 여행 만들기, 다가오는 여행 D-day, 최근 일정.
@@ -212,8 +212,8 @@ private fun UpcomingTripCard(trip: SavedTrip, today: LocalDate, onClick: () -> U
     PhotoCard(
         key = trip.destinationName,
         title = trip.title,
-        subtitle = "${trip.departureDate.format(DATE_FORMAT)} – " +
-            "${trip.returnDate.format(DATE_FORMAT)} · ${trip.dayCount}일",
+        subtitle = "${dateShort(trip.departureDate)} – " +
+            "${dateShort(trip.returnDate)} · ${trip.dayCount}일",
         // 목적지가 어디든 이 카드만은 브랜드 색으로 둔다. 홈에서 가장 먼저 보이는 면이다.
         colors = LocalPalette.current.HeroGradient,
         // 터쿼이즈 자체가 충분히 어두워서 덮개 없이도 흰 글자가 읽힌다.
@@ -288,7 +288,7 @@ private fun RecentTripRow(trip: SavedTrip, onClick: () -> Unit) {
             )
             Text(
                 text = "${trip.destinationName} · ${trip.dayCount}일 · " +
-                    trip.departureDate.format(DATE_FORMAT),
+                    dateShort(trip.departureDate),
                 style = MaterialTheme.typography.bodyMedium,
                 color = LocalPalette.current.TextSecondary,
                 maxLines = 1,
@@ -305,4 +305,3 @@ private val THUMB_ICON_SIZE = Tokens.Space.xxl * 1.4f
 
 /** 빈 목록 자리의 그림 진하기. 글자보다 눈에 들어오면 주인공이 바뀐다. */
 private const val EMPTY_STATE_ART_ALPHA = 0.35f
-private val DATE_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("M.d")

@@ -1,13 +1,19 @@
 package kr.ac.baekseok.readytogo.domain.plan
 
+import androidx.annotation.StringRes
+import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.data.model.LatLng
 import kr.ac.baekseok.readytogo.domain.recommend.distanceKm
 import kotlin.math.roundToInt
 
-/** 두 지점 사이를 어떻게 이동하는지. 화면에 "도보 12분"처럼 적는다. */
-enum class TravelMode(val label: String) {
-    WALK("도보"),
-    TRANSIT("대중교통"),
+/**
+ * 두 지점 사이를 어떻게 이동하는지. 화면에 "도보 12분"처럼 적는다.
+ *
+ * 글자가 아니라 리소스 id를 든다 — 도메인에는 Context가 없어서 번역된 이름을 만들 수 없다.
+ */
+enum class TravelMode(@StringRes val labelRes: Int) {
+    WALK(R.string.travel_mode_walk),
+    TRANSIT(R.string.travel_mode_transit),
 }
 
 /**
@@ -19,10 +25,7 @@ data class TravelLeg(
     val mode: TravelMode,
     val minutes: Int,
     val distanceKm: Double,
-) {
-    /** "도보 12분" */
-    val label: String get() = "${mode.label} ${minutes}분"
-}
+)
 
 /**
  * 거리로 이동 시간을 추정한다.
@@ -46,19 +49,13 @@ fun estimateTravel(from: LatLng, to: LatLng): TravelLeg {
 }
 
 /**
- * 분을 사람이 읽는 말로. "약 1시간 30분", "약 45분"
+ * 분을 시·분으로 쪼갠다. 글자로 바꾸는 일은 화면이 한다(`ui/format/durationText`).
  *
- * "약"을 붙이는 이유: 추정값인데 "1시간 30분"이라고 단언하면 정확한 값으로 읽힌다.
+ * 도메인이 "약 1시간 30분"까지 만들면 언어를 바꿀 수 없다. 숫자만 내보내고
+ * 어순과 단위는 리소스에 맡긴다.
  */
-fun formatDuration(minutes: Int): String {
-    val hours = minutes / MINUTES_PER_HOUR
-    val rest = minutes % MINUTES_PER_HOUR
-    return when {
-        hours == 0 -> "약 ${rest}분"
-        rest == 0 -> "약 ${hours}시간"
-        else -> "약 ${hours}시간 ${rest}분"
-    }
-}
+fun splitDuration(minutes: Int): Pair<Int, Int> =
+    minutes / MINUTES_PER_HOUR to minutes % MINUTES_PER_HOUR
 
 /**
  * 이동 추정 상수. 숫자만 바꿔 조정할 수 있게 한곳에 모았다.

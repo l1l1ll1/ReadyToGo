@@ -27,9 +27,9 @@ import kr.ac.baekseok.readytogo.ui.component.EmptyState
 import kr.ac.baekseok.readytogo.ui.component.PhotoCard
 import kr.ac.baekseok.readytogo.ui.component.SectionHeader
 import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
+import kr.ac.baekseok.readytogo.ui.format.dateShort
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 /**
  * "여행" 탭 — 저장된 일정 목록.
@@ -158,7 +158,7 @@ private fun TripCard(
         key = trip.destinationName,
         title = trip.title,
         subtitle = "${trip.destinationName} · " +
-            "${trip.departureDate.format(DATE_FORMAT)} – ${trip.returnDate.format(DATE_FORMAT)} · " +
+            "${dateShort(trip.departureDate)} – ${dateShort(trip.returnDate)} · " +
             "${trip.dayCount}일",
         onClick = onClick,
         onLongClick = onLongClick,
@@ -185,4 +185,3 @@ private fun TripCard(
     }
 }
 
-private val DATE_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("M.d")

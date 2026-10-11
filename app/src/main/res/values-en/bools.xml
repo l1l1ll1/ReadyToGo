@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 영어에는 "만" 단위가 없다. 전체 금액을 그대로 적는다. -->
+    <bool name="money_short_uses_man">false</bool>
+</resources>

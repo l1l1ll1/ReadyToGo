@@ -302,13 +302,13 @@ class TripPlanner(
             if (pair == null && !widened) {
                 widened = true
                 available = (available + widenSearch()).distinctBy { it.id }
-                android.util.Log.d("TripPlan", "  ${dayNumber}일차 ${meal.label}: 반경 넓혀 재검색")
+                android.util.Log.d("TripPlan", "  ${dayNumber}일차 ${meal.name}: 반경 넓혀 재검색")
                 pair = selectForMeal(meal, available, anchors, maxPriceWon, usedRestaurantIds)
             }
 
             if (pair == null) {
                 // 5단계 — 여기까지 오면 정말 없다. 화면이 "근처 추천 식당 없음"을 보여준다.
-                android.util.Log.d("TripPlan", "  ${dayNumber}일차 ${meal.label}: 후보 없음")
+                android.util.Log.d("TripPlan", "  ${dayNumber}일차 ${meal.name}: 후보 없음")
                 continue
             }
 
@@ -430,7 +430,7 @@ class TripPlanner(
             } else {
                 forMeal.count { it.priceWon <= mealBudget }.toString()
             }
-            "${meal.label} ${forMeal.size}곳(예산내 $within)"
+            "${meal.name} ${forMeal.size}곳(예산내 $within)"
         }
         android.util.Log.d("TripPlan", "$label: 총 ${candidates.size}곳 · $breakdown")
     }
@@ -449,7 +449,7 @@ class TripPlanner(
         val neededPerMeal = dayCount * CHOICES_PER_MEAL
         val reasons = MealTime.entries.mapNotNull { meal ->
             val count = candidates.count { meal in it.suitableMeals }
-            if (count < neededPerMeal) "${meal.label} $count/$neededPerMeal" else null
+            if (count < neededPerMeal) "${meal.name} $count/$neededPerMeal" else null
         }.toMutableList()
 
         // 점심과 저녁은 거의 같은 후보를 쓴다(일반 식당은 둘 다 가능). 중복 배제 때문에 한 곳은

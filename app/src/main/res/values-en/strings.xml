@@ -145,4 +145,42 @@
     <string name="notification_channel_name">Trip reminders</string>
     <string name="notification_channel_body">We remind you 7 days and 1 day before a saved trip departs.</string>
     <string name="notification_body">%1$s departs in %2$d days.</string>
+
+    <!-- 공통 표기 -->
+    <string name="fmt_money">KRW %s</string>
+    <!-- "만원"은 한국어에만 있는 단위다. 영어는 money_short_uses_man이 false라 이 값을 쓰지 않는다. -->
+    <string name="fmt_money_man">KRW %s</string>
+    <string name="fmt_date_md">MMM d</string>
+    <string name="fmt_date_md_e">MMM d (E)</string>
+    <string name="fmt_nights_days">%1$d nights, %2$d days</string>
+    <string name="fmt_duration_hm">About %1$d hr %2$d min</string>
+    <string name="fmt_duration_h">About %1$d hr</string>
+    <string name="fmt_duration_m">About %1$d min</string>
+    <string name="fmt_travel_leg">%1$s %2$d min</string>
+
+    <!-- 여행 목적 -->
+    <string name="purpose_rest">Relax</string>
+    <string name="purpose_sightseeing">Sightseeing</string>
+    <string name="purpose_food">Food</string>
+    <string name="purpose_activity">Activity</string>
+
+    <!-- 끼니 -->
+    <string name="meal_breakfast">Breakfast</string>
+    <string name="meal_lunch">Lunch</string>
+    <string name="meal_dinner">Dinner</string>
+
+    <!-- 두 번째 선택지 기준 -->
+    <string name="alternative_within_budget">Within budget</string>
+    <string name="alternative_cheaper">Better value</string>
+    <string name="alternative_closest">Closest</string>
+    <string name="alternative_none">No alternative</string>
+
+    <!-- 이동 수단 -->
+    <string name="travel_mode_walk">Walk</string>
+    <string name="travel_mode_transit">Transit</string>
+
+    <!-- 즐겨찾기 종류 -->
+    <string name="favorite_kind_restaurant">Restaurant</string>
+    <string name="favorite_kind_attraction">Attraction</string>
+    <string name="favorite_kind_lodging">Stay</string>
 </resources>

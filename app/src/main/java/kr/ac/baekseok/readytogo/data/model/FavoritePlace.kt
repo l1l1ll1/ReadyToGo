@@ -1,5 +1,8 @@
 package kr.ac.baekseok.readytogo.data.model
 
+import androidx.annotation.StringRes
+import kr.ac.baekseok.readytogo.R
+
 /**
  * 즐겨찾기한 장소. 식당·관광지 카드의 ♥를 누르면 여기로 들어온다.
  *
@@ -21,9 +24,13 @@ data class FavoritePlace(
     val mapUrl: String,
 )
 
-/** 즐겨찾기 종류. 목록을 식당·관광지로 나눠 보여주려면 구분이 필요하다. */
-enum class FavoriteKind(val label: String) {
-    RESTAURANT("식당"),
-    ATTRACTION("관광지"),
-    LODGING("숙소"),
+/**
+ * 즐겨찾기 종류. 목록을 식당·관광지로 나눠 보여주려면 구분이 필요하다.
+ *
+ * 글자가 아니라 리소스 id를 드는 이유는 [TravelPurpose] 주석 참고.
+ */
+enum class FavoriteKind(@StringRes val labelRes: Int) {
+    RESTAURANT(R.string.favorite_kind_restaurant),
+    ATTRACTION(R.string.favorite_kind_attraction),
+    LODGING(R.string.favorite_kind_lodging),
 }

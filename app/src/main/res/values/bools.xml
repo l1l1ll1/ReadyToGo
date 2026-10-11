@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+        좁은 자리의 금액을 "만원" 단위로 끊을지.
+
+        한국어에만 있는 단위라 언어로 갈린다. 코드에서 Locale을 보고 분기하지 않고
+        리소스로 두는 이유: 언어가 늘면 코드가 아니라 이 파일만 늘어난다.
+    -->
+    <bool name="money_short_uses_man">true</bool>
+</resources>

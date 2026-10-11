@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kr.ac.baekseok.readytogo.ui.component.PrimaryButton
 import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
+import kr.ac.baekseok.readytogo.ui.format.tripRangeText
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 import java.time.Instant
 import java.time.LocalDate
@@ -82,7 +83,7 @@ fun DateRangeSheet(
             // 고른 기간을 시트 안에서도 보여준다. 달력만 보면 며칠짜리인지 세어 봐야 한다.
             Text(
                 text = if (start != null && end != null) {
-                    formatTripRange(start, end)
+                    tripRangeText(start, end)
                 } else {
                     "출발일과 귀국일을 차례로 누르세요"
                 },

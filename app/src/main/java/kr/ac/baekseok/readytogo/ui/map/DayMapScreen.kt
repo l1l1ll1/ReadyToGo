@@ -18,6 +18,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -90,7 +91,11 @@ fun DayMapContent(
     lodging: Lodging?,
     modifier: Modifier = Modifier,
 ) {
-    val spots = remember(day, lodging) { day.toMapSpots(lodging).spreadOverlapping() }
+    // 끼니 이름은 지금 언어로 미리 풀어서 넘긴다 — remember 블록 안에서는 리소스를 읽을 수 없다.
+    val mealLabels = MealTime.entries.associateWith { stringResource(it.labelRes) }
+    val spots = remember(day, lodging, mealLabels) {
+        day.toMapSpots(lodging, mealLabels).spreadOverlapping()
+    }
 
     Box(modifier = modifier.fillMaxSize()) {
         if (spots.isEmpty()) {
@@ -300,7 +305,10 @@ private fun AppLatLng.toGms() = GmsLatLng(latitude, longitude)
  * 식당은 "추천"(첫 번째 선택지)만 찍는다. 두 선택지를 다 찍으면 한 끼에 마커가 둘씩,
  * 하루에 여섯 개가 되어 관광지 동선이 묻힌다.
  */
-private fun DayPlan.toMapSpots(lodging: Lodging?): List<MapSpot> {
+private fun DayPlan.toMapSpots(
+    lodging: Lodging?,
+    mealLabels: Map<MealTime, String>,
+): List<MapSpot> {
     val attractionSpots = attractions.mapIndexed { index, attraction ->
         MapSpot(
             position = attraction.location,
@@ -314,7 +322,7 @@ private fun DayPlan.toMapSpots(lodging: Lodging?): List<MapSpot> {
         val restaurant: Restaurant = meals[meal]?.qualityFirst?.item ?: return@mapNotNull null
         MapSpot(
             position = restaurant.location,
-            title = "${meal.label} · ${restaurant.name}",
+            title = "${mealLabels[meal]} · ${restaurant.name}",
             snippet = "${restaurant.category} · ${"%,d".format(restaurant.priceWon)}원",
             kind = SpotKind.RESTAURANT,
         )

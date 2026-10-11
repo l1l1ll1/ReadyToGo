@@ -1,5 +1,7 @@
 package kr.ac.baekseok.readytogo.data.model
 
+import androidx.annotation.StringRes
+import kr.ac.baekseok.readytogo.R
 import java.time.LocalDate
 
 /** 추천된 항목 하나와 그 근거. */
@@ -16,19 +18,23 @@ data class Recommendation<T>(
     val distanceFromCenterKm: Double? = null,
 )
 
-/** 두 번째 선택지가 어떤 기준으로 뽑혔는지. 화면 이름표가 여기서 나온다. */
-enum class AlternativeKind(val label: String) {
+/**
+ * 두 번째 선택지가 어떤 기준으로 뽑혔는지. 화면 이름표가 여기서 나온다.
+ *
+ * 글자가 아니라 리소스 id를 드는 이유는 [TravelPurpose] 주석 참고.
+ */
+enum class AlternativeKind(@StringRes val labelRes: Int) {
     /** 1등이 예산을 넘겨서, 예산 안에서 점수가 가장 높은 것을 골랐다. */
-    WITHIN_BUDGET("예산 내"),
+    WITHIN_BUDGET(R.string.alternative_within_budget),
 
     /** 1등이 이미 예산 안이라, 더 싼 것 중 점수가 가장 높은 것을 골랐다. */
-    CHEAPER("가성비"),
+    CHEAPER(R.string.alternative_cheaper),
 
     /** 더 싼 후보가 없어서, 동선이 가장 좋은 것을 골랐다. */
-    CLOSEST("동선 우선"),
+    CLOSEST(R.string.alternative_closest),
 
     /** 후보가 하나뿐이라 대안을 만들 수 없었다. */
-    NONE("대안 없음"),
+    NONE(R.string.alternative_none),
 }
 
 /**
@@ -49,10 +55,10 @@ data class RecommendationPair<T>(
 )
 
 /** 끼니. 화면에서 MealTime.entries 순서대로 돌리면 아침→점심→저녁이 된다. */
-enum class MealTime(val label: String) {
-    BREAKFAST("아침"),
-    LUNCH("점심"),
-    DINNER("저녁"),
+enum class MealTime(@StringRes val labelRes: Int) {
+    BREAKFAST(R.string.meal_breakfast),
+    LUNCH(R.string.meal_lunch),
+    DINNER(R.string.meal_dinner),
 }
 
 /**

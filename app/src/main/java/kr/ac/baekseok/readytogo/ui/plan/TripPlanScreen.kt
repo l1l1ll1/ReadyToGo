@@ -46,6 +46,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -67,6 +68,7 @@ import kr.ac.baekseok.readytogo.data.model.TripPlan
 import kr.ac.baekseok.readytogo.domain.plan.TimelineItem
 import kr.ac.baekseok.readytogo.domain.purpose.PurposeProfiles
 import kr.ac.baekseok.readytogo.ui.component.FavoriteButton
+import kr.ac.baekseok.readytogo.ui.format.money
 import kr.ac.baekseok.readytogo.ui.map.DayMapContent
 import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.ReadytogoTheme
@@ -75,12 +77,8 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlin.math.roundToInt
 
-// 요일이 기기 언어를 따라가면 한국어 화면에 "9.26(Sat)"이 섞인다. 한국어로 고정한다.
-internal val DATE = DateTimeFormatter.ofPattern("M.d(E)", Locale.KOREAN)
 private val TIME = DateTimeFormatter.ofPattern("HH:mm")
 
-/** 금액 표기를 한 곳에서 맞춘다. */
-internal fun Long.won(): String = "%,d원".format(this)
 
 /** 결과 화면의 탭. 순서가 화면에 나오는 순서다. */
 private enum class PlanTab(val label: String) {
@@ -539,14 +537,18 @@ private fun PurposeShareBar(plan: TripPlan) {
         }
     }
 
+    // 목적 이름은 buildString 밖에서 미리 푼다 — joinToString의 람다는 inline이 아니라
+    // 그 안에서 stringResource를 부를 수 없다.
+    val purposeNames = plan.condition.purposes.map { stringResource(it.labelRes) }
+
     Text(
         text = buildString {
             val remaining = plan.budget.remainingWon
-            if (remaining != null) append("항공료를 뺀 ${remaining.won()}을 ")
-            if (plan.condition.purposes.isEmpty()) {
+            if (remaining != null) append("항공료를 뺀 ${money(remaining)}을 ")
+            if (purposeNames.isEmpty()) {
                 append("기본 비율로 나눴습니다. 목적을 고르면 배분이 달라집니다.")
             } else {
-                append(plan.condition.purposes.joinToString("·") { it.label })
+                append(purposeNames.joinToString("·"))
                 append("에 맞춰 나눈 비율입니다.")
             }
         },
@@ -563,7 +565,7 @@ private fun BudgetRow(label: String, amount: Long?) {
     if (amount == null) return
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
         Text(label, style = MaterialTheme.typography.bodyMedium)
-        Text(amount.won(), style = MaterialTheme.typography.bodyMedium)
+        Text(money(amount), style = MaterialTheme.typography.bodyMedium)
     }
 }
 
@@ -606,7 +608,7 @@ private fun FlightCard(flight: Flight) {
             )
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 Text("${flight.airline} ${flight.flightNumber}", fontWeight = FontWeight.Bold)
-                Text(flight.priceWon.won(), fontWeight = FontWeight.Bold)
+                Text(money(flight.priceWon), fontWeight = FontWeight.Bold)
             }
             Text(
                 "${flight.departureAirport} ${flight.departureAt.format(TIME)}" +
@@ -762,7 +764,11 @@ private fun MealBlock(
     onToggleFavorite: (FavoritePlace) -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(Tokens.Space.md)) {
-        Text(meal.label, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+        Text(
+            text = stringResource(meal.labelRes),
+            style = MaterialTheme.typography.titleSmall,
+            fontWeight = FontWeight.Bold,
+        )
         ChoiceRow(
             label = pair.labelOfFirst(),
             overBudget = pair.qualityFirst.overBudget,
@@ -812,8 +818,10 @@ internal fun Restaurant.toFavorite(cityName: String) = FavoritePlace(
 internal fun Attraction.toFavorite(cityName: String) = FavoritePlace(
     placeId = id,
     name = name,
-    // 관광지는 Places 카테고리 표시명을 따로 들고 있지 않다. 종류 이름으로 대신한다.
-    category = FavoriteKind.ATTRACTION.label,
+    // 관광지는 Places 카테고리 표시명을 따로 들고 있지 않다. 비워 두면 화면이
+    // 종류 이름("관광지")으로 대신 채운다 — 번역된 글자를 저장하면 나중에 언어를
+    // 바꿔도 저장될 때의 언어가 그대로 남는다.
+    category = "",
     kind = FavoriteKind.ATTRACTION,
     location = location,
     cityName = cityName,
@@ -827,12 +835,13 @@ internal fun Attraction.toFavorite(cityName: String) = FavoritePlace(
  * 실제로는 범위 안에서 움직인다. 예산 판정은 상한 기준이라 모자랄 일은 없다.
  * 현지 통화를 같이 적는 이유는 메뉴판과 바로 대조하기 위함이다.
  */
+@Composable
 internal fun Restaurant.priceText(): String {
     val krw = when {
-        priceIsUpperBound -> "${priceWon.won()} 이하"
+        priceIsUpperBound -> "${money(priceWon)} 이하"
         minPriceWon != null && minPriceWon != priceWon ->
-            "${"%,d".format(minPriceWon)}~${priceWon.won()}"
-        else -> priceWon.won()
+            "${"%,d".format(minPriceWon)}~${money(priceWon)}"
+        else -> money(priceWon)
     }
     return when {
         priceEstimated -> "$krw (추정)"
@@ -923,8 +932,9 @@ private fun ChoiceRow(
  * Places는 호텔 요금을 주지 않아 등급에서 추정한 값이다. 확정 금액으로 오해하지 않도록
  * "예상"을 앞에 붙인다.
  */
+@Composable
 private fun Lodging.priceText(): String =
-    if (priceEstimated) "예상 1박 약 ${priceWon.won()}" else "${priceWon.won()} / 1박"
+    if (priceEstimated) "예상 1박 약 ${money(priceWon)}" else "${money(priceWon)} / 1박"
 
 private fun Lodging.detailLine(): String =
     "★$rating (리뷰 ${"%,d".format(reviewCount)}) · $address"
@@ -941,7 +951,8 @@ internal fun Restaurant.detailLine(): String =
 private fun RecommendationPair<*>.labelOfFirst(): String =
     if (qualityFirst.overBudget) "추천 · 예산 초과" else "추천"
 
-private fun RecommendationPair<*>.labelOfSecond(): String = alternativeKind.label
+@Composable
+private fun RecommendationPair<*>.labelOfSecond(): String = stringResource(alternativeKind.labelRes)
 
 /**
  * 링크를 브라우저·지도 앱으로 여는 동작을 만든다. 열 수 없는 주소면 null을 돌려준다.

@@ -20,10 +20,11 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import kr.ac.baekseok.readytogo.domain.plan.TimelineItem
-import kr.ac.baekseok.readytogo.domain.plan.formatDuration
+import kr.ac.baekseok.readytogo.ui.format.durationText
 import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 
@@ -131,7 +132,7 @@ private fun VisitDetail(item: TimelineItem.Visit) {
             )
         }
         Text(
-            text = "머무는 시간 ${formatDuration(item.stayMinutes)}",
+            text = "머무는 시간 ${durationText(item.stayMinutes)}",
             style = MaterialTheme.typography.bodyMedium,
             color = LocalPalette.current.TextSecondary,
         )
@@ -146,7 +147,7 @@ private fun MealDetail(item: TimelineItem.Meal) {
     Column(verticalArrangement = Arrangement.spacedBy(Tokens.Space.xs)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = item.meal.label,
+                text = stringResource(item.meal.labelRes),
                 style = MaterialTheme.typography.labelLarge,
                 color = if (overBudget) LocalPalette.current.Accent else LocalPalette.current.Point,
                 fontWeight = FontWeight.Bold,

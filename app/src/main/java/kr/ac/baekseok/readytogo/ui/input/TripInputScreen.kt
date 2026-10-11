@@ -44,6 +44,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
@@ -54,6 +55,7 @@ import kr.ac.baekseok.readytogo.data.model.TravelPurpose
 import kr.ac.baekseok.readytogo.data.model.TripCondition
 import kr.ac.baekseok.readytogo.ui.component.PrimaryButton
 import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
+import kr.ac.baekseok.readytogo.ui.format.tripRangeText
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 
 /**
@@ -293,7 +295,7 @@ private fun DateCard(
             )
             Text(
                 text = if (departure != null && returnDate != null) {
-                    formatTripRange(departure, returnDate)
+                    tripRangeText(departure, returnDate)
                 } else {
                     "날짜를 고르세요"
                 },
@@ -385,7 +387,7 @@ private fun PurposeSection(
                 FilterChip(
                     selected = purpose in selected,
                     onClick = { onToggle(purpose) },
-                    label = { Text(text = purpose.label, maxLines = 1) },
+                    label = { Text(text = stringResource(purpose.labelRes), maxLines = 1) },
                     leadingIcon = {
                         Icon(
                             imageVector = purpose.icon,

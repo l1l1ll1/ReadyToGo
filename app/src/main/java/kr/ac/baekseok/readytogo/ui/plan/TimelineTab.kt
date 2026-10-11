@@ -31,6 +31,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -44,7 +45,9 @@ import kr.ac.baekseok.readytogo.domain.plan.TimelineEntry
 import kr.ac.baekseok.readytogo.domain.plan.TimelineItem
 import kr.ac.baekseok.readytogo.domain.plan.TravelLeg
 import kr.ac.baekseok.readytogo.domain.plan.TravelMode
-import kr.ac.baekseok.readytogo.domain.plan.formatDuration
+import kr.ac.baekseok.readytogo.ui.format.dateWithDay
+import kr.ac.baekseok.readytogo.ui.format.durationText
+import kr.ac.baekseok.readytogo.ui.format.travelLegText
 import kr.ac.baekseok.readytogo.domain.plan.toTimeline
 import kr.ac.baekseok.readytogo.domain.purpose.PurposeAttractionTypes
 import kr.ac.baekseok.readytogo.ui.component.EmptyState
@@ -156,13 +159,13 @@ private fun DayHeader(day: DayPlan, totalMinutes: Int, onOpenMap: () -> Unit) {
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = "${day.dayNumber}일차 · ${day.date.format(DATE)}",
+                text = "${day.dayNumber}일차 · ${dateWithDay(day.date)}",
                 style = MaterialTheme.typography.titleMedium,
             )
             // 하루가 얼마나 빡빡한지 숫자로 알려준다. 항목만 세어서는 감이 안 온다.
             if (totalMinutes > 0) {
                 Text(
-                    text = "이동 포함 ${formatDuration(totalMinutes)}",
+                    text = "이동 포함 ${durationText(totalMinutes)}",
                     style = MaterialTheme.typography.bodyMedium,
                     color = LocalPalette.current.TextSecondary,
                 )
@@ -276,7 +279,7 @@ private fun VisitContent(item: TimelineItem.Visit, purposes: Set<TravelPurpose>)
             horizontalArrangement = Arrangement.spacedBy(Tokens.Space.xs),
             verticalArrangement = Arrangement.spacedBy(Tokens.Space.xs),
         ) {
-            matched.forEach { purpose -> TagChip(text = purpose.label) }
+            matched.forEach { purpose -> TagChip(text = stringResource(purpose.labelRes)) }
         }
     }
 
@@ -287,7 +290,7 @@ private fun VisitContent(item: TimelineItem.Visit, purposes: Set<TravelPurpose>)
         color = LocalPalette.current.TextSecondary,
     )
     Text(
-        text = formatDuration(item.stayMinutes),
+        text = durationText(item.stayMinutes),
         style = MaterialTheme.typography.labelMedium,
         color = LocalPalette.current.TextSecondary,
     )
@@ -308,7 +311,7 @@ private fun MealContent(item: TimelineItem.Meal) {
 
     Row(verticalAlignment = Alignment.CenterVertically) {
         Text(
-            text = item.meal.label,
+            text = stringResource(item.meal.labelRes),
             style = MaterialTheme.typography.labelMedium,
             color = accent,
             fontWeight = FontWeight.Bold,
@@ -340,7 +343,7 @@ private fun MealContent(item: TimelineItem.Meal) {
         fontWeight = FontWeight.Bold,
     )
     Text(
-        text = formatDuration(item.stayMinutes),
+        text = durationText(item.stayMinutes),
         style = MaterialTheme.typography.labelMedium,
         color = LocalPalette.current.TextSecondary,
     )
@@ -355,7 +358,7 @@ private fun MealContent(item: TimelineItem.Meal) {
 @Composable
 private fun NoMealContent(item: TimelineItem.NoMeal) {
     Text(
-        text = item.meal.label,
+        text = stringResource(item.meal.labelRes),
         style = MaterialTheme.typography.labelMedium,
         color = LocalPalette.current.TextSecondary,
         fontWeight = FontWeight.Bold,
@@ -396,7 +399,7 @@ private fun TravelRow(leg: TravelLeg) {
             )
         }
         Text(
-            text = "${leg.label} · ${"%.1f".format(leg.distanceKm)}km",
+            text = "${travelLegText(leg)} · ${"%.1f".format(leg.distanceKm)}km",
             style = MaterialTheme.typography.labelMedium,
             color = LocalPalette.current.TextSecondary,
             modifier = Modifier.padding(start = Tokens.Space.md),

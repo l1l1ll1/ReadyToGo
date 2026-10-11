@@ -1,17 +1,24 @@
 package kr.ac.baekseok.readytogo.data.model
 
+import androidx.annotation.StringRes
+import kr.ac.baekseok.readytogo.R
 import java.io.Serializable
 import java.time.LocalDate
 
 /**
- * 여행 목적. label은 화면에 그대로 노출되는 한국어 이름이다.
+ * 여행 목적.
+ *
  * 나중에 Repository 질의 조건으로도 쓰기 때문에 UI 패키지가 아니라 데이터 모델에 둔다.
+ *
+ * **이름을 글자가 아니라 리소스 id로 들고 있는 이유**: 모델에는 Context가 없어서 여기서
+ * 번역된 글자를 만들 수 없다. id만 들고 화면이 `stringResource(labelRes)`로 푼다
+ * (AppLanguage·TextScale과 같은 방식).
  */
-enum class TravelPurpose(val label: String) {
-    REST("휴양"),
-    SIGHTSEEING("관광"),
-    FOOD("맛집"),
-    ACTIVITY("액티비티"),
+enum class TravelPurpose(@StringRes val labelRes: Int) {
+    REST(R.string.purpose_rest),
+    SIGHTSEEING(R.string.purpose_sightseeing),
+    FOOD(R.string.purpose_food),
+    ACTIVITY(R.string.purpose_activity),
 }
 
 /**

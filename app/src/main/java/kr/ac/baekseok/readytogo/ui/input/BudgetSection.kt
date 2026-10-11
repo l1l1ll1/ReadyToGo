@@ -31,6 +31,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import kr.ac.baekseok.readytogo.domain.budget.BudgetRange
 import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
+import kr.ac.baekseok.readytogo.ui.format.money
+import kr.ac.baekseok.readytogo.ui.format.moneyShort
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 import kotlin.math.ln
 import kotlin.math.pow
@@ -86,7 +88,7 @@ fun BudgetSection(
                     horizontalArrangement = Arrangement.spacedBy(Tokens.Space.xs),
                 ) {
                     Text(
-                        text = formatWon(budgetWon),
+                        text = money(budgetWon),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = LocalPalette.current.Point,
@@ -100,7 +102,7 @@ fun BudgetSection(
                 // 여러 명이면 총액만 보고는 넉넉한지 알 수 없다. 1인당 몫을 같이 보여준다.
                 if (adults > 1) {
                     Text(
-                        text = "1인당 약 ${formatWonShort(perAdult(budgetWon, adults))}",
+                        text = "1인당 약 ${moneyShort(perAdult(budgetWon, adults))}",
                         style = MaterialTheme.typography.labelMedium,
                         color = LocalPalette.current.TextSecondary,
                     )
@@ -124,16 +126,16 @@ fun BudgetSection(
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(
-                text = formatWonShort(minWon),
+                text = moneyShort(minWon),
                 style = MaterialTheme.typography.labelMedium,
                 color = LocalPalette.current.TextSecondary,
             )
             Text(
                 // 슬라이더 최댓값을 넘는 금액은 직접 입력으로만 넣을 수 있다. 그걸 알려준다.
                 text = if (budgetWon > maxWon) {
-                    "${formatWonShort(maxWon)} 초과"
+                    "${moneyShort(maxWon)} 초과"
                 } else {
-                    formatWonShort(maxWon)
+                    moneyShort(maxWon)
                 },
                 style = MaterialTheme.typography.labelMedium,
                 color = LocalPalette.current.TextSecondary,
@@ -148,7 +150,7 @@ fun BudgetSection(
                 FilterChip(
                     selected = budgetWon == amount,
                     onClick = { onBudgetSelected(amount) },
-                    label = { Text(formatWonShort(amount)) },
+                    label = { Text(moneyShort(amount)) },
                     shape = Tokens.Radius.chip,
                 )
             }
@@ -204,9 +206,9 @@ private fun BudgetInputDialog(
                     // 숫자를 세지 않아도 되게 천 단위로 끊어 보여준다.
                     text = typed?.let { won ->
                         if (adults > 1) {
-                            "${formatWon(won)} · 1인당 약 ${formatWonShort(perAdult(won, adults))}"
+                            "${money(won)} · 1인당 약 ${moneyShort(perAdult(won, adults))}"
                         } else {
-                            formatWon(won)
+                            money(won)
                         }
                     } ?: "숫자를 입력하세요",
                     style = MaterialTheme.typography.bodyMedium,

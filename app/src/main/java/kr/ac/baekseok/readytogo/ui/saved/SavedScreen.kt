@@ -126,7 +126,7 @@ private fun KindFilter(
             FilterChip(
                 selected = selected == kind,
                 onClick = { onSelect(kind) },
-                label = { Text("${kind.label} $count") },
+                label = { Text("${stringResource(kind.labelRes)} $count") },
                 shape = Tokens.Radius.chip,
             )
         }
@@ -166,7 +166,9 @@ private fun FavoriteRow(
                 overflow = TextOverflow.Ellipsis,
             )
             Text(
-                text = "${place.category} · ${place.cityName}",
+                // 관광지는 Places 카테고리가 없어 비어 있다. 그때는 종류 이름으로 채운다.
+                text = "${place.category.ifBlank { stringResource(place.kind.labelRes) }} · " +
+                    place.cityName,
                 style = MaterialTheme.typography.bodyMedium,
                 color = LocalPalette.current.TextSecondary,
                 maxLines = 1,

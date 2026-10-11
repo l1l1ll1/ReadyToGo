@@ -15,12 +15,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import kr.ac.baekseok.readytogo.data.model.TravelPurpose
 import kr.ac.baekseok.readytogo.data.model.TripPlan
-import kr.ac.baekseok.readytogo.domain.plan.formatDuration
+import kr.ac.baekseok.readytogo.ui.format.dateWithDay
+import kr.ac.baekseok.readytogo.ui.format.durationText
+import kr.ac.baekseok.readytogo.ui.format.money
 import kr.ac.baekseok.readytogo.domain.plan.toTimeline
 import kr.ac.baekseok.readytogo.ui.component.TagChip
 import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
@@ -53,7 +56,7 @@ fun SummaryHeader(plan: TripPlan) {
             text = listOfNotNull(
                 c.destination?.country,
                 c.departureDate?.let { departure ->
-                    c.returnDate?.let { back -> "${departure.format(DATE)} – ${back.format(DATE)}" }
+                    c.returnDate?.let { back -> "${dateWithDay(departure)} – ${dateWithDay(back)}" }
                 },
                 "${plan.dailyPlans.size}일",
                 // 방 수까지 적는 이유: 숙소 예산이 왜 그 금액인지가 인원만으로는 안 보인다.
@@ -73,7 +76,7 @@ fun SummaryHeader(plan: TripPlan) {
                 // 목적 순서는 선언 순서로 고정한다. Set 순회 순서에 맡기면 같은 조합인데
                 // 화면을 다시 열 때마다 배지 차례가 바뀐다.
                 TravelPurpose.entries.filter { it in c.purposes }.forEach { purpose ->
-                    TagChip(text = purpose.label)
+                    TagChip(text = stringResource(purpose.labelRes))
                 }
             }
         }
@@ -127,7 +130,7 @@ private fun PlanDensityLine(plan: TripPlan) {
 
     val parts = listOfNotNull(
         perDay?.let { "하루 관광지 ${"%.1f".format(it).removeSuffix(".0")}곳" },
-        minutesPerDay?.takeIf { it > 0 }?.let { "이동 포함 하루 ${formatDuration(it)}" },
+        minutesPerDay?.takeIf { it > 0 }?.let { "이동 포함 하루 ${durationText(it)}" },
     )
     if (parts.isEmpty()) return
 
@@ -175,7 +178,8 @@ private fun TightMealBudgetNotice(plan: TripPlan) {
  *
  * 나눠서 나온 값이라 끝자리에 의미가 없다. 16,681원을 그대로 적으면 정확한 값으로 읽힌다.
  */
-private fun formatRoughWon(won: Long): String = ((won + 50) / 100 * 100).won()
+@Composable
+private fun formatRoughWon(won: Long): String = money((won + 50) / 100 * 100)
 
 /**
  * 예산 사용률 바.
@@ -200,7 +204,7 @@ private fun BudgetUsageBar(totalWon: Long, plannedWon: Long) {
                 modifier = Modifier.weight(1f),
             )
             Text(
-                text = "${plannedWon.won()} / ${totalWon.won()} (${(ratio * 100).toInt()}%)",
+                text = "${money(plannedWon)} / ${money(totalWon)} (${(ratio * 100).toInt()}%)",
                 style = MaterialTheme.typography.labelMedium,
                 color = color,
                 fontWeight = FontWeight.Bold,

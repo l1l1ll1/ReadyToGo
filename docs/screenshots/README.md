@@ -8,7 +8,8 @@
 | `icon.png` | 런처 홈 화면의 앱 아이콘 (독 오른쪽) |
 | `splash.png` | 시작 화면 — 흰 배경에 로고 일러스트 |
 | `login.png` | 로그인 — 흰 배경, 워드마크 + 소개 문구 |
-| `home.png` | 홈 — 다가오는 여행 카드, FAB |
+| `home.png` | 홈 — 닉네임 인사, 다가오는 여행 D-day 카드, 최근 일정, FAB |
+| `settings.png` | 설정 — 계정·언어·알림·접근성 |
 | `plan-summary.png` | 결과 화면 요약 탭 |
 | `en-input.png` | 영어 — 입력 화면 (금액이 달러로 환산된다) |
 | `en-plan-summary.png` | 영어 — 결과 화면 요약 탭 |

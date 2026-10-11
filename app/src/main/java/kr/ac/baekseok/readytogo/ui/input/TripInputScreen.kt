@@ -51,6 +51,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.data.model.TravelPurpose
 import kr.ac.baekseok.readytogo.data.model.TripCondition
 import kr.ac.baekseok.readytogo.ui.component.PrimaryButton
@@ -91,10 +92,10 @@ fun TripInputScreen(
         containerColor = LocalPalette.current.Background,
         topBar = {
             TopAppBar(
-                title = { Text("새 여행") },
+                title = { Text(stringResource(R.string.input_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "뒤로")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.common_back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -122,7 +123,7 @@ fun TripInputScreen(
             RouteCard(
                 originName = condition.origin?.shortName,
                 destinationName = condition.destination?.shortName,
-            onOriginClick = { openSheet = DestinationTarget.ORIGIN },
+                onOriginClick = { openSheet = DestinationTarget.ORIGIN },
                 onDestinationClick = { openSheet = DestinationTarget.DESTINATION },
             )
 
@@ -212,9 +213,9 @@ private fun RouteCard(
             .padding(vertical = Tokens.Space.lg),
     ) {
         RouteEnd(
-            label = "출발",
+            label = stringResource(R.string.input_origin_label),
             value = originName,
-            placeholder = "출발지",
+            placeholder = stringResource(R.string.input_origin_placeholder),
             onClick = onOriginClick,
             modifier = Modifier.weight(1f),
         )
@@ -225,9 +226,9 @@ private fun RouteCard(
             modifier = Modifier.size(Tokens.Size.icon),
         )
         RouteEnd(
-            label = "도착",
+            label = stringResource(R.string.input_destination_label),
             value = destinationName,
-            placeholder = "목적지",
+            placeholder = stringResource(R.string.input_destination_placeholder),
             onClick = onDestinationClick,
             modifier = Modifier.weight(1f),
         )
@@ -289,7 +290,7 @@ private fun DateCard(
         )
         Column(verticalArrangement = Arrangement.spacedBy(Tokens.Space.xs)) {
             Text(
-                text = "여행 날짜",
+                text = stringResource(R.string.input_dates),
                 style = MaterialTheme.typography.labelMedium,
                 color = LocalPalette.current.TextSecondary,
             )
@@ -297,7 +298,7 @@ private fun DateCard(
                 text = if (departure != null && returnDate != null) {
                     tripRangeText(departure, returnDate)
                 } else {
-                    "날짜를 고르세요"
+                    stringResource(R.string.input_dates_placeholder)
                 },
                 style = MaterialTheme.typography.titleSmall,
                 color = if (departure != null && returnDate != null) {
@@ -332,7 +333,7 @@ private fun PartySection(
             modifier = Modifier.fillMaxWidth(),
         ) {
             Text(
-                text = "인원",
+                text = stringResource(R.string.input_people),
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.weight(1f),
             )
@@ -340,10 +341,10 @@ private fun PartySection(
                 onClick = { onChange(-1) },
                 enabled = adults > TripCondition.MIN_ADULTS,
             ) {
-                Icon(Icons.Outlined.RemoveCircleOutline, contentDescription = "인원 줄이기")
+                Icon(Icons.Outlined.RemoveCircleOutline, contentDescription = stringResource(R.string.input_people_decrease))
             }
             Text(
-                text = "${adults}명",
+                text = stringResource(R.string.input_people_count, adults),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
@@ -353,11 +354,11 @@ private fun PartySection(
                 onClick = { onChange(1) },
                 enabled = adults < TripCondition.MAX_ADULTS,
             ) {
-                Icon(Icons.Outlined.AddCircleOutline, contentDescription = "인원 늘리기")
+                Icon(Icons.Outlined.AddCircleOutline, contentDescription = stringResource(R.string.input_people_increase))
             }
         }
         Text(
-            text = "성인 기준입니다. 숙소는 2인 1실로 ${roomCount}개 방을 잡습니다.",
+            text = stringResource(R.string.input_people_note, roomCount),
             style = MaterialTheme.typography.bodyMedium,
             color = LocalPalette.current.TextSecondary,
         )
@@ -370,9 +371,12 @@ private fun PurposeSection(
     onToggle: (TravelPurpose) -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(Tokens.Space.md)) {
-        Text(text = "무엇을 하러 가세요?", style = MaterialTheme.typography.titleMedium)
         Text(
-            text = "고른 목적에 따라 예산 배분과 하루 일정 밀도가 달라집니다. 여러 개 고를 수 있습니다.",
+            text = stringResource(R.string.input_purpose_title),
+            style = MaterialTheme.typography.titleMedium,
+        )
+        Text(
+            text = stringResource(R.string.input_purpose_body),
             style = MaterialTheme.typography.bodyMedium,
             color = LocalPalette.current.TextSecondary,
         )
@@ -437,7 +441,11 @@ private fun CreatePlanBar(
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
-            PrimaryButton(text = "계획 만들기", enabled = enabled, onClick = onClick)
+            PrimaryButton(
+                text = stringResource(R.string.input_create_plan),
+                enabled = enabled,
+                onClick = onClick,
+            )
         }
     }
 }

@@ -28,17 +28,20 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.annotation.StringRes
+import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.data.model.Destination
 import kr.ac.baekseok.readytogo.ui.component.EmptyState
 import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 
 /** 시트가 무엇을 고르는 중인지. 제목과 목록이 갈린다. */
-enum class DestinationTarget(val title: String, val hint: String) {
-    ORIGIN("어디서 출발하세요?", "공항 이름으로 찾기"),
-    DESTINATION("어디로 가세요?", "도시·나라·공항 코드로 찾기"),
+enum class DestinationTarget(@StringRes val titleRes: Int, @StringRes val hintRes: Int) {
+    ORIGIN(R.string.dest_origin_title, R.string.dest_origin_hint),
+    DESTINATION(R.string.dest_destination_title, R.string.dest_destination_hint),
 }
 
 /**
@@ -79,12 +82,15 @@ fun DestinationSheet(
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = target.title,
+                    text = stringResource(target.titleRes),
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.weight(1f),
                 )
                 IconButton(onClick = onDismiss) {
-                    Icon(Icons.Outlined.Close, contentDescription = "닫기")
+                    Icon(
+                        Icons.Outlined.Close,
+                        contentDescription = stringResource(R.string.common_close),
+                    )
                 }
             }
 
@@ -100,12 +106,15 @@ fun DestinationSheet(
             OutlinedTextField(
                 value = search.query,
                 onValueChange = onQueryChange,
-                label = { Text(target.hint) },
+                label = { Text(stringResource(target.hintRes)) },
                 leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = null) },
                 trailingIcon = {
                     if (search.query.isNotEmpty()) {
                         IconButton(onClick = { onQueryChange("") }) {
-                            Icon(Icons.Outlined.Close, contentDescription = "검색어 지우기")
+                            Icon(
+                                Icons.Outlined.Close,
+                                contentDescription = stringResource(R.string.dest_clear_search),
+                            )
                         }
                     }
                 },
@@ -119,8 +128,8 @@ fun DestinationSheet(
                 search.query.isNotBlank() -> {
                     if (search.results.isEmpty()) {
                         EmptyState(
-                            title = "찾는 곳이 없습니다",
-                            description = "도시 이름이나 공항 코드(예: HND)로 다시 찾아보세요.",
+                            title = stringResource(R.string.dest_empty_title),
+                            description = stringResource(R.string.dest_empty_body),
                         )
                     } else {
                         DestinationList(
@@ -137,7 +146,9 @@ fun DestinationSheet(
                 selectedCountry != null -> Column(
                     verticalArrangement = Arrangement.spacedBy(Tokens.Space.sm),
                 ) {
-                    TextButton(onClick = onBackToCountries) { Text("← 나라 다시 고르기") }
+                    TextButton(onClick = onBackToCountries) {
+                        Text(stringResource(R.string.dest_back_to_countries))
+                    }
                     DestinationList(
                         destinations = options.cities,
                         icon = Icons.Outlined.LocationCity,

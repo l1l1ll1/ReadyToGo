@@ -18,9 +18,11 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import kr.ac.baekseok.readytogo.ui.component.PrimaryButton
 import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.format.tripRangeText
+import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 import java.time.Instant
 import java.time.LocalDate
@@ -73,11 +75,11 @@ fun DateRangeSheet(
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(
-                    text = "언제 가세요?",
+                    text = stringResource(R.string.date_title),
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.weight(1f),
                 )
-                TextButton(onClick = onDismiss) { Text("취소") }
+                TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) }
             }
 
             // 고른 기간을 시트 안에서도 보여준다. 달력만 보면 며칠짜리인지 세어 봐야 한다.
@@ -85,7 +87,7 @@ fun DateRangeSheet(
                 text = if (start != null && end != null) {
                     tripRangeText(start, end)
                 } else {
-                    "출발일과 귀국일을 차례로 누르세요"
+                    stringResource(R.string.date_hint)
                 },
                 style = MaterialTheme.typography.bodyLarge,
                 color = if (start != null && end != null) {
@@ -106,7 +108,7 @@ fun DateRangeSheet(
             )
 
             PrimaryButton(
-                text = "확인",
+                text = stringResource(R.string.common_confirm),
                 enabled = start != null && end != null,
                 onClick = {
                     // enabled 조건과 같지만, 눌리는 순간 값이 null이 아님을 컴파일러에 알려야 한다.

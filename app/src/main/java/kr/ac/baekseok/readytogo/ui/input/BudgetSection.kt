@@ -26,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -33,6 +34,7 @@ import kr.ac.baekseok.readytogo.domain.budget.BudgetRange
 import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.format.money
 import kr.ac.baekseok.readytogo.ui.format.moneyShort
+import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 import kotlin.math.ln
 import kotlin.math.pow
@@ -71,7 +73,7 @@ fun BudgetSection(
             modifier = Modifier.fillMaxWidth(),
         ) {
             Text(
-                text = "예산",
+                text = stringResource(R.string.budget_title),
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.weight(1f),
             )
@@ -95,14 +97,17 @@ fun BudgetSection(
                     )
                     Icon(
                         imageVector = Icons.Outlined.Edit,
-                        contentDescription = "예산 직접 입력",
+                        contentDescription = stringResource(R.string.budget_edit),
                         tint = LocalPalette.current.Point,
                     )
                 }
                 // 여러 명이면 총액만 보고는 넉넉한지 알 수 없다. 1인당 몫을 같이 보여준다.
                 if (adults > 1) {
                     Text(
-                        text = "1인당 약 ${moneyShort(perAdult(budgetWon, adults))}",
+                        text = stringResource(
+                            R.string.budget_per_adult,
+                            moneyShort(perAdult(budgetWon, adults)),
+                        ),
                         style = MaterialTheme.typography.labelMedium,
                         color = LocalPalette.current.TextSecondary,
                     )
@@ -133,7 +138,7 @@ fun BudgetSection(
             Text(
                 // 슬라이더 최댓값을 넘는 금액은 직접 입력으로만 넣을 수 있다. 그걸 알려준다.
                 text = if (budgetWon > maxWon) {
-                    "${moneyShort(maxWon)} 초과"
+                    stringResource(R.string.budget_over_max, moneyShort(maxWon))
                 } else {
                     moneyShort(maxWon)
                 },
@@ -190,13 +195,13 @@ private fun BudgetInputDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("예산 입력") },
+        title = { Text(stringResource(R.string.budget_dialog_title)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(Tokens.Space.sm)) {
                 OutlinedTextField(
                     value = text,
                     onValueChange = { input -> text = input.filter { it.isDigit() } },
-                    label = { Text("원") },
+                    label = { Text(stringResource(R.string.budget_dialog_unit)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     singleLine = true,
                     shape = Tokens.Radius.button,
@@ -206,11 +211,15 @@ private fun BudgetInputDialog(
                     // 숫자를 세지 않아도 되게 천 단위로 끊어 보여준다.
                     text = typed?.let { won ->
                         if (adults > 1) {
-                            "${money(won)} · 1인당 약 ${moneyShort(perAdult(won, adults))}"
+                            stringResource(
+                                R.string.budget_dialog_summary,
+                                money(won),
+                                moneyShort(perAdult(won, adults)),
+                            )
                         } else {
                             money(won)
                         }
-                    } ?: "숫자를 입력하세요",
+                    } ?: stringResource(R.string.budget_dialog_hint),
                     style = MaterialTheme.typography.bodyMedium,
                     color = LocalPalette.current.TextSecondary,
                 )
@@ -220,10 +229,10 @@ private fun BudgetInputDialog(
             TextButton(
                 onClick = { onConfirm(text) },
                 enabled = (typed ?: 0L) > 0L,
-            ) { Text("확인") }
+            ) { Text(stringResource(R.string.common_confirm)) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("취소") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) }
         },
     )
 }

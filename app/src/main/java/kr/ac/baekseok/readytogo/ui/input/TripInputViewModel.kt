@@ -3,6 +3,7 @@ package kr.ac.baekseok.readytogo.ui.input
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.data.model.Destination
 import kr.ac.baekseok.readytogo.data.model.TravelPurpose
 import kr.ac.baekseok.readytogo.data.model.TripCondition
@@ -207,12 +208,21 @@ class TripInputViewModel(
      */
     val missingHint: StateFlow<String?> = _condition
         .map { condition ->
+            val app = getApplication<Application>()
             val missing = buildList {
-                if (condition.origin == null) add("출발지")
-                if (condition.destination == null) add("목적지")
-                if (condition.departureDate == null || condition.returnDate == null) add("여행 날짜")
+                if (condition.origin == null) add(app.getString(R.string.input_missing_origin))
+                if (condition.destination == null) {
+                    add(app.getString(R.string.input_missing_destination))
+                }
+                if (condition.departureDate == null || condition.returnDate == null) {
+                    add(app.getString(R.string.input_missing_dates))
+                }
             }
-            if (missing.isEmpty()) null else "${missing.joinToString(", ")}를 골라주세요"
+            if (missing.isEmpty()) {
+                null
+            } else {
+                app.getString(R.string.input_missing_hint, missing.joinToString(", "))
+            }
         }
         .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 

@@ -162,13 +162,25 @@ fun DayPlan.toTimeline(
 
     // 사용자가 끌어서 바꾼 순서가 있으면 그것을 따른다.
     //
-    // **키가 맞지 않으면 기본 순서로 돌아간다.** 저장해 둔 순서를 읽었는데 그 사이 계획이
-    // 바뀌었을 수 있다(관광지가 달라지면 키도 달라진다). 어긋난 순서를 억지로 적용하면
-    // 항목이 사라지거나 중복된다.
-    val sorted = if (customOrder.isEmpty() || customOrder.toSet() != ordered.map { it.key }.toSet()) {
+    // **기록에 없는 키는 제자리에 둔다.** 순서는 화면에 보이는 항목으로 만들어지므로
+    // 지운 항목의 키는 빠져 있고, 계획이 바뀌면 새 자리가 생기기도 한다. 전에는 키가
+    // 하나라도 어긋나면 기록 전체를 버렸는데, 그래서 항목을 하나 지우고 나면 그날은
+    // 아무리 끌어도 순서가 되돌아갔다.
+    val sorted = if (customOrder.isEmpty()) {
         ordered
     } else {
-        ordered.sortedBy { customOrder.indexOf(it.key) }
+        val rank = customOrder.withIndex().associate { (index, key) -> key to index }
+        // 기록에 없는 항목은 바로 앞 항목과 같은 순위로 본다. sortedBy는 안정 정렬이라
+        // 같은 순위끼리는 원래 차례가 남는다 — 즉 있던 자리에 그대로 붙어 있는다.
+        var previous = -1
+        ordered
+            .map { item ->
+                val at = rank[item.key] ?: previous
+                previous = at
+                item to at
+            }
+            .sortedBy { (_, at) -> at }
+            .map { (item, _) -> item }
     }
 
     // 이동 시간은 **순서를 정하고 지운 항목을 걸러낸 뒤에** 계산해야 한다.

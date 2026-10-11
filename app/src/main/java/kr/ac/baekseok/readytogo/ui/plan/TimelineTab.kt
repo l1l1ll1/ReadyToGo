@@ -132,13 +132,26 @@ fun TimelineTab(
             return@Column
         }
 
+        val savedOrder = edits.orderIn(day.dayNumber)
+
+        // **끌리는 동안에는 ViewModel을 건드리지 않는다.** 한 칸 옮길 때마다 edits를
+        // 갱신하면 화면 전체가 다시 그려지고 이동시간까지 다시 계산된다. 순서는 여기에
+        // 담아 두고 손을 뗄 때 한 번만 넘긴다.
+        //
+        // 저장된 순서가 바뀌면(=손을 떼고 넘긴 순서가 돌아오면) remember가 초기화되며
+        // 저절로 버려진다. 손으로 비우면 그 한 프레임 동안 예전 순서가 보여 깜빡인다.
+        var dragOrder by remember(day.dayNumber, savedOrder) { mutableStateOf<List<String>?>(null) }
+
         val entries = day.toTimeline(
             deletedKeys = edits.deletedIn(day.dayNumber),
             pickedMeals = edits.pickedIn(day.dayNumber),
-            customOrder = edits.orderIn(day.dayNumber),
+            customOrder = dragOrder ?: savedOrder,
             pickedAttractions = edits.pickedAttractionsIn(day.dayNumber),
             picked = pickedPlaces,
         )
+
+        // 하루의 첫 끼니. 여기에는 놓을 수 없다 — 아침보다 앞은 하루가 시작되기 전이다.
+        val firstMealKey = entries.firstOrNull { it.item !is TimelineItem.Visit }?.item?.key
 
         val listState = rememberLazyListState()
 
@@ -157,11 +170,9 @@ fun TimelineTab(
         // 그대로 쓰면 첫 이동 뒤로 옛 목록을 들고 계산한다 — 위로 옮기는 것이 안 먹던 원인이다.
         val currentEntries by rememberUpdatedState(entries)
 
-        // 옮길 수 없는 이동(끼니 자리로 밀어 넣기)이면 null이 와서 아무것도 하지 않는다.
+        // 옮길 수 없는 이동이면 null이 와서 아무것도 하지 않는다.
         val reorderState = rememberReorderableLazyListState(listState) { from, to ->
-            moveWithinMealSlots(currentEntries, from.index, to.index)?.let { keys ->
-                onReorder(day.dayNumber, keys)
-            }
+            moveVisit(currentEntries, from.index, to.index)?.let { keys -> dragOrder = keys }
         }
 
         Box(
@@ -212,17 +223,25 @@ fun TimelineTab(
                     // 식당을 바꾸는 일은 상세 시트의 "다른 선택지"가 맡는다.
                     val draggable = entry.item is TimelineItem.Visit
 
-                    ReorderableItem(reorderState, key = entry.item.key) { isDragging ->
+                    ReorderableItem(
+                        state = reorderState,
+                        key = entry.item.key,
+                        // 아침은 드롭 대상에서 뺀다. 여기에 놓을 수 없게 하는 것이
+                        // "아침 위로는 못 올린다"를 지키는 가장 확실한 방법이다 —
+                        // 콜백에서 거절하면 라이브러리는 이미 옮긴 줄 알고 그려서 튄다.
+                        enabled = entry.item.key != firstMealKey,
+                    ) { isDragging ->
                         val handle = if (draggable) {
                             Modifier.longPressDraggableHandle(
                                 onDragStarted = { draggingKey = entry.item.key },
                                 onDragStopped = {
+                                    // 끌리는 동안 바뀐 순서를 여기서 한 번만 넘긴다.
+                                    // 옮길 때마다 넘기면 한 번 끄는 사이에 화면 전체가
+                                    // 수십 번 다시 그려지고 Firestore 쓰기도 그만큼 나간다.
+                                    dragOrder?.let { onReorder(day.dayNumber, it) }
                                     if (overTrash) {
                                         onDelete(day.dayNumber, entry.item.key)
                                     } else {
-                                        // 순서는 끌리는 동안 화면에서만 바꾸고, 손을 뗄 때
-                                        // 한 번 저장한다. 옮길 때마다 저장하면 한 번 끄는
-                                        // 사이에 Firestore 쓰기가 수십 번 나간다.
                                         onReorderCommit()
                                     }
                                     draggingKey = null
@@ -264,30 +283,29 @@ fun TimelineTab(
 /**
  * 끌어서 옮긴 결과 순서. 옮길 수 없으면 null.
  *
- * **끼니는 자리가 고정이다.** 놓으려는 자리가 끼니면 그 끼니를 넘어 가장 가까운 관광지
- * 자리까지 밀어 준다 — 거기서 멈추면 끼니 사이를 영영 넘어갈 수 없다.
+ * **끼니를 건너뛰지 않고 있는 그대로 한 칸씩 옮긴다.** 빼내는 것이 관광지 하나뿐이라
+ * 끼니끼리의 앞뒤는 저절로 지켜진다 — 점심 앞에 놓으면 아침~점심 틈, 뒤에 놓으면
+ * 점심~저녁 틈이다. 전에는 끼니를 만나면 다음 관광지 자리까지 밀어 버렸는데,
+ * 그러면 (1) 관광지가 없는 틈으로는 영영 옮길 수 없었고 (2) 라이브러리가 예상한
+ * 자리와 실제 자리가 달라져 들린 항목이 튀었다.
+ *
+ * 아침 위로는 애초에 올 수 없다. 첫 끼니를 드롭 대상에서 빼 두었다(`enabled = false`).
  *
  * 목록 맨 앞의 날짜 머리글(LazyColumn의 첫 item) 때문에 인덱스가 하나씩 밀려 있다.
  */
-private fun moveWithinMealSlots(
+private fun moveVisit(
     entries: List<TimelineEntry>,
     fromIndex: Int,
     toIndex: Int,
 ): List<String>? {
     val from = fromIndex - HEADER_ITEM_COUNT
-    if (from !in entries.indices || entries[from].item !is TimelineItem.Visit) return null
+    val to = toIndex - HEADER_ITEM_COUNT
+    if (from !in entries.indices || to !in entries.indices || from == to) return null
 
-    var to = toIndex - HEADER_ITEM_COUNT
-    val step = if (to > from) 1 else -1
-    while (to in entries.indices && entries[to].item !is TimelineItem.Visit) to += step
+    // 끼니는 끌 수 없다. 하루의 뼈대라 자리가 고정이고, 식당은 상세 시트에서 바꾼다.
+    if (entries[from].item !is TimelineItem.Visit) return null
 
-    // **끼니를 넘다가 목록 밖으로 나가면 그 끝에 붙인다.** 전에는 포기하고 null을
-    // 돌려줬는데, 그러면 저녁 뒤에 관광지를 둘 수 없었다. 관광지가 하나뿐인 날은
-    // 아예 움직일 수가 없어 끌기가 고장 난 것처럼 보였다.
-    val target = to.coerceIn(0, entries.lastIndex)
-    if (target == from) return null
-
-    return entries.map { it.item.key }.toMutableList().apply { add(target, removeAt(from)) }
+    return entries.map { it.item.key }.toMutableList().apply { add(to, removeAt(from)) }
 }
 
 /**
@@ -637,8 +655,8 @@ private val TimelineItem.icon: ImageVector
         is TimelineItem.NoMeal -> Icons.Outlined.HelpOutline
     }
 
-/** 사진을 붙일 장소의 id. 추천을 못 찾은 끼니는 붙일 장소가 없다. */
-private val TimelineItem.placeId: String?
+/** 장소의 id. 추천을 못 찾은 끼니는 가리킬 장소가 없다. */
+internal val TimelineItem.placeId: String?
     get() = when (this) {
         is TimelineItem.Visit -> attraction.id
         is TimelineItem.Meal -> restaurant.id

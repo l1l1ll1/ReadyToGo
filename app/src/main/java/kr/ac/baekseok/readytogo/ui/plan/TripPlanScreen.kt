@@ -330,8 +330,13 @@ private fun TripPlanContent(
                 ?.let { meal -> { placeId: String -> onPickMeal(dayNumber, meal.key, placeId) } },
             // 같은 도시, 같은 종류만 보여준다. 도쿄 일정에 오사카에서 담은 곳이 뜨면
             // 고를 수 있는 것처럼 보이지만 실제로는 갈 수 없다.
+            //
+            // 지금 그 자리에 들어 있는 곳도 뺀다. 골라 봐야 자기 자신으로 바뀌어
+            // 아무 일도 일어나지 않는데, 목록에 있으면 바꿀 수 있는 것처럼 보인다.
             favorites = favorites.filter {
-                it.kind == item.favoriteKind && it.cityName == planCity
+                it.kind == item.favoriteKind &&
+                    it.cityName == planCity &&
+                    it.placeId != item.placeId
             },
             dayCenter = dayCenterOf(plan, dayNumber),
             // 추천을 못 찾은 끼니 자리에도 끼울 수 있다. 오히려 그 자리에 가장 필요하다.

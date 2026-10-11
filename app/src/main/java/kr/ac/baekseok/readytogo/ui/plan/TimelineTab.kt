@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,6 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import kr.ac.baekseok.readytogo.data.model.DayPlan
 import kr.ac.baekseok.readytogo.data.model.FavoritePlace
+import kr.ac.baekseok.readytogo.data.model.TravelPurpose
 import kr.ac.baekseok.readytogo.data.model.TripPlan
 import kr.ac.baekseok.readytogo.domain.plan.TimelineEntry
 import kr.ac.baekseok.readytogo.domain.plan.TimelineItem
@@ -44,8 +46,10 @@ import kr.ac.baekseok.readytogo.domain.plan.TravelLeg
 import kr.ac.baekseok.readytogo.domain.plan.TravelMode
 import kr.ac.baekseok.readytogo.domain.plan.formatDuration
 import kr.ac.baekseok.readytogo.domain.plan.toTimeline
+import kr.ac.baekseok.readytogo.domain.purpose.PurposeAttractionTypes
 import kr.ac.baekseok.readytogo.ui.component.EmptyState
 import kr.ac.baekseok.readytogo.ui.component.FavoriteButton
+import kr.ac.baekseok.readytogo.ui.component.TagChip
 import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 
@@ -128,6 +132,7 @@ fun TimelineTab(
                     entry = entry,
                     favoriteIds = favoriteIds,
                     cityName = plan.condition.destination?.city.orEmpty(),
+                    purposes = plan.condition.purposes,
                     // 추천이 없는 끼니는 보여줄 상세가 없다. 시트를 띄우지 않는다.
                     onClick = if (entry.item is TimelineItem.NoMeal) {
                         null
@@ -177,6 +182,8 @@ private fun TimelineRow(
     entry: TimelineEntry,
     favoriteIds: Set<String>,
     cityName: String,
+    /** 목적 태그를 어떤 기준으로 붙일지. 비어 있으면 태그를 달지 않는다. */
+    purposes: Set<TravelPurpose>,
     onClick: (() -> Unit)?,
     onToggleFavorite: (FavoritePlace) -> Unit,
 ) {
@@ -200,7 +207,7 @@ private fun TimelineRow(
                     ),
             ) {
                 when (val item = entry.item) {
-                    is TimelineItem.Visit -> VisitContent(item)
+                    is TimelineItem.Visit -> VisitContent(item, purposes)
                     is TimelineItem.Meal -> MealContent(item)
                     is TimelineItem.NoMeal -> NoMealContent(item)
                 }
@@ -250,7 +257,7 @@ private fun TimelineRail(icon: ImageVector) {
 }
 
 @Composable
-private fun VisitContent(item: TimelineItem.Visit) {
+private fun VisitContent(item: TimelineItem.Visit, purposes: Set<TravelPurpose>) {
     val attraction = item.attraction
     Text(
         text = attraction.name,
@@ -258,6 +265,21 @@ private fun VisitContent(item: TimelineItem.Visit) {
         maxLines = 2,
         overflow = TextOverflow.Ellipsis,
     )
+
+    // **이 곳이 어떤 목적에 맞아서 들어왔는지** 보여준다. 점수에 목적 일치 가산점을 준
+    // 바로 그 판정이라(AttractionScoring), 태그가 붙은 곳이 상위에 온 이유가 드러난다.
+    // 맞는 목적이 없으면 붙일 이름이 없으므로 아무것도 그리지 않는다 — 평점·동선만으로
+    // 올라온 곳도 있고, 그 자리에 "해당 없음" 같은 칸을 두면 흠처럼 보인다.
+    val matched = PurposeAttractionTypes.matched(attraction.types, purposes)
+    if (matched.isNotEmpty()) {
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(Tokens.Space.xs),
+            verticalArrangement = Arrangement.spacedBy(Tokens.Space.xs),
+        ) {
+            matched.forEach { purpose -> TagChip(text = purpose.label) }
+        }
+    }
+
     Text(
         text = "관광지 · ★${attraction.rating}" +
             if (attraction.reviewCount > 0) " (리뷰 ${"%,d".format(attraction.reviewCount)})" else "",

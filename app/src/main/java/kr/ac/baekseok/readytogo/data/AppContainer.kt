@@ -124,10 +124,14 @@ object AppContainer {
     /**
      * 온보딩을 본 적 있는지.
      *
-     * 1단계에서는 메모리에만 둔다 — 앱을 껐다 켜면 온보딩이 다시 나오므로 확인하기 쉽다.
-     * 8단계 3번에서 [settings]와 같이 SharedPreferences로 옮긴다.
+     * 기기에 저장한다. 메모리에만 두던 때는 앱을 껐다 켤 때마다 온보딩 3장이 다시 나왔다 —
+     * 개발 중에는 확인하기 편했지만 사용자에게는 매번 같은 화면을 넘기게 하는 일이다.
      */
-    var onboardingSeen: Boolean = false
+    var onboardingSeen: Boolean
+        get() = settings.onboardingSeen
+        set(value) {
+            settings.onboardingSeen = value
+        }
 
     /**
      * 둘러보기 중에 저장하려 했던 일정.

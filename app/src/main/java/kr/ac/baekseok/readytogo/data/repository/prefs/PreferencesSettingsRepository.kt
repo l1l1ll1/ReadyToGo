@@ -40,6 +40,19 @@ class PreferencesSettingsRepository(context: Context) : SettingsRepository {
     }
 
     /**
+     * 온보딩 3장을 본 적 있는지.
+     *
+     * **[AppSettings]에 넣지 않는 이유**: 설정 화면에서 사용자가 바꾸는 값이 아니다.
+     * 거기 섞으면 설정을 한 번 저장할 때마다 이 값도 같이 쓰여서, 나중에 "설정 초기화"를
+     * 만들면 온보딩이 딸려 나온다.
+     *
+     * 같은 파일에 두는 이유는 성격이 같아서다 — 계정이 아니라 기기에 딸린 값이다.
+     */
+    var onboardingSeen: Boolean
+        get() = prefs.getBoolean(KEY_ONBOARDING_SEEN, false)
+        set(value) = prefs.edit().putBoolean(KEY_ONBOARDING_SEEN, value).apply()
+
+    /**
      * 저장된 값을 읽는다. 없거나 알아볼 수 없으면 기본값을 쓴다.
      *
      * enum 이름을 그대로 저장하므로, 나중에 enum에서 항목을 빼면 예전 값이 읽히지 않는다.
@@ -86,5 +99,6 @@ class PreferencesSettingsRepository(context: Context) : SettingsRepository {
         const val KEY_NOTIFY_DAY = "notify_before_day"
         const val KEY_TEXT_SCALE = "text_scale"
         const val KEY_HIGH_CONTRAST = "high_contrast"
+        const val KEY_ONBOARDING_SEEN = "onboarding_seen"
     }
 }

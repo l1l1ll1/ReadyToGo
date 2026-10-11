@@ -139,6 +139,7 @@ fun TripPlanScreen(
         onMessageShown = viewModel::clearMessage,
         onDeleteItem = viewModel::deleteTimelineItem,
         onReorder = viewModel::reorderDay,
+        onReorderCommit = viewModel::commitEdits,
         onPickMeal = viewModel::pickMeal,
         onUndoDelete = viewModel::undoDelete,
         onUndoExpired = viewModel::clearLastDeleted,
@@ -165,6 +166,7 @@ private fun TripPlanContent(
     onMessageShown: () -> Unit = {},
     onDeleteItem: (Int, String) -> Unit = { _, _ -> },
     onReorder: (Int, List<String>) -> Unit = { _, _ -> },
+    onReorderCommit: () -> Unit = {},
     onPickMeal: (Int, String, String?) -> Unit = { _, _, _ -> },
     onUndoDelete: () -> Unit = {},
     onUndoExpired: () -> Unit = {},
@@ -291,6 +293,7 @@ private fun TripPlanContent(
                         openedItem = dayNumber to item
                     },
                     onReorder = onReorder,
+                    onReorderCommit = onReorderCommit,
                     onDeleteItem = onDeleteItem,
                 )
             }
@@ -328,6 +331,7 @@ private fun PlanTabContent(
     onSelectMapDay: (Int) -> Unit,
     onTimelineItemClick: (Int, TimelineItem) -> Unit,
     onReorder: (Int, List<String>) -> Unit,
+    onReorderCommit: () -> Unit,
     onDeleteItem: (Int, String) -> Unit,
 ) {
     when (tab) {
@@ -388,6 +392,7 @@ private fun PlanTabContent(
             onOpenMapForDay = onOpenMapForDay,
             onItemClick = onTimelineItemClick,
             onReorder = onReorder,
+            onReorderCommit = onReorderCommit,
             onDelete = onDeleteItem,
             onToggleFavorite = onToggleFavorite,
         )

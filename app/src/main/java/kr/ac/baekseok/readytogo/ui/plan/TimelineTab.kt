@@ -38,14 +38,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.boundsInWindow
+import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -97,6 +102,8 @@ fun TimelineTab(
     onItemClick: (Int, TimelineItem) -> Unit,
     onToggleFavorite: (FavoritePlace) -> Unit,
     onReorder: (Int, List<String>) -> Unit,
+    /** 끌기가 끝났을 때. 바뀐 순서를 이때 한 번만 저장한다. */
+    onReorderCommit: () -> Unit,
     onDelete: (Int, String) -> Unit,
 ) {
     val day = plan.dailyPlans.firstOrNull { it.dayNumber == selectedDayNumber }
@@ -131,22 +138,43 @@ fun TimelineTab(
 
         val listState = rememberLazyListState()
 
-        // 끌리는 항목과 휴지통 영역이 겹치는지 보려고 둘의 화면 좌표를 들고 있는다.
-        // 라이브러리는 순서 바꾸기까지만 해주고, 목록 밖으로 끌어다 놓는 것은 직접 봐야 한다.
+        // **손가락 위치로 휴지통 판정을 한다.** 전에는 끌리는 항목의 좌표를 매 프레임
+        // onGloballyPositioned로 재서 비교했는데, 그 측정이 다시 그리기를 부르면서
+        // 위로 끌 때 항목이 손가락을 못 따라왔다. 항목 크기와도 무관해져서 판정도 정확해진다.
         var trashBounds by remember { mutableStateOf<Rect?>(null) }
-        var draggedBounds by remember { mutableStateOf<Rect?>(null) }
+        var pointer by remember { mutableStateOf<Offset?>(null) }
+        var listOrigin by remember { mutableStateOf(Offset.Zero) }
         var draggingKey by remember { mutableStateOf<String?>(null) }
+
         val overTrash = draggingKey != null &&
-            trashBounds?.let { trash -> draggedBounds?.overlaps(trash) } == true
+            pointer?.let { trashBounds?.contains(it + listOrigin) } == true
+
+        // **지금 보이는 목록을 봐야 한다.** 람다는 처음 만들 때 한 번만 잡히므로 entries를
+        // 그대로 쓰면 첫 이동 뒤로 옛 목록을 들고 계산한다 — 위로 옮기는 것이 안 먹던 원인이다.
+        val currentEntries by rememberUpdatedState(entries)
 
         // 옮길 수 없는 이동(끼니 자리로 밀어 넣기)이면 null이 와서 아무것도 하지 않는다.
         val reorderState = rememberReorderableLazyListState(listState) { from, to ->
-            moveWithinMealSlots(entries, from.index, to.index)?.let { keys ->
+            moveWithinMealSlots(currentEntries, from.index, to.index)?.let { keys ->
                 onReorder(day.dayNumber, keys)
             }
         }
 
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .onGloballyPositioned { listOrigin = it.positionInWindow() }
+                // 손가락 위치만 **엿본다.** Initial 패스에서 읽고 아무것도 소비하지 않아
+                // 목록 스크롤과 끌기는 그대로 동작한다.
+                .pointerInput(Unit) {
+                    awaitPointerEventScope {
+                        while (true) {
+                            val event = awaitPointerEvent(PointerEventPass.Initial)
+                            pointer = event.changes.firstOrNull()?.position
+                        }
+                    }
+                },
+        ) {
             LazyColumn(
                 state = listState,
                 contentPadding = PaddingValues(
@@ -185,9 +213,15 @@ fun TimelineTab(
                             Modifier.longPressDraggableHandle(
                                 onDragStarted = { draggingKey = entry.item.key },
                                 onDragStopped = {
-                                    if (overTrash) onDelete(day.dayNumber, entry.item.key)
+                                    if (overTrash) {
+                                        onDelete(day.dayNumber, entry.item.key)
+                                    } else {
+                                        // 순서는 끌리는 동안 화면에서만 바꾸고, 손을 뗄 때
+                                        // 한 번 저장한다. 옮길 때마다 저장하면 한 번 끄는
+                                        // 사이에 Firestore 쓰기가 수십 번 나간다.
+                                        onReorderCommit()
+                                    }
                                     draggingKey = null
-                                    draggedBounds = null
                                 },
                             )
                         } else {
@@ -207,15 +241,7 @@ fun TimelineTab(
                             },
                             onToggleFavorite = onToggleFavorite,
                             dragging = isDragging,
-                            modifier = handle.then(
-                                if (isDragging) {
-                                    Modifier.onGloballyPositioned {
-                                        draggedBounds = it.boundsInWindow()
-                                    }
-                                } else {
-                                    Modifier
-                                },
-                            ),
+                            modifier = handle,
                         )
                     }
                 }

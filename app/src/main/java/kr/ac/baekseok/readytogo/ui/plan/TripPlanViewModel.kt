@@ -32,6 +32,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
@@ -143,12 +144,13 @@ class TripPlanViewModel(
         if (loadedCondition == condition && _uiState.value !is TripPlanUiState.Failure) return
         loadedCondition = condition
 
+        // 저장해 둔 편집을 꺼내 온다. **계획 만들기와 나란히 돌린다** — 계획이 몇 초
+        // 걸리므로 편집은 그 전에 도착한다. 순서대로 기다리면 저장하지 않은 계획에서
+        // 제한 시간만큼 화면이 늦게 뜬다.
+        viewModelScope.launch { _edits.value = restoreEdits(condition) }
+
         viewModelScope.launch {
             _uiState.value = TripPlanUiState.Loading
-
-            // 저장해 둔 편집이 있으면 먼저 꺼내 온다. 계획을 그리기 전에 넣어야
-            // 지운 항목이 한 번 보였다 사라지는 깜빡임이 없다.
-            _edits.value = restoreEdits(condition)
 
             // 계획 하나를 만드는 데 걸리는 시간. 검색을 병렬로 바꾸는 등의 개선 효과를
             // 눈이 아니라 숫자로 확인하기 위해 남긴다.
@@ -291,7 +293,14 @@ class TripPlanViewModel(
      * 여기서 다시 검사하지 않는 이유: 규칙이 두 곳에 생기면 어긋난다.
      */
     fun reorderDay(dayNumber: Int, keys: List<String>) {
-        updateEdits { it.copy(order = it.order + (dayNumber to keys)) }
+        // **여기서는 저장하지 않는다.** 끌기 한 번에 이 함수가 수십 번 불린다.
+        // 저장은 손을 뗄 때 commitEdits가 한 번만 한다.
+        _edits.update { it.copy(order = it.order + (dayNumber to keys)) }
+    }
+
+    /** 끌기가 끝났다. 지금까지 바뀐 순서를 저장한다. */
+    fun commitEdits() {
+        persistEdits(_edits.value)
     }
 
     /**
@@ -315,15 +324,20 @@ class TripPlanViewModel(
     /**
      * 저장된 일정에 붙어 있는 편집. 저장한 적 없으면 빈 값.
      *
-     * 둘러보기 중이거나 아직 저장하지 않은 계획은 꺼낼 곳이 없다. 그때는 이번 화면에서만
-     * 사는 편집이 된다.
+     * **첫 방출을 그냥 쓰면 안 된다.** 로그인 상태가 잡히기 전에는 빈 목록이 먼저 오고,
+     * 그걸 집으면 저장해 둔 편집을 놓친다. 실제로 편집이 사라지는 것을 봤다.
+     * 찾는 일정이 들어 있는 방출까지 기다리되, 없는 경우를 위해 시간 제한을 둔다.
+     *
+     * 둘러보기 중이거나 아직 저장하지 않은 계획은 꺼낼 곳이 없다. 그때는 제한 시간이
+     * 지나고 빈 값으로 돌아간다 — 이번 화면에서만 사는 편집이 된다.
      */
     private suspend fun restoreEdits(condition: TripCondition): TimelineEdits {
         val id = SavedTrip.idFor(condition) ?: return TimelineEdits()
-        return AppContainer.savedTrips.observeAll().first()
-            .firstOrNull { it.id == id }
-            ?.edits
-            ?: TimelineEdits()
+
+        val trips = withTimeoutOrNull(RESTORE_EDITS_TIMEOUT_MS) {
+            AppContainer.savedTrips.observeAll().first { list -> list.any { it.id == id } }
+        }
+        return trips?.firstOrNull { it.id == id }?.edits ?: TimelineEdits()
     }
 
     private fun persistEdits(edits: TimelineEdits) {
@@ -368,5 +382,13 @@ class TripPlanViewModel(
     private companion object {
         const val TAG = "TripPlan"
         const val FLOW_TIMEOUT_MS = 5_000L
+
+        /**
+         * 저장된 편집을 기다리는 시간.
+         *
+         * 저장하지 않은 계획에서는 끝까지 기다렸다 빈 값이 된다. 계획 만들기와 나란히
+         * 도는 일이라 화면이 늦어지지는 않는다.
+         */
+        const val RESTORE_EDITS_TIMEOUT_MS = 3_000L
     }
 }

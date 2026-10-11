@@ -5,6 +5,7 @@ import android.os.SystemClock
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.data.AppContainer
 import kr.ac.baekseok.readytogo.data.USE_REAL_API
 import kr.ac.baekseok.readytogo.data.model.FavoritePlace
@@ -164,7 +165,7 @@ class TripPlanViewModel(
 
             _uiState.value = result.fold(
                 onSuccess = { TripPlanUiState.Success(it) },
-                onFailure = { TripPlanUiState.Failure(it.message ?: "계획을 만들지 못했습니다.") },
+                onFailure = { TripPlanUiState.Failure(it.message ?: string(R.string.plan_create_failed)) },
             )
         }
     }
@@ -191,14 +192,18 @@ class TripPlanViewModel(
         viewModelScope.launch {
             if (saved.value) {
                 AppContainer.savedTrips.delete(id)
-                _message.value = "저장을 해제했습니다."
+                _message.value = string(R.string.plan_save_removed)
                 return@launch
             }
 
             val trip = SavedTrip(
                 id = id,
                 // 기본 이름은 "도쿄 5일"처럼 자동으로 만든다. 이름을 먼저 물으면 저장이 번거로워진다.
-                title = "${destination.shortName} ${ChronoUnit.DAYS.between(departure, returnDate) + 1}일",
+                title = string(
+                    R.string.plan_saved_title,
+                    destination.shortName,
+                    (ChronoUnit.DAYS.between(departure, returnDate) + 1).toInt(),
+                ),
                 destinationName = destination.shortName,
                 departureDate = departure,
                 returnDate = returnDate,
@@ -215,8 +220,8 @@ class TripPlanViewModel(
             }
 
             AppContainer.savedTrips.save(trip)
-                .onSuccess { _message.value = "여행 탭에 저장했습니다." }
-                .onFailure { _message.value = it.message ?: "저장하지 못했습니다." }
+                .onSuccess { _message.value = string(R.string.plan_saved) }
+                .onFailure { _message.value = it.message ?: string(R.string.plan_save_failed) }
         }
     }
 
@@ -228,7 +233,7 @@ class TripPlanViewModel(
                 return@launch
             }
             AppContainer.favorites.add(place)
-                .onFailure { _message.value = it.message ?: "저장하지 못했습니다." }
+                .onFailure { _message.value = it.message ?: string(R.string.plan_save_failed) }
         }
     }
 
@@ -251,7 +256,7 @@ class TripPlanViewModel(
             edits.copy(deleted = edits.deleted.plusKey(dayNumber, key))
         }
         _lastDeleted.value = dayNumber to key
-        _message.value = "일정에서 뺐습니다."
+        _message.value = string(R.string.plan_item_removed)
     }
 
     /** 방금 뺀 항목. 되돌리기를 보여줄 근거다. */
@@ -290,6 +295,15 @@ class TripPlanViewModel(
 
     private fun Map<Int, Set<String>>.minusKey(dayNumber: Int, key: String) =
         this + (dayNumber to (this[dayNumber].orEmpty() - key))
+
+    /**
+     * 문자열 리소스를 읽는다.
+     *
+     * 스낵바 문구는 ViewModel이 만들어 화면으로 넘긴다. 번역된 글자를 여기서 집어야
+     * 하는데 Composable이 아니라 stringResource를 못 쓴다 — Application Context로 읽는다.
+     */
+    private fun string(resId: Int, vararg args: Any): String =
+        getApplication<Application>().getString(resId, *args)
 
     private companion object {
         const val TAG = "TripPlan"

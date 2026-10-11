@@ -2,6 +2,7 @@ package kr.ac.baekseok.readytogo.ui.plan
 
 import android.content.Intent
 import android.net.Uri
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -53,6 +54,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.data.model.Attraction
 import kr.ac.baekseok.readytogo.data.model.DayPlan
 import kr.ac.baekseok.readytogo.data.model.FavoriteKind
@@ -81,12 +83,12 @@ private val TIME = DateTimeFormatter.ofPattern("HH:mm")
 
 
 /** 결과 화면의 탭. 순서가 화면에 나오는 순서다. */
-private enum class PlanTab(val label: String) {
-    SUMMARY("요약"),
-    FLIGHT("항공"),
-    LODGING("숙소"),
-    ITINERARY("일정표"),
-    MAP("지도"),
+private enum class PlanTab(@StringRes val labelRes: Int) {
+    SUMMARY(R.string.plan_tab_summary),
+    FLIGHT(R.string.plan_tab_flight),
+    LODGING(R.string.plan_tab_lodging),
+    ITINERARY(R.string.plan_tab_itinerary),
+    MAP(R.string.plan_tab_map),
 }
 
 /**
@@ -177,7 +179,7 @@ private fun TripPlanContent(
         // 방금 뺀 항목이 있으면 되돌리기 버튼을 같이 띄운다.
         val result = snackbarHostState.showSnackbar(
             message = text,
-            actionLabel = if (canUndoDelete) "되돌리기" else null,
+            actionLabel = if (canUndoDelete) context.getString(R.string.plan_undo) else null,
             withDismissAction = false,
         )
         if (result == SnackbarResult.ActionPerformed) onUndoDelete() else onUndoExpired()
@@ -188,8 +190,8 @@ private fun TripPlanContent(
     LaunchedEffect(signInRequested) {
         if (!signInRequested) return@LaunchedEffect
         val result = snackbarHostState.showSnackbar(
-            message = "로그인하면 이 일정을 저장할 수 있습니다.",
-            actionLabel = "로그인",
+            message = context.getString(R.string.plan_sign_in_to_save),
+            actionLabel = context.getString(R.string.common_sign_in),
             withDismissAction = false,
         )
         onSignInRequestShown()
@@ -202,13 +204,19 @@ private fun TripPlanContent(
         topBar = {
             Column {
                 TopAppBar(
-                    title = { Text("여행 계획") },
-                    navigationIcon = { TextButton(onClick = onBack) { Text("뒤로") } },
+                    title = { Text(stringResource(R.string.plan_title)) },
+                    navigationIcon = {
+                        TextButton(onClick = onBack) { Text(stringResource(R.string.common_back)) }
+                    },
                     actions = {
                         // 계획이 완성되기 전에는 저장할 내용이 없다.
                         if (uiState is TripPlanUiState.Success) {
                             TextButton(onClick = onToggleSaved) {
-                                Text(if (saved) "저장 해제" else "저장")
+                                Text(
+                                    stringResource(
+                                        if (saved) R.string.plan_unsave else R.string.plan_save,
+                                    ),
+                                )
                             }
                         }
                     },
@@ -224,7 +232,7 @@ private fun TripPlanContent(
                             Tab(
                                 selected = tab == selectedTab,
                                 onClick = { selectedTab = tab },
-                                text = { Text(tab.label) },
+                                text = { Text(stringResource(tab.labelRes)) },
                             )
                         }
                     }
@@ -244,7 +252,10 @@ private fun TripPlanContent(
                     verticalArrangement = Arrangement.spacedBy(Tokens.Space.md),
                 ) {
                     CircularProgressIndicator()
-                    Text("계획을 만드는 중입니다", style = MaterialTheme.typography.bodyMedium)
+                    Text(
+                        text = stringResource(R.string.plan_loading),
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
                 }
 
                 is TripPlanUiState.Failure -> Column(
@@ -253,7 +264,7 @@ private fun TripPlanContent(
                     modifier = Modifier.padding(Tokens.Space.xl),
                 ) {
                     Text(uiState.message, style = MaterialTheme.typography.bodyMedium)
-                    Button(onClick = onRetry) { Text("다시 시도") }
+                    Button(onClick = onRetry) { Text(stringResource(R.string.plan_retry)) }
                 }
 
                 is TripPlanUiState.Success -> PlanTabContent(
@@ -310,13 +321,13 @@ private fun PlanTabContent(
     when (tab) {
         PlanTab.SUMMARY -> TabColumn {
             item { SummaryHeader(plan) }
-            item { SectionTitle("예산 분해") }
+            item { SectionTitle(stringResource(R.string.plan_section_budget)) }
             item { BudgetBreakdown(plan) }
 
             // 고른 항공·숙소를 요약에서도 보여준다. 탭을 옮겨 확인하지 않아도
             // "이 계획이 무엇인지"가 한 화면에 들어온다.
             plan.flights.firstOrNull()?.let { cheapest ->
-                item { SectionTitle("항공") }
+                item { SectionTitle(stringResource(R.string.plan_section_flight)) }
                 if (cheapest.isSample) {
                     item { SampleDataNotice() }
                 }
@@ -324,16 +335,16 @@ private fun PlanTabContent(
             }
 
             plan.lodging?.let { pair ->
-                item { SectionTitle("숙소") }
+                item { SectionTitle(stringResource(R.string.plan_section_lodging)) }
                 item { LodgingCard(pair) }
             }
 
-            item { SectionTitle("일정 하이라이트") }
+            item { SectionTitle(stringResource(R.string.plan_section_highlights)) }
             item { ItineraryHighlights(plan) }
         }
 
         PlanTab.FLIGHT -> TabColumn {
-            item { SectionTitle("항공권 (최저가순)") }
+            item { SectionTitle(stringResource(R.string.plan_section_flights_cheapest)) }
             // 실제 검색이 안 됐을 때 예시 가격을 진짜로 오해하면 잘못된 예산을 세우게 된다.
             if (plan.flights.firstOrNull()?.isSample == true) {
                 item { SampleDataNotice() }
@@ -344,9 +355,14 @@ private fun PlanTabContent(
         PlanTab.LODGING -> TabColumn {
             val pair = plan.lodging
             if (pair == null) {
-                item { Text("숙소를 찾지 못했습니다", style = MaterialTheme.typography.bodyMedium) }
+                item {
+                    Text(
+                        text = stringResource(R.string.plan_lodging_not_found),
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
             } else {
-                item { SectionTitle("숙소") }
+                item { SectionTitle(stringResource(R.string.plan_section_lodging)) }
                 item { LodgingCard(pair) }
             }
         }
@@ -401,14 +417,19 @@ private fun MapTab(plan: TripPlan, selectedDayNumber: Int, onSelectDay: (Int) ->
                 Tab(
                     selected = candidate.dayNumber == day?.dayNumber,
                     onClick = { onSelectDay(candidate.dayNumber) },
-                    text = { Text("${candidate.dayNumber}일차") },
+                    text = {
+                        Text(stringResource(R.string.plan_day_tab, candidate.dayNumber))
+                    },
                 )
             }
         }
 
         if (day == null) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("표시할 일정이 없습니다", style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    text = stringResource(R.string.plan_map_empty),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
             }
         } else {
             DayMapContent(
@@ -434,7 +455,10 @@ private fun SectionTitle(text: String) {
 private fun BudgetBreakdown(plan: TripPlan) {
     val b = plan.budget
     if (b.totalWon == null) {
-        Text("예산을 입력하지 않아 상한 없이 추천했습니다", style = MaterialTheme.typography.bodyMedium)
+        Text(
+            text = stringResource(R.string.plan_budget_no_limit),
+            style = MaterialTheme.typography.bodyMedium,
+        )
         return
     }
 
@@ -445,22 +469,30 @@ private fun BudgetBreakdown(plan: TripPlan) {
         ) {
             PurposeShareBar(plan)
 
-            BudgetRow("항공", b.flightWon)
+            BudgetRow(stringResource(R.string.plan_budget_flight), b.flightWon)
             // 단위를 적어 둔다. 인원이 늘면 이 값이 내려가는데, 무엇의 상한인지 모르면
             // "예산이 줄었다"로 읽힌다 — 실제로는 1인·1실 몫이 줄어든 것이다.
             BudgetRow(
-                label = if (b.roomCount > 1) "숙소 1박 상한 (1실 × ${b.roomCount}실)" else "숙소 1박 상한",
+                label = if (b.roomCount > 1) {
+                    stringResource(R.string.plan_budget_lodging_cap_rooms, b.roomCount)
+                } else {
+                    stringResource(R.string.plan_budget_lodging_cap)
+                },
                 amount = b.lodgingPerNightWon,
             )
             BudgetRow(
-                label = if (b.adults > 1) "식사 1끼 상한 (1인 × ${b.adults}명)" else "식사 1끼 상한",
+                label = if (b.adults > 1) {
+                    stringResource(R.string.plan_budget_meal_cap_adults, b.adults)
+                } else {
+                    stringResource(R.string.plan_budget_meal_cap)
+                },
                 amount = b.mealWon,
             )
-            BudgetRow("교통·입장료·예비비", b.otherWon)
+            BudgetRow(stringResource(R.string.plan_budget_other), b.otherWon)
 
             if (b.flightAloneExceedsBudget) {
                 Text(
-                    "항공료만으로 예산을 넘습니다. 예산을 올리거나 날짜를 바꿔보세요.",
+                    text = stringResource(R.string.plan_budget_flight_exceeds),
                     style = MaterialTheme.typography.bodySmall,
                     // 예산 초과는 코랄이다. 붉은 Danger는 삭제·탈퇴처럼 되돌릴 수 없는
                     // 일에만 쓴다 — 예산을 넘은 건 잘못이 아니라 눈에 걸려야 할 것이다.
@@ -483,18 +515,26 @@ private fun BudgetBreakdown(plan: TripPlan) {
  */
 @Composable
 private fun PurposeShareBar(plan: TripPlan) {
+    // 기준 금액이 없으면 막대의 설명이 성립하지 않는다. 예산을 안 넣었으면 호출부가
+    // 여기까지 오지 않지만, 값이 비는 경우에 빈 막대만 남는 것보다 안 그리는 쪽이 낫다.
+    val remaining = plan.budget.remainingWon ?: return
+
     val profile = PurposeProfiles.of(plan.condition.purposes)
     val palette = LocalPalette.current
 
     // 색은 브랜드 세 색을 그대로 쓴다. 막대마다 새 색을 만들면 화면에 색이 늘어난다.
     val shares = listOf(
-        Triple("숙박", profile.lodgingShare, palette.Point),
-        Triple("식비", profile.foodShare, palette.Accent),
-        Triple("기타", profile.otherShare, palette.SecondaryBold),
+        Triple(stringResource(R.string.plan_share_lodging), profile.lodgingShare, palette.Point),
+        Triple(stringResource(R.string.plan_share_food), profile.foodShare, palette.Accent),
+        Triple(
+            stringResource(R.string.plan_share_other),
+            profile.otherShare,
+            palette.SecondaryBold,
+        ),
     )
 
     Text(
-        text = "목적별 배분",
+        text = stringResource(R.string.plan_share_title),
         style = MaterialTheme.typography.labelMedium,
         color = palette.TextSecondary,
     )
@@ -529,7 +569,11 @@ private fun PurposeShareBar(plan: TripPlan) {
                         .background(color),
                 )
                 Text(
-                    text = " $label ${(share * 100).roundToInt()}%",
+                    text = " " + stringResource(
+                        R.string.plan_share_legend,
+                        label,
+                        (share * 100).roundToInt(),
+                    ),
                     style = MaterialTheme.typography.labelMedium,
                     color = palette.TextSecondary,
                 )
@@ -542,15 +586,14 @@ private fun PurposeShareBar(plan: TripPlan) {
     val purposeNames = plan.condition.purposes.map { stringResource(it.labelRes) }
 
     Text(
-        text = buildString {
-            val remaining = plan.budget.remainingWon
-            if (remaining != null) append("항공료를 뺀 ${money(remaining)}을 ")
-            if (purposeNames.isEmpty()) {
-                append("기본 비율로 나눴습니다. 목적을 고르면 배분이 달라집니다.")
-            } else {
-                append(purposeNames.joinToString("·"))
-                append("에 맞춰 나눈 비율입니다.")
-            }
+        text = if (purposeNames.isEmpty()) {
+            stringResource(R.string.plan_share_note_default, money(remaining))
+        } else {
+            stringResource(
+                R.string.plan_share_note,
+                money(remaining),
+                purposeNames.joinToString("·"),
+            )
         },
         style = MaterialTheme.typography.labelMedium,
         color = palette.TextSecondary,
@@ -580,11 +623,13 @@ private fun SampleDataNotice() {
             containerColor = LocalPalette.current.Secondary,
         ),
     ) {
-        Column(modifier = Modifier.padding(Tokens.Space.lg), verticalArrangement = Arrangement.spacedBy(Tokens.Space.xs)) {
-            Text("예시 데이터", fontWeight = FontWeight.Bold)
+        Column(
+            modifier = Modifier.padding(Tokens.Space.lg),
+            verticalArrangement = Arrangement.spacedBy(Tokens.Space.xs),
+        ) {
+            Text(stringResource(R.string.plan_sample_title), fontWeight = FontWeight.Bold)
             Text(
-                "항공권을 실제로 검색하지 못해 예시 가격을 보여주고 있습니다. " +
-                    "실제 요금과 다를 수 있습니다.",
+                text = stringResource(R.string.plan_sample_body),
                 style = MaterialTheme.typography.bodySmall,
             )
         }
@@ -602,21 +647,33 @@ private fun FlightCard(flight: Flight) {
             // "가는 편 · 왕복 총액"을 적는다. SerpApi 1차 호출은 가는 편만 주는데
             // 가격은 왕복 총액이다. 라벨이 없으면 편도 가격으로 오해한다.
             Text(
-                text = "가는 편 · 왕복 총액",
+                text = stringResource(R.string.plan_flight_outbound_total),
                 style = MaterialTheme.typography.labelMedium,
                 color = LocalPalette.current.Point,
             )
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
                 Text("${flight.airline} ${flight.flightNumber}", fontWeight = FontWeight.Bold)
                 Text(money(flight.priceWon), fontWeight = FontWeight.Bold)
             }
             Text(
-                "${flight.departureAirport} ${flight.departureAt.format(TIME)}" +
-                    " → ${flight.arrivalAirport} ${flight.arrivalAt.format(TIME)}",
+                text = stringResource(
+                    R.string.plan_flight_route,
+                    flight.departureAirport,
+                    flight.departureAt.format(TIME),
+                    flight.arrivalAirport,
+                    flight.arrivalAt.format(TIME),
+                ),
                 style = MaterialTheme.typography.bodyMedium,
             )
             Text(
-                if (flight.stops == 0) "직항" else "경유 ${flight.stops}회",
+                text = if (flight.stops == 0) {
+                    stringResource(R.string.plan_flight_direct)
+                } else {
+                    stringResource(R.string.plan_flight_stops, flight.stops)
+                },
                 style = MaterialTheme.typography.bodySmall,
             )
         }
@@ -640,7 +697,7 @@ private fun LodgingCard(pair: RecommendationPair<Lodging>) {
         ) {
             if (samePrice) {
                 Text(
-                    text = "두 곳의 예상 1박가가 같습니다. 리뷰 수를 기준으로 보세요.",
+                    text = stringResource(R.string.plan_lodging_same_price),
                     style = MaterialTheme.typography.bodySmall,
                     color = LocalPalette.current.TextSecondary,
                 )
@@ -683,120 +740,10 @@ enum class RowEmphasis { PRICE, REVIEWS }
 @Composable
 private fun NoAlternativeNotice() {
     Text(
-        text = "조건에 맞는 다른 후보가 없습니다",
+        text = stringResource(R.string.plan_no_alternative),
         style = MaterialTheme.typography.bodySmall,
         color = LocalPalette.current.TextSecondary,
     )
-}
-
-@Composable
-private fun DayCard(
-    day: DayPlan,
-    cityName: String,
-    favoriteIds: Set<String>,
-    onToggleFavorite: (FavoritePlace) -> Unit,
-) {
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(
-            modifier = Modifier.padding(Tokens.Space.lg),
-            verticalArrangement = Arrangement.spacedBy(Tokens.Space.md),
-        ) {
-            AttractionBlock(
-                attractions = day.attractions,
-                cityName = cityName,
-                favoriteIds = favoriteIds,
-                onToggleFavorite = onToggleFavorite,
-            )
-
-            MealTime.entries.forEach { meal ->
-                val pair = day.meals[meal] ?: return@forEach
-                HorizontalDivider()
-                MealBlock(
-                    meal = meal,
-                    pair = pair,
-                    cityName = cityName,
-                    favoriteIds = favoriteIds,
-                    onToggleFavorite = onToggleFavorite,
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun AttractionBlock(
-    attractions: List<Attraction>,
-    cityName: String,
-    favoriteIds: Set<String>,
-    onToggleFavorite: (FavoritePlace) -> Unit,
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(Tokens.Space.xs)) {
-        Text("가볼 곳", fontWeight = FontWeight.Bold)
-        if (attractions.isEmpty()) {
-            Text("이동·휴식에 쓰는 날입니다", style = MaterialTheme.typography.bodyMedium)
-        } else {
-            attractions.forEach { attraction ->
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text(
-                        "${attraction.name} · ${attraction.stayMinutes}분 · ★${attraction.rating}",
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.weight(1f),
-                    )
-                    FavoriteButton(
-                        favorite = attraction.id in favoriteIds,
-                        onToggle = { onToggleFavorite(attraction.toFavorite(cityName)) },
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun MealBlock(
-    meal: MealTime,
-    pair: RecommendationPair<Restaurant>,
-    cityName: String,
-    favoriteIds: Set<String>,
-    onToggleFavorite: (FavoritePlace) -> Unit,
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(Tokens.Space.md)) {
-        Text(
-            text = stringResource(meal.labelRes),
-            style = MaterialTheme.typography.titleSmall,
-            fontWeight = FontWeight.Bold,
-        )
-        ChoiceRow(
-            label = pair.labelOfFirst(),
-            overBudget = pair.qualityFirst.overBudget,
-            title = pair.qualityFirst.item.name,
-            price = pair.qualityFirst.item.priceText(),
-            detail = pair.qualityFirst.item.detailLine(),
-            extra = pair.qualityFirst.distanceLine(),
-            url = pair.qualityFirst.item.mapUrl,
-            favorite = pair.qualityFirst.item.id in favoriteIds,
-            onToggleFavorite = { onToggleFavorite(pair.qualityFirst.item.toFavorite(cityName)) },
-        )
-        val alternative = pair.withinBudget
-        if (alternative == null) {
-            NoAlternativeNotice()
-        } else {
-            ChoiceRow(
-                label = pair.labelOfSecond(),
-                overBudget = alternative.overBudget,
-                title = alternative.item.name,
-                price = alternative.item.priceText(),
-                detail = alternative.item.detailLine(),
-                extra = alternative.distanceLine(),
-                url = alternative.item.mapUrl,
-                favorite = alternative.item.id in favoriteIds,
-                onToggleFavorite = { onToggleFavorite(alternative.item.toFavorite(cityName)) },
-            )
-        }
-    }
 }
 
 /**
@@ -838,13 +785,13 @@ internal fun Attraction.toFavorite(cityName: String) = FavoritePlace(
 @Composable
 internal fun Restaurant.priceText(): String {
     val krw = when {
-        priceIsUpperBound -> "${money(priceWon)} 이하"
+        priceIsUpperBound -> stringResource(R.string.plan_price_upper_bound, money(priceWon))
         minPriceWon != null && minPriceWon != priceWon ->
             "${"%,d".format(minPriceWon)}~${money(priceWon)}"
         else -> money(priceWon)
     }
     return when {
-        priceEstimated -> "$krw (추정)"
+        priceEstimated -> stringResource(R.string.plan_price_estimated, krw)
         localPriceText != null -> "$krw\n$localPriceText"
         else -> krw
     }
@@ -898,7 +845,7 @@ private fun ChoiceRow(
         Column(horizontalAlignment = Alignment.End) {
             if (emphasis == RowEmphasis.REVIEWS) {
                 Text(
-                    text = "리뷰 ${"%,d".format(reviewCount)}",
+                    text = stringResource(R.string.plan_reviews, "%,d".format(reviewCount)),
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Bold,
                     color = if (overBudget) accent else Color.Unspecified,
@@ -933,14 +880,22 @@ private fun ChoiceRow(
  * "예상"을 앞에 붙인다.
  */
 @Composable
-private fun Lodging.priceText(): String =
-    if (priceEstimated) "예상 1박 약 ${money(priceWon)}" else "${money(priceWon)} / 1박"
+private fun Lodging.priceText(): String = stringResource(
+    if (priceEstimated) R.string.plan_lodging_price_estimated else R.string.plan_lodging_price,
+    money(priceWon),
+)
 
-private fun Lodging.detailLine(): String =
-    "★$rating (리뷰 ${"%,d".format(reviewCount)}) · $address"
+@Composable
+private fun Lodging.detailLine(): String = "${ratingReviews(rating, reviewCount)} · $address"
 
+@Composable
 internal fun Restaurant.detailLine(): String =
-    "$category · ★$rating (리뷰 ${"%,d".format(reviewCount)}) · $address"
+    "$category · ${ratingReviews(rating, reviewCount)} · $address"
+
+/** "★4.2 (리뷰 15,935)" — 숙소·식당이 같은 모양으로 적는다. */
+@Composable
+private fun ratingReviews(rating: Double, reviewCount: Int): String =
+    stringResource(R.string.plan_rating_reviews, rating.toString(), "%,d".format(reviewCount))
 
 /**
  * 두 선택지의 이름표.
@@ -948,8 +903,14 @@ internal fun Restaurant.detailLine(): String =
  * 두 번째 칸은 상황마다 다른 기준으로 뽑히므로 "다른 선택" 같은 모호한 이름 대신
  * 어떤 기준이었는지를 그대로 적는다 — 예산 내 / 가성비 / 동선 우선.
  */
-private fun RecommendationPair<*>.labelOfFirst(): String =
-    if (qualityFirst.overBudget) "추천 · 예산 초과" else "추천"
+@Composable
+private fun RecommendationPair<*>.labelOfFirst(): String = stringResource(
+    if (qualityFirst.overBudget) {
+        R.string.plan_choice_recommended_over
+    } else {
+        R.string.plan_choice_recommended
+    },
+)
 
 @Composable
 private fun RecommendationPair<*>.labelOfSecond(): String = stringResource(alternativeKind.labelRes)
@@ -981,8 +942,11 @@ private fun rememberUrlOpener(url: String?): (() -> Unit)? {
 }
 
 /** 왜 이 곳이 추천됐는지 알 수 있게 동선 근거를 한 줄 덧붙인다. */
-private fun Recommendation<*>.distanceLine(): String? =
-    distanceFromCenterKm?.let { "일정 중심에서 %.1fkm".format(it) }
+@Composable
+private fun Recommendation<*>.distanceLine(): String? {
+    val km = distanceFromCenterKm ?: return null
+    return stringResource(R.string.plan_distance_from_center, "%.1f".format(km))
+}
 
 private const val FLIGHTS_SHOWN = 3
 

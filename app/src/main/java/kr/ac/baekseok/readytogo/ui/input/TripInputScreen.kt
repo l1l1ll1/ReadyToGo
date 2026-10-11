@@ -122,7 +122,7 @@ fun TripInputScreen(
             RouteCard(
                 originName = condition.origin?.shortName,
                 destinationName = condition.destination?.shortName,
-                onOriginClick = { openSheet = DestinationTarget.ORIGIN },
+            onOriginClick = { openSheet = DestinationTarget.ORIGIN },
                 onDestinationClick = { openSheet = DestinationTarget.DESTINATION },
             )
 

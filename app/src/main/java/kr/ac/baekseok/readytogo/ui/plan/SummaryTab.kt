@@ -19,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.data.model.TravelPurpose
 import kr.ac.baekseok.readytogo.data.model.TripPlan
 import kr.ac.baekseok.readytogo.ui.format.dateWithDay
@@ -58,9 +59,14 @@ fun SummaryHeader(plan: TripPlan) {
                 c.departureDate?.let { departure ->
                     c.returnDate?.let { back -> "${dateWithDay(departure)} – ${dateWithDay(back)}" }
                 },
-                "${plan.dailyPlans.size}일",
+                stringResource(R.string.plan_days, plan.dailyPlans.size),
                 // 방 수까지 적는 이유: 숙소 예산이 왜 그 금액인지가 인원만으로는 안 보인다.
-                "성인 ${c.adults}명" + if (c.roomCount > 1) " · ${c.roomCount}실" else "",
+                stringResource(R.string.plan_adults, c.adults) +
+                    if (c.roomCount > 1) {
+                        " · " + stringResource(R.string.plan_rooms, c.roomCount)
+                    } else {
+                        ""
+                    },
             ).joinToString(" · "),
             style = MaterialTheme.typography.bodyMedium,
             color = LocalPalette.current.TextSecondary,
@@ -129,8 +135,14 @@ private fun PlanDensityLine(plan: TripPlan) {
         }
 
     val parts = listOfNotNull(
-        perDay?.let { "하루 관광지 ${"%.1f".format(it).removeSuffix(".0")}곳" },
-        minutesPerDay?.takeIf { it > 0 }?.let { "이동 포함 하루 ${durationText(it)}" },
+        perDay?.let {
+            // 3.0곳이 아니라 3곳으로 적는다. 소수점이 붙으면 추정값처럼 보인다.
+            val count = "%.1f".format(it).removeSuffix(".0")
+            stringResource(R.string.plan_density_attractions, count)
+        },
+        minutesPerDay?.takeIf { it > 0 }?.let {
+            stringResource(R.string.plan_density_travel, durationText(it))
+        },
     )
     if (parts.isEmpty()) return
 
@@ -165,8 +177,7 @@ private fun TightMealBudgetNotice(plan: TripPlan) {
     if (overRatio <= MEAL_OVER_BUDGET_WARNING_RATIO) return
 
     Text(
-        text = "이 예산으로는 식비가 1인 1끼 약 ${formatRoughWon(mealCap)}이라 빠듯해요. " +
-            "예산을 올리거나 일정을 줄이면 선택지가 넓어집니다.",
+        text = stringResource(R.string.plan_meal_budget_tight, formatRoughWon(mealCap)),
         style = MaterialTheme.typography.labelMedium,
         color = LocalPalette.current.TextSecondary,
         modifier = Modifier.padding(top = Tokens.Space.sm),
@@ -198,13 +209,18 @@ private fun BudgetUsageBar(totalWon: Long, plannedWon: Long) {
     Column(verticalArrangement = Arrangement.spacedBy(Tokens.Space.xs)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = "예산 사용",
+                text = stringResource(R.string.plan_budget_usage),
                 style = MaterialTheme.typography.labelMedium,
                 color = LocalPalette.current.TextSecondary,
                 modifier = Modifier.weight(1f),
             )
             Text(
-                text = "${money(plannedWon)} / ${money(totalWon)} (${(ratio * 100).toInt()}%)",
+                text = stringResource(
+                    R.string.plan_budget_usage_value,
+                    money(plannedWon),
+                    money(totalWon),
+                    (ratio * 100).toInt(),
+                ),
                 style = MaterialTheme.typography.labelMedium,
                 color = color,
                 fontWeight = FontWeight.Bold,
@@ -229,7 +245,7 @@ private fun BudgetUsageBar(totalWon: Long, plannedWon: Long) {
 
         if (overBudget) {
             Text(
-                text = "계획이 예산을 넘습니다. 예산 초과로 표시된 항목을 대안으로 바꿔보세요.",
+                text = stringResource(R.string.plan_budget_over),
                 style = MaterialTheme.typography.labelMedium,
                 color = color,
             )
@@ -270,7 +286,10 @@ fun ItineraryHighlights(plan: TripPlan) {
                     Text(
                         text = "★${attraction.rating}" +
                             if (attraction.reviewCount > 0) {
-                                " · 리뷰 ${"%,d".format(attraction.reviewCount)}"
+                                " · " + stringResource(
+                                    R.string.plan_reviews,
+                                    "%,d".format(attraction.reviewCount),
+                                )
                             } else {
                                 ""
                             },

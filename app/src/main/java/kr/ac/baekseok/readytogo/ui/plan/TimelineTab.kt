@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.data.model.DayPlan
 import kr.ac.baekseok.readytogo.data.model.FavoritePlace
 import kr.ac.baekseok.readytogo.data.model.TravelPurpose
@@ -88,13 +89,15 @@ fun TimelineTab(
                 Tab(
                     selected = candidate.dayNumber == day?.dayNumber,
                     onClick = { onSelectDay(candidate.dayNumber) },
-                    text = { Text("${candidate.dayNumber}일차") },
+                    text = {
+                        Text(stringResource(R.string.plan_day_tab, candidate.dayNumber))
+                    },
                 )
             }
         }
 
         if (day == null) {
-            EmptyState(title = "일정이 없습니다", description = "")
+            EmptyState(title = stringResource(R.string.plan_timeline_empty), description = "")
             return@Column
         }
 
@@ -124,8 +127,8 @@ fun TimelineTab(
             if (entries.isEmpty()) {
                 item {
                     EmptyState(
-                        title = "이 날은 비어 있습니다",
-                        description = "이동·휴식에 쓰는 날이거나, 항목을 모두 뺐습니다.",
+                        title = stringResource(R.string.plan_day_empty_title),
+                        description = stringResource(R.string.plan_day_empty_body),
                     )
                 }
             }
@@ -159,19 +162,23 @@ private fun DayHeader(day: DayPlan, totalMinutes: Int, onOpenMap: () -> Unit) {
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = "${day.dayNumber}일차 · ${dateWithDay(day.date)}",
+                text = stringResource(
+                    R.string.plan_day_header,
+                    day.dayNumber,
+                    dateWithDay(day.date),
+                ),
                 style = MaterialTheme.typography.titleMedium,
             )
             // 하루가 얼마나 빡빡한지 숫자로 알려준다. 항목만 세어서는 감이 안 온다.
             if (totalMinutes > 0) {
                 Text(
-                    text = "이동 포함 ${durationText(totalMinutes)}",
+                    text = stringResource(R.string.plan_day_total, durationText(totalMinutes)),
                     style = MaterialTheme.typography.bodyMedium,
                     color = LocalPalette.current.TextSecondary,
                 )
             }
         }
-        TextButton(onClick = onOpenMap) { Text("지도") }
+        TextButton(onClick = onOpenMap) { Text(stringResource(R.string.plan_open_map)) }
     }
 }
 
@@ -284,8 +291,16 @@ private fun VisitContent(item: TimelineItem.Visit, purposes: Set<TravelPurpose>)
     }
 
     Text(
-        text = "관광지 · ★${attraction.rating}" +
-            if (attraction.reviewCount > 0) " (리뷰 ${"%,d".format(attraction.reviewCount)})" else "",
+        text = stringResource(R.string.plan_attraction) + " · " +
+            if (attraction.reviewCount > 0) {
+                stringResource(
+                    R.string.plan_rating_reviews,
+                    attraction.rating.toString(),
+                    "%,d".format(attraction.reviewCount),
+                )
+            } else {
+                "★${attraction.rating}"
+            },
         style = MaterialTheme.typography.bodyMedium,
         color = LocalPalette.current.TextSecondary,
     )
@@ -318,7 +333,7 @@ private fun MealContent(item: TimelineItem.Meal) {
         )
         if (overBudget) {
             Text(
-                text = " · 예산 초과",
+                text = stringResource(R.string.plan_over_budget_suffix),
                 style = MaterialTheme.typography.labelMedium,
                 color = accent,
             )
@@ -364,12 +379,12 @@ private fun NoMealContent(item: TimelineItem.NoMeal) {
         fontWeight = FontWeight.Bold,
     )
     Text(
-        text = "근처 추천 식당 없음",
+        text = stringResource(R.string.plan_no_meal_title),
         style = MaterialTheme.typography.titleSmall,
         color = LocalPalette.current.TextSecondary,
     )
     Text(
-        text = "이 동네에서 조건에 맞는 곳을 찾지 못했습니다.",
+        text = stringResource(R.string.plan_no_meal_body),
         style = MaterialTheme.typography.bodyMedium,
         color = LocalPalette.current.TextSecondary,
     )

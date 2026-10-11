@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.domain.plan.TimelineItem
 import kr.ac.baekseok.readytogo.ui.format.durationText
 import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
@@ -66,7 +67,7 @@ fun PlaceDetailSheet(
                 is TimelineItem.Meal -> MealDetail(item)
                 // 추천이 없는 끼니는 상세를 띄우지 않는다. 호출부가 막지만 타입상 분기가 필요하다.
                 is TimelineItem.NoMeal -> Text(
-                    text = "추천할 식당을 찾지 못했습니다.",
+                    text = stringResource(R.string.plan_sheet_no_restaurant),
                     style = MaterialTheme.typography.bodyLarge,
                 )
             }
@@ -77,7 +78,7 @@ fun PlaceDetailSheet(
             if (mapUrl.isNotBlank()) {
                 SheetAction(
                     icon = Icons.Outlined.Map,
-                    label = "지도에서 열기",
+                    label = stringResource(R.string.plan_sheet_open_map),
                     onClick = {
                         onOpenMap(mapUrl)
                         onDismiss()
@@ -88,7 +89,7 @@ fun PlaceDetailSheet(
             if (onSwap != null) {
                 SheetAction(
                     icon = Icons.Outlined.SwapHoriz,
-                    label = "대안으로 교체",
+                    label = stringResource(R.string.plan_sheet_swap),
                     onClick = {
                         onSwap()
                         onDismiss()
@@ -98,7 +99,7 @@ fun PlaceDetailSheet(
 
             SheetAction(
                 icon = Icons.Outlined.Delete,
-                label = "일정에서 빼기",
+                label = stringResource(R.string.plan_sheet_remove),
                 tint = LocalPalette.current.Danger,
                 onClick = {
                     onDelete()
@@ -115,11 +116,15 @@ private fun VisitDetail(item: TimelineItem.Visit) {
     Column(verticalArrangement = Arrangement.spacedBy(Tokens.Space.xs)) {
         Text(text = attraction.name, style = MaterialTheme.typography.titleLarge)
         Text(
-            text = "관광지 · ★${attraction.rating}" +
+            text = stringResource(R.string.plan_attraction) + " · " +
                 if (attraction.reviewCount > 0) {
-                    " (리뷰 ${"%,d".format(attraction.reviewCount)})"
+                    stringResource(
+                        R.string.plan_rating_reviews,
+                        attraction.rating.toString(),
+                        "%,d".format(attraction.reviewCount),
+                    )
                 } else {
-                    ""
+                    "★${attraction.rating}"
                 },
             style = MaterialTheme.typography.bodyLarge,
             color = LocalPalette.current.TextSecondary,
@@ -132,7 +137,7 @@ private fun VisitDetail(item: TimelineItem.Visit) {
             )
         }
         Text(
-            text = "머무는 시간 ${durationText(item.stayMinutes)}",
+            text = stringResource(R.string.plan_sheet_stay_time, durationText(item.stayMinutes)),
             style = MaterialTheme.typography.bodyMedium,
             color = LocalPalette.current.TextSecondary,
         )
@@ -154,7 +159,7 @@ private fun MealDetail(item: TimelineItem.Meal) {
             )
             if (overBudget) {
                 Text(
-                    text = " · 예산 초과",
+                    text = stringResource(R.string.plan_over_budget_suffix),
                     style = MaterialTheme.typography.labelLarge,
                     color = LocalPalette.current.Accent,
                 )

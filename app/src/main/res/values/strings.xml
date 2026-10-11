@@ -199,4 +199,114 @@
     <string name="favorite_kind_restaurant">식당</string>
     <string name="favorite_kind_attraction">관광지</string>
     <string name="favorite_kind_lodging">숙소</string>
+
+    <!-- ===== 결과 화면 ===== -->
+    <string name="plan_title">여행 계획</string>
+    <string name="plan_save">저장</string>
+    <string name="plan_unsave">저장 해제</string>
+    <string name="plan_undo">되돌리기</string>
+    <string name="plan_loading">계획을 만드는 중입니다</string>
+    <string name="plan_retry">다시 시도</string>
+
+    <!-- 탭 -->
+    <string name="plan_tab_summary">요약</string>
+    <string name="plan_tab_flight">항공</string>
+    <string name="plan_tab_lodging">숙소</string>
+    <string name="plan_tab_itinerary">일정표</string>
+    <string name="plan_tab_map">지도</string>
+
+    <!-- 안내 메시지 -->
+    <string name="plan_sign_in_to_save">로그인하면 이 일정을 저장할 수 있습니다.</string>
+    <string name="plan_create_failed">계획을 만들지 못했습니다.</string>
+    <string name="plan_saved">여행 탭에 저장했습니다.</string>
+    <string name="plan_save_removed">저장을 해제했습니다.</string>
+    <string name="plan_save_failed">저장하지 못했습니다.</string>
+    <string name="plan_item_removed">일정에서 뺐습니다.</string>
+
+    <!-- 섹션 제목 -->
+    <string name="plan_section_budget">예산 분해</string>
+    <string name="plan_section_flight">항공</string>
+    <string name="plan_section_lodging">숙소</string>
+    <string name="plan_section_highlights">일정 하이라이트</string>
+    <string name="plan_section_flights_cheapest">항공권 (최저가순)</string>
+    <string name="plan_lodging_not_found">숙소를 찾지 못했습니다</string>
+    <string name="plan_map_empty">표시할 일정이 없습니다</string>
+    <string name="plan_day_tab">%1$d일차</string>
+
+    <!-- 요약 헤더 -->
+    <string name="plan_days">%1$d일</string>
+    <string name="plan_adults">성인 %1$d명</string>
+    <string name="plan_rooms">%1$d실</string>
+    <string name="plan_density_attractions">하루 관광지 %1$s곳</string>
+    <string name="plan_density_travel">이동 포함 하루 %1$s</string>
+    <string name="plan_budget_usage">예산 사용</string>
+    <!-- 예: "1,613,343원 / 2,000,000원 (80%)" -->
+    <string name="plan_budget_usage_value">%1$s / %2$s (%3$d%%)</string>
+    <string name="plan_budget_over">계획이 예산을 넘습니다. 예산 초과로 표시된 항목을 대안으로 바꿔보세요.</string>
+    <string name="plan_meal_budget_tight">이 예산으로는 식비가 1인 1끼 약 %1$s이라 빠듯해요. 예산을 올리거나 일정을 줄이면 선택지가 넓어집니다.</string>
+
+    <!-- 예산 분해 -->
+    <string name="plan_budget_no_limit">예산을 입력하지 않아 상한 없이 추천했습니다</string>
+    <string name="plan_budget_flight">항공</string>
+    <string name="plan_budget_lodging_cap">숙소 1박 상한</string>
+    <string name="plan_budget_lodging_cap_rooms">숙소 1박 상한 (1실 × %1$d실)</string>
+    <string name="plan_budget_meal_cap">식사 1끼 상한</string>
+    <string name="plan_budget_meal_cap_adults">식사 1끼 상한 (1인 × %1$d명)</string>
+    <string name="plan_budget_other">교통·입장료·예비비</string>
+    <string name="plan_budget_flight_exceeds">항공료만으로 예산을 넘습니다. 예산을 올리거나 날짜를 바꿔보세요.</string>
+
+    <!-- 목적별 배분 막대 -->
+    <string name="plan_share_title">목적별 배분</string>
+    <string name="plan_share_lodging">숙박</string>
+    <string name="plan_share_food">식비</string>
+    <string name="plan_share_other">기타</string>
+    <!-- 예: "숙박 45%" -->
+    <string name="plan_share_legend">%1$s %2$d%%</string>
+    <string name="plan_share_note">항공료를 뺀 %1$s을 %2$s에 맞춰 나눈 비율입니다.</string>
+    <string name="plan_share_note_default">항공료를 뺀 %1$s을 기본 비율로 나눴습니다. 목적을 고르면 배분이 달라집니다.</string>
+
+    <!-- 항공 -->
+    <string name="plan_sample_title">예시 데이터</string>
+    <string name="plan_sample_body">항공권을 실제로 검색하지 못해 예시 가격을 보여주고 있습니다. 실제 요금과 다를 수 있습니다.</string>
+    <string name="plan_flight_outbound_total">가는 편 · 왕복 총액</string>
+    <string name="plan_flight_direct">직항</string>
+    <string name="plan_flight_stops">경유 %1$d회</string>
+    <!-- 예: "ICN 07:10 → NRT 10:00" -->
+    <string name="plan_flight_route">%1$s %2$s → %3$s %4$s</string>
+
+    <!-- 숙소·식당 선택지 -->
+    <string name="plan_choice_recommended">추천</string>
+    <string name="plan_choice_recommended_over">추천 · 예산 초과</string>
+    <!-- 앞의 가운뎃점까지가 한 덩어리다. 따옴표가 없으면 앞 공백이 잘린다. -->
+    <string name="plan_over_budget_suffix">" · 예산 초과"</string>
+    <string name="plan_lodging_same_price">두 곳의 예상 1박가가 같습니다. 리뷰 수를 기준으로 보세요.</string>
+    <string name="plan_no_alternative">조건에 맞는 다른 후보가 없습니다</string>
+    <string name="plan_reviews">리뷰 %1$s</string>
+    <string name="plan_rating_reviews">★%1$s (리뷰 %2$s)</string>
+    <string name="plan_distance_from_center">일정 중심에서 %1$skm</string>
+    <string name="plan_price_upper_bound">%1$s 이하</string>
+    <string name="plan_price_estimated">%1$s (추정)</string>
+    <string name="plan_lodging_price_estimated">예상 1박 약 %1$s</string>
+    <string name="plan_lodging_price">%1$s / 1박</string>
+
+    <!-- 일정표 -->
+    <string name="plan_timeline_empty">일정이 없습니다</string>
+    <string name="plan_day_empty_title">이 날은 비어 있습니다</string>
+    <string name="plan_day_empty_body">이동·휴식에 쓰는 날이거나, 항목을 모두 뺐습니다.</string>
+    <string name="plan_day_header">%1$d일차 · %2$s</string>
+    <string name="plan_day_total">이동 포함 %1$s</string>
+    <string name="plan_open_map">지도</string>
+    <string name="plan_attraction">관광지</string>
+    <string name="plan_no_meal_title">근처 추천 식당 없음</string>
+    <string name="plan_no_meal_body">이 동네에서 조건에 맞는 곳을 찾지 못했습니다.</string>
+
+    <!-- 장소 상세 시트 -->
+    <string name="plan_sheet_no_restaurant">추천할 식당을 찾지 못했습니다.</string>
+    <string name="plan_sheet_open_map">지도에서 열기</string>
+    <string name="plan_sheet_swap">대안으로 교체</string>
+    <string name="plan_sheet_remove">일정에서 빼기</string>
+    <string name="plan_sheet_stay_time">머무는 시간 %1$s</string>
+
+    <!-- 저장할 때 자동으로 붙는 일정 이름. 예: "도쿄 5일" -->
+    <string name="plan_saved_title">%1$s %2$d일</string>
 </resources>

@@ -183,4 +183,110 @@
     <string name="favorite_kind_restaurant">Restaurant</string>
     <string name="favorite_kind_attraction">Attraction</string>
     <string name="favorite_kind_lodging">Stay</string>
+
+    <!-- ===== 결과 화면 ===== -->
+    <string name="plan_title">Trip plan</string>
+    <string name="plan_save">Save</string>
+    <string name="plan_unsave">Unsave</string>
+    <string name="plan_undo">Undo</string>
+    <string name="plan_loading">Building your plan</string>
+    <string name="plan_retry">Try again</string>
+
+    <!-- 탭 -->
+    <string name="plan_tab_summary">Summary</string>
+    <string name="plan_tab_flight">Flights</string>
+    <string name="plan_tab_lodging">Stay</string>
+    <string name="plan_tab_itinerary">Itinerary</string>
+    <string name="plan_tab_map">Map</string>
+
+    <!-- 안내 메시지 -->
+    <string name="plan_sign_in_to_save">Sign in to save this plan.</string>
+    <string name="plan_create_failed">We couldn\'t build the plan.</string>
+    <string name="plan_saved">Saved to the Trips tab.</string>
+    <string name="plan_save_removed">Removed from saved trips.</string>
+    <string name="plan_save_failed">We couldn\'t save it.</string>
+    <string name="plan_item_removed">Removed from the itinerary.</string>
+
+    <!-- 섹션 제목 -->
+    <string name="plan_section_budget">Budget breakdown</string>
+    <string name="plan_section_flight">Flight</string>
+    <string name="plan_section_lodging">Stay</string>
+    <string name="plan_section_highlights">Highlights</string>
+    <string name="plan_section_flights_cheapest">Flights (cheapest first)</string>
+    <string name="plan_lodging_not_found">No stay found</string>
+    <string name="plan_map_empty">Nothing to show on the map</string>
+    <string name="plan_day_tab">Day %1$d</string>
+
+    <!-- 요약 헤더 -->
+    <string name="plan_days">%1$d days</string>
+    <string name="plan_adults">%1$d adults</string>
+    <string name="plan_rooms">%1$d rooms</string>
+    <string name="plan_density_attractions">%1$s attractions a day</string>
+    <string name="plan_density_travel">%1$s a day including travel</string>
+    <string name="plan_budget_usage">Budget used</string>
+    <string name="plan_budget_usage_value">%1$s / %2$s (%3$d%%)</string>
+    <string name="plan_budget_over">This plan goes over your budget. Try swapping the items marked over budget.</string>
+    <string name="plan_meal_budget_tight">At this budget, meals come to about %1$s per person per meal, which is tight. Raising the budget or shortening the trip opens up more choices.</string>
+
+    <!-- 예산 분해 -->
+    <string name="plan_budget_no_limit">No budget entered, so recommendations have no price cap</string>
+    <string name="plan_budget_flight">Flight</string>
+    <string name="plan_budget_lodging_cap">Stay, cap per night</string>
+    <string name="plan_budget_lodging_cap_rooms">Stay, cap per night (1 room × %1$d)</string>
+    <string name="plan_budget_meal_cap">Meal, cap per meal</string>
+    <string name="plan_budget_meal_cap_adults">Meal, cap per meal (1 person × %1$d)</string>
+    <string name="plan_budget_other">Transit, tickets, buffer</string>
+    <string name="plan_budget_flight_exceeds">The flight alone goes over your budget. Raise the budget or change the dates.</string>
+
+    <!-- 목적별 배분 막대 -->
+    <string name="plan_share_title">Split by purpose</string>
+    <string name="plan_share_lodging">Stay</string>
+    <string name="plan_share_food">Food</string>
+    <string name="plan_share_other">Other</string>
+    <string name="plan_share_legend">%1$s %2$d%%</string>
+    <string name="plan_share_note">How %1$s, what\'s left after airfare, is split for %2$s.</string>
+    <string name="plan_share_note_default">How %1$s, what\'s left after airfare, is split by default. Pick a purpose to change it.</string>
+
+    <!-- 항공 -->
+    <string name="plan_sample_title">Sample data</string>
+    <string name="plan_sample_body">We couldn\'t search live flights, so these are sample prices. Actual fares may differ.</string>
+    <string name="plan_flight_outbound_total">Outbound · round-trip total</string>
+    <string name="plan_flight_direct">Nonstop</string>
+    <string name="plan_flight_stops">%1$d stops</string>
+    <string name="plan_flight_route">%1$s %2$s → %3$s %4$s</string>
+
+    <!-- 숙소·식당 선택지 -->
+    <string name="plan_choice_recommended">Recommended</string>
+    <string name="plan_choice_recommended_over">Recommended · over budget</string>
+    <string name="plan_over_budget_suffix">" · over budget"</string>
+    <string name="plan_lodging_same_price">Both have the same estimated nightly price. Compare review counts instead.</string>
+    <string name="plan_no_alternative">No other candidate matches</string>
+    <string name="plan_reviews">%1$s reviews</string>
+    <string name="plan_rating_reviews">★%1$s (%2$s reviews)</string>
+    <string name="plan_distance_from_center">%1$s km from the trip center</string>
+    <string name="plan_price_upper_bound">Up to %1$s</string>
+    <string name="plan_price_estimated">%1$s (est.)</string>
+    <string name="plan_lodging_price_estimated">About %1$s per night (est.)</string>
+    <string name="plan_lodging_price">%1$s per night</string>
+
+    <!-- 일정표 -->
+    <string name="plan_timeline_empty">No itinerary</string>
+    <string name="plan_day_empty_title">This day is empty</string>
+    <string name="plan_day_empty_body">It\'s a travel or rest day, or you removed every item.</string>
+    <string name="plan_day_header">Day %1$d · %2$s</string>
+    <string name="plan_day_total">%1$s including travel</string>
+    <string name="plan_open_map">Map</string>
+    <string name="plan_attraction">Attraction</string>
+    <string name="plan_no_meal_title">No restaurant nearby</string>
+    <string name="plan_no_meal_body">We couldn\'t find a match in this area.</string>
+
+    <!-- 장소 상세 시트 -->
+    <string name="plan_sheet_no_restaurant">We couldn\'t find a restaurant to recommend.</string>
+    <string name="plan_sheet_open_map">Open in Maps</string>
+    <string name="plan_sheet_swap">Swap for the alternative</string>
+    <string name="plan_sheet_remove">Remove from itinerary</string>
+    <string name="plan_sheet_stay_time">Stay %1$s</string>
+
+    <!-- 저장할 때 자동으로 붙는 일정 이름. 예: "Tokyo, 5 days" -->
+    <string name="plan_saved_title">%1$s, %2$d days</string>
 </resources>

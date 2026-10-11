@@ -42,6 +42,7 @@ import kr.ac.baekseok.readytogo.ui.component.PhotoCard
 import kr.ac.baekseok.readytogo.ui.component.PrimaryButton
 import kr.ac.baekseok.readytogo.ui.component.SectionHeader
 import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
+import kr.ac.baekseok.readytogo.ui.theme.isAppInDarkTheme
 import kr.ac.baekseok.readytogo.ui.format.dateShort
 import kr.ac.baekseok.readytogo.ui.format.savedTripDestination
 import kr.ac.baekseok.readytogo.ui.format.savedTripTitle
@@ -274,17 +275,25 @@ private fun RecentTripRow(trip: SavedTrip, today: LocalDate, onClick: () -> Unit
             .padding(Tokens.Space.md),
     ) {
         // 목록 줄의 썸네일은 사진 자리가 아니라 **표식**이다. 목적지마다 색이 달라지면
-        // 다섯 줄이 알록달록해져 제목이 안 읽힌다. 연노랑 한 가지에 작은 아이콘만 얹는다.
+        // 다섯 줄이 알록달록해져 제목이 안 읽힌다. 한 가지 바탕에 작은 아이콘만 얹는다.
+        //
+        // **다크에서는 연노랑을 쓰지 않는다.** 어두운 카키로 내려가 탁해지고, 그 위에 얹힌
+        // 여러 색 아이콘이 흙빛으로 섞인다. 그때는 면을 가라앉히고 포인트 색 아이콘
+        // 하나로 표식을 삼는다 — 라이트에서 연노랑이 하던 일을 색 대비가 대신한다.
+        val dark = isAppInDarkTheme()
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
                 .size(THUMB_SIZE)
                 .clip(Tokens.Radius.button)
-                .background(LocalPalette.current.Secondary),
+                .background(
+                    if (dark) LocalPalette.current.SurfaceMuted else LocalPalette.current.Secondary,
+                ),
         ) {
             Image(
                 painter = painterResource(R.drawable.ic_launcher_art),
                 contentDescription = null,
+                colorFilter = if (dark) ColorFilter.tint(LocalPalette.current.Point) else null,
                 modifier = Modifier.size(THUMB_ICON_SIZE),
             )
         }

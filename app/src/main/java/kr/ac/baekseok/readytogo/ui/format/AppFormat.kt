@@ -3,6 +3,7 @@ package kr.ac.baekseok.readytogo.ui.format
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.res.booleanResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.domain.plan.TravelLeg
@@ -66,12 +67,28 @@ fun dateShort(date: LocalDate): String = date.format(rememberDateFormat(R.string
 @Composable
 fun dateWithDay(date: LocalDate): String = date.format(rememberDateFormat(R.string.fmt_date_md_e))
 
+/**
+ * 수를 세는 말. 영어는 1과 그 외에서 말이 달라져 plurals로 둔다 — 문자열 하나로 두면
+ * "1 adults", "1 days"가 그대로 찍힌다(실제로 요약 헤더에 나왔다).
+ */
+@Composable
+fun daysText(days: Int): String = pluralStringResource(R.plurals.days_count, days, days)
+
+@Composable
+fun nightsText(nights: Int): String = pluralStringResource(R.plurals.nights_count, nights, nights)
+
+@Composable
+fun adultsText(adults: Int): String = pluralStringResource(R.plurals.adults_count, adults, adults)
+
+@Composable
+fun roomsText(rooms: Int): String = pluralStringResource(R.plurals.rooms_count, rooms, rooms)
+
 /** "10.24(금) – 10.28(화) · 4박 5일" */
 @Composable
 fun tripRangeText(departure: LocalDate, returnDate: LocalDate): String {
-    val nights = ChronoUnit.DAYS.between(departure, returnDate)
+    val nights = ChronoUnit.DAYS.between(departure, returnDate).toInt()
     return "${dateWithDay(departure)} – ${dateWithDay(returnDate)} · " +
-        stringResource(R.string.fmt_nights_days, nights.toInt(), (nights + 1).toInt())
+        stringResource(R.string.fmt_nights_days, nightsText(nights), daysText(nights + 1))
 }
 
 /**

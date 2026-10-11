@@ -43,6 +43,7 @@ import kr.ac.baekseok.readytogo.ui.component.PrimaryButton
 import kr.ac.baekseok.readytogo.ui.component.SectionHeader
 import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.format.dateShort
+import kr.ac.baekseok.readytogo.ui.format.daysText
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 import java.time.LocalDate
 
@@ -216,7 +217,7 @@ private fun UpcomingTripCard(trip: SavedTrip, today: LocalDate, onClick: () -> U
             R.string.fmt_date_range_days,
             dateShort(trip.departureDate),
             dateShort(trip.returnDate),
-            trip.dayCount,
+            daysText(trip.dayCount),
         ),
         // 목적지가 어디든 이 카드만은 브랜드 색으로 둔다. 홈에서 가장 먼저 보이는 면이다.
         colors = LocalPalette.current.HeroGradient,
@@ -294,7 +295,7 @@ private fun RecentTripRow(trip: SavedTrip, onClick: () -> Unit) {
                 text = stringResource(
                     R.string.home_recent_subtitle,
                     trip.destinationName,
-                    trip.dayCount,
+                    daysText(trip.dayCount),
                     dateShort(trip.departureDate),
                 ),
                 style = MaterialTheme.typography.bodyMedium,

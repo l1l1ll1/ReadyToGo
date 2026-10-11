@@ -47,6 +47,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -672,7 +673,7 @@ private fun FlightCard(flight: Flight) {
                 text = if (flight.stops == 0) {
                     stringResource(R.string.plan_flight_direct)
                 } else {
-                    stringResource(R.string.plan_flight_stops, flight.stops)
+                    pluralStringResource(R.plurals.stops_count, flight.stops, flight.stops)
                 },
                 style = MaterialTheme.typography.bodySmall,
             )

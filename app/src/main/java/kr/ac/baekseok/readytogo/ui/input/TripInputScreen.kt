@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -44,6 +46,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -150,6 +153,10 @@ fun TripInputScreen(
                 selected = condition.purposes,
                 onToggle = viewModel::onPurposeToggle,
             )
+
+            // 마지막 칩이 하단 바에 딱 붙어 빽빽해 보인다. 영어처럼 칩이 두 줄로
+            // 넘어가는 언어에서 더 심하다. 스크롤 끝에 숨 쉴 자리를 둔다.
+            Spacer(modifier = Modifier.height(Tokens.Space.sm))
         }
     }
 
@@ -358,7 +365,7 @@ private fun PartySection(
             }
         }
         Text(
-            text = stringResource(R.string.input_people_note, roomCount),
+            text = pluralStringResource(R.plurals.input_people_note, roomCount, roomCount),
             style = MaterialTheme.typography.bodyMedium,
             color = LocalPalette.current.TextSecondary,
         )

@@ -152,7 +152,7 @@
     <string name="fmt_money_man">KRW %s</string>
     <string name="fmt_date_md">MMM d</string>
     <string name="fmt_date_md_e">MMM d (E)</string>
-    <string name="fmt_nights_days">%1$d nights, %2$d days</string>
+    <string name="fmt_nights_days">%1$s, %2$s</string>
     <string name="fmt_duration_hm">About %1$d hr %2$d min</string>
     <string name="fmt_duration_h">About %1$d hr</string>
     <string name="fmt_duration_m">About %1$d min</string>
@@ -218,9 +218,6 @@
     <string name="plan_day_tab">Day %1$d</string>
 
     <!-- 요약 헤더 -->
-    <string name="plan_days">%1$d days</string>
-    <string name="plan_adults">%1$d adults</string>
-    <string name="plan_rooms">%1$d rooms</string>
     <string name="plan_density_attractions">%1$s attractions a day</string>
     <string name="plan_density_travel">%1$s a day including travel</string>
     <string name="plan_budget_usage">Budget used</string>
@@ -252,7 +249,6 @@
     <string name="plan_sample_body">We couldn\'t search live flights, so these are sample prices. Actual fares may differ.</string>
     <string name="plan_flight_outbound_total">Outbound · round-trip total</string>
     <string name="plan_flight_direct">Nonstop</string>
-    <string name="plan_flight_stops">%1$d stops</string>
     <string name="plan_flight_route">%1$s %2$s → %3$s %4$s</string>
 
     <!-- 숙소·식당 선택지 -->
@@ -288,7 +284,7 @@
     <string name="plan_sheet_stay_time">Stay %1$s</string>
 
     <!-- 저장할 때 자동으로 붙는 일정 이름. 예: "Tokyo, 5 days" -->
-    <string name="plan_saved_title">%1$s, %2$d days</string>
+    <string name="plan_saved_title">%1$s, %2$s</string>
 
     <!-- ===== 입력 화면 ===== -->
     <string name="common_confirm">OK</string>
@@ -305,7 +301,6 @@
     <string name="input_people_increase">More travelers</string>
     <!-- 옆에 "Travelers" 라벨이 붙어 있어 숫자만으로 읽힌다. -->
     <string name="input_people_count">%1$d</string>
-    <string name="input_people_note">Adults only. We book %1$d room(s) at 2 people per room.</string>
     <string name="input_purpose_title">What\'s this trip for?</string>
     <string name="input_purpose_body">What you pick changes the budget split and how full each day is. Pick as many as you like.</string>
     <string name="input_create_plan">Build the plan</string>
@@ -342,7 +337,7 @@
     <!-- ===== 공통 ===== -->
     <string name="common_delete">Delete</string>
     <string name="common_save_failed">We couldn\'t save it.</string>
-    <string name="fmt_date_range_days">%1$s – %2$s · %3$d days</string>
+    <string name="fmt_date_range_days">%1$s – %2$s · %3$s</string>
 
     <!-- ===== 여행 탭 ===== -->
     <string name="trips_empty_title">No saved trips</string>
@@ -353,8 +348,8 @@
     <string name="trips_past">Past trips</string>
     <string name="trips_delete_title">Delete this trip?</string>
     <string name="trips_delete_body">\"%1$s\" will be deleted. This can\'t be undone.</string>
-    <string name="trips_subtitle">%1$s · %2$s – %3$s · %4$d days</string>
-    <string name="home_recent_subtitle">%1$s · %2$d days · %3$s</string>
+    <string name="trips_subtitle">%1$s · %2$s – %3$s · %4$s</string>
+    <string name="home_recent_subtitle">%1$s · %2$s · %3$s</string>
 
     <!-- ===== 지도 ===== -->
     <string name="map_title">Day %1$d route</string>

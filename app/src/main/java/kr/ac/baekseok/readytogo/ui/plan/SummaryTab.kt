@@ -22,7 +22,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.data.model.TravelPurpose
 import kr.ac.baekseok.readytogo.data.model.TripPlan
+import kr.ac.baekseok.readytogo.ui.format.adultsText
 import kr.ac.baekseok.readytogo.ui.format.dateWithDay
+import kr.ac.baekseok.readytogo.ui.format.daysText
+import kr.ac.baekseok.readytogo.ui.format.roomsText
 import kr.ac.baekseok.readytogo.ui.format.durationText
 import kr.ac.baekseok.readytogo.ui.format.money
 import kr.ac.baekseok.readytogo.domain.plan.toTimeline
@@ -59,14 +62,10 @@ fun SummaryHeader(plan: TripPlan) {
                 c.departureDate?.let { departure ->
                     c.returnDate?.let { back -> "${dateWithDay(departure)} – ${dateWithDay(back)}" }
                 },
-                stringResource(R.string.plan_days, plan.dailyPlans.size),
+                daysText(plan.dailyPlans.size),
                 // 방 수까지 적는 이유: 숙소 예산이 왜 그 금액인지가 인원만으로는 안 보인다.
-                stringResource(R.string.plan_adults, c.adults) +
-                    if (c.roomCount > 1) {
-                        " · " + stringResource(R.string.plan_rooms, c.roomCount)
-                    } else {
-                        ""
-                    },
+                adultsText(c.adults) +
+                    if (c.roomCount > 1) " · " + roomsText(c.roomCount) else "",
             ).joinToString(" · "),
             style = MaterialTheme.typography.bodyMedium,
             color = LocalPalette.current.TextSecondary,

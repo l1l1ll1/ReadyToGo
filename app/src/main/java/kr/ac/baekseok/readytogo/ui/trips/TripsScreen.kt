@@ -30,6 +30,7 @@ import kr.ac.baekseok.readytogo.ui.component.PhotoCard
 import kr.ac.baekseok.readytogo.ui.component.SectionHeader
 import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.format.dateShort
+import kr.ac.baekseok.readytogo.ui.format.daysText
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 import java.time.LocalDate
 
@@ -169,7 +170,7 @@ private fun TripCard(
             trip.destinationName,
             dateShort(trip.departureDate),
             dateShort(trip.returnDate),
-            trip.dayCount,
+            daysText(trip.dayCount),
         ),
         onClick = onClick,
         onLongClick = onLongClick,

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+        수를 세는 말.
+
+        **왜 plurals인가**: 영어는 1과 그 외에서 말이 달라진다. 문자열 하나로 두면
+        "1 adults", "1 days"가 그대로 찍힌다. 실제로 요약 헤더에 "1 adults"가 나왔다.
+
+        한국어에는 단수·복수 구분이 없어 `other` 하나만 둔다. 비어 있는 `one`을 적어 두면
+        나중에 "하나일 때만 다르게" 같은 규칙이 있는 것처럼 보인다.
+    -->
+    <plurals name="days_count">
+        <item quantity="other">%d일</item>
+    </plurals>
+    <plurals name="nights_count">
+        <item quantity="other">%d박</item>
+    </plurals>
+    <plurals name="adults_count">
+        <item quantity="other">성인 %d명</item>
+    </plurals>
+    <plurals name="rooms_count">
+        <item quantity="other">%d실</item>
+    </plurals>
+    <plurals name="stops_count">
+        <item quantity="other">경유 %d회</item>
+    </plurals>
+    <!-- 방 수에 따라 문장이 통째로 달라져서 문장째 둔다. -->
+    <plurals name="input_people_note">
+        <item quantity="other">성인 기준입니다. 숙소는 2인 1실로 %d개 방을 잡습니다.</item>
+    </plurals>
+</resources>

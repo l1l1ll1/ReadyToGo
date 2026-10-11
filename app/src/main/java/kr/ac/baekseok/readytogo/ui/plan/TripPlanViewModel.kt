@@ -199,8 +199,7 @@ class TripPlanViewModel(
             val trip = SavedTrip(
                 id = id,
                 // 기본 이름은 "도쿄 5일"처럼 자동으로 만든다. 이름을 먼저 물으면 저장이 번거로워진다.
-                title = string(
-                    R.string.plan_saved_title,
+                title = savedTripTitle(
                     destination.shortName,
                     (ChronoUnit.DAYS.between(departure, returnDate) + 1).toInt(),
                 ),
@@ -304,6 +303,17 @@ class TripPlanViewModel(
      */
     private fun string(resId: Int, vararg args: Any): String =
         getApplication<Application>().getString(resId, *args)
+
+    /**
+     * 저장할 때 자동으로 붙는 이름. "도쿄 5일" / "Tokyo, 5 days"
+     *
+     * 날짜 수는 plurals라 따로 뽑는다 — 영어에서 "1 days"가 되지 않게 한다.
+     */
+    private fun savedTripTitle(destination: String, days: Int): String {
+        val resources = getApplication<Application>().resources
+        val daysText = resources.getQuantityString(R.plurals.days_count, days, days)
+        return string(R.string.plan_saved_title, destination, daysText)
+    }
 
     private companion object {
         const val TAG = "TripPlan"

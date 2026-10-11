@@ -183,9 +183,20 @@ fun DayPlan.toTimeline(
             .map { (item, _) -> item }
     }
 
+    // **하루는 첫 끼니로 시작한다.** 아침보다 앞은 아직 하루가 시작되기 전이라 일정을
+    // 둘 자리가 아니다. 끌기에서도 아침은 놓을 자리가 아니지만, 그 규칙이 생기기 전에
+    // 저장된 순서는 화면 규칙만으로는 고쳐지지 않는다. 여기서 아침을 맨 앞으로 되돌리고
+    // 앞에 있던 관광지는 그 바로 뒤에 붙인다.
+    val firstMeal = sorted.indexOfFirst { it !is TimelineItem.Visit }
+    val dayStart = if (firstMeal <= 0) {
+        sorted
+    } else {
+        listOf(sorted[firstMeal]) + sorted.take(firstMeal) + sorted.drop(firstMeal + 1)
+    }
+
     // 이동 시간은 **순서를 정하고 지운 항목을 걸러낸 뒤에** 계산해야 한다.
     // 먼저 계산하면 지운 항목까지 거쳐 가는 시간이 남고, 순서를 바꿔도 "도보 17분"이 그대로다.
-    val remaining = sorted.filterNot { it.key in deletedKeys }
+    val remaining = dayStart.filterNot { it.key in deletedKeys }
 
     // 좌표가 없는 항목(추천 못 찾은 끼니)은 건너뛰고 **마지막 좌표**에서 거리를 잰다.
     // 그러지 않으면 빈 끼니가 끼는 순간 앞뒤 이동시간이 사라진다.

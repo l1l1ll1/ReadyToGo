@@ -7,6 +7,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,6 +36,11 @@ import kr.ac.baekseok.readytogo.ui.theme.Tokens
  */
 @Composable
 fun rememberPlacePhoto(placeId: String): PlacePhoto? {
+    // **설정에서 끄면 요청 자체를 보내지 않는다.** 받아 놓고 숨기면 데이터와 과금은
+    // 그대로 나가면서 화면만 비는 셈이 된다. 토글의 약속은 "안 받는다"이다.
+    val settings by AppContainer.settings.settings.collectAsState()
+    if (!settings.showPlacePhotos) return null
+
     var photo by remember(placeId) { mutableStateOf<PlacePhoto?>(null) }
 
     LaunchedEffect(placeId) {

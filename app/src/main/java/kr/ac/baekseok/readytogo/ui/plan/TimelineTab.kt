@@ -53,6 +53,9 @@ import kr.ac.baekseok.readytogo.domain.plan.toTimeline
 import kr.ac.baekseok.readytogo.domain.purpose.PurposeAttractionTypes
 import kr.ac.baekseok.readytogo.ui.component.EmptyState
 import kr.ac.baekseok.readytogo.ui.component.FavoriteButton
+import kr.ac.baekseok.readytogo.ui.component.PhotoAttributionLine
+import kr.ac.baekseok.readytogo.ui.component.PlacePhotoThumb
+import kr.ac.baekseok.readytogo.ui.component.rememberPlacePhoto
 import kr.ac.baekseok.readytogo.ui.component.TagChip
 import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
@@ -203,8 +206,13 @@ private fun TimelineRow(
         Row(modifier = Modifier.fillMaxWidth()) {
             TimelineRail(icon = entry.item.icon)
 
-            Column(
-                verticalArrangement = Arrangement.spacedBy(Tokens.Space.xs),
+            // 사진은 설정에서 켠 경우에만 받는다(rememberPlacePhoto). 꺼져 있으면 null이라
+            // 썸네일 자리 자체가 생기지 않고 지금처럼 글자만 남는다.
+            val placeId = entry.item.placeId
+            val photo = placeId?.let { rememberPlacePhoto(it) }
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(Tokens.Space.md),
                 modifier = Modifier
                     .weight(1f)
                     .clip(Tokens.Radius.card)
@@ -216,10 +224,24 @@ private fun TimelineRow(
                         bottom = Tokens.Space.lg,
                     ),
             ) {
-                when (val item = entry.item) {
-                    is TimelineItem.Visit -> VisitContent(item, purposes)
-                    is TimelineItem.Meal -> MealContent(item)
-                    is TimelineItem.NoMeal -> NoMealContent(item)
+                if (photo != null && placeId != null) {
+                    PlacePhotoThumb(
+                        placeId = placeId,
+                        photo = photo,
+                        size = Tokens.Size.placeThumb,
+                    )
+                }
+
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(Tokens.Space.xs),
+                    modifier = Modifier.weight(1f),
+                ) {
+                    when (val item = entry.item) {
+                        is TimelineItem.Visit -> VisitContent(item, purposes)
+                        is TimelineItem.Meal -> MealContent(item)
+                        is TimelineItem.NoMeal -> NoMealContent(item)
+                    }
+                    PhotoAttributionLine(photo)
                 }
             }
 
@@ -427,6 +449,14 @@ private val TimelineItem.icon: ImageVector
         is TimelineItem.Visit -> Icons.Outlined.Place
         is TimelineItem.Meal -> Icons.Outlined.LocalCafe
         is TimelineItem.NoMeal -> Icons.Outlined.HelpOutline
+    }
+
+/** 사진을 붙일 장소의 id. 추천을 못 찾은 끼니는 붙일 장소가 없다. */
+private val TimelineItem.placeId: String?
+    get() = when (this) {
+        is TimelineItem.Visit -> attraction.id
+        is TimelineItem.Meal -> restaurant.id
+        is TimelineItem.NoMeal -> null
     }
 
 private fun TimelineItem.toFavoritePlace(cityName: String): FavoritePlace? = when (this) {

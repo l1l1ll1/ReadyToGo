@@ -31,6 +31,8 @@ class SettingsViewModel : ViewModel() {
 
     fun setHighContrast(enabled: Boolean) = update { it.copy(highContrast = enabled) }
 
+    fun setShowPlacePhotos(enabled: Boolean) = update { it.copy(showPlacePhotos = enabled) }
+
     private fun update(transform: (AppSettings) -> AppSettings) {
         viewModelScope.launch { repository.update(transform(repository.settings.value)) }
     }

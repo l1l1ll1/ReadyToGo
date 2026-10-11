@@ -24,6 +24,14 @@ data class AppSettings(
     val textScale: TextScale = TextScale.NORMAL,
     /** 고대비. 켜면 글자와 배경 대비를 높인다. */
     val highContrast: Boolean = false,
+    /**
+     * 장소 사진을 받아 보여줄지.
+     *
+     * **기본값이 꺼짐인 이유**: 사진은 요청마다 과금되고 데이터도 쓴다. 일정 하나를
+     * 펼치면 수십 장이 오가는데, 그걸 사용자가 모르는 채로 시작하면 안 된다.
+     * 켜고 싶은 사람만 켠다.
+     */
+    val showPlacePhotos: Boolean = false,
 )
 
 /**

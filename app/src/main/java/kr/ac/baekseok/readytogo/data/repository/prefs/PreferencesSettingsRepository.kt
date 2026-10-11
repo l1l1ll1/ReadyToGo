@@ -34,6 +34,7 @@ class PreferencesSettingsRepository(context: Context) : SettingsRepository {
             .putBoolean(KEY_NOTIFY_DAY, settings.notifyBeforeDay)
             .putString(KEY_TEXT_SCALE, settings.textScale.name)
             .putBoolean(KEY_HIGH_CONTRAST, settings.highContrast)
+            .putBoolean(KEY_SHOW_PLACE_PHOTOS, settings.showPlacePhotos)
             .apply()
 
         _settings.value = settings
@@ -66,6 +67,7 @@ class PreferencesSettingsRepository(context: Context) : SettingsRepository {
             notifyBeforeDay = prefs.getBoolean(KEY_NOTIFY_DAY, default.notifyBeforeDay),
             textScale = prefs.enumOrNull(KEY_TEXT_SCALE, TextScale.entries) ?: default.textScale,
             highContrast = prefs.getBoolean(KEY_HIGH_CONTRAST, default.highContrast),
+            showPlacePhotos = prefs.getBoolean(KEY_SHOW_PLACE_PHOTOS, default.showPlacePhotos),
         )
     }
 
@@ -99,6 +101,7 @@ class PreferencesSettingsRepository(context: Context) : SettingsRepository {
         const val KEY_NOTIFY_DAY = "notify_before_day"
         const val KEY_TEXT_SCALE = "text_scale"
         const val KEY_HIGH_CONTRAST = "high_contrast"
+        const val KEY_SHOW_PLACE_PHOTOS = "show_place_photos"
         const val KEY_ONBOARDING_SEEN = "onboarding_seen"
     }
 }

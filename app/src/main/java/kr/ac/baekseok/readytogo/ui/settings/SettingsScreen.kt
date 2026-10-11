@@ -126,6 +126,16 @@ fun SettingsScreen(
             )
         }
 
+        item { SettingsSectionGap(title = stringResource(R.string.settings_section_data)) }
+        item {
+            ToggleRow(
+                label = stringResource(R.string.settings_place_photos),
+                description = stringResource(R.string.settings_place_photos_body),
+                checked = settings.showPlacePhotos,
+                onCheckedChange = viewModel::setShowPlacePhotos,
+            )
+        }
+
         item { SettingsSectionGap(title = stringResource(R.string.settings_section_accessibility)) }
         item {
             NavigationRow(

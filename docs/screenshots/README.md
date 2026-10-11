@@ -11,6 +11,7 @@
 | `home.png` | 홈 — 닉네임 인사, 다가오는 여행 D-day 카드, 최근 일정, FAB |
 | `settings.png` | 설정 — 계정·언어·알림·접근성 |
 | `plan-summary.png` | 결과 화면 요약 탭 |
+| `plan-timeline-photos.png` | 일정표 — 설정에서 "장소 사진 표시"를 켠 상태 |
 | `en-input.png` | 영어 — 입력 화면 (금액이 달러로 환산된다) |
 | `en-plan-summary.png` | 영어 — 결과 화면 요약 탭 |
 | `en-trips.png` | 영어 — 여행 탭 |

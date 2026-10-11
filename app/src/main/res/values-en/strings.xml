@@ -388,4 +388,8 @@
     <string name="flight_unknown_airline">Unknown airline</string>
     <string name="fmt_money_range">$%1$s~$%2$s</string>
     <string name="photo_attribution">Photo: %1$s</string>
+    <!-- 데이터 -->
+    <string name="settings_section_data">Data</string>
+    <string name="settings_place_photos">Show place photos</string>
+    <string name="settings_place_photos_body">Uses more data.</string>
 </resources>

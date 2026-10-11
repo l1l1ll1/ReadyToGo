@@ -418,4 +418,8 @@
     <string name="fmt_money_range">%1$s~%2$s원</string>
     <!-- 사진 제공자. Places 약관상 반드시 적어야 한다. 예: "사진 Vivian Li" -->
     <string name="photo_attribution">사진 %1$s</string>
+    <!-- 데이터 -->
+    <string name="settings_section_data">데이터</string>
+    <string name="settings_place_photos">장소 사진 표시</string>
+    <string name="settings_place_photos_body">데이터 사용량이 늘어납니다.</string>
 </resources>

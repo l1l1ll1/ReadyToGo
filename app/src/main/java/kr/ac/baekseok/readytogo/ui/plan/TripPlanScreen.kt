@@ -243,7 +243,7 @@ private fun TripPlanContent(
             when (uiState) {
                 is TripPlanUiState.Loading -> Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(Tokens.Space.md),
                 ) {
                     CircularProgressIndicator()
                     Text("계획을 만드는 중입니다", style = MaterialTheme.typography.bodyMedium)
@@ -251,8 +251,8 @@ private fun TripPlanContent(
 
                 is TripPlanUiState.Failure -> Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier.padding(24.dp),
+                    verticalArrangement = Arrangement.spacedBy(Tokens.Space.md),
+                    modifier = Modifier.padding(Tokens.Space.xl),
                 ) {
                     Text(uiState.message, style = MaterialTheme.typography.bodyMedium)
                     Button(onClick = onRetry) { Text("다시 시도") }
@@ -377,8 +377,8 @@ private fun PlanTabContent(
 private fun TabColumn(content: androidx.compose.foundation.lazy.LazyListScope.() -> Unit) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        contentPadding = PaddingValues(Tokens.Space.lg),
+        verticalArrangement = Arrangement.spacedBy(Tokens.Space.md),
         content = content,
     )
 }
@@ -428,7 +428,7 @@ private fun SectionTitle(text: String) {
         text = text,
         style = MaterialTheme.typography.titleMedium,
         fontWeight = FontWeight.Bold,
-        modifier = Modifier.padding(top = 8.dp),
+        modifier = Modifier.padding(top = Tokens.Space.sm),
     )
 }
 
@@ -442,8 +442,8 @@ private fun BudgetBreakdown(plan: TripPlan) {
 
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(6.dp),
+            modifier = Modifier.padding(Tokens.Space.lg),
+            verticalArrangement = Arrangement.spacedBy(Tokens.Space.sm),
         ) {
             PurposeShareBar(plan)
 
@@ -464,7 +464,9 @@ private fun BudgetBreakdown(plan: TripPlan) {
                 Text(
                     "항공료만으로 예산을 넘습니다. 예산을 올리거나 날짜를 바꿔보세요.",
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.error,
+                    // 예산 초과는 코랄이다. 붉은 Danger는 삭제·탈퇴처럼 되돌릴 수 없는
+                    // 일에만 쓴다 — 예산을 넘은 건 잘못이 아니라 눈에 걸려야 할 것이다.
+                    color = LocalPalette.current.Accent,
                 )
             }
         }
@@ -571,10 +573,12 @@ private fun SampleDataNotice() {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.errorContainer,
+            // 연노랑 바탕. 붉은 오류 색을 쓰면 앱이 고장 난 것처럼 보이는데,
+            // 실제로는 "이 가격은 참고용"이라는 주의지 실패가 아니다.
+            containerColor = LocalPalette.current.Secondary,
         ),
     ) {
-        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+        Column(modifier = Modifier.padding(Tokens.Space.lg), verticalArrangement = Arrangement.spacedBy(Tokens.Space.xs)) {
             Text("예시 데이터", fontWeight = FontWeight.Bold)
             Text(
                 "항공권을 실제로 검색하지 못해 예시 가격을 보여주고 있습니다. " +
@@ -590,15 +594,15 @@ private fun FlightCard(flight: Flight) {
     val open = rememberUrlOpener(flight.bookingUrl.takeUnless { flight.isSample })
     Card(modifier = Modifier.fillMaxWidth(), onClick = open ?: {}, enabled = open != null) {
         Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
+            modifier = Modifier.padding(Tokens.Space.lg),
+            verticalArrangement = Arrangement.spacedBy(Tokens.Space.xs),
         ) {
             // "가는 편 · 왕복 총액"을 적는다. SerpApi 1차 호출은 가는 편만 주는데
             // 가격은 왕복 총액이다. 라벨이 없으면 편도 가격으로 오해한다.
             Text(
                 text = "가는 편 · 왕복 총액",
                 style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.primary,
+                color = LocalPalette.current.Point,
             )
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 Text("${flight.airline} ${flight.flightNumber}", fontWeight = FontWeight.Bold)
@@ -629,14 +633,14 @@ private fun LodgingCard(pair: RecommendationPair<Lodging>) {
 
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.padding(Tokens.Space.lg),
+            verticalArrangement = Arrangement.spacedBy(Tokens.Space.md),
         ) {
             if (samePrice) {
                 Text(
                     text = "두 곳의 예상 1박가가 같습니다. 리뷰 수를 기준으로 보세요.",
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.outline,
+                    color = LocalPalette.current.TextSecondary,
                 )
             }
 
@@ -679,7 +683,7 @@ private fun NoAlternativeNotice() {
     Text(
         text = "조건에 맞는 다른 후보가 없습니다",
         style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.outline,
+        color = LocalPalette.current.TextSecondary,
     )
 }
 
@@ -692,8 +696,8 @@ private fun DayCard(
 ) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
+            modifier = Modifier.padding(Tokens.Space.lg),
+            verticalArrangement = Arrangement.spacedBy(Tokens.Space.md),
         ) {
             AttractionBlock(
                 attractions = day.attractions,
@@ -724,7 +728,7 @@ private fun AttractionBlock(
     favoriteIds: Set<String>,
     onToggleFavorite: (FavoritePlace) -> Unit,
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(Tokens.Space.xs)) {
         Text("가볼 곳", fontWeight = FontWeight.Bold)
         if (attractions.isEmpty()) {
             Text("이동·휴식에 쓰는 날입니다", style = MaterialTheme.typography.bodyMedium)
@@ -757,7 +761,7 @@ private fun MealBlock(
     favoriteIds: Set<String>,
     onToggleFavorite: (FavoritePlace) -> Unit,
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(Tokens.Space.md)) {
         Text(meal.label, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
         ChoiceRow(
             label = pair.labelOfFirst(),
@@ -868,7 +872,7 @@ private fun ChoiceRow(
             .fillMaxWidth()
             // ♥는 줄 전체의 클릭과 겹치지 않는다 — Row의 clickable은 ♥ 아래로 전달되지 않는다.
             .then(if (open != null) Modifier.clickable(onClick = open) else Modifier),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(Tokens.Space.sm),
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(label, style = MaterialTheme.typography.labelMedium, color = accent)
@@ -878,7 +882,7 @@ private fun ChoiceRow(
                 Text(
                     extra,
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.outline,
+                    color = LocalPalette.current.TextSecondary,
                 )
             }
         }
@@ -893,7 +897,7 @@ private fun ChoiceRow(
                 Text(
                     text = price,
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.outline,
+                    color = LocalPalette.current.TextSecondary,
                 )
             } else {
                 Text(

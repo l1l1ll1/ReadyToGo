@@ -20,6 +20,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import kr.ac.baekseok.readytogo.data.model.TravelPurpose
 import kr.ac.baekseok.readytogo.data.model.TripPlan
+import kr.ac.baekseok.readytogo.domain.plan.formatDuration
+import kr.ac.baekseok.readytogo.domain.plan.toTimeline
 import kr.ac.baekseok.readytogo.ui.component.TagChip
 import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
@@ -76,6 +78,8 @@ fun SummaryHeader(plan: TripPlan) {
             }
         }
 
+        PlanDensityLine(plan)
+
         val total = b.totalWon
         val planned = plan.plannedSpendWon()
         if (total != null) {
@@ -87,6 +91,51 @@ fun SummaryHeader(plan: TripPlan) {
             TightMealBudgetNotice(plan)
         }
     }
+}
+
+/**
+ * 하루 일정이 얼마나 빡빡한지 한 줄.
+ *
+ * **목적이 예산만 바꾸는 게 아니라는 걸 보여주는 자리다.** 배분 막대가 돈 쪽을 맡고,
+ * 이 줄이 시간 쪽을 맡는다. 휴양은 하루 2곳, 관광은 4곳이라 같은 5일이어도 일정 밀도가
+ * 달라지는데, 그 차이가 숫자로 안 보이면 목적을 왜 골랐는지 알 수 없다.
+ *
+ * 값은 **실제로 배치된 일정에서 센다.** PurposeProfile의 설정값을 그대로 적으면
+ * 도착일·출국일(1곳 고정)이나 후보가 모자라 덜 들어간 날을 못 보여준다.
+ *
+ * 온전한 날이 없으면(1박 2일) 관광지 수를 적지 않는다 — 전부 이동하는 날이라
+ * "하루 1곳"이 목적 때문인 것처럼 읽힌다.
+ */
+@Composable
+private fun PlanDensityLine(plan: TripPlan) {
+    // 도착일·출국일은 목적과 무관하게 1곳이다(CLAUDE.md). 평균에 넣으면 밀도가 낮게 나온다.
+    val fullDays = plan.dailyPlans.drop(1).dropLast(1)
+
+    val perDay = fullDays
+        .takeIf { it.isNotEmpty() }
+        ?.let { days -> days.sumOf { it.attractions.size }.toDouble() / days.size }
+
+    // 이동 시간은 전체가 아니라 하루 평균으로 적는다. 5일 합계 "25시간"은 큰 수로만 보이고
+    // 하루가 어떤지 가늠이 안 된다.
+    val minutesPerDay = plan.dailyPlans
+        .takeIf { it.isNotEmpty() }
+        ?.let { days ->
+            days.sumOf { day ->
+                day.toTimeline().sumOf { it.item.stayMinutes + (it.travelFromPrevious?.minutes ?: 0) }
+            } / days.size
+        }
+
+    val parts = listOfNotNull(
+        perDay?.let { "하루 관광지 ${"%.1f".format(it).removeSuffix(".0")}곳" },
+        minutesPerDay?.takeIf { it > 0 }?.let { "이동 포함 하루 ${formatDuration(it)}" },
+    )
+    if (parts.isEmpty()) return
+
+    Text(
+        text = parts.joinToString(" · "),
+        style = MaterialTheme.typography.bodyMedium,
+        color = LocalPalette.current.TextSecondary,
+    )
 }
 
 /**

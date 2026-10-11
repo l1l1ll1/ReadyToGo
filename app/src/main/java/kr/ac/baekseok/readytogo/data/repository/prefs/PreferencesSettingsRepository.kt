@@ -3,6 +3,7 @@ package kr.ac.baekseok.readytogo.data.repository.prefs
 import android.content.Context
 import kr.ac.baekseok.readytogo.data.model.AppLanguage
 import kr.ac.baekseok.readytogo.data.model.AppSettings
+import kr.ac.baekseok.readytogo.data.model.AppTheme
 import kr.ac.baekseok.readytogo.data.model.TextScale
 import kr.ac.baekseok.readytogo.data.repository.SettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,6 +36,7 @@ class PreferencesSettingsRepository(context: Context) : SettingsRepository {
             .putString(KEY_TEXT_SCALE, settings.textScale.name)
             .putBoolean(KEY_HIGH_CONTRAST, settings.highContrast)
             .putBoolean(KEY_SHOW_PLACE_PHOTOS, settings.showPlacePhotos)
+            .putString(KEY_THEME, settings.theme.name)
             .apply()
 
         _settings.value = settings
@@ -68,6 +70,7 @@ class PreferencesSettingsRepository(context: Context) : SettingsRepository {
             textScale = prefs.enumOrNull(KEY_TEXT_SCALE, TextScale.entries) ?: default.textScale,
             highContrast = prefs.getBoolean(KEY_HIGH_CONTRAST, default.highContrast),
             showPlacePhotos = prefs.getBoolean(KEY_SHOW_PLACE_PHOTOS, default.showPlacePhotos),
+            theme = prefs.enumOrNull(KEY_THEME, AppTheme.entries) ?: default.theme,
         )
     }
 
@@ -102,6 +105,7 @@ class PreferencesSettingsRepository(context: Context) : SettingsRepository {
         const val KEY_TEXT_SCALE = "text_scale"
         const val KEY_HIGH_CONTRAST = "high_contrast"
         const val KEY_SHOW_PLACE_PHOTOS = "show_place_photos"
+        const val KEY_THEME = "theme"
         const val KEY_ONBOARDING_SEEN = "onboarding_seen"
     }
 }

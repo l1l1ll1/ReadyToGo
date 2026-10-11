@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import kr.ac.baekseok.readytogo.data.AppContainer
 import kr.ac.baekseok.readytogo.data.model.AppLanguage
 import kr.ac.baekseok.readytogo.data.model.AppSettings
+import kr.ac.baekseok.readytogo.data.model.AppTheme
 import kr.ac.baekseok.readytogo.data.model.TextScale
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -30,6 +31,8 @@ class SettingsViewModel : ViewModel() {
     fun setTextScale(scale: TextScale) = update { it.copy(textScale = scale) }
 
     fun setHighContrast(enabled: Boolean) = update { it.copy(highContrast = enabled) }
+
+    fun setTheme(theme: AppTheme) = update { it.copy(theme = theme) }
 
     fun setShowPlacePhotos(enabled: Boolean) = update { it.copy(showPlacePhotos = enabled) }
 

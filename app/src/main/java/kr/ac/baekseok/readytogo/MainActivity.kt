@@ -1,12 +1,16 @@
 package kr.ac.baekseok.readytogo
 
+import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.LaunchedEffect
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import kr.ac.baekseok.readytogo.ui.navigation.ReadytogoNavHost
 import kr.ac.baekseok.readytogo.ui.theme.ReadytogoTheme
+import kr.ac.baekseok.readytogo.ui.theme.isAppInDarkTheme
 
 class MainActivity : ComponentActivity() {
 
@@ -34,8 +38,22 @@ class MainActivity : ComponentActivity() {
         splash.setKeepOnScreenCondition { !contentReady }
 
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
+            // **상태바 글자 색은 창 설정이라 Compose가 아니라 Activity가 정한다.**
+            // enableEdgeToEdge의 기본값은 기기 다크 모드만 보기 때문에, 앱에서만 다크를
+            // 고른 경우 어두운 배경에 어두운 글자가 남아 상태바가 사라진다.
+            // 설정이 바뀔 때마다 다시 적용한다.
+            val dark = isAppInDarkTheme()
+            LaunchedEffect(dark) {
+                enableEdgeToEdge(
+                    statusBarStyle = if (dark) {
+                        SystemBarStyle.dark(Color.TRANSPARENT)
+                    } else {
+                        SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
+                    },
+                )
+            }
+
             ReadytogoTheme {
                 // 화면 구성과 이동 규칙은 ReadytogoNavHost가 전부 맡는다.
                 // 기기 뒤로 가기도 NavHost가 처리하므로 BackHandler가 필요 없다.

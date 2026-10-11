@@ -24,6 +24,8 @@ data class AppSettings(
     val textScale: TextScale = TextScale.NORMAL,
     /** 고대비. 켜면 글자와 배경 대비를 높인다. */
     val highContrast: Boolean = false,
+    /** 밝게 볼지 어둡게 볼지. 기본은 기기 설정을 따른다. */
+    val theme: AppTheme = AppTheme.SYSTEM,
     /**
      * 장소 사진을 받아 보여줄지.
      *
@@ -42,6 +44,21 @@ data class AppSettings(
 enum class AppLanguage(@StringRes val labelRes: Int, val tag: String) {
     KOREAN(R.string.language_korean, "ko"),
     ENGLISH(R.string.language_english, "en"),
+}
+
+/**
+ * 화면을 밝게 볼지 어둡게 볼지.
+ *
+ * **고대비와 별개다.** 고대비는 접근성 설정이라 라이트·다크 어느 쪽에서도 유지된다 —
+ * 둘을 합치면 "어둡게 보고 싶지만 대비도 높이고 싶다"를 고를 수 없다.
+ *
+ * [SYSTEM]이 기본인 이유: 기기를 어둡게 쓰는 사람은 앱도 어둡기를 기대한다. 앱마다
+ * 따로 켜게 하면 설정을 찾아 들어가야 한다.
+ */
+enum class AppTheme(@StringRes val labelRes: Int) {
+    SYSTEM(R.string.theme_system),
+    LIGHT(R.string.theme_light),
+    DARK(R.string.theme_dark),
 }
 
 /**

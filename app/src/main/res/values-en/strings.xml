@@ -94,6 +94,13 @@
     <string name="settings_notify_week">7 days before departure</string>
     <string name="settings_notify_day">1 day before departure</string>
     <string name="settings_notify_permission_denied">Notifications are blocked, so this can\'t be turned on. Allow them in your device settings.</string>
+    <!-- 화면 -->
+    <string name="settings_section_display">Display</string>
+    <string name="settings_theme">Theme</string>
+    <string name="theme_system">Follow system</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+
     <string name="settings_section_accessibility">Accessibility</string>
     <string name="settings_text_scale">Text size</string>
     <string name="settings_high_contrast">High contrast</string>

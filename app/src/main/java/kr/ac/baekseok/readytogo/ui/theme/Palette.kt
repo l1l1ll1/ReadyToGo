@@ -43,6 +43,15 @@ data class AppPalette(
      */
     val Accent: Color,
 
+    /**
+     * [Accent] 면 위에 얹는 글자·아이콘 색.
+     *
+     * **[Background]를 쓰면 안 된다.** 라이트에서는 둘 다 흰색이라 같아 보이지만,
+     * 다크에서는 Background가 어두워져 코랄 FAB 위 글자가 읽히지 않는다.
+     * 코랄은 라이트·다크 어느 쪽에서도 충분히 진해서 이 값은 양쪽 모두 흰색이다.
+     */
+    val OnAccent: Color,
+
     val Background: Color,
     val Surface: Color,
     val SurfaceMuted: Color,
@@ -84,6 +93,7 @@ val LightPalette = AppPalette(
     Secondary = Color(0xFFFFF0B3),
     SecondaryBold = Color(0xFFFFD75E),
     Accent = Color(0xFFFF805E),
+    OnAccent = Color(0xFFFFFFFF),
 
     Background = Color(0xFFFFFFFF),
     Surface = Color(0xFFFFFFFF),
@@ -118,7 +128,7 @@ val LightPalette = AppPalette(
 )
 
 /**
- * 고대비 한 벌.
+ * 라이트 + 고대비 한 벌.
  *
  * **흰 배경은 그대로 둔다.** 배경까지 검게 뒤집으면 큰 카드 위 글자 대비가 다시 무너지고,
  * 이 앱의 분위기가 아니게 된다(CLAUDE.md 디자인). 대신 **흐린 것들을 진하게** 만든다:
@@ -127,7 +137,7 @@ val LightPalette = AppPalette(
  * 특히 보조 글자(네이비 60%)가 문제였다. 흰 배경 위 대비가 작은 글씨(13sp)에서 모자란다.
  * 알파를 빼고 진한 네이비를 그대로 쓴다.
  */
-val HighContrastPalette = LightPalette.copy(
+val LightHighContrastPalette = LightPalette.copy(
     Point = Color(0xFF0E6E76),
     PointDark = Color(0xFF0A5056),
     PointLight = Color(0xFFBFE9ED),
@@ -160,6 +170,88 @@ val HighContrastPalette = LightPalette.copy(
         Color(0xFF5A6773),
         Color(0xFF33404D),
     ),
+)
+
+/**
+ * 다크 한 벌.
+ *
+ * **순검정을 쓰지 않는다.** 글자가 네이비 가족이라 순검정 배경에서는 색이 따로 놀고,
+ * OLED에서 스크롤할 때 잔상이 남는다. 같은 네이비를 어둡게 내린 값으로 깐다.
+ *
+ * **[SurfaceMuted]가 [Background]보다 밝다.** 라이트에서는 카드를 옅은 회색으로 "가라앉혀"
+ * 구분했는데, 어두운 화면에서는 반대로 **떠올려야** 면이 보인다. 라이트 값을 그냥 뒤집으면
+ * 카드가 배경에 묻힌다.
+ *
+ * **[PointDark]와 [PointLight]는 값이 서로 뒤바뀐다.** 두 이름은 밝기가 아니라 역할이다 —
+ * PointLight는 칩·배지의 *면*, PointDark는 그 면 위의 *글자*다. 면이 어두워지면 글자는
+ * 밝아져야 한다. 이름을 Container/OnContainer로 바꾸는 편이 정확하지만 호출부가 많아
+ * 이름은 두고 여기에 적어 둔다.
+ */
+val DarkPalette = LightPalette.copy(
+    // 브랜드색은 그대로 둔다. 모드에 따라 포인트 컬러가 바뀌면 같은 앱으로 안 보인다.
+    Point = Color(0xFF20B8C4),
+    PointDark = Color(0xFF8FE4EB),
+    PointLight = Color(0xFF0E3B40),
+
+    // 연노랑은 어두운 화면에서 형광처럼 뜬다. 바탕은 깊게, 작은 면은 살짝 낮춘 금색으로.
+    Secondary = Color(0xFF3E3A22),
+    SecondaryBold = Color(0xFFE6C45C),
+    Accent = Color(0xFFFF9470),
+
+    Background = Color(0xFF121820),
+    Surface = Color(0xFF1A2230),
+    SurfaceMuted = Color(0xFF222C3C),
+
+    TextPrimary = Color(0xFFE8EDF5),
+    TextSecondary = Color(0xFFE8EDF5).copy(alpha = 0.65f),
+
+    Divider = Color(0xFF2E3A4C),
+
+    // 어두운 바탕에서는 진한 빨강이 바탕에 먹힌다. 밝혀야 "주의"로 읽힌다.
+    Danger = Color(0xFFFF6B5C),
+    Warning = Color(0xFFE8A33D),
+    Heart = Color(0xFFFF4D7D),
+
+    // 어두운 화면에서 원래 터쿼이즈는 너무 밝게 튄다. 한 단계 깊게.
+    HeroGradient = listOf(
+        Color(0xFF1BA3AE),
+        Color(0xFF136C75),
+    ),
+
+    MutedGradient = listOf(
+        Color(0xFF3A4553),
+        Color(0xFF28313D),
+    ),
+)
+
+/**
+ * 다크 + 고대비 한 벌.
+ *
+ * 고대비는 접근성 설정이라 다크에서도 유지된다. 라이트 고대비가 "흐린 것을 진하게"였다면
+ * 여기서는 반대로 **흐린 것을 밝게** 만든다 — 보조 글자, 선, 포인트 컬러가 대상이다.
+ */
+val DarkHighContrastPalette = DarkPalette.copy(
+    Point = Color(0xFF4FD3DD),
+    PointDark = Color(0xFFB8F0F5),
+    PointLight = Color(0xFF14525A),
+
+    SecondaryBold = Color(0xFFFFD98A),
+    Accent = Color(0xFFFFA98C),
+
+    Background = Color(0xFF0A0E14),
+    Surface = Color(0xFF141C28),
+    SurfaceMuted = Color(0xFF1E2836),
+
+    TextPrimary = Color(0xFFFFFFFF),
+    // 알파를 빼고 흰색을 그대로 쓴다. 라이트 고대비가 네이비 60%를 버린 것과 같은 이유다.
+    TextSecondary = Color(0xFFD6DEE9),
+
+    // 선이 보여야 섹션 경계가 읽힌다.
+    Divider = Color(0xFF5C6B7E),
+
+    Danger = Color(0xFFFF8A7D),
+    Warning = Color(0xFFFFBE5E),
+    Heart = Color(0xFFFF7098),
 )
 
 /**

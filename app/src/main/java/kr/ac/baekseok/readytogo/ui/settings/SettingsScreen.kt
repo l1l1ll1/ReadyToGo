@@ -34,6 +34,7 @@ import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.data.AppContainer
 import kr.ac.baekseok.readytogo.data.photo.PhotoBudget
 import kr.ac.baekseok.readytogo.notification.canPostNotifications
+import kr.ac.baekseok.readytogo.data.model.AppTheme
 import kr.ac.baekseok.readytogo.data.model.AppLanguage
 import kr.ac.baekseok.readytogo.data.model.TextScale
 import kr.ac.baekseok.readytogo.ui.component.SectionHeader
@@ -58,6 +59,7 @@ fun SettingsScreen(
     val settings by viewModel.settings.collectAsState()
     var showLanguagePicker by remember { mutableStateOf(false) }
     var showTextScalePicker by remember { mutableStateOf(false) }
+    var showThemePicker by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
     val permissionDenied = stringResource(R.string.settings_notify_permission_denied)
@@ -152,6 +154,16 @@ fun SettingsScreen(
             )
         }
 
+        // 다크 모드는 접근성이 아니라 취향이다. 고대비와 같은 칸에 두면 뜻이 섞인다.
+        item { SettingsSectionGap(title = stringResource(R.string.settings_section_display)) }
+        item {
+            NavigationRow(
+                label = stringResource(R.string.settings_theme),
+                value = stringResource(settings.theme.labelRes),
+                onClick = { showThemePicker = true },
+            )
+        }
+
         item { SettingsSectionGap(title = stringResource(R.string.settings_section_accessibility)) }
         item {
             NavigationRow(
@@ -195,6 +207,20 @@ fun SettingsScreen(
                 showLanguagePicker = false
             },
             onDismiss = { showLanguagePicker = false },
+        )
+    }
+
+    if (showThemePicker) {
+        ChoiceDialog(
+            title = stringResource(R.string.settings_theme),
+            options = AppTheme.entries,
+            selected = settings.theme,
+            labelOf = { stringResource(it.labelRes) },
+            onSelect = {
+                viewModel.setTheme(it)
+                showThemePicker = false
+            },
+            onDismiss = { showThemePicker = false },
         )
     }
 

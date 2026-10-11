@@ -28,7 +28,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -81,7 +80,7 @@ fun HomeScreen(
                 // 코랄은 "지금 눌러야 할 것"에 쓴다. 터쿼이즈로 두면 탭 바와 같은 색이라
                 // 바닥에 버튼이 하나 더 있는 것처럼 보인다.
                 containerColor = LocalPalette.current.Accent,
-                contentColor = Color.White,
+                contentColor = LocalPalette.current.OnAccent,
                 icon = { Icon(Icons.Filled.Add, contentDescription = null) },
                 text = { Text(stringResource(R.string.home_create_trip)) },
                 modifier = Modifier

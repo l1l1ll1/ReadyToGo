@@ -17,6 +17,8 @@ data class TimelineEdits(
     val deleted: Map<Int, Set<String>> = emptyMap(),
     /** 직접 고른 끼니. 일차 → (끼니 키 → 고른 장소 id). */
     val pickedMeals: Map<Int, Map<String, String>> = emptyMap(),
+    /** 즐겨찾기로 바꿔 끼운 관광지. 일차 → (자리 키 → 고른 장소 id). */
+    val pickedAttractions: Map<Int, Map<String, String>> = emptyMap(),
     /**
      * 끌어서 바꾼 순서. 일차 → 항목 키 순서.
      *
@@ -28,11 +30,14 @@ data class TimelineEdits(
 ) {
     fun deletedIn(dayNumber: Int): Set<String> = deleted[dayNumber].orEmpty()
     fun pickedIn(dayNumber: Int): Map<String, String> = pickedMeals[dayNumber].orEmpty()
+    fun pickedAttractionsIn(dayNumber: Int): Map<String, String> =
+        pickedAttractions[dayNumber].orEmpty()
     fun orderIn(dayNumber: Int): List<String> = order[dayNumber].orEmpty()
 
     /** 손댄 것이 하나도 없는지. 저장할 때 빈 값을 올리지 않으려고 본다. */
     val isEmpty: Boolean
         get() = deleted.values.all { it.isEmpty() } &&
             pickedMeals.values.all { it.isEmpty() } &&
+            pickedAttractions.values.all { it.isEmpty() } &&
             order.values.all { it.isEmpty() }
 }

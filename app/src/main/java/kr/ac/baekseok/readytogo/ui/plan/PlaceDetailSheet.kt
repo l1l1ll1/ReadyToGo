@@ -27,10 +27,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import kr.ac.baekseok.readytogo.R
+import kr.ac.baekseok.readytogo.data.model.FavoritePlace
+import kr.ac.baekseok.readytogo.data.model.LatLng
 import kr.ac.baekseok.readytogo.data.model.Recommendation
 import kr.ac.baekseok.readytogo.data.model.Restaurant
 import kr.ac.baekseok.readytogo.domain.plan.TimelineItem
+import kr.ac.baekseok.readytogo.domain.recommend.distanceKm
 import kr.ac.baekseok.readytogo.ui.component.PlacePhotoThumb
+import kr.ac.baekseok.readytogo.ui.component.TagChip
 import kr.ac.baekseok.readytogo.ui.component.rememberPlacePhoto
 import kr.ac.baekseok.readytogo.ui.format.durationText
 import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
@@ -51,6 +55,14 @@ fun PlaceDetailSheet(
     item: TimelineItem,
     onOpenMap: (String) -> Unit,
     onPick: ((String) -> Unit)?,
+    /**
+     * 같은 도시, 같은 종류로 이미 걸러 둔 즐겨찾기. 비어 있으면 섹션이 나오지 않는다.
+     */
+    favorites: List<FavoritePlace>,
+    /** 그날 일정의 중심점. 멀리 있는 곳에 표시를 붙이는 기준이다. */
+    dayCenter: LatLng?,
+    /** 즐겨찾기를 끼워 넣을 때. null이면 끼울 수 없는 자리다. */
+    onPickFavorite: ((FavoritePlace) -> Unit)?,
     onDelete: () -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -106,6 +118,15 @@ fun PlaceDetailSheet(
 
             if (onPick != null && item is TimelineItem.Meal) {
                 MealOptions(item = item, onPick = onPick, onDismiss = onDismiss)
+            }
+
+            if (onPickFavorite != null && favorites.isNotEmpty()) {
+                SavedPlaces(
+                    favorites = favorites,
+                    dayCenter = dayCenter,
+                    onPick = onPickFavorite,
+                    onDismiss = onDismiss,
+                )
             }
         }
     }
@@ -308,3 +329,91 @@ private val TimelineItem.mapUrl: String
         is TimelineItem.Meal -> restaurant.mapUrl
         is TimelineItem.NoMeal -> ""
     }
+
+/**
+ * 내가 저장한 곳에서 골라 끼운다.
+ *
+ * **고르는 순간에만 Places 상세 조회가 나간다.** 이 목록을 그리는 것으로는 호출이
+ * 없다 — 즐겨찾기에 이미 있는 이름·좌표만으로 줄을 만든다.
+ *
+ * 그날 동선 중심에서 먼 곳은 표시만 하고 막지는 않는다. 멀어도 가고 싶어서 담아 둔
+ * 곳일 수 있고, 그 판단은 사용자 몫이다.
+ */
+@Composable
+private fun SavedPlaces(
+    favorites: List<FavoritePlace>,
+    dayCenter: LatLng?,
+    onPick: (FavoritePlace) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    HorizontalDivider(color = LocalPalette.current.Divider)
+
+    Text(
+        text = stringResource(R.string.plan_sheet_saved_places),
+        style = MaterialTheme.typography.labelLarge,
+        color = LocalPalette.current.TextSecondary,
+        modifier = Modifier.padding(top = Tokens.Space.sm),
+    )
+
+    favorites.forEach { favorite ->
+        val km = dayCenter?.let { distanceKm(favorite.location, it) }
+        SavedPlaceRow(
+            favorite = favorite,
+            far = km != null && km > FAR_FROM_CENTER_KM,
+            onClick = {
+                onPick(favorite)
+                onDismiss()
+            },
+        )
+    }
+}
+
+@Composable
+private fun SavedPlaceRow(favorite: FavoritePlace, far: Boolean, onClick: () -> Unit) {
+    val photo = rememberPlacePhoto(favorite.placeId)
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(Tokens.Space.md),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(Tokens.Radius.card)
+            .clickable(onClick = onClick)
+            .padding(vertical = Tokens.Space.sm),
+    ) {
+        PlacePhotoThumb(placeId = favorite.placeId, photo = photo, size = Tokens.Size.placeThumb)
+
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = favorite.name,
+                style = MaterialTheme.typography.titleSmall,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                text = favorite.category.ifBlank { stringResource(favorite.kind.labelRes) },
+                style = MaterialTheme.typography.bodySmall,
+                color = LocalPalette.current.TextSecondary,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+
+        // 멀다고 못 고르게 하지는 않는다. 알고 고르게만 한다.
+        if (far) {
+            TagChip(
+                text = stringResource(R.string.plan_sheet_far_away),
+                container = LocalPalette.current.Secondary,
+                content = LocalPalette.current.TextPrimary,
+            )
+        }
+    }
+}
+
+/**
+ * 이 거리를 넘으면 "거리 먼 곳"을 붙인다.
+ *
+ * 10km는 도심 안에서 지하철로 20~30분쯤이다. 그 이상이면 하루 일정에 끼울 때
+ * 이동만으로 한 시간이 날아간다.
+ */
+private const val FAR_FROM_CENTER_KM = 10.0

@@ -69,6 +69,13 @@ data class Restaurant(
      * Google이 저가 구간을 "¥1~¥1,000"처럼 표기해서, 그대로 두면 "8원부터"가 되어버린다.
      */
     val priceIsUpperBound: Boolean = false,
+    /**
+     * 가격을 알 수 없는 경우.
+     *
+     * 즐겨찾기를 일정에 끼워 넣을 때 그 장소만 따로 받아 오는데, Places가 가격대를
+     * 주지 않거나 조회가 실패할 수 있다. 0원으로 두면 "공짜"로 읽히므로 따로 표시한다.
+     */
+    val priceUnknown: Boolean = false,
     val address: String,
     val mapUrl: String,
     /**

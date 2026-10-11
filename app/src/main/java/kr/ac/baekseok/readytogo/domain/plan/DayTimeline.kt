@@ -4,6 +4,7 @@ import kr.ac.baekseok.readytogo.data.model.Attraction
 import kr.ac.baekseok.readytogo.data.model.DayPlan
 import kr.ac.baekseok.readytogo.data.model.LatLng
 import kr.ac.baekseok.readytogo.data.model.MealTime
+import kr.ac.baekseok.readytogo.data.model.PickedPlaces
 import kr.ac.baekseok.readytogo.data.model.Recommendation
 import kr.ac.baekseok.readytogo.data.model.RecommendationPair
 import kr.ac.baekseok.readytogo.data.model.Restaurant
@@ -31,9 +32,17 @@ sealed interface TimelineItem {
 
     data class Visit(
         val attraction: Attraction,
+        /**
+         * 원래 이 자리에 있던 관광지의 id.
+         *
+         * **키를 여기에 묶는 이유**: 즐겨찾기로 바꿔 끼우면 attraction이 통째로 달라지는데,
+         * 키까지 바뀌면 지운 기록과 순서 기록이 그 자리를 못 찾는다. 자리는 그대로 두고
+         * 안에 든 장소만 바꾼다.
+         */
+        val slotId: String = attraction.id,
     ) : TimelineItem {
         override val location get() = attraction.location
-        override val key get() = "visit-${attraction.id}"
+        override val key get() = "visit-$slotId"
         override val stayMinutes get() = attraction.stayMinutes
     }
 
@@ -49,6 +58,12 @@ sealed interface TimelineItem {
         val meal: MealTime,
         val pair: RecommendationPair<Restaurant>,
         val pickedPlaceId: String? = null,
+        /**
+         * 즐겨찾기에서 골라 끼운 식당. 후보 목록에 없는 곳이라 따로 들고 온다.
+         *
+         * 아직 받아 오는 중이면 null이고, 그동안은 추천이 그대로 보인다.
+         */
+        val pickedRestaurant: Restaurant? = null,
     ) : TimelineItem {
         /**
          * 고를 수 있는 전부. 추천 → 대안 → 나머지 순이고, 같은 곳이 두 번 들어가지 않는다.
@@ -59,8 +74,16 @@ sealed interface TimelineItem {
             get() = (listOf(pair.qualityFirst) + listOfNotNull(pair.withinBudget) + pair.alternatives)
                 .distinctBy { it.item.id }
 
-        /** 지금 보여줄 쪽. */
-        val shown get() = options.firstOrNull { it.item.id == pickedPlaceId } ?: pair.qualityFirst
+        /**
+         * 지금 보여줄 쪽.
+         *
+         * 즐겨찾기에서 고른 곳은 후보에 없으므로 점수 없이 감싼다  14 사용자가 직접 고른
+         * 자리라 추천 점수를 매길 근거가 없다.
+         */
+        val shown: Recommendation<Restaurant>
+            get() = options.firstOrNull { it.item.id == pickedPlaceId }
+                ?: pickedRestaurant?.let { Recommendation(item = it, score = 0.0, overBudget = false) }
+                ?: pair.qualityFirst
 
         val restaurant: Restaurant get() = shown.item
 
@@ -98,19 +121,31 @@ data class TimelineEntry(
  * @param deletedKeys 사용자가 지운 항목. 계획을 다시 만들지 않고 여기서 걸러낸다.
  * @param pickedMeals 사용자가 직접 고른 끼니. 끼니 키 → 고른 장소 id.
  * @param customOrder 끌어서 바꾼 순서. 비어 있거나 키가 맞지 않으면 기본 순서를 쓴다.
+ * @param pickedAttractions 즐겨찾기로 바꿔 끼운 관광지. 자리 키 → 고른 장소 id.
+ * @param picked 위 두 가지가 가리키는 실제 장소. 아직 못 받았으면 원래 것을 그대로 둔다.
  */
 fun DayPlan.toTimeline(
     deletedKeys: Set<String> = emptySet(),
     pickedMeals: Map<String, String> = emptyMap(),
     customOrder: List<String> = emptyList(),
+    pickedAttractions: Map<String, String> = emptyMap(),
+    picked: PickedPlaces = PickedPlaces(),
 ): List<TimelineEntry> {
-    val visits = attractions.map { TimelineItem.Visit(it) }
+    val visits = attractions.map { attraction ->
+        val slot = TimelineItem.Visit(attraction)
+        // 바꿔 끼운 곳이 있으면 자리는 두고 안에 든 장소만 갈아 끼운다.
+        val replacement = pickedAttractions[slot.key]?.let { picked.attractions[it] }
+        if (replacement == null) slot else slot.copy(attraction = replacement)
+    }
 
     // 추천을 못 찾은 끼니도 자리를 남긴다. 없으면 점심을 잊은 것처럼 보인다.
     fun mealItem(meal: MealTime): TimelineItem {
         val pair = meals[meal] ?: return TimelineItem.NoMeal(meal)
         val item = TimelineItem.Meal(meal, pair)
-        return item.copy(pickedPlaceId = pickedMeals[item.key])
+        return item.copy(
+            pickedPlaceId = pickedMeals[item.key],
+            pickedRestaurant = pickedMeals[item.key]?.let { picked.restaurants[it] },
+        )
     }
 
     // 관광지를 점심 전후로 나눈다. 한 곳뿐이면 점심 뒤에 둔다 — 아침 먹고 바로 나가는 것보다

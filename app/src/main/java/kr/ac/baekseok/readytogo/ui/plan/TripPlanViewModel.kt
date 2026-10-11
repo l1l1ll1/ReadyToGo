@@ -8,7 +8,9 @@ import androidx.lifecycle.viewModelScope
 import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.data.AppContainer
 import kr.ac.baekseok.readytogo.data.USE_REAL_API
+import kr.ac.baekseok.readytogo.data.model.FavoriteKind
 import kr.ac.baekseok.readytogo.data.model.FavoritePlace
+import kr.ac.baekseok.readytogo.data.model.PickedPlaces
 import kr.ac.baekseok.readytogo.data.model.SavedTrip
 import kr.ac.baekseok.readytogo.data.model.TimelineEdits
 import kr.ac.baekseok.readytogo.data.model.TripCondition
@@ -99,6 +101,15 @@ class TripPlanViewModel(
      */
     val favoriteIds: StateFlow<Set<String>> = AppContainer.favorites.observeIds()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(FLOW_TIMEOUT_MS), emptySet())
+
+    /**
+     * 저장한 장소 전체. 상세 시트의 "내가 저장한 곳"이 쓴다.
+     *
+     * id 집합([favoriteIds])과 따로 두는 이유: ♥를 칠할 때는 id만 있으면 되지만,
+     * 끼워 넣을 후보로 보여주려면 이름·좌표·종류가 필요하다.
+     */
+    val favorites: StateFlow<List<FavoritePlace>> = AppContainer.favorites.observeAll()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(FLOW_TIMEOUT_MS), emptyList())
 
     // 저장 가능 여부로 ♥를 비활성화하지는 않는다. 눌리지 않는 버튼은 왜 안 되는지 알려주지 못해서,
     // 누르게 두고 Repository가 돌려주는 "로그인하면 저장할 수 있습니다"를 [message]로 띄운다.
@@ -301,6 +312,55 @@ class TripPlanViewModel(
     /** 끌기가 끝났다. 지금까지 바뀐 순서를 저장한다. */
     fun commitEdits() {
         persistEdits(_edits.value)
+    }
+
+    /**
+     * 즐겨찾기에서 받아 온 장소들. 앱이 떠 있는 동안만 산다.
+     *
+     * 편집에는 id만 남고 실제 장소는 여기 있다([PickedPlaces] 주석). 다시 켜면 비어
+     * 있다가, 그 자리를 그릴 때 다시 받아 온다.
+     */
+    private val _pickedPlaces = MutableStateFlow(PickedPlaces())
+    val pickedPlaces: StateFlow<PickedPlaces> = _pickedPlaces.asStateFlow()
+
+    /**
+     * 즐겨찾기한 곳을 일정에 끼워 넣는다.
+     *
+     * **Places 상세 조회가 나가는 유일한 자리다.** 목록을 펼치거나 탭을 여는 것으로는
+     * 호출되지 않는다 — 조회마다 과금되기 때문이다. 같은 곳을 다시 고르면 Repository가
+     * 메모리에 들고 있던 것을 돌려줘서 호출이 없다.
+     *
+     * 먼저 장소를 받아 둔 다음 편집을 기록한다. 순서가 반대면 아직 못 받은 id를 가리키는
+     * 자리가 한 번 그려져서 원래 추천이 깜빡 보인다.
+     */
+    fun pickFavorite(dayNumber: Int, slotKey: String, favorite: FavoritePlace) {
+        val details = AppContainer.placeDetails ?: return
+
+        viewModelScope.launch {
+            when (favorite.kind) {
+                FavoriteKind.RESTAURANT -> {
+                    val restaurant = details.restaurantFor(favorite)
+                    _pickedPlaces.update {
+                        it.copy(restaurants = it.restaurants + (favorite.placeId to restaurant))
+                    }
+                    updateEdits { edits ->
+                        val next = edits.pickedIn(dayNumber) + (slotKey to favorite.placeId)
+                        edits.copy(pickedMeals = edits.pickedMeals + (dayNumber to next))
+                    }
+                }
+
+                else -> {
+                    val attraction = details.attractionFor(favorite)
+                    _pickedPlaces.update {
+                        it.copy(attractions = it.attractions + (favorite.placeId to attraction))
+                    }
+                    updateEdits { edits ->
+                        val next = edits.pickedAttractionsIn(dayNumber) + (slotKey to favorite.placeId)
+                        edits.copy(pickedAttractions = edits.pickedAttractions + (dayNumber to next))
+                    }
+                }
+            }
+        }
     }
 
     /**

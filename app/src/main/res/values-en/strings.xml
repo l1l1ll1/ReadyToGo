@@ -281,6 +281,9 @@
     <string name="plan_sheet_open_map">Open in Maps</string>
     <string name="plan_sheet_other_options">Other options</string>
     <string name="plan_sheet_chosen">Currently chosen</string>
+    <string name="plan_sheet_saved_places">Your saved places</string>
+    <string name="plan_sheet_far_away">Far away</string>
+    <string name="plan_price_unknown">No price info</string>
     <string name="plan_sheet_remove">Remove from itinerary</string>
     <string name="plan_sheet_stay_time">Stay %1$s</string>
 

@@ -59,6 +59,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 import kr.ac.baekseok.readytogo.R
+import kr.ac.baekseok.readytogo.data.model.PickedPlaces
 import kr.ac.baekseok.readytogo.data.model.TimelineEdits
 import kr.ac.baekseok.readytogo.data.model.DayPlan
 import kr.ac.baekseok.readytogo.data.model.FavoritePlace
@@ -96,6 +97,7 @@ fun TimelineTab(
     plan: TripPlan,
     selectedDayNumber: Int,
     edits: TimelineEdits,
+    pickedPlaces: PickedPlaces,
     favoriteIds: Set<String>,
     onSelectDay: (Int) -> Unit,
     onOpenMapForDay: (Int) -> Unit,
@@ -134,6 +136,8 @@ fun TimelineTab(
             deletedKeys = edits.deletedIn(day.dayNumber),
             pickedMeals = edits.pickedIn(day.dayNumber),
             customOrder = edits.orderIn(day.dayNumber),
+            pickedAttractions = edits.pickedAttractionsIn(day.dayNumber),
+            picked = pickedPlaces,
         )
 
         val listState = rememberLazyListState()

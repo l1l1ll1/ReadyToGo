@@ -97,6 +97,7 @@ internal fun Map<String, Any?>.localDate(key: String): LocalDate? {
 internal fun TimelineEdits.toMap(): Map<String, Any?> = mapOf(
     "deleted" to deleted.mapKeys { it.key.toString() }.mapValues { it.value.toList() },
     "pickedMeals" to pickedMeals.mapKeys { it.key.toString() },
+    "pickedAttractions" to pickedAttractions.mapKeys { it.key.toString() },
     "order" to order.mapKeys { it.key.toString() },
 )
 
@@ -114,6 +115,16 @@ internal fun Map<String, Any?>.toTimelineEdits(): TimelineEdits = TimelineEdits(
                 ?.mapNotNull { (k, v) ->
                     if (k is String && v is String) k to v else null
                 }
+                ?.toMap()
+                ?: return@mapNotNull null
+            day.toIntOrNull()?.let { it to picks }
+        }
+        ?.toMap()
+        .orEmpty(),
+    pickedAttractions = childMap("pickedAttractions")
+        ?.mapNotNull { (day, value) ->
+            val picks = (value as? Map<*, *>)
+                ?.mapNotNull { (k, v) -> if (k is String && v is String) k to v else null }
                 ?.toMap()
                 ?: return@mapNotNull null
             day.toIntOrNull()?.let { it to picks }

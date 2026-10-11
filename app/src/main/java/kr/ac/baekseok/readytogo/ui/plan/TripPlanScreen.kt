@@ -56,6 +56,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kr.ac.baekseok.readytogo.R
+import kr.ac.baekseok.readytogo.data.model.PickedPlaces
+import kr.ac.baekseok.readytogo.data.model.LatLng
 import kr.ac.baekseok.readytogo.data.model.TimelineEdits
 import kr.ac.baekseok.readytogo.data.model.Attraction
 import kr.ac.baekseok.readytogo.data.model.DayPlan
@@ -70,6 +72,7 @@ import kr.ac.baekseok.readytogo.data.model.Restaurant
 import kr.ac.baekseok.readytogo.data.model.TripCondition
 import kr.ac.baekseok.readytogo.data.model.TripPlan
 import kr.ac.baekseok.readytogo.domain.plan.TimelineItem
+import kr.ac.baekseok.readytogo.domain.recommend.medianCenter
 import kr.ac.baekseok.readytogo.domain.purpose.PurposeProfiles
 import kr.ac.baekseok.readytogo.ui.component.FavoriteButton
 import kr.ac.baekseok.readytogo.ui.component.PhotoAttributionLine
@@ -118,6 +121,8 @@ fun TripPlanScreen(
     val signInRequested by viewModel.signInRequested.collectAsState()
     val edits by viewModel.edits.collectAsState()
     val lastDeleted by viewModel.lastDeleted.collectAsState()
+    val favorites by viewModel.favorites.collectAsState()
+    val pickedPlaces by viewModel.pickedPlaces.collectAsState()
 
     // 조건이 바뀔 때만 다시 만든다. 중복 호출 방지는 ViewModel이 한 번 더 막는다.
     LaunchedEffect(condition) { viewModel.load(condition) }
@@ -125,6 +130,8 @@ fun TripPlanScreen(
     TripPlanContent(
         uiState = uiState,
         favoriteIds = favoriteIds,
+        favorites = favorites,
+        pickedPlaces = pickedPlaces,
         saved = saved,
         message = message,
         signInRequested = signInRequested,
@@ -141,6 +148,7 @@ fun TripPlanScreen(
         onReorder = viewModel::reorderDay,
         onReorderCommit = viewModel::commitEdits,
         onPickMeal = viewModel::pickMeal,
+        onPickFavorite = viewModel::pickFavorite,
         onUndoDelete = viewModel::undoDelete,
         onUndoExpired = viewModel::clearLastDeleted,
         modifier = modifier,
@@ -152,6 +160,8 @@ fun TripPlanScreen(
 private fun TripPlanContent(
     uiState: TripPlanUiState,
     favoriteIds: Set<String> = emptySet(),
+    favorites: List<FavoritePlace> = emptyList(),
+    pickedPlaces: PickedPlaces = PickedPlaces(),
     saved: Boolean = false,
     message: String? = null,
     signInRequested: Boolean = false,
@@ -168,6 +178,7 @@ private fun TripPlanContent(
     onReorder: (Int, List<String>) -> Unit = { _, _ -> },
     onReorderCommit: () -> Unit = {},
     onPickMeal: (Int, String, String?) -> Unit = { _, _, _ -> },
+    onPickFavorite: (Int, String, FavoritePlace) -> Unit = { _, _, _ -> },
     onUndoDelete: () -> Unit = {},
     onUndoExpired: () -> Unit = {},
     modifier: Modifier = Modifier,
@@ -282,6 +293,7 @@ private fun TripPlanContent(
                     plan = uiState.plan,
                     favoriteIds = favoriteIds,
                     edits = edits,
+                    pickedPlaces = pickedPlaces,
                     mapDayNumber = mapDayNumber,
                     onToggleFavorite = onToggleFavorite,
                     onOpenMapForDay = { dayNumber ->
@@ -301,6 +313,9 @@ private fun TripPlanContent(
     }
 
     openedItem?.let { (dayNumber, item) ->
+        val plan = (uiState as? TripPlanUiState.Success)?.plan
+        val planCity = plan?.condition?.destination?.city.orEmpty()
+
         PlaceDetailSheet(
             item = item,
             onOpenMap = { url ->
@@ -313,6 +328,16 @@ private fun TripPlanContent(
             onPick = (item as? TimelineItem.Meal)
                 ?.takeIf { it.options.size > 1 }
                 ?.let { meal -> { placeId: String -> onPickMeal(dayNumber, meal.key, placeId) } },
+            // 같은 도시, 같은 종류만 보여준다. 도쿄 일정에 오사카에서 담은 곳이 뜨면
+            // 고를 수 있는 것처럼 보이지만 실제로는 갈 수 없다.
+            favorites = favorites.filter {
+                it.kind == item.favoriteKind && it.cityName == planCity
+            },
+            dayCenter = dayCenterOf(plan, dayNumber),
+            // 추천을 못 찾은 끼니 자리에도 끼울 수 있다. 오히려 그 자리에 가장 필요하다.
+            onPickFavorite = { favorite: FavoritePlace ->
+                onPickFavorite(dayNumber, item.key, favorite)
+            },
             onDelete = { onDeleteItem(dayNumber, item.key) },
             onDismiss = { openedItem = null },
         )
@@ -325,6 +350,7 @@ private fun PlanTabContent(
     plan: TripPlan,
     favoriteIds: Set<String>,
     edits: TimelineEdits,
+    pickedPlaces: PickedPlaces,
     mapDayNumber: Int,
     onToggleFavorite: (FavoritePlace) -> Unit,
     onOpenMapForDay: (Int) -> Unit,
@@ -387,6 +413,7 @@ private fun PlanTabContent(
             plan = plan,
             selectedDayNumber = mapDayNumber,
             edits = edits,
+            pickedPlaces = pickedPlaces,
             favoriteIds = favoriteIds,
             onSelectDay = onSelectMapDay,
             onOpenMapForDay = onOpenMapForDay,
@@ -805,6 +832,9 @@ internal fun Attraction.toFavorite(cityName: String) = FavoritePlace(
  */
 @Composable
 internal fun Restaurant.priceText(): String {
+    // 즐겨찾기를 끼워 넣었는데 가격대를 못 받은 경우. 0원을 보여주면 공짜로 읽힌다.
+    if (priceUnknown) return stringResource(R.string.plan_price_unknown)
+
     val krw = when {
         priceIsUpperBound -> stringResource(R.string.plan_price_upper_bound, money(priceWon))
         minPriceWon != null && minPriceWon != priceWon -> moneyRange(minPriceWon, priceWon)
@@ -988,4 +1018,21 @@ private fun TripPlanLoadingPreview() {
     ReadytogoTheme {
         Surface { TripPlanContent(TripPlanUiState.Loading, onBack = {}, onRetry = {}) }
     }
+}
+/** 이 자리에 끼울 수 있는 즐겨찾기 종류. 끼니 자리에는 식당, 관광지 자리에는 관광지다. */
+private val TimelineItem.favoriteKind: FavoriteKind
+    get() = when (this) {
+        is TimelineItem.Visit -> FavoriteKind.ATTRACTION
+        is TimelineItem.Meal, is TimelineItem.NoMeal -> FavoriteKind.RESTAURANT
+    }
+
+/**
+ * 그날 동선의 중심점. "거리 먼 곳" 표시의 기준이다.
+ *
+ * 숙소·식당 추천과 같은 기준(위·경도 중앙값)을 쓴다 — 화면마다 다른 중심을 쓰면
+ * 같은 장소가 어디서는 멀고 어디서는 가까운 곳이 된다.
+ */
+private fun dayCenterOf(plan: TripPlan?, dayNumber: Int): LatLng? {
+    val day = plan?.dailyPlans?.firstOrNull { it.dayNumber == dayNumber } ?: return null
+    return medianCenter(day.attractions.map { it.location })
 }

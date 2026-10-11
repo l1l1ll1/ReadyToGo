@@ -5,6 +5,8 @@ import androidx.annotation.StringRes
 import android.util.Log
 import kr.ac.baekseok.readytogo.data.model.AuthState
 import kr.ac.baekseok.readytogo.data.model.SavedTrip
+import kr.ac.baekseok.readytogo.data.repository.PlaceDetailsRepository
+import kr.ac.baekseok.readytogo.data.repository.places.GooglePlaceDetailsRepository
 import kr.ac.baekseok.readytogo.data.photo.PhotoBudget
 import kr.ac.baekseok.readytogo.BuildConfig
 import kr.ac.baekseok.readytogo.data.repository.NoPlacePhotoRepository
@@ -131,6 +133,15 @@ object AppContainer {
      */
     /** 이번 달 사진 사용량. 설정 화면이 읽어 보여주고, 사진 Repository가 같은 것을 쓴다. */
     val photoBudget: PhotoBudget by lazy { PhotoBudget(appContext) }
+
+    /**
+     * 즐겨찾기를 일정에 끼워 넣을 때 그 장소를 받아 온다.
+     *
+     * 키가 없으면 세우지 않는다 — 그때는 화면이 즐겨찾기 목록 자체를 보여주지 않는다.
+     */
+    val placeDetails: PlaceDetailsRepository? by lazy {
+        if (BuildConfig.MAPS_API_KEY.isBlank()) null else GooglePlaceDetailsRepository(appContext)
+    }
 
     val placePhotos: PlacePhotoRepository by lazy {
         if (BuildConfig.MAPS_API_KEY.isBlank()) {

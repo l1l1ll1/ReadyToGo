@@ -301,6 +301,9 @@
     <string name="plan_sheet_open_map">지도에서 열기</string>
     <string name="plan_sheet_other_options">다른 선택지</string>
     <string name="plan_sheet_chosen">지금 고른 곳</string>
+    <string name="plan_sheet_saved_places">내가 저장한 곳</string>
+    <string name="plan_sheet_far_away">거리 먼 곳</string>
+    <string name="plan_price_unknown">가격 정보 없음</string>
     <string name="plan_sheet_remove">일정에서 빼기</string>
     <string name="plan_sheet_stay_time">머무는 시간 %1$s</string>
 

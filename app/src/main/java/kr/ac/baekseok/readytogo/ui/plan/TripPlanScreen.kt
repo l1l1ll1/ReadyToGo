@@ -71,6 +71,9 @@ import kr.ac.baekseok.readytogo.data.model.TripPlan
 import kr.ac.baekseok.readytogo.domain.plan.TimelineItem
 import kr.ac.baekseok.readytogo.domain.purpose.PurposeProfiles
 import kr.ac.baekseok.readytogo.ui.component.FavoriteButton
+import kr.ac.baekseok.readytogo.ui.component.PhotoAttributionLine
+import kr.ac.baekseok.readytogo.ui.component.PlacePhotoThumb
+import kr.ac.baekseok.readytogo.ui.component.rememberPlacePhoto
 import kr.ac.baekseok.readytogo.ui.format.money
 import kr.ac.baekseok.readytogo.ui.format.moneyRange
 import kr.ac.baekseok.readytogo.ui.map.DayMapContent
@@ -715,6 +718,7 @@ private fun LodgingCard(pair: RecommendationPair<Lodging>) {
                 url = pair.qualityFirst.item.bookingUrl,
                 emphasis = if (samePrice) RowEmphasis.REVIEWS else RowEmphasis.PRICE,
                 reviewCount = pair.qualityFirst.item.reviewCount,
+                placeId = pair.qualityFirst.item.id,
             )
             if (alternative == null) {
                 NoAlternativeNotice()
@@ -729,6 +733,7 @@ private fun LodgingCard(pair: RecommendationPair<Lodging>) {
                     url = alternative.item.bookingUrl,
                     emphasis = if (samePrice) RowEmphasis.REVIEWS else RowEmphasis.PRICE,
                     reviewCount = alternative.item.reviewCount,
+                    placeId = alternative.item.id,
                 )
             }
         }
@@ -818,11 +823,19 @@ private fun ChoiceRow(
     emphasis: RowEmphasis = RowEmphasis.PRICE,
     /** [RowEmphasis.REVIEWS]일 때 가격 대신 굵게 보여줄 리뷰 수. */
     reviewCount: Int = 0,
+    /**
+     * 사진을 붙일 장소의 id. 비우면 사진 없이 글자만 나온다.
+     *
+     * 모든 선택지에 붙이지 않는 이유는 과금이다 — 사진을 보여줄 자리를 좁게 고른
+     * 배경은 GooglePlacesPhotoRepository 주석에 있다.
+     */
+    placeId: String? = null,
 ) {
     val accent: Color =
         // 예산 초과는 코랄. 붉은 Danger는 되돌릴 수 없는 일에만 쓴다(SummaryTab 주석 참고).
         if (overBudget) LocalPalette.current.Accent else LocalPalette.current.Point
     val open = rememberUrlOpener(url)
+    val photo = placeId?.let { rememberPlacePhoto(it) }
 
     Row(
         modifier = Modifier
@@ -831,6 +844,9 @@ private fun ChoiceRow(
             .then(if (open != null) Modifier.clickable(onClick = open) else Modifier),
         horizontalArrangement = Arrangement.spacedBy(Tokens.Space.sm),
     ) {
+        if (placeId != null) {
+            PlacePhotoThumb(placeId = placeId, photo = photo, size = Tokens.Size.placeThumb)
+        }
         Column(modifier = Modifier.weight(1f)) {
             Text(label, style = MaterialTheme.typography.labelMedium, color = accent)
             Text(title, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
@@ -842,6 +858,7 @@ private fun ChoiceRow(
                     color = LocalPalette.current.TextSecondary,
                 )
             }
+            PhotoAttributionLine(photo)
         }
         Column(horizontalAlignment = Alignment.End) {
             if (emphasis == RowEmphasis.REVIEWS) {

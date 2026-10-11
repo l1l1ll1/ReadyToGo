@@ -29,7 +29,10 @@ import kr.ac.baekseok.readytogo.ui.format.roomsText
 import kr.ac.baekseok.readytogo.ui.format.durationText
 import kr.ac.baekseok.readytogo.ui.format.money
 import kr.ac.baekseok.readytogo.domain.plan.toTimeline
+import kr.ac.baekseok.readytogo.ui.component.PhotoAttributionLine
+import kr.ac.baekseok.readytogo.ui.component.PlacePhotoThumb
 import kr.ac.baekseok.readytogo.ui.component.TagChip
+import kr.ac.baekseok.readytogo.ui.component.rememberPlacePhoto
 import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 
@@ -275,6 +278,17 @@ fun ItineraryHighlights(plan: TripPlan) {
                     style = MaterialTheme.typography.titleMedium,
                     color = LocalPalette.current.Point,
                 )
+
+                // 요약에서 "뭘 보러 가는지"를 글자보다 사진이 먼저 알려준다.
+                // 사진을 붙이는 자리를 여기 셋으로 묶은 이유는 과금 때문이다 —
+                // GooglePlacesPhotoRepository 주석 참고.
+                val photo = rememberPlacePhoto(attraction.id)
+                PlacePhotoThumb(
+                    placeId = attraction.id,
+                    photo = photo,
+                    size = Tokens.Size.placeThumb,
+                )
+
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = attraction.name,
@@ -295,6 +309,7 @@ fun ItineraryHighlights(plan: TripPlan) {
                         style = MaterialTheme.typography.bodyMedium,
                         color = LocalPalette.current.TextSecondary,
                     )
+                    PhotoAttributionLine(photo)
                 }
             }
         }

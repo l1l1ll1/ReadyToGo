@@ -387,4 +387,5 @@
     <string name="place_price_upper_bound">Up to %1$s</string>
     <string name="flight_unknown_airline">Unknown airline</string>
     <string name="fmt_money_range">$%1$s~$%2$s</string>
+    <string name="photo_attribution">Photo: %1$s</string>
 </resources>

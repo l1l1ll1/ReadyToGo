@@ -105,6 +105,12 @@ object Tokens {
          */
         val sheetListMaxHeight = 420.dp
 
+        /**
+         * 장소 사진 썸네일. 목록 한 줄 높이에 맞춘다 � 더 키우면 줄이 성큼성큼 길어지고,
+         * 더 줄이면 사진에서 무엇인지 알아볼 수 없다.
+         */
+        val placeThumb = 64.dp
+
         /** 타임라인 왼쪽 세로줄. 점(32dp) 폭에 맞춰야 선과 점의 중심이 어긋나지 않는다. */
         val timelineRailWidth = 32.dp
         val timelineLineWidth = 2.dp

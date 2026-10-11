@@ -99,6 +99,10 @@ dependencies {
     implementation(libs.maps.compose)
     // 식당·관광지 검색. 7단계에서 MockPlaceRepository를 대체한다.
     implementation(libs.places)
+    // Places 사진을 URL로 받아 그린다(로드맵 5). 캐시·지연 로드를 직접 짜지 않으려고 쓴다.
+    // network-okhttp가 따로 있는 이유: coil-compose만으로는 http로 못 받는다.
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)

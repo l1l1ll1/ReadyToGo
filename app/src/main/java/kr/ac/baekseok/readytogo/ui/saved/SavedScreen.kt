@@ -30,6 +30,9 @@ import kr.ac.baekseok.readytogo.data.model.FavoriteKind
 import kr.ac.baekseok.readytogo.data.model.FavoritePlace
 import kr.ac.baekseok.readytogo.ui.component.EmptyState
 import kr.ac.baekseok.readytogo.ui.component.FavoriteButton
+import kr.ac.baekseok.readytogo.ui.component.PhotoAttributionLine
+import kr.ac.baekseok.readytogo.ui.component.PlacePhotoThumb
+import kr.ac.baekseok.readytogo.ui.component.rememberPlacePhoto
 import kr.ac.baekseok.readytogo.ui.component.PhotoCard
 import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
@@ -149,12 +152,9 @@ private fun FavoriteRow(
             .background(LocalPalette.current.SurfaceMuted)
             .padding(Tokens.Space.md),
     ) {
-        PhotoCard(
-            key = place.placeId,
-            title = "",
-            height = THUMB_SIZE,
-            modifier = Modifier.width(THUMB_SIZE),
-        )
+        val photo = rememberPlacePhoto(place.placeId)
+
+        PlacePhotoThumb(placeId = place.placeId, photo = photo, size = THUMB_SIZE)
         Column(
             verticalArrangement = Arrangement.spacedBy(Tokens.Space.xs),
             modifier = Modifier.weight(1f),
@@ -174,6 +174,7 @@ private fun FavoriteRow(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
+            PhotoAttributionLine(photo)
         }
         // 저장 목록에서는 ♥가 항상 채워져 있다. 누르면 해제된다.
         FavoriteButton(favorite = true, onToggle = onRemove)

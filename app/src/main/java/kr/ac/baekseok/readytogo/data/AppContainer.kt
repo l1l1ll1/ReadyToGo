@@ -5,6 +5,10 @@ import androidx.annotation.StringRes
 import android.util.Log
 import kr.ac.baekseok.readytogo.data.model.AuthState
 import kr.ac.baekseok.readytogo.data.model.SavedTrip
+import kr.ac.baekseok.readytogo.BuildConfig
+import kr.ac.baekseok.readytogo.data.repository.NoPlacePhotoRepository
+import kr.ac.baekseok.readytogo.data.repository.PlacePhotoRepository
+import kr.ac.baekseok.readytogo.data.repository.places.GooglePlacesPhotoRepository
 import kr.ac.baekseok.readytogo.data.repository.FavoriteRepository
 import kr.ac.baekseok.readytogo.data.repository.SavedTripRepository
 import kr.ac.baekseok.readytogo.data.repository.UserProfileRepository
@@ -118,6 +122,20 @@ object AppContainer {
     }
 
     /** 설정은 계정이 아니라 기기에 딸린 값이라 Firestore를 쓰지 않는다. */
+    /**
+     * 장소 사진. 키가 없으면 사진 없이 돈다 � 그라데이션이 그대로 남는다.
+     *
+     * 화면이 직접 쓰는 유일한 Repository다. 계획을 만드는 흐름과 무관하게, 카드가 보일 때
+     * 그 카드만 물어본다(지연 로드). 사진은 과금이라 미리 받아 두지 않는다.
+     */
+    val placePhotos: PlacePhotoRepository by lazy {
+        if (BuildConfig.MAPS_API_KEY.isBlank()) {
+            NoPlacePhotoRepository
+        } else {
+            GooglePlacesPhotoRepository(appContext)
+        }
+    }
+
     val settings: PreferencesSettingsRepository by lazy {
         PreferencesSettingsRepository(appContext)
     }

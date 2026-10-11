@@ -113,7 +113,7 @@ fun PhotoCard(
         ) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.titleMedium.copy(shadow = TITLE_SHADOW),
+                style = MaterialTheme.typography.titleMedium.copy(shadow = PhotoTextShadow),
                 color = Color.White,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
@@ -121,7 +121,7 @@ fun PhotoCard(
             if (subtitle != null) {
                 Text(
                     text = subtitle,
-                    style = MaterialTheme.typography.bodyMedium.copy(shadow = TITLE_SHADOW),
+                    style = MaterialTheme.typography.bodyMedium.copy(shadow = PhotoTextShadow),
                     color = Color.White.copy(alpha = 0.9f),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -136,10 +136,10 @@ fun PhotoCard(
 /**
  * 카드 위 흰 글자에 까는 그림자.
  *
- * 덮개 없이도 글자가 읽히게 하는 장치다. 번짐을 4로 얕게 둬서 글자 테두리만
+ * 덮개 없이도 글자가 읽히게 하는 장치다. 사진 위 출처 글자도 같은 것을 쓴다. 번짐을 4로 얕게 둬서 글자 테두리만
  * 살짝 어두워지고 배경 색은 그대로 보인다 — 더 키우면 글자 주변만 때처럼 뭉친다.
  */
-private val TITLE_SHADOW = Shadow(
+internal val PhotoTextShadow = Shadow(
     color = Color.Black.copy(alpha = 0.35f),
     offset = Offset(0f, 1f),
     blurRadius = 4f,

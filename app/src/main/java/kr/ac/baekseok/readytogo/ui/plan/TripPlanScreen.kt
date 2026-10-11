@@ -2,6 +2,7 @@ package kr.ac.baekseok.readytogo.ui.plan
 
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,10 +10,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -41,6 +46,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -59,12 +65,15 @@ import kr.ac.baekseok.readytogo.data.model.Restaurant
 import kr.ac.baekseok.readytogo.data.model.TripCondition
 import kr.ac.baekseok.readytogo.data.model.TripPlan
 import kr.ac.baekseok.readytogo.domain.plan.TimelineItem
+import kr.ac.baekseok.readytogo.domain.purpose.PurposeProfiles
 import kr.ac.baekseok.readytogo.ui.component.FavoriteButton
 import kr.ac.baekseok.readytogo.ui.map.DayMapContent
 import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.ReadytogoTheme
+import kr.ac.baekseok.readytogo.ui.theme.Tokens
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import kotlin.math.roundToInt
 
 // 요일이 기기 언어를 따라가면 한국어 화면에 "9.26(Sat)"이 섞인다. 한국어로 고정한다.
 internal val DATE = DateTimeFormatter.ofPattern("M.d(E)", Locale.KOREAN)
@@ -436,6 +445,8 @@ private fun BudgetBreakdown(plan: TripPlan) {
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
+            PurposeShareBar(plan)
+
             BudgetRow("항공", b.flightWon)
             // 단위를 적어 둔다. 인원이 늘면 이 값이 내려가는데, 무엇의 상한인지 모르면
             // "예산이 줄었다"로 읽힌다 — 실제로는 1인·1실 몫이 줄어든 것이다.
@@ -458,6 +469,91 @@ private fun BudgetBreakdown(plan: TripPlan) {
             }
         }
     }
+}
+
+/**
+ * 목적별 배분 막대 — 아래 금액 네 줄이 **왜 그 금액인지**를 설명하는 그림.
+ *
+ * 금액만 나열하면 "숙소 상한 18만원"이 어디서 나온 수인지 알 수 없다. 고른 목적이
+ * 항공료를 뺀 나머지를 어떤 비율로 갈랐는지 보여주면, 목적을 바꿀 때 무엇이 달라질지도
+ * 같이 읽힌다(CLAUDE.md 여행 목적별 설정).
+ *
+ * **요약 헤더가 아니라 이 카드 안에 둔다.** 헤더에는 이미 "예산 사용" 막대가 있는데,
+ * 성격이 다른 막대 두 개가 붙어 있으면 어느 쪽이 무엇인지 헷갈린다.
+ */
+@Composable
+private fun PurposeShareBar(plan: TripPlan) {
+    val profile = PurposeProfiles.of(plan.condition.purposes)
+    val palette = LocalPalette.current
+
+    // 색은 브랜드 세 색을 그대로 쓴다. 막대마다 새 색을 만들면 화면에 색이 늘어난다.
+    val shares = listOf(
+        Triple("숙박", profile.lodgingShare, palette.Point),
+        Triple("식비", profile.foodShare, palette.Accent),
+        Triple("기타", profile.otherShare, palette.Secondary),
+    )
+
+    Text(
+        text = "목적별 배분",
+        style = MaterialTheme.typography.labelMedium,
+        color = palette.TextSecondary,
+    )
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(Tokens.Space.sm)
+            .clip(Tokens.Radius.chip),
+    ) {
+        shares.forEach { (_, share, color) ->
+            Box(
+                modifier = Modifier
+                    .weight(share.toFloat())
+                    .fillMaxHeight()
+                    .background(color),
+            )
+        }
+    }
+
+    // 막대만 두면 어느 칸이 무엇인지 알 수 없다. 색과 비율을 글자로 한 번 더 적는다.
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(Tokens.Space.md),
+        modifier = Modifier.padding(top = Tokens.Space.xs),
+    ) {
+        shares.forEach { (label, share, color) ->
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .size(Tokens.Space.sm)
+                        .clip(CircleShape)
+                        .background(color),
+                )
+                Text(
+                    text = " $label ${(share * 100).roundToInt()}%",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = palette.TextSecondary,
+                )
+            }
+        }
+    }
+
+    Text(
+        text = buildString {
+            val remaining = plan.budget.remainingWon
+            if (remaining != null) append("항공료를 뺀 ${remaining.won()}을 ")
+            if (plan.condition.purposes.isEmpty()) {
+                append("기본 비율로 나눴습니다. 목적을 고르면 배분이 달라집니다.")
+            } else {
+                append(plan.condition.purposes.joinToString("·") { it.label })
+                append("에 맞춰 나눈 비율입니다.")
+            }
+        },
+        style = MaterialTheme.typography.labelMedium,
+        color = palette.TextSecondary,
+        modifier = Modifier.padding(bottom = Tokens.Space.xs),
+    )
+
+    HorizontalDivider(color = palette.Divider)
 }
 
 @Composable

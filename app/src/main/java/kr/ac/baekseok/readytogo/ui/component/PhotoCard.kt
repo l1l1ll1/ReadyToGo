@@ -17,8 +17,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
@@ -55,6 +57,14 @@ fun PhotoCard(
      * 무엇이든 브랜드 색으로 보여야 한다.
      */
     colors: List<Color>? = null,
+    /**
+     * 아래쪽을 어둡게 덮을지. 배경 색을 모르는 카드(사진 대용 그라데이션)는 켜 둬야
+     * 흰 글자가 밝은 색 위에 얹히는 일을 막는다.
+     *
+     * **배경 색을 직접 정한 카드는 끈다.** 브랜드 색을 깔아 놓고 그 위에 검은 덮개를
+     * 씌우면 공들여 고른 색이 아래쪽에서 탁해진다. 그 경우 글자는 [TITLE_SHADOW]가 지킨다.
+     */
+    scrim: Boolean = true,
     modifier: Modifier = Modifier,
     overlay: @Composable (BoxScope.() -> Unit)? = null,
 ) {
@@ -81,7 +91,7 @@ fun PhotoCard(
         //
         // **글자가 없으면 깔지 않는다.** 온보딩처럼 제목 없이 그림 자리로만 쓰는 카드에서는
         // 지킬 글자가 없는데, 노을 그라데이션 위에 검은 덮개가 겹쳐 아래쪽이 탁해졌다.
-        if (title.isNotEmpty() || subtitle != null) {
+        if (scrim && (title.isNotEmpty() || subtitle != null)) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -103,7 +113,7 @@ fun PhotoCard(
         ) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.titleMedium.copy(shadow = TITLE_SHADOW),
                 color = Color.White,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
@@ -111,7 +121,7 @@ fun PhotoCard(
             if (subtitle != null) {
                 Text(
                     text = subtitle,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodyMedium.copy(shadow = TITLE_SHADOW),
                     color = Color.White.copy(alpha = 0.9f),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -122,3 +132,15 @@ fun PhotoCard(
         overlay?.invoke(this)
     }
 }
+
+/**
+ * 카드 위 흰 글자에 까는 그림자.
+ *
+ * 덮개 없이도 글자가 읽히게 하는 장치다. 번짐을 4로 얕게 둬서 글자 테두리만
+ * 살짝 어두워지고 배경 색은 그대로 보인다 — 더 키우면 글자 주변만 때처럼 뭉친다.
+ */
+private val TITLE_SHADOW = Shadow(
+    color = Color.Black.copy(alpha = 0.35f),
+    offset = Offset(0f, 1f),
+    blurRadius = 4f,
+)

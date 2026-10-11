@@ -80,24 +80,29 @@ fun LoginScreen(
                 .systemBarsPadding()
                 .padding(horizontal = Tokens.Space.screenHorizontal),
         ) {
-            // 위아래 빈 공간의 비율. 로고를 화면 정중앙이 아니라 조금 위에 둔다 —
-            // 아래쪽 버튼 두 개가 시선을 끌어내려서, 정중앙에 두면 오히려 처져 보인다.
-            Spacer(modifier = Modifier.weight(TOP_SPACE_WEIGHT))
+            // **워드마크+문구를 버튼 위 공간의 세로 중앙에 둔다.** 전에는 위아래 여백을
+            // 1 : 1.4로 나눠 로고를 올렸는데, 흰 배경이 되고 나니 문구와 버튼 사이가
+            // 화면 1/4만큼 휑하게 비어 보였다. 남는 높이를 이 Box가 전부 먹고,
+            // 그 안에서 가운데 정렬하면 빈 칸이 위아래로 고르게 나뉜다.
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.weight(1f),
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Wordmark(width = Tokens.Size.loginWordmark)
 
-            Wordmark(width = Tokens.Size.loginWordmark)
+                    // 워드마크 아래쪽 밑줄이 글자에 붙어 있다. 문구를 가까이 두면 한 덩어리로
+                    // 보여 로고가 아니라 제목처럼 읽힌다.
+                    Spacer(modifier = Modifier.height(Tokens.Space.xxl))
 
-            // 워드마크 아래쪽 밑줄이 글자에 붙어 있다. 문구를 가까이 두면 한 덩어리로
-            // 보여 로고가 아니라 제목처럼 읽힌다.
-            Spacer(modifier = Modifier.height(Tokens.Space.xxl))
-
-            Text(
-                text = stringResource(R.string.login_tagline),
-                style = MaterialTheme.typography.bodyLarge,
-                color = LocalPalette.current.TextPrimary,
-                textAlign = TextAlign.Center,
-            )
-
-            Spacer(modifier = Modifier.weight(BOTTOM_SPACE_WEIGHT))
+                    Text(
+                        text = stringResource(R.string.login_tagline),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = LocalPalette.current.TextPrimary,
+                        textAlign = TextAlign.Center,
+                    )
+                }
+            }
 
             if (error != null) {
                 Text(
@@ -140,16 +145,6 @@ fun LoginScreen(
         }
     }
 }
-
-/**
- * 로고 위아래 빈 공간의 비율.
- *
- * 1 : 1.4로 아래를 더 비운다. 정확히 반반으로 두면 로고가 화면 한가운데 오는데,
- * 아래쪽 버튼 두 개가 시선을 끌어내려서 로고가 처진 것처럼 보인다.
- */
-private const val TOP_SPACE_WEIGHT = 1f
-private const val BOTTOM_SPACE_WEIGHT = 1.4f
-
 
 /** 프로필 사진이 없을 때 쓰는 이니셜 원. 설정·프로필 화면이 같이 쓴다. */
 @Composable

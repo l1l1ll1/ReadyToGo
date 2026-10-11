@@ -86,9 +86,11 @@ val LightPalette = AppPalette(
     // 즐겨찾기 ♥ 채운 상태. 코랄과 구분돼야 눌린 게 보인다.
     Heart = Color(0xFFE0245E),
 
+    // 포인트색 한 가지의 밝기 차이로만 만든다(Point → PointDark).
+    // 밝은 하늘색으로 번지게 두면 카드가 흰 배경에 녹아 면이 안 보였다.
     HeroGradient = listOf(
         Color(0xFF20B8C4),
-        Color(0xFF5ED3DC),
+        Color(0xFF178F99),
     ),
 )
 
@@ -125,7 +127,7 @@ val HighContrastPalette = LightPalette.copy(
 
     HeroGradient = listOf(
         Color(0xFF0E6E76),
-        Color(0xFF2FA3AD),
+        Color(0xFF0A5056),
     ),
 )
 

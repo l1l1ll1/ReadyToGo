@@ -216,6 +216,8 @@ private fun UpcomingTripCard(trip: SavedTrip, today: LocalDate, onClick: () -> U
             "${trip.returnDate.format(DATE_FORMAT)} · ${trip.dayCount}일",
         // 목적지가 어디든 이 카드만은 브랜드 색으로 둔다. 홈에서 가장 먼저 보이는 면이다.
         colors = LocalPalette.current.HeroGradient,
+        // 터쿼이즈 자체가 충분히 어두워서 덮개 없이도 흰 글자가 읽힌다.
+        scrim = false,
         height = Tokens.Size.heroCardHeight,
         onClick = onClick,
     ) {

@@ -58,7 +58,7 @@ fun SummaryHeader(plan: TripPlan) {
         )
         Text(
             text = listOfNotNull(
-                c.destination?.country,
+                c.destination?.localizedCountry,
                 c.departureDate?.let { departure ->
                     c.returnDate?.let { back -> "${dateWithDay(departure)} – ${dateWithDay(back)}" }
                 },

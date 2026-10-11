@@ -194,7 +194,7 @@ private fun DestinationList(
                     // "코타쿠알라무다(Kota Kuala Muda) (PEN)"처럼 괄호가 두 번 겹친다
                     // — 한글 표기가 애매한 도시는 이름 안에 이미 영문이 병기돼 있다.
                     Text(
-                        text = destination.city,
+                        text = destination.localizedCity,
                         style = MaterialTheme.typography.bodyLarge,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -224,7 +224,7 @@ private fun Destination.subtitleFor(query: String, showCountry: Boolean): String
     val matched = airportCodes.firstOrNull { it.equals(query.trim(), ignoreCase = true) }
     val code = matched ?: airportCodes.firstOrNull()
 
-    return listOfNotNull(country.takeIf { showCountry }, code).joinToString(" · ")
+    return listOfNotNull(localizedCountry.takeIf { showCountry }, code).joinToString(" · ")
 }
 
 @Composable

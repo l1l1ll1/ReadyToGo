@@ -25,12 +25,14 @@ class AssetDestinationRepository(
     private var cache: List<Destination>? = null
 
     override suspend fun countries(): Result<List<String>> = runCatching {
-        load().map { it.country }.distinct().sorted()
+        load().map { it.localizedCountry }.distinct().sorted()
     }
 
     override suspend fun cities(country: String): Result<List<Destination>> = runCatching {
+        // 나라 이름은 화면에 보이는 언어로 들어온다. 한글�영문 어느 쪽과도 맞춘다 �
+        // 목록과 필터가 같은 열을 봐야 영어로 바꿨을 때 목록이 비지 않는다.
         // JSON이 이미 나라별 인구순으로 정렬돼 있어 여기서 다시 정렬하지 않는다.
-        load().filter { it.country == country }
+        load().filter { it.country == country || it.countryEn == country }
     }
 
     override suspend fun origins(): Result<List<Destination>> = runCatching { KOREAN_AIRPORTS }
@@ -50,16 +52,22 @@ class AssetDestinationRepository(
             .sortedWith(
                 // 1) 도시명이 검색어로 시작, 2) 도시명에 포함, 3) 나머지(나라명·공항 코드만 걸린 것)
                 compareBy(
-                    { if (it.city.startsWith(keyword, ignoreCase = true)) 0 else 1 },
-                    { if (it.city.contains(keyword, ignoreCase = true)) 0 else 1 },
+                    { if (it.localizedCity.startsWith(keyword, ignoreCase = true)) 0 else 1 },
+                    { if (it.localizedCity.contains(keyword, ignoreCase = true)) 0 else 1 },
                 ),
             )
             .take(MAX_SEARCH_RESULTS)
     }
 
+    /**
+     * 한글�영문 이름을 **둘 다** 본다. 앱이 영어라도 "도쿄"로 찾을 수 있어야 하고,
+     * 한국어라도 "Tokyo"로 찾을 수 있어야 한다 � 키보드를 바꾸기 귀찮은 쪽이 보통이다.
+     */
     private fun Destination.matches(keyword: String): Boolean =
         city.contains(keyword, ignoreCase = true) ||
+            cityEn.contains(keyword, ignoreCase = true) ||
             country.contains(keyword, ignoreCase = true) ||
+            countryEn.contains(keyword, ignoreCase = true) ||
             airportCodes.any { it.equals(keyword, ignoreCase = true) }
 
     private suspend fun load(): List<Destination> {
@@ -78,6 +86,8 @@ class AssetDestinationRepository(
                     city = item.getString("city"),
                     location = LatLng(item.getDouble("lat"), item.getDouble("lon")),
                     airportCodes = List(codes.length()) { codes.getString(it) },
+                    cityEn = item.optString("cityEn"),
+                    countryEn = item.optString("countryEn"),
                 )
             }
             parsed.also { cache = it }
@@ -98,13 +108,23 @@ class AssetDestinationRepository(
          * 일곱 개가 전부고 바뀔 일이 거의 없다.
          */
         val KOREAN_AIRPORTS = listOf(
-            Destination("대한민국", "인천", LatLng(37.4602, 126.4407), listOf("ICN")),
-            Destination("대한민국", "김포", LatLng(37.5583, 126.7906), listOf("GMP")),
-            Destination("대한민국", "부산", LatLng(35.1796, 128.9382), listOf("PUS")),
-            Destination("대한민국", "제주", LatLng(33.5104, 126.4914), listOf("CJU")),
-            Destination("대한민국", "대구", LatLng(35.8714, 128.6014), listOf("TAE")),
-            Destination("대한민국", "청주", LatLng(36.7166, 127.4991), listOf("CJJ")),
-            Destination("대한민국", "무안", LatLng(34.9914, 126.3828), listOf("MWX")),
+            korea("인천", "Incheon", 37.4602, 126.4407, "ICN"),
+            korea("김포", "Gimpo", 37.5583, 126.7906, "GMP"),
+            korea("부산", "Busan", 35.1796, 128.9382, "PUS"),
+            korea("제주", "Jeju", 33.5104, 126.4914, "CJU"),
+            korea("대구", "Daegu", 35.8714, 128.6014, "TAE"),
+            korea("청주", "Cheongju", 36.7166, 127.4991, "CJJ"),
+            korea("무안", "Muan", 34.9914, 126.3828, "MWX"),
         )
+
+        private fun korea(city: String, cityEn: String, lat: Double, lon: Double, code: String) =
+            Destination(
+                country = "대한민국",
+                city = city,
+                location = LatLng(lat, lon),
+                airportCodes = listOf(code),
+                cityEn = cityEn,
+                countryEn = "South Korea",
+            )
     }
 }

@@ -59,3 +59,26 @@ powershell -ExecutionPolicy Bypass -File tools/geo/build-destinations.ps1
 
 PowerShell 스크립트는 **UTF-8 BOM**으로 저장해야 한다. Windows PowerShell 5.1은 BOM이 없으면
 파일을 ANSI로 읽어서 한글 주석과 문자열이 깨진다.
+
+## 영문 이름
+
+`destinations.json`에는 한글 이름 옆에 `cityEn`·`countryEn` 열이 있다. 앱을 영어로 바꾸면
+출발지·목적지·도시 검색이 이 열을 쓴다.
+
+| 파일 | 역할 |
+|---|---|
+| `english-city-names.json` | `나라(한글)\|도시(한글)` → 영문 도시명 표 |
+| `apply-english-names.ps1` | 표를 읽어 두 열을 채운다. `-Source`를 주면 표부터 다시 만든다 |
+
+**한글 이름과 달리 영문은 복원해야 했다.** `apply-korean-names.ps1`이 원래 있던 영문 이름을
+한글로 덮어쓰기 때문에 `destinations.json`에 영문이 남지 않는다. 그래서 `cities15000.txt`를
+다시 받아 **좌표(소수 넷째 자리)로** 맞춰 뽑았다 — 이름으로는 맞출 수 없다.
+
+```
+pwsh tools/geo/apply-english-names.ps1 -Source cities15000.txt   # 표 재생성 + 적용
+pwsh tools/geo/apply-english-names.ps1                           # 표만 적용(원본 불필요)
+```
+
+인구 기준에 걸려 GeoNames 목록에 없는 관광지 16곳(할슈타트·몽생미셸 등)은 좌표로 맞출 수
+없어 스크립트 안의 `MANUAL_EN` 표에 적어 뒀다. `build-destinations.ps1`의 수동 추가 목록과
+짝이 맞아야 한다.

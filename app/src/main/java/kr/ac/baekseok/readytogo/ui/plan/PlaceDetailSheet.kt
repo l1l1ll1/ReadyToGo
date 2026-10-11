@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Delete
@@ -75,11 +77,17 @@ fun PlaceDetailSheet(
         shape = Tokens.Radius.sheet,
     ) {
         Column(
-            modifier = Modifier.padding(
-                start = Tokens.Space.screenHorizontal,
-                end = Tokens.Space.screenHorizontal,
-                bottom = Tokens.Space.xxl,
-            ),
+            // **스크롤이 반드시 있어야 한다.** 전에는 내용이 짧아 없어도 됐는데,
+            // "다른 선택지"와 "내가 저장한 곳" 두 목록이 붙으면서 화면을 넘긴다.
+            // 스크롤이 없으면 아래 섹션에 영영 닿을 수 없다 — 실제로 끼니 시트에서
+            // "내가 저장한 곳"이 보이지 않았다.
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .padding(
+                    start = Tokens.Space.screenHorizontal,
+                    end = Tokens.Space.screenHorizontal,
+                    bottom = Tokens.Space.xxl,
+                ),
             verticalArrangement = Arrangement.spacedBy(Tokens.Space.md),
         ) {
             when (item) {

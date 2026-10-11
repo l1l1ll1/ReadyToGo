@@ -280,9 +280,14 @@ private fun moveWithinMealSlots(
     var to = toIndex - HEADER_ITEM_COUNT
     val step = if (to > from) 1 else -1
     while (to in entries.indices && entries[to].item !is TimelineItem.Visit) to += step
-    if (to !in entries.indices || to == from) return null
 
-    return entries.map { it.item.key }.toMutableList().apply { add(to, removeAt(from)) }
+    // **끼니를 넘다가 목록 밖으로 나가면 그 끝에 붙인다.** 전에는 포기하고 null을
+    // 돌려줬는데, 그러면 저녁 뒤에 관광지를 둘 수 없었다. 관광지가 하나뿐인 날은
+    // 아예 움직일 수가 없어 끌기가 고장 난 것처럼 보였다.
+    val target = to.coerceIn(0, entries.lastIndex)
+    if (target == from) return null
+
+    return entries.map { it.item.key }.toMutableList().apply { add(target, removeAt(from)) }
 }
 
 /**

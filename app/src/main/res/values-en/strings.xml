@@ -372,4 +372,19 @@
     <!-- ===== 정보 ===== -->
     <string name="about_license_apache">Apache License 2.0</string>
     <string name="about_google_terms">Google APIs Terms of Service</string>
+
+    <!-- ===== Repository가 화면으로 올려 보내는 문구 ===== -->
+    <string name="error_sign_in_to_save_place">Sign in to save places.</string>
+    <string name="error_sign_in_to_save_trip">Sign in to save trips.</string>
+    <string name="error_sign_in_for_nickname">Sign in to set a nickname.</string>
+    <string name="error_not_signed_in">You are not signed in.</string>
+    <string name="error_sign_in_retry">Sign-in failed. Please try again in a moment.</string>
+    <string name="error_unknown_currency">We have no exchange rate for this currency: %1$s</string>
+    <string name="default_display_name">Traveler</string>
+    <string name="saved_trip_fallback_title">%1$s trip</string>
+    <string name="saved_trip_fallback_title_unknown">Saved trip</string>
+    <string name="place_category_restaurant">Restaurant</string>
+    <string name="place_price_upper_bound">Up to %1$s</string>
+    <string name="flight_unknown_airline">Unknown airline</string>
+    <string name="fmt_money_range">$%1$s~$%2$s</string>
 </resources>

@@ -34,10 +34,22 @@ fun money(won: Long): String =
     stringResource(R.string.fmt_money, "%,d".format(MoneyDisplay.amountFor(won)))
 
 /**
- * "150만원" / "KRW 1,500,000" — 칩이나 슬라이더 눈금처럼 좁은 자리.
+ * 가격대. "25,441~33,925원" / "$18~$25"
  *
- * "만" 단위가 없는 언어에서는 전체 금액을 그대로 적는다(`R.bool.money_short_uses_man`).
- * 만 단위로 떨어지지 않는 금액도 마찬가지다 — "15.3만원"은 읽기 더 어렵다.
+ * **양쪽 다 환산해야 한다.** 한쪽만 바꿨더니 "8,480~$12"처럼 단위가 섞여 나왔다.
+ */
+@Composable
+fun moneyRange(minWon: Long, maxWon: Long): String = stringResource(
+    R.string.fmt_money_range,
+    "%,d".format(MoneyDisplay.amountFor(minWon)),
+    "%,d".format(MoneyDisplay.amountFor(maxWon)),
+)
+
+/**
+ * "150만원" / "$1,500,000" — 칩이나 슬라이더 눈금처럼 좁은 자리.
+ *
+ * "만" 단위가 없는 언어에서는 전체 금액을 그대로 적는다. 만 단위로 떨어지지 않는
+ * 금액도 마찬가지다 — "15.3만원"은 읽기 더 어렵다.
  */
 @Composable
 fun moneyShort(won: Long): String =

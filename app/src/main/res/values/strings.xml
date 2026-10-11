@@ -396,4 +396,24 @@
     <!-- ===== 정보 ===== -->
     <string name="about_license_apache">Apache License 2.0</string>
     <string name="about_google_terms">Google API 서비스 약관</string>
+
+    <!-- ===== Repository가 화면으로 올려 보내는 문구 ===== -->
+    <string name="error_sign_in_to_save_place">로그인하면 장소를 저장할 수 있습니다.</string>
+    <string name="error_sign_in_to_save_trip">로그인하면 일정을 저장할 수 있습니다.</string>
+    <string name="error_sign_in_for_nickname">로그인해야 닉네임을 정할 수 있습니다.</string>
+    <string name="error_not_signed_in">로그인 상태가 아닙니다.</string>
+    <string name="error_sign_in_retry">로그인에 실패했습니다. 잠시 후 다시 시도해 주세요.</string>
+    <string name="error_unknown_currency">환율을 모르는 통화입니다: %1$s</string>
+    <!-- Google 계정에 표시 이름이 없을 때 쓰는 기본 이름 -->
+    <string name="default_display_name">여행자</string>
+    <!-- 저장된 일정에 이름이 없을 때. 예: "도쿄 여행" -->
+    <string name="saved_trip_fallback_title">%1$s 여행</string>
+    <string name="saved_trip_fallback_title_unknown">저장된 일정</string>
+    <!-- Places가 종류 이름을 안 줄 때 -->
+    <string name="place_category_restaurant">음식점</string>
+    <!-- 가격대 상한만 알 때. 예: "¥3,000 이하" -->
+    <string name="place_price_upper_bound">%1$s 이하</string>
+    <string name="flight_unknown_airline">항공사 미상</string>
+    <!-- 가격대. 예: "25,441~33,925원" -->
+    <string name="fmt_money_range">%1$s~%2$s원</string>
 </resources>

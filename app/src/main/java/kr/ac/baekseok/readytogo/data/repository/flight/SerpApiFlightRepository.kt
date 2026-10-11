@@ -2,7 +2,9 @@ package kr.ac.baekseok.readytogo.data.repository.flight
 
 import android.content.Context
 import android.util.Log
+import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.BuildConfig
+import kr.ac.baekseok.readytogo.data.AppContainer
 import kr.ac.baekseok.readytogo.data.model.Flight
 import kr.ac.baekseok.readytogo.data.model.TripCondition
 import kr.ac.baekseok.readytogo.data.repository.FlightRepository
@@ -206,7 +208,8 @@ class SerpApiFlightRepository(
 
         return Flight(
             id = "serpapi-$index-${optString("departure_token", price.toString())}",
-            airline = first.optString("airline").ifBlank { "항공사 미상" },
+            airline = first.optString("airline")
+                .ifBlank { AppContainer.string(R.string.flight_unknown_airline) },
             flightNumber = first.optString("flight_number"),
             departureAirport = departure?.optString("id").orEmpty().ifBlank { origin },
             arrivalAirport = arrival?.optString("id").orEmpty().ifBlank { destination },

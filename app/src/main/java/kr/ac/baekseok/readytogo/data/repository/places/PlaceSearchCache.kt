@@ -7,6 +7,7 @@ import kr.ac.baekseok.readytogo.data.model.LatLng
 import kr.ac.baekseok.readytogo.data.model.Lodging
 import kr.ac.baekseok.readytogo.data.model.MealTime
 import kr.ac.baekseok.readytogo.data.model.Restaurant
+import java.util.Locale
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.concurrent.TimeUnit
@@ -33,11 +34,15 @@ class PlaceSearchCache(context: Context) {
      *
      * 좌표를 소수점 셋째 자리까지만 쓴다(약 100m). 그보다 세밀하게 넣으면 일정이 조금만 달라져도
      * 중심점이 미세하게 움직여 캐시가 전부 빗나간다 — 100m 차이로 식당 목록이 달라지지는 않는다.
+     *
+     * **언어도 키의 일부다.** Places가 장소 이름과 종류를 그 언어로 주므로, 한국어로 받아 둔
+     * 결과를 영어 화면에 그대로 쓰면 "일본 음식점"이 남는다.
      */
     fun keyOf(kind: String, center: LatLng, radiusMeters: Double, types: List<String>): String {
         val lat = "%.3f".format(center.latitude)
         val lon = "%.3f".format(center.longitude)
-        return "$kind|$lat|$lon|${radiusMeters.toInt()}|${types.sorted().joinToString(",")}"
+        val language = Locale.getDefault().language
+        return "$kind|$lat|$lon|${radiusMeters.toInt()}|${types.sorted().joinToString(",")}|$language"
     }
 
     fun readRestaurants(key: String): List<Restaurant>? =

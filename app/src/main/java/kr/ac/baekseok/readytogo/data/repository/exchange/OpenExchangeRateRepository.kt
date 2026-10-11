@@ -1,5 +1,7 @@
 package kr.ac.baekseok.readytogo.data.repository.exchange
 
+import kr.ac.baekseok.readytogo.R
+import kr.ac.baekseok.readytogo.data.AppContainer
 import kr.ac.baekseok.readytogo.data.repository.ExchangeRateRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -35,7 +37,7 @@ class OpenExchangeRateRepository : ExchangeRateRepository {
         return if (rate != null) {
             Result.success(rate)
         } else {
-            Result.failure(IllegalArgumentException("환율을 모르는 통화입니다: $code"))
+            Result.failure(IllegalArgumentException(AppContainer.string(R.string.error_unknown_currency, code)))
         }
     }
 

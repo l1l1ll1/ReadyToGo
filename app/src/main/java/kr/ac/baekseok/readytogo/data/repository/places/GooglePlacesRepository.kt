@@ -7,7 +7,9 @@ import com.google.android.libraries.places.api.model.CircularBounds
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.android.libraries.places.api.net.SearchNearbyRequest
+import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.BuildConfig
+import kr.ac.baekseok.readytogo.data.AppContainer
 import kr.ac.baekseok.readytogo.data.model.Attraction
 import kr.ac.baekseok.readytogo.data.model.LatLng
 import kr.ac.baekseok.readytogo.data.model.MealTime
@@ -166,7 +168,8 @@ class GooglePlacesRepository(
         return Restaurant(
             id = id ?: return null,
             name = displayName ?: return null,
-            category = primaryTypeDisplayName ?: "음식점",
+            category = primaryTypeDisplayName
+                ?: AppContainer.string(R.string.place_category_restaurant),
             rating = score,
             reviewCount = userRatingCount ?: 0,
             location = LatLng(position.latitude, position.longitude),
@@ -265,7 +268,7 @@ class GooglePlacesRepository(
         val symbol = CURRENCY_SYMBOLS[currency] ?: "$currency "
         val endText = "$symbol${"%,d".format(end)}"
         return when {
-            upperBoundOnly -> "$endText 이하"
+            upperBoundOnly -> AppContainer.string(R.string.place_price_upper_bound, endText)
             start != null && start != end -> "$symbol${"%,d".format(start)}~$endText"
             else -> endText
         }

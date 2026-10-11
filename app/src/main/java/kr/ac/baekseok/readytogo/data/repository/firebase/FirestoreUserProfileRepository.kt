@@ -3,6 +3,8 @@ package kr.ac.baekseok.readytogo.data.repository.firebase
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
+import kr.ac.baekseok.readytogo.R
+import kr.ac.baekseok.readytogo.data.AppContainer
 import kr.ac.baekseok.readytogo.data.model.AuthState
 import kr.ac.baekseok.readytogo.data.repository.UserProfileRepository
 import kr.ac.baekseok.readytogo.data.repository.await
@@ -67,7 +69,7 @@ class FirestoreUserProfileRepository(
 
     private fun requireUid(): String =
         (authState.value as? AuthState.SignedIn)?.user?.id
-            ?: error("로그인해야 닉네임을 정할 수 있습니다.")
+            ?: error(AppContainer.string(R.string.error_sign_in_for_nickname))
 
     private fun FirebaseFirestore.userDocument(uid: String) =
         collection(USERS).document(uid)

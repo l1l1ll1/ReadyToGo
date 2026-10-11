@@ -72,6 +72,7 @@ import kr.ac.baekseok.readytogo.domain.plan.TimelineItem
 import kr.ac.baekseok.readytogo.domain.purpose.PurposeProfiles
 import kr.ac.baekseok.readytogo.ui.component.FavoriteButton
 import kr.ac.baekseok.readytogo.ui.format.money
+import kr.ac.baekseok.readytogo.ui.format.moneyRange
 import kr.ac.baekseok.readytogo.ui.map.DayMapContent
 import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.ReadytogoTheme
@@ -787,8 +788,7 @@ internal fun Attraction.toFavorite(cityName: String) = FavoritePlace(
 internal fun Restaurant.priceText(): String {
     val krw = when {
         priceIsUpperBound -> stringResource(R.string.plan_price_upper_bound, money(priceWon))
-        minPriceWon != null && minPriceWon != priceWon ->
-            "${"%,d".format(minPriceWon)}~${money(priceWon)}"
+        minPriceWon != null && minPriceWon != priceWon -> moneyRange(minPriceWon, priceWon)
         else -> money(priceWon)
     }
     return when {

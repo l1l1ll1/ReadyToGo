@@ -1,6 +1,7 @@
 package kr.ac.baekseok.readytogo.data
 
 import android.content.Context
+import androidx.annotation.StringRes
 import android.util.Log
 import kr.ac.baekseok.readytogo.data.model.AuthState
 import kr.ac.baekseok.readytogo.data.model.SavedTrip
@@ -120,6 +121,16 @@ object AppContainer {
     val settings: PreferencesSettingsRepository by lazy {
         PreferencesSettingsRepository(appContext)
     }
+
+    /**
+     * 화면에 그대로 뜨는 문구를 리소스에서 꺼낸다.
+     *
+     * Repository는 Context를 들고 있지 않은 것이 많은데, 거기서 던지는 예외 메시지가
+     * 스낵바에 그대로 올라간다. 영어로 바꿔도 "로그인하면 장소를 저장할 수 있습니다."가
+     * 남았다. 통로를 여기 하나만 두고 appContext는 계속 감춰 둔다.
+     */
+    fun string(@StringRes resId: Int, vararg args: Any): String =
+        appContext.getString(resId, *args)
 
     /**
      * 온보딩을 본 적 있는지.

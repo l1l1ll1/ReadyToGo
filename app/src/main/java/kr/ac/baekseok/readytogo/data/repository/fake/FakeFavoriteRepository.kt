@@ -1,5 +1,7 @@
 package kr.ac.baekseok.readytogo.data.repository.fake
 
+import kr.ac.baekseok.readytogo.R
+import kr.ac.baekseok.readytogo.data.AppContainer
 import kr.ac.baekseok.readytogo.data.model.AuthState
 import kr.ac.baekseok.readytogo.data.model.FavoriteKind
 import kr.ac.baekseok.readytogo.data.model.FavoritePlace
@@ -39,7 +41,7 @@ class FakeFavoriteRepository(
 
     override suspend fun add(place: FavoritePlace): Result<Unit> {
         if (!authState.value.canSave) {
-            return Result.failure(IllegalStateException("로그인하면 장소를 저장할 수 있습니다."))
+            return Result.failure(IllegalStateException(AppContainer.string(R.string.error_sign_in_to_save_place)))
         }
         // 같은 장소를 두 번 담지 않는다. ♥를 연타해도 목록에 한 줄만 남아야 한다.
         if (_favorites.value.none { it.placeId == place.placeId }) {

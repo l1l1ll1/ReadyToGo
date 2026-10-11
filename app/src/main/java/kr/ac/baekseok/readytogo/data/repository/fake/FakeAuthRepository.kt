@@ -1,5 +1,7 @@
 package kr.ac.baekseok.readytogo.data.repository.fake
 
+import kr.ac.baekseok.readytogo.R
+import kr.ac.baekseok.readytogo.data.AppContainer
 import kr.ac.baekseok.readytogo.data.model.AuthState
 import kr.ac.baekseok.readytogo.data.model.UserProfile
 import kr.ac.baekseok.readytogo.data.repository.AuthRepository
@@ -57,7 +59,7 @@ class FakeAuthRepository : AuthRepository {
         val SAMPLE_USER = UserProfile(
             id = "sample-user",
             email = "traveler@example.com",
-            displayName = "여행자",
+            displayName = AppContainer.string(R.string.default_display_name),
         )
     }
 }

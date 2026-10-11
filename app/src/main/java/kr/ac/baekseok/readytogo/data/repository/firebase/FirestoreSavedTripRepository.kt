@@ -2,6 +2,8 @@ package kr.ac.baekseok.readytogo.data.repository.firebase
 
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
+import kr.ac.baekseok.readytogo.R
+import kr.ac.baekseok.readytogo.data.AppContainer
 import kr.ac.baekseok.readytogo.data.model.AuthState
 import kr.ac.baekseok.readytogo.data.model.SavedTrip
 import kr.ac.baekseok.readytogo.data.repository.SavedTripRepository
@@ -101,7 +103,7 @@ class FirestoreSavedTripRepository(
 
     private fun requireUid(): String =
         (authState.value as? AuthState.SignedIn)?.user?.id
-            ?: error("로그인하면 일정을 저장할 수 있습니다.")
+            ?: error(AppContainer.string(R.string.error_sign_in_to_save_trip))
 
     private fun FirebaseFirestore.tripsCollection(uid: String) =
         collection(USERS).document(uid).collection(TRIPS)
@@ -145,4 +147,6 @@ private fun Map<String, Any?>.toSavedTrip(id: String): SavedTrip? {
     )
 }
 
-private fun destinationFallbackTitle(city: String?) = city?.let { "$it 여행" } ?: "저장된 일정"
+private fun destinationFallbackTitle(city: String?) = city
+    ?.let { AppContainer.string(R.string.saved_trip_fallback_title, it) }
+    ?: AppContainer.string(R.string.saved_trip_fallback_title_unknown)

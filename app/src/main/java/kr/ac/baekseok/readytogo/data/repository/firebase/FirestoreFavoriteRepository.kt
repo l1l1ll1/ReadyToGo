@@ -2,6 +2,8 @@ package kr.ac.baekseok.readytogo.data.repository.firebase
 
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
+import kr.ac.baekseok.readytogo.R
+import kr.ac.baekseok.readytogo.data.AppContainer
 import kr.ac.baekseok.readytogo.data.model.AuthState
 import kr.ac.baekseok.readytogo.data.model.FavoriteKind
 import kr.ac.baekseok.readytogo.data.model.FavoritePlace
@@ -79,7 +81,7 @@ class FirestoreFavoriteRepository(
 
     private fun requireUid(): String =
         (authState.value as? AuthState.SignedIn)?.user?.id
-            ?: error("로그인하면 장소를 저장할 수 있습니다.")
+            ?: error(AppContainer.string(R.string.error_sign_in_to_save_place))
 
     private fun FirebaseFirestore.favoritesCollection(uid: String) =
         collection(USERS).document(uid).collection(FAVORITES)

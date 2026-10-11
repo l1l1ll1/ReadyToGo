@@ -12,6 +12,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import kr.ac.baekseok.readytogo.R
+import kr.ac.baekseok.readytogo.data.AppContainer
 import kr.ac.baekseok.readytogo.data.model.AuthState
 import kr.ac.baekseok.readytogo.data.model.UserProfile
 import kr.ac.baekseok.readytogo.data.repository.AuthRepository
@@ -154,7 +155,7 @@ class FirebaseAuthRepository(
      * 그래서 호출부가 데이터를 먼저 지우고 이 함수를 부른다(AuthViewModel 참고).
      */
     override suspend fun deleteAccount(): Result<Unit> = runCatching {
-        val user = auth.currentUser ?: error("로그인 상태가 아닙니다.")
+        val user = auth.currentUser ?: error(AppContainer.string(R.string.error_not_signed_in))
         user.delete().await()
         _authState.value = AuthState.SignedOut
         Unit
@@ -167,7 +168,7 @@ class FirebaseAuthRepository(
         // 화면이 "님"을 붙이는데 빈 문자열이면 " 님"이 된다.
         displayName = displayName?.takeIf { it.isNotBlank() }
             ?: email?.substringBefore('@')
-            ?: "여행자",
+            ?: AppContainer.string(R.string.default_display_name),
         photoUrl = photoUrl?.toString(),
     )
 
@@ -179,8 +180,8 @@ class FirebaseAuthRepository(
      */
     private fun Throwable.userMessage(): String = when (this) {
         is GetCredentialException ->
-            "로그인에 실패했습니다. 잠시 후 다시 시도해 주세요."
-        else -> message ?: "로그인에 실패했습니다."
+            AppContainer.string(R.string.error_sign_in_retry)
+        else -> message ?: AppContainer.string(R.string.auth_sign_in_failed)
     }
 
     private companion object {

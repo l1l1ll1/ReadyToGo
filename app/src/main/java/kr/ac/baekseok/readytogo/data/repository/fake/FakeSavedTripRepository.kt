@@ -1,5 +1,7 @@
 package kr.ac.baekseok.readytogo.data.repository.fake
 
+import kr.ac.baekseok.readytogo.R
+import kr.ac.baekseok.readytogo.data.AppContainer
 import kr.ac.baekseok.readytogo.data.model.AuthState
 import kr.ac.baekseok.readytogo.data.model.Destination
 import kr.ac.baekseok.readytogo.data.model.LatLng
@@ -42,7 +44,7 @@ class FakeSavedTripRepository(
 
     override suspend fun save(trip: SavedTrip): Result<Unit> {
         if (!authState.value.canSave) {
-            return Result.failure(IllegalStateException("로그인하면 일정을 저장할 수 있습니다."))
+            return Result.failure(IllegalStateException(AppContainer.string(R.string.error_sign_in_to_save_trip)))
         }
         // 같은 id면 덮어쓴다. 결과 화면에서 저장을 두 번 눌러도 목록에 두 줄이 생기면 안 된다.
         _trips.value = _trips.value.filterNot { it.id == trip.id } + trip

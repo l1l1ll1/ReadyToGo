@@ -146,21 +146,21 @@ private fun NavGraphBuilder.entryGraph(navController: NavHostController) {
     }
 
     composable(Routes.LOGIN) {
-        TabScreen {
-            LoginScreen(
-                onSignedIn = {
-                    // 둘러보기는 닉네임이 없으므로 바로 홈으로, 로그인은 확인을 거친다.
-                    val next = if (AppContainer.auth.authState.value.canSave) {
-                        Routes.AFTER_LOGIN
-                    } else {
-                        Routes.HOME
-                    }
-                    navController.navigate(next) {
-                        popUpTo(Routes.LOGIN) { inclusive = true }
-                    }
-                },
-            )
-        }
+        // **TabScreen으로 감싸지 않는다.** 로그인은 배경색이 화면 끝까지 차야 하는데,
+        // TabScreen이 주는 상태바 여백 때문에 위에 흰 띠가 남았다. 여백은 화면이 직접 준다.
+        LoginScreen(
+            onSignedIn = {
+                // 둘러보기는 닉네임이 없으므로 바로 홈으로, 로그인은 확인을 거친다.
+                val next = if (AppContainer.auth.authState.value.canSave) {
+                    Routes.AFTER_LOGIN
+                } else {
+                    Routes.HOME
+                }
+                navController.navigate(next) {
+                    popUpTo(Routes.LOGIN) { inclusive = true }
+                }
+            },
+        )
     }
 
     composable(Routes.AFTER_LOGIN) {

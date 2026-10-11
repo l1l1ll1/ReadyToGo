@@ -290,7 +290,8 @@
     <string name="plan_lodging_far">멀어요</string>
     <string name="plan_lodging_mostly_far">일정 대부분이 숙소에서 멉니다 (%1$d일 중 %2$d일)</string>
     <string name="plan_lodging_far_days">숙소에서 먼 날: %1$s</string>
-    <string name="plan_lodging_better_label">어느 날에도 덜 먼 곳</string>
+    <string name="plan_lodging_far_from_stay">숙소에서 멉니다</string>
+    <string name="plan_lodging_better_label">대부분의 날에 가까운 곳</string>
     <string name="plan_lodging_worst_day">가장 먼 날 %1$skm</string>
 
     <!-- 일정표 -->

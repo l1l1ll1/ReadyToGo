@@ -393,6 +393,11 @@ private fun PlanTabContent(
             plan.lodging?.let { pair ->
                 item { SectionTitle(stringResource(R.string.plan_section_lodging)) }
                 item { LodgingCard(pair) }
+
+                // 숙소가 일정에서 먼 경우에만 한 줄 나온다. 자세한 날짜별 거리는 숙소 탭에 있다.
+                distanceCheck?.let { check ->
+                    item { LodgingDistanceLine(check) }
+                }
             }
 
             item { SectionTitle(stringResource(R.string.plan_section_highlights)) }
@@ -435,6 +440,7 @@ private fun PlanTabContent(
             edits = edits,
             pickedPlaces = pickedPlaces,
             favoriteIds = favoriteIds,
+            farDayNumbers = distanceCheck?.farDays?.map { it.dayNumber }?.toSet().orEmpty(),
             onSelectDay = onSelectMapDay,
             onOpenMapForDay = onOpenMapForDay,
             onItemClick = onTimelineItemClick,
@@ -802,10 +808,43 @@ private fun LodgingCard(pair: RecommendationPair<Lodging>) {
 }
 
 /**
- * 숙소가 날짜별 일정에서 얼마나 떨어져 있는지.
+ * 숙소 거리 한 줄 요약. 요약 탭과 숙소 탭이 같은 문장을 쓴다.
  *
  * **전부 가까우면 아무것도 띄우지 않는다.** 멀쩡한데 뜨는 경고는 다음부터 읽히지 않는다.
- * 그래서 먼 날이 없으면 날짜 목록만 담담하게 보여준다.
+ */
+@Composable
+private fun LodgingDistanceLine(check: LodgingDistanceCheck) {
+    val palette = LocalPalette.current
+
+    when {
+        check.mostlyFar -> Text(
+            text = stringResource(
+                R.string.plan_lodging_mostly_far,
+                check.days.size,
+                check.farDays.size,
+            ),
+            style = MaterialTheme.typography.bodyMedium,
+            color = palette.Danger,
+        )
+
+        check.farDays.isNotEmpty() -> Text(
+            // 날짜 이름을 먼저 만들어 둔다. joinToString 안에서는 리소스를 못 읽는다.
+            text = stringResource(
+                R.string.plan_lodging_far_days,
+                check.farDays
+                    .map { stringResource(R.string.plan_day_tab, it.dayNumber) }
+                    .joinToString(),
+            ),
+            style = MaterialTheme.typography.bodyMedium,
+            color = palette.TextSecondary,
+        )
+    }
+}
+
+/**
+ * 숙소가 날짜별 일정에서 얼마나 떨어져 있는지.
+ *
+ * 먼 날이 없으면 날짜 목록만 담담하게 보여준다.
  */
 @Composable
 private fun LodgingDistanceCard(check: LodgingDistanceCheck) {
@@ -816,29 +855,7 @@ private fun LodgingDistanceCard(check: LodgingDistanceCheck) {
             modifier = Modifier.padding(Tokens.Space.lg),
             verticalArrangement = Arrangement.spacedBy(Tokens.Space.md),
         ) {
-            when {
-                check.mostlyFar -> Text(
-                    text = stringResource(
-                        R.string.plan_lodging_mostly_far,
-                        check.days.size,
-                        check.farDays.size,
-                    ),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = palette.Danger,
-                )
-
-                check.farDays.isNotEmpty() -> Text(
-                    // 날짜 이름을 먼저 만들어 둔다. joinToString 안에서는 리소스를 못 읽는다.
-                    text = stringResource(
-                        R.string.plan_lodging_far_days,
-                        check.farDays
-                            .map { stringResource(R.string.plan_day_tab, it.dayNumber) }
-                            .joinToString(),
-                    ),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = palette.TextSecondary,
-                )
-            }
+            LodgingDistanceLine(check)
 
             check.days.forEach { day ->
                 Row(

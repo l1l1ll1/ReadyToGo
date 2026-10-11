@@ -102,19 +102,21 @@ fun TripPlan.checkLodgingDistance(
     // 지금 숙소가 또 1등이라 아무것도 달라지지 않는다. 묻는 것은 "어느 날도 많이
     // 멀지 않은 곳이 있나"이므로 날짜별 거리의 최댓값이 가장 작은 후보를 고른다.
     val current = pair.qualityFirst.item
-    val worstNow = days.maxOf { it.travel.distanceKm }
     val better = (listOfNotNull(pair.withinBudget) + pair.alternatives)
         .map { it.item }
         .filter { it.id != current.id }
-        .map { candidate ->
-            BetterLodging(
-                lodging = candidate,
-                worstDistanceKm = centers.values.maxOf { distanceKm(candidate.location, it) },
-            )
+        .mapNotNull { candidate ->
+            val distances = centers.values.map { distanceKm(candidate.location, it) }
+
+            // **과반의 날에서 가까운 후보만 제안한다.** 지금보다 조금이라도 가까우면
+            // 제안하게 했더니 4.8km에 4.6km를 내놓았다 — 바꿔도 똑같이 멀어서
+            // "더 나은 곳"이라 부를 수 없다. 그런 후보가 없으면 경고만 띄운다.
+            val nearDays = distances.count { it <= LODGING_FAR_KM }
+            if (nearDays * 2 <= distances.size) return@mapNotNull null
+
+            BetterLodging(lodging = candidate, worstDistanceKm = distances.max())
         }
         .minByOrNull { it.worstDistanceKm }
-        // 지금 숙소보다 나을 때만 보여준다. 더 먼 곳을 "더 나은 곳"이라 부를 수는 없다.
-        ?.takeIf { it.worstDistanceKm < worstNow }
 
     return check.copy(better = better)
 }

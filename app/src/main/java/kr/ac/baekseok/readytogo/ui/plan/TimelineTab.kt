@@ -99,6 +99,8 @@ fun TimelineTab(
     edits: TimelineEdits,
     pickedPlaces: PickedPlaces,
     favoriteIds: Set<String>,
+    /** 숙소에서 먼 날의 번호. 그 날 머리글에만 표시가 붙는다. */
+    farDayNumbers: Set<Int>,
     onSelectDay: (Int) -> Unit,
     onOpenMapForDay: (Int) -> Unit,
     onItemClick: (Int, TimelineItem) -> Unit,
@@ -205,6 +207,7 @@ fun TimelineTab(
                         totalMinutes = entries.sumOf { entry ->
                             entry.item.stayMinutes + (entry.travelFromPrevious?.minutes ?: 0)
                         },
+                        farFromLodging = day.dayNumber in farDayNumbers,
                         onOpenMap = { onOpenMapForDay(day.dayNumber) },
                     )
                 }
@@ -351,7 +354,13 @@ private fun TrashTarget(
 private const val HEADER_ITEM_COUNT = 1
 
 @Composable
-private fun DayHeader(day: DayPlan, totalMinutes: Int, onOpenMap: () -> Unit) {
+private fun DayHeader(
+    day: DayPlan,
+    totalMinutes: Int,
+    /** 이 날이 숙소에서 먼지. 먼 날에만 표시가 붙는다. */
+    farFromLodging: Boolean,
+    onOpenMap: () -> Unit,
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -373,6 +382,14 @@ private fun DayHeader(day: DayPlan, totalMinutes: Int, onOpenMap: () -> Unit) {
                     text = stringResource(R.string.plan_day_total, durationText(totalMinutes)),
                     style = MaterialTheme.typography.bodyMedium,
                     color = LocalPalette.current.TextSecondary,
+                )
+            }
+            // 이 날만 숙소에서 멀다는 것은 날짜를 열어봐야 안다. 머리글에 적어 둔다.
+            if (farFromLodging) {
+                Text(
+                    text = stringResource(R.string.plan_lodging_far_from_stay),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = LocalPalette.current.Danger,
                 )
             }
         }

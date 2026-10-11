@@ -270,7 +270,8 @@
     <string name="plan_lodging_far">Far</string>
     <string name="plan_lodging_mostly_far">Most days are far from your stay (%2$d of %1$d)</string>
     <string name="plan_lodging_far_days">Days far from your stay: %1$s</string>
-    <string name="plan_lodging_better_label">Closer on every day</string>
+    <string name="plan_lodging_far_from_stay">Far from your stay</string>
+    <string name="plan_lodging_better_label">Close on most days</string>
     <string name="plan_lodging_worst_day">Farthest day %1$s km</string>
 
     <!-- 일정표 -->

@@ -490,7 +490,7 @@ private fun PurposeShareBar(plan: TripPlan) {
     val shares = listOf(
         Triple("숙박", profile.lodgingShare, palette.Point),
         Triple("식비", profile.foodShare, palette.Accent),
-        Triple("기타", profile.otherShare, palette.Secondary),
+        Triple("기타", profile.otherShare, palette.SecondaryBold),
     )
 
     Text(

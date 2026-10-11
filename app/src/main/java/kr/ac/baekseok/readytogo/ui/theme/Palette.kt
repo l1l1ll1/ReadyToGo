@@ -27,6 +27,15 @@ data class AppPalette(
     val Secondary: Color,
 
     /**
+     * 연노랑을 **작은 면으로 칠할 때** 쓰는 진한 쪽.
+     *
+     * [Secondary]는 칩이나 카드처럼 넓은 바탕에 맞춰 연하게 잡혀 있다. 배분 막대의
+     * 한 칸이나 범례 점처럼 면이 작아지면 회색 카드 위에서 거의 안 보인다.
+     * 글자를 얹는 자리가 아니므로 대비 대신 **눈에 띄는지**만 보고 고른 값이다.
+     */
+    val SecondaryBold: Color,
+
+    /**
      * 코랄 오렌지. FAB, 주요 동작 버튼, D-day 배지, 예산 초과 표시.
      *
      * [Point]와 역할이 다르다 — 터쿼이즈는 "지금 고른 것/갈 수 있는 곳"이고,
@@ -65,6 +74,7 @@ val LightPalette = AppPalette(
     PointLight = Color(0xFFD6F3F5),
 
     Secondary = Color(0xFFFFF0B3),
+    SecondaryBold = Color(0xFFFFD75E),
     Accent = Color(0xFFFF805E),
 
     Background = Color(0xFFFFFFFF),
@@ -111,6 +121,8 @@ val HighContrastPalette = LightPalette.copy(
 
     // 연노랑은 바탕으로만 쓰이므로 글자(네이비)와의 대비를 올리는 쪽으로 진하게 간다.
     Secondary = Color(0xFFFFE38A),
+    // 고대비에서는 Secondary가 이미 진해서 더 올리지 않는다. 같은 값을 쓴다.
+    SecondaryBold = Color(0xFFFFE38A),
     Accent = Color(0xFFC9472A),
 
     SurfaceMuted = Color(0xFFEAEEF2),

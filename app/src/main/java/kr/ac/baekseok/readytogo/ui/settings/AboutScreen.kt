@@ -2,6 +2,7 @@ package kr.ac.baekseok.readytogo.ui.settings
 
 import android.content.Intent
 import android.net.Uri
+import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -98,11 +99,11 @@ fun AboutScreen(onOpenPrivacy: () -> Unit) {
  *
  * @param license 라이선스 이름. 전문은 [url]에서 본다.
  */
-private data class Library(val name: String, val license: String, val url: String)
+private data class Library(val name: String, @StringRes val licenseRes: Int, val url: String)
 
-private const val APACHE_2 = "Apache License 2.0"
+private val APACHE_2 = R.string.about_license_apache
 private const val APACHE_2_URL = "https://www.apache.org/licenses/LICENSE-2.0"
-private const val GOOGLE_TERMS = "Google API 서비스 약관"
+
 private const val GOOGLE_TERMS_URL = "https://developers.google.com/terms"
 
 private val LIBRARIES = listOf(
@@ -114,8 +115,8 @@ private val LIBRARIES = listOf(
     Library("maps-compose", APACHE_2, APACHE_2_URL),
     Library("Firebase Android SDK (Auth · Firestore)", APACHE_2, APACHE_2_URL),
     Library("Google Identity (googleid)", APACHE_2, APACHE_2_URL),
-    Library("Google Maps SDK for Android", GOOGLE_TERMS, GOOGLE_TERMS_URL),
-    Library("Google Places SDK for Android", GOOGLE_TERMS, GOOGLE_TERMS_URL),
+    Library("Google Maps SDK for Android", R.string.about_google_terms, GOOGLE_TERMS_URL),
+    Library("Google Places SDK for Android", R.string.about_google_terms, GOOGLE_TERMS_URL),
 )
 
 /** 라이브러리 한 줄. 라이선스 이름을 누르면 전문을 브라우저로 연다. */
@@ -137,7 +138,7 @@ private fun LicenseRow(library: Library) {
     ) {
         Text(text = library.name, style = MaterialTheme.typography.bodyLarge)
         Text(
-            text = library.license,
+            text = stringResource(library.licenseRes),
             style = MaterialTheme.typography.bodyMedium,
             color = LocalPalette.current.Point,
         )

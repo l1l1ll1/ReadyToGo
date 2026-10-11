@@ -1,7 +1,9 @@
 package kr.ac.baekseok.readytogo.ui.profile
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.data.AppContainer
 import kr.ac.baekseok.readytogo.data.model.AuthState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,7 +34,9 @@ data class NicknameUiState(
  * 처음 열릴 때 **이미 정한 닉네임이 있으면 그것을, 없으면 Google 계정 이름을** 채운다.
  * 빈 칸으로 두면 첫 로그인에서 아무거나 지어내야 해서 거기서 멈추는 사람이 생긴다.
  */
-class NicknameViewModel : ViewModel() {
+class NicknameViewModel(
+    application: Application,
+) : AndroidViewModel(application) {
 
     private val _uiState = MutableStateFlow(NicknameUiState())
     val uiState: StateFlow<NicknameUiState> = _uiState.asStateFlow()
@@ -66,7 +70,10 @@ class NicknameViewModel : ViewModel() {
                 .onSuccess { _uiState.update { s -> s.copy(saving = false, saved = true) } }
                 .onFailure { error ->
                     _uiState.update { s ->
-                        s.copy(saving = false, error = error.message ?: "저장하지 못했습니다.")
+                        s.copy(
+                            saving = false,
+                            error = error.message ?: string(R.string.common_save_failed),
+                        )
                     }
                 }
         }
@@ -76,4 +83,7 @@ class NicknameViewModel : ViewModel() {
         /** 홈 인사말 "(닉네임)님, 어디로 갈까요?"가 한 줄에 들어가는 길이. */
         const val MAX_LENGTH = 12
     }
+
+    /** 화면에 띄울 문구. ViewModel에는 stringResource가 없어 Application Context로 읽는다. */
+    private fun string(resId: Int): String = getApplication<Application>().getString(resId)
 }

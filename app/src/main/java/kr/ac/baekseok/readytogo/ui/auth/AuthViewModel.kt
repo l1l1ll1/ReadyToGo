@@ -2,8 +2,10 @@ package kr.ac.baekseok.readytogo.ui.auth
 
 import android.content.Context
 import android.util.Log
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.data.AppContainer
 import kr.ac.baekseok.readytogo.data.model.AuthState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +22,9 @@ import kotlinx.coroutines.launch
  * 생성자에 인자를 받지 않는 이유: 인자가 있으면 기본 ViewModel 팩토리가 만들지 못해
  * "Cannot create an instance" 예외가 난다. 이 프로젝트에서 이미 한 번 겪은 문제다.
  */
-class AuthViewModel : ViewModel() {
+class AuthViewModel(
+    application: Application,
+) : AndroidViewModel(application) {
 
     private val repository = AppContainer.auth
 
@@ -52,7 +56,7 @@ class AuthViewModel : ViewModel() {
 
         viewModelScope.launch {
             repository.signInWithGoogle(context)
-                .onFailure { _error.value = it.message ?: "로그인에 실패했습니다." }
+                .onFailure { _error.value = it.message ?: string(R.string.auth_sign_in_failed) }
             _signingIn.value = false
         }
     }
@@ -86,14 +90,14 @@ class AuthViewModel : ViewModel() {
             dataDeleted
                 .onFailure {
                     Log.w(TAG, "데이터 삭제 실패 — 계정은 그대로 둔다", it)
-                    _error.value = "저장된 데이터를 지우지 못해 탈퇴를 멈췄습니다. 다시 시도해 주세요."
+                    _error.value = string(R.string.auth_delete_data_failed)
                     return@launch
                 }
             Log.d(TAG, "데이터 삭제 완료: users/$uid")
 
             repository.deleteAccount()
                 .onSuccess { Log.d(TAG, "계정 삭제 완료") }
-                .onFailure { _error.value = it.message ?: "탈퇴에 실패했습니다." }
+                .onFailure { _error.value = it.message ?: string(R.string.auth_delete_failed) }
         }
     }
 
@@ -104,4 +108,7 @@ class AuthViewModel : ViewModel() {
     private companion object {
         const val TAG = "Auth"
     }
+
+    /** 화면에 띄울 문구. ViewModel에는 stringResource가 없어 Application Context로 읽는다. */
+    private fun string(resId: Int): String = getApplication<Application>().getString(resId)
 }

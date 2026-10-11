@@ -30,6 +30,7 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
+import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.data.model.DayPlan
 import kr.ac.baekseok.readytogo.data.model.Lodging
 import kr.ac.baekseok.readytogo.data.model.MealTime
@@ -65,8 +66,10 @@ fun DayMapScreen(
         modifier = modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text("${day.dayNumber}일차 동선") },
-                navigationIcon = { TextButton(onClick = onBack) { Text("뒤로") } },
+                title = { Text(stringResource(R.string.map_title, day.dayNumber)) },
+                navigationIcon = {
+                    TextButton(onClick = onBack) { Text(stringResource(R.string.common_back)) }
+                },
             )
         },
     ) { innerPadding ->
@@ -91,10 +94,9 @@ fun DayMapContent(
     lodging: Lodging?,
     modifier: Modifier = Modifier,
 ) {
-    // 끼니 이름은 지금 언어로 미리 풀어서 넘긴다 — remember 블록 안에서는 리소스를 읽을 수 없다.
-    val mealLabels = MealTime.entries.associateWith { stringResource(it.labelRes) }
-    val spots = remember(day, lodging, mealLabels) {
-        day.toMapSpots(lodging, mealLabels).spreadOverlapping()
+    val texts = rememberMapSpotTexts()
+    val spots = remember(day, lodging, texts) {
+        day.toMapSpots(lodging, texts).spreadOverlapping()
     }
 
     Box(modifier = modifier.fillMaxSize()) {
@@ -109,7 +111,10 @@ fun DayMapContent(
 @Composable
 private fun EmptyMapNotice() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("이 날은 지도에 표시할 장소가 없습니다", style = MaterialTheme.typography.bodyMedium)
+        Text(
+            text = stringResource(R.string.map_empty),
+            style = MaterialTheme.typography.bodyMedium,
+        )
     }
 }
 
@@ -164,10 +169,14 @@ private fun MapLegend(modifier: Modifier = Modifier) {
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
-            Text("마커 색", style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
-            LegendRow(MARKER_RED, "관광지 (방문 순서)")
-            LegendRow(MARKER_AZURE, "숙소")
-            LegendRow(MARKER_ORANGE, "식당")
+            Text(
+                text = stringResource(R.string.map_legend_title),
+                style = MaterialTheme.typography.labelSmall,
+                fontWeight = FontWeight.Bold,
+            )
+            LegendRow(MARKER_RED, stringResource(R.string.map_legend_attraction))
+            LegendRow(MARKER_AZURE, stringResource(R.string.map_legend_lodging))
+            LegendRow(MARKER_ORANGE, stringResource(R.string.map_legend_restaurant))
         }
     }
 }
@@ -305,15 +314,13 @@ private fun AppLatLng.toGms() = GmsLatLng(latitude, longitude)
  * 식당은 "추천"(첫 번째 선택지)만 찍는다. 두 선택지를 다 찍으면 한 끼에 마커가 둘씩,
  * 하루에 여섯 개가 되어 관광지 동선이 묻힌다.
  */
-private fun DayPlan.toMapSpots(
-    lodging: Lodging?,
-    mealLabels: Map<MealTime, String>,
-): List<MapSpot> {
+private fun DayPlan.toMapSpots(lodging: Lodging?, texts: MapSpotTexts): List<MapSpot> {
     val attractionSpots = attractions.mapIndexed { index, attraction ->
         MapSpot(
             position = attraction.location,
             title = "${index + 1}. ${attraction.name}",
-            snippet = "${attraction.stayMinutes}분 · ★${attraction.rating}",
+            snippet = texts.attractionSnippet
+                .format(attraction.stayMinutes, attraction.rating.toString()),
             kind = SpotKind.ATTRACTION,
         )
     }
@@ -322,8 +329,9 @@ private fun DayPlan.toMapSpots(
         val restaurant: Restaurant = meals[meal]?.qualityFirst?.item ?: return@mapNotNull null
         MapSpot(
             position = restaurant.location,
-            title = "${mealLabels[meal]} · ${restaurant.name}",
-            snippet = "${restaurant.category} · ${"%,d".format(restaurant.priceWon)}원",
+            title = "${texts.mealLabels[meal]} · ${restaurant.name}",
+            snippet = texts.restaurantSnippet
+                .format(restaurant.category, texts.money(restaurant.priceWon)),
             kind = SpotKind.RESTAURANT,
         )
     }
@@ -331,11 +339,56 @@ private fun DayPlan.toMapSpots(
     val lodgingSpot = lodging?.let {
         MapSpot(
             position = it.location,
-            title = "숙소 · ${it.name}",
-            snippet = "${"%,d".format(it.priceWon)}원 / 1박",
+            title = texts.lodgingTitle.format(it.name),
+            snippet = texts.lodgingSnippet.format(texts.money(it.priceWon)),
             kind = SpotKind.LODGING,
         )
     }
 
     return attractionSpots + mealSpots + listOfNotNull(lodgingSpot)
+}
+
+/**
+ * 마커 말풍선에 들어갈 글자.
+ *
+ * **미리 풀어서 들고 다니는 이유**: 지점 목록은 `remember` 안에서 만드는데, 그 블록은
+ * Composable이 아니라 `stringResource`를 부를 수 없다. 패턴만 먼저 꺼내 두고
+ * 숫자를 끼우는 일은 목록을 만들 때 한다.
+ */
+private data class MapSpotTexts(
+    val mealLabels: Map<MealTime, String>,
+    val attractionSnippet: String,
+    val restaurantSnippet: String,
+    val lodgingTitle: String,
+    val lodgingSnippet: String,
+    /** 금액 표기도 언어마다 다르다("12,000원" / "KRW 12,000"). */
+    val money: (Long) -> String,
+)
+
+@Composable
+private fun rememberMapSpotTexts(): MapSpotTexts {
+    val mealLabels = MealTime.entries.associateWith { stringResource(it.labelRes) }
+    val attractionSnippet = stringResource(R.string.map_attraction_snippet)
+    val restaurantSnippet = stringResource(R.string.map_restaurant_snippet)
+    val lodgingTitle = stringResource(R.string.map_lodging_title)
+    val lodgingSnippet = stringResource(R.string.map_lodging_snippet)
+    val moneyPattern = stringResource(R.string.fmt_money)
+
+    return remember(
+        mealLabels,
+        attractionSnippet,
+        restaurantSnippet,
+        lodgingTitle,
+        lodgingSnippet,
+        moneyPattern,
+    ) {
+        MapSpotTexts(
+            mealLabels = mealLabels,
+            attractionSnippet = attractionSnippet,
+            restaurantSnippet = restaurantSnippet,
+            lodgingTitle = lodgingTitle,
+            lodgingSnippet = lodgingSnippet,
+            money = { moneyPattern.format("%,d".format(it)) },
+        )
+    }
 }

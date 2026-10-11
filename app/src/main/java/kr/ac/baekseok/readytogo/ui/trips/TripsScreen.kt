@@ -21,7 +21,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.data.model.SavedTrip
 import kr.ac.baekseok.readytogo.ui.component.EmptyState
 import kr.ac.baekseok.readytogo.ui.component.PhotoCard
@@ -53,16 +55,16 @@ fun TripsScreen(
                 // 같은 문구를 쓰면 둘러보기 중인 사용자가 저장했는데 사라졌다고 생각한다.
                 if (state.canSave) {
                     EmptyState(
-                        title = "저장된 일정이 없습니다",
-                        description = "일정을 만들고 저장하면 여기에 모입니다.",
-                        actionLabel = "새 여행 만들기",
+                        title = stringResource(R.string.trips_empty_title),
+                        description = stringResource(R.string.trips_empty_body),
+                        actionLabel = stringResource(R.string.home_create_trip),
                         onAction = onCreateTrip,
                     )
                 } else {
                     EmptyState(
-                        title = "둘러보기 중입니다",
-                        description = "일정은 지금도 만들 수 있지만, 저장하려면 로그인이 필요합니다.",
-                        actionLabel = "새 여행 만들기",
+                        title = stringResource(R.string.trips_guest_title),
+                        description = stringResource(R.string.trips_guest_body),
+                        actionLabel = stringResource(R.string.home_create_trip),
                         onAction = onCreateTrip,
                     )
                 }
@@ -80,14 +82,14 @@ fun TripsScreen(
                 // 길게 누르기는 눌러보지 않으면 알 수 없다. 한 줄로 알려준다.
                 item {
                     Text(
-                        text = "카드를 길게 누르면 삭제할 수 있습니다.",
+                        text = stringResource(R.string.trips_long_press_hint),
                         style = MaterialTheme.typography.labelMedium,
                         color = LocalPalette.current.TextSecondary,
                     )
                 }
 
                 if (state.upcoming.isNotEmpty()) {
-                    item { SectionHeader(title = "다가오는 여행") }
+                    item { SectionHeader(title = stringResource(R.string.home_upcoming)) }
                     items(state.upcoming, key = { it.id }) { trip ->
                         TripCard(
                             trip = trip,
@@ -101,7 +103,7 @@ fun TripsScreen(
                 if (state.past.isNotEmpty()) {
                     item {
                         SectionHeader(
-                            title = "지난 여행",
+                            title = stringResource(R.string.trips_past),
                             modifier = Modifier.padding(top = Tokens.Space.lg),
                         )
                     }
@@ -122,18 +124,23 @@ fun TripsScreen(
     pendingDelete?.let { trip ->
         AlertDialog(
             onDismissRequest = { pendingDelete = null },
-            title = { Text("일정을 삭제할까요?") },
-            text = { Text("\"${trip.title}\"을 삭제합니다. 되돌릴 수 없습니다.") },
+            title = { Text(stringResource(R.string.trips_delete_title)) },
+            text = { Text(stringResource(R.string.trips_delete_body, trip.title)) },
             confirmButton = {
                 TextButton(onClick = {
                     viewModel.delete(trip.id)
                     pendingDelete = null
                 }) {
-                    Text("삭제", color = LocalPalette.current.Danger)
+                    Text(
+                        text = stringResource(R.string.common_delete),
+                        color = LocalPalette.current.Danger,
+                    )
                 }
             },
             dismissButton = {
-                TextButton(onClick = { pendingDelete = null }) { Text("취소") }
+                TextButton(onClick = { pendingDelete = null }) {
+                    Text(stringResource(R.string.common_cancel))
+                }
             },
         )
     }
@@ -157,9 +164,13 @@ private fun TripCard(
     PhotoCard(
         key = trip.destinationName,
         title = trip.title,
-        subtitle = "${trip.destinationName} · " +
-            "${dateShort(trip.departureDate)} – ${dateShort(trip.returnDate)} · " +
-            "${trip.dayCount}일",
+        subtitle = stringResource(
+            R.string.trips_subtitle,
+            trip.destinationName,
+            dateShort(trip.departureDate),
+            dateShort(trip.returnDate),
+            trip.dayCount,
+        ),
         onClick = onClick,
         onLongClick = onLongClick,
     ) {
@@ -172,7 +183,11 @@ private fun TripCard(
                     .padding(Tokens.Space.md),
             ) {
                 Text(
-                    text = if (daysLeft == 0L) "출발일" else "D-$daysLeft",
+                    text = if (daysLeft == 0L) {
+                        stringResource(R.string.home_departure_day)
+                    } else {
+                        stringResource(R.string.home_dday, daysLeft.toInt())
+                    },
                     style = MaterialTheme.typography.labelLarge,
                     color = LocalPalette.current.Point,
                     modifier = Modifier.padding(

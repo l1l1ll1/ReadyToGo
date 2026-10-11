@@ -358,4 +358,46 @@
     <!-- 날짜 시트 -->
     <string name="date_title">언제 가세요?</string>
     <string name="date_hint">출발일과 귀국일을 차례로 누르세요</string>
+
+    <!-- ===== 공통 ===== -->
+    <string name="common_delete">삭제</string>
+    <string name="common_save_failed">저장하지 못했습니다.</string>
+    <!-- 예: "10.20 – 10.24 · 5일" — 홈과 여행 탭이 같이 쓴다. -->
+    <string name="fmt_date_range_days">%1$s – %2$s · %3$d일</string>
+
+    <!-- ===== 여행 탭 ===== -->
+    <string name="trips_empty_title">저장된 일정이 없습니다</string>
+    <string name="trips_empty_body">일정을 만들고 저장하면 여기에 모입니다.</string>
+    <string name="trips_guest_title">둘러보기 중입니다</string>
+    <string name="trips_guest_body">일정은 지금도 만들 수 있지만, 저장하려면 로그인이 필요합니다.</string>
+    <string name="trips_long_press_hint">카드를 길게 누르면 삭제할 수 있습니다.</string>
+    <string name="trips_past">지난 여행</string>
+    <string name="trips_delete_title">일정을 삭제할까요?</string>
+    <string name="trips_delete_body">\"%1$s\"을 삭제합니다. 되돌릴 수 없습니다.</string>
+    <!-- 예: "도쿄 · 10.20 – 10.24 · 5일" -->
+    <string name="trips_subtitle">%1$s · %2$s – %3$s · %4$d일</string>
+    <!-- 예: "도쿄 · 5일 · 10.20" -->
+    <string name="home_recent_subtitle">%1$s · %2$d일 · %3$s</string>
+
+    <!-- ===== 지도 ===== -->
+    <string name="map_title">%1$d일차 동선</string>
+    <string name="map_empty">이 날은 지도에 표시할 장소가 없습니다</string>
+    <string name="map_legend_title">마커 색</string>
+    <string name="map_legend_attraction">관광지 (방문 순서)</string>
+    <string name="map_legend_lodging">숙소</string>
+    <string name="map_legend_restaurant">식당</string>
+    <!-- 마커를 눌렀을 때 뜨는 말풍선 -->
+    <string name="map_attraction_snippet">%1$d분 · ★%2$s</string>
+    <string name="map_restaurant_snippet">%1$s · %2$s</string>
+    <string name="map_lodging_title">숙소 · %1$s</string>
+    <string name="map_lodging_snippet">%1$s / 1박</string>
+
+    <!-- ===== 로그인·탈퇴 ===== -->
+    <string name="auth_sign_in_failed">로그인에 실패했습니다.</string>
+    <string name="auth_delete_data_failed">저장된 데이터를 지우지 못해 탈퇴를 멈췄습니다. 다시 시도해 주세요.</string>
+    <string name="auth_delete_failed">탈퇴에 실패했습니다.</string>
+
+    <!-- ===== 정보 ===== -->
+    <string name="about_license_apache">Apache License 2.0</string>
+    <string name="about_google_terms">Google API 서비스 약관</string>
 </resources>

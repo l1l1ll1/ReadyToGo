@@ -212,8 +212,12 @@ private fun UpcomingTripCard(trip: SavedTrip, today: LocalDate, onClick: () -> U
     PhotoCard(
         key = trip.destinationName,
         title = trip.title,
-        subtitle = "${dateShort(trip.departureDate)} – " +
-            "${dateShort(trip.returnDate)} · ${trip.dayCount}일",
+        subtitle = stringResource(
+            R.string.fmt_date_range_days,
+            dateShort(trip.departureDate),
+            dateShort(trip.returnDate),
+            trip.dayCount,
+        ),
         // 목적지가 어디든 이 카드만은 브랜드 색으로 둔다. 홈에서 가장 먼저 보이는 면이다.
         colors = LocalPalette.current.HeroGradient,
         // 터쿼이즈 자체가 충분히 어두워서 덮개 없이도 흰 글자가 읽힌다.
@@ -287,8 +291,12 @@ private fun RecentTripRow(trip: SavedTrip, onClick: () -> Unit) {
                 overflow = TextOverflow.Ellipsis,
             )
             Text(
-                text = "${trip.destinationName} · ${trip.dayCount}일 · " +
+                text = stringResource(
+                    R.string.home_recent_subtitle,
+                    trip.destinationName,
+                    trip.dayCount,
                     dateShort(trip.departureDate),
+                ),
                 style = MaterialTheme.typography.bodyMedium,
                 color = LocalPalette.current.TextSecondary,
                 maxLines = 1,

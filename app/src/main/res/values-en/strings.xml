@@ -338,4 +338,42 @@
     <!-- 날짜 시트 -->
     <string name="date_title">When are you going?</string>
     <string name="date_hint">Tap your departure date, then your return date</string>
+
+    <!-- ===== 공통 ===== -->
+    <string name="common_delete">Delete</string>
+    <string name="common_save_failed">We couldn\'t save it.</string>
+    <string name="fmt_date_range_days">%1$s – %2$s · %3$d days</string>
+
+    <!-- ===== 여행 탭 ===== -->
+    <string name="trips_empty_title">No saved trips</string>
+    <string name="trips_empty_body">Trips you build and save show up here.</string>
+    <string name="trips_guest_title">You\'re just browsing</string>
+    <string name="trips_guest_body">You can still build plans, but saving one needs an account.</string>
+    <string name="trips_long_press_hint">Long-press a card to delete it.</string>
+    <string name="trips_past">Past trips</string>
+    <string name="trips_delete_title">Delete this trip?</string>
+    <string name="trips_delete_body">\"%1$s\" will be deleted. This can\'t be undone.</string>
+    <string name="trips_subtitle">%1$s · %2$s – %3$s · %4$d days</string>
+    <string name="home_recent_subtitle">%1$s · %2$d days · %3$s</string>
+
+    <!-- ===== 지도 ===== -->
+    <string name="map_title">Day %1$d route</string>
+    <string name="map_empty">No places to show on the map for this day</string>
+    <string name="map_legend_title">Marker colors</string>
+    <string name="map_legend_attraction">Attractions (in order)</string>
+    <string name="map_legend_lodging">Stay</string>
+    <string name="map_legend_restaurant">Restaurant</string>
+    <string name="map_attraction_snippet">%1$d min · ★%2$s</string>
+    <string name="map_restaurant_snippet">%1$s · %2$s</string>
+    <string name="map_lodging_title">Stay · %1$s</string>
+    <string name="map_lodging_snippet">%1$s per night</string>
+
+    <!-- ===== 로그인·탈퇴 ===== -->
+    <string name="auth_sign_in_failed">Sign-in failed.</string>
+    <string name="auth_delete_data_failed">We couldn\'t delete your saved data, so your account was kept. Please try again.</string>
+    <string name="auth_delete_failed">We couldn\'t delete your account.</string>
+
+    <!-- ===== 정보 ===== -->
+    <string name="about_license_apache">Apache License 2.0</string>
+    <string name="about_google_terms">Google APIs Terms of Service</string>
 </resources>

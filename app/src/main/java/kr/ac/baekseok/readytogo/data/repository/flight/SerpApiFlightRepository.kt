@@ -33,6 +33,14 @@ class SerpApiFlightRepository(
     context: Context,
     private val cache: FlightSearchCache = FlightSearchCache(context),
     private val fallback: FlightRepository = MockFlightRepository(),
+    /**
+     * 결과를 받을 언어. 항공사 이름이 이 언어로 돌아온다("에어부산" vs "Air Busan").
+     *
+     * 설정값을 직접 읽지 않고 함수로 받는 이유: 사용자가 언어를 바꾸면 다음 검색부터
+     * 바로 따라가야 하는데, 생성 시점의 값을 들고 있으면 앱을 다시 켤 때까지 안 바뀐다.
+     */
+    private val language: () -> String =
+        { context.resources.configuration.locales[0].language },
 ) : FlightRepository {
 
     override suspend fun search(condition: TripCondition): Result<List<Flight>> {
@@ -57,6 +65,7 @@ class SerpApiFlightRepository(
             departureDate.toString(),
             returnDate.toString(),
             condition.adults,
+            language(),
         )
         cache.read(key)?.let {
             Log.d(TAG, "캐시 사용: $key (호출 0회)")
@@ -96,7 +105,7 @@ class SerpApiFlightRepository(
         returnDate: LocalDate,
         adults: Int,
     ): List<Flight> = withContext(Dispatchers.IO) {
-        val url = buildUrl(origin, destination, departureDate, returnDate, adults)
+        val url = buildUrl(origin, destination, departureDate, returnDate, adults, language())
 
         val body = (URL(url).openConnection() as HttpURLConnection).run {
             connectTimeout = TIMEOUT_MS
@@ -123,6 +132,7 @@ class SerpApiFlightRepository(
         departureDate: LocalDate,
         returnDate: LocalDate,
         adults: Int,
+        language: String,
     ): String {
         val params = mapOf(
             "engine" to "google_flights",
@@ -134,7 +144,7 @@ class SerpApiFlightRepository(
             "adults" to adults.toString(),
             // 원화로 직접 받아 환율 변환 단계를 없앤다.
             "currency" to "KRW",
-            "hl" to "ko",
+            "hl" to language,
             "gl" to "kr",
             "api_key" to BuildConfig.SERPAPI_KEY,
         )

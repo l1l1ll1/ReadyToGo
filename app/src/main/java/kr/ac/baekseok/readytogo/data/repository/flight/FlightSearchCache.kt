@@ -21,10 +21,14 @@ class FlightSearchCache(context: Context) {
     private val preferences =
         context.applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
-    /** 캐시 키. 이 네 가지가 같으면 같은 검색이다. */
     /**
+     * 캐시 키. 이것들이 같으면 같은 검색이다.
+     *
      * 인원이 키에 들어가는 이유: 가격이 **인원 전체의 총액**이라 1명 결과를 4명에게 보여주면
      * 항공료가 4분의 1로 잡히고, 그 값으로 예산을 나누면 전부 틀어진다.
+     *
+     * **언어도 키의 일부다.** SerpApi가 항공사 이름을 그 언어로 돌려주므로, 한국어로
+     * 받아 둔 결과를 영어 화면에 그대로 쓰면 "에어부산"이 남는다.
      */
     fun keyOf(
         origin: String,
@@ -32,7 +36,8 @@ class FlightSearchCache(context: Context) {
         departureDate: String,
         returnDate: String,
         adults: Int,
-    ) = "$origin-$destination-$departureDate-$returnDate-${adults}인"
+        language: String,
+    ) = "$origin-$destination-$departureDate-$returnDate-${adults}인-$language"
 
     /** 유효기간이 지나지 않은 결과만 돌려준다. 없으면 null. */
     fun read(key: String): List<Flight>? {

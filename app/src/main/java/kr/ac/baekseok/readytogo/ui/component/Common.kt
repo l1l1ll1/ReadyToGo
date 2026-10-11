@@ -1,5 +1,6 @@
 package kr.ac.baekseok.readytogo.ui.component
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,6 +23,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -52,6 +54,33 @@ fun SectionHeader(
             }
         }
     }
+}
+
+/**
+ * 작은 이름표 칩. 여행 목적처럼 **분류를 보여줄 뿐 누를 수 없는 값**에 쓴다.
+ *
+ * Material3의 `AssistChip`을 쓰지 않는 이유: 테두리와 36dp 높이가 붙어 있어 버튼처럼
+ * 보인다. 누르면 뭔가 될 것 같은데 아무 일도 안 일어나는 칸이 화면에 생긴다.
+ *
+ * @param container 칩 바탕색. 기본은 포인트 연한 색이다.
+ * @param content 글자색.
+ */
+@Composable
+fun TagChip(
+    text: String,
+    modifier: Modifier = Modifier,
+    container: Color = LocalPalette.current.PointLight,
+    content: Color = LocalPalette.current.PointDark,
+) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.labelMedium,
+        color = content,
+        modifier = modifier
+            .clip(Tokens.Radius.chip)
+            .background(container)
+            .padding(horizontal = Tokens.Space.md, vertical = Tokens.Space.xs),
+    )
 }
 
 /** 화면의 주요 동작 버튼. 포인트 컬러를 쓰는 곳은 화면당 하나만 둔다. */

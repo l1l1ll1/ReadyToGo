@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,7 +18,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import kr.ac.baekseok.readytogo.data.model.TravelPurpose
 import kr.ac.baekseok.readytogo.data.model.TripPlan
+import kr.ac.baekseok.readytogo.ui.component.TagChip
 import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 
@@ -57,12 +60,20 @@ fun SummaryHeader(plan: TripPlan) {
             style = MaterialTheme.typography.bodyMedium,
             color = LocalPalette.current.TextSecondary,
         )
+        // **목적은 글자가 아니라 배지로 둔다.** 한 줄 글자로 적으면 바로 위 날짜·인원 줄과
+        // 같은 무게로 읽혀서, 이 계획을 무엇에 맞춰 짰는지가 묻힌다. 예산 배분과 하루
+        // 관광지 수가 전부 여기서 갈리므로 헤더에서 가장 먼저 눈에 걸려야 한다.
         if (c.purposes.isNotEmpty()) {
-            Text(
-                text = c.purposes.joinToString(" · ") { it.label },
-                style = MaterialTheme.typography.bodyMedium,
-                color = LocalPalette.current.Point,
-            )
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(Tokens.Space.sm),
+                verticalArrangement = Arrangement.spacedBy(Tokens.Space.sm),
+            ) {
+                // 목적 순서는 선언 순서로 고정한다. Set 순회 순서에 맡기면 같은 조합인데
+                // 화면을 다시 열 때마다 배지 차례가 바뀐다.
+                TravelPurpose.entries.filter { it in c.purposes }.forEach { purpose ->
+                    TagChip(text = purpose.label)
+                }
+            }
         }
 
         val total = b.totalWon

@@ -30,6 +30,8 @@ import kr.ac.baekseok.readytogo.ui.component.PhotoCard
 import kr.ac.baekseok.readytogo.ui.component.SectionHeader
 import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.format.dateShort
+import kr.ac.baekseok.readytogo.ui.format.savedTripDestination
+import kr.ac.baekseok.readytogo.ui.format.savedTripTitle
 import kr.ac.baekseok.readytogo.ui.format.daysText
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 import java.time.LocalDate
@@ -126,7 +128,7 @@ fun TripsScreen(
         AlertDialog(
             onDismissRequest = { pendingDelete = null },
             title = { Text(stringResource(R.string.trips_delete_title)) },
-            text = { Text(stringResource(R.string.trips_delete_body, trip.title)) },
+            text = { Text(stringResource(R.string.trips_delete_body, savedTripTitle(trip))) },
             confirmButton = {
                 TextButton(onClick = {
                     viewModel.delete(trip.id)
@@ -164,10 +166,10 @@ private fun TripCard(
 
     PhotoCard(
         key = trip.destinationName,
-        title = trip.title,
+        title = savedTripTitle(trip),
         subtitle = stringResource(
             R.string.trips_subtitle,
-            trip.destinationName,
+            savedTripDestination(trip),
             dateShort(trip.departureDate),
             dateShort(trip.returnDate),
             daysText(trip.dayCount),

@@ -5,6 +5,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import kr.ac.baekseok.readytogo.R
+import kr.ac.baekseok.readytogo.data.model.SavedTrip
 import kr.ac.baekseok.readytogo.domain.budget.MoneyDisplay
 import kr.ac.baekseok.readytogo.domain.plan.TravelLeg
 import kr.ac.baekseok.readytogo.domain.plan.splitDuration
@@ -122,3 +123,24 @@ private fun rememberDateFormat(patternRes: Int): DateTimeFormatter {
 }
 
 private const val MAN = 10_000L
+
+/**
+ * 저장된 일정의 이름과 목적지. "도쿄 5일" / "Tokyo, 5 days"
+ *
+ * **저장해 둔 글자를 그대로 쓰지 않는다.** 이름은 저장하는 순간의 언어로 굳는데,
+ * 나중에 언어를 바꾸면 영어 화면에 "도쿄, 5 days"처럼 섞여 남는다. 조건에 든
+ * 목적지로 그때그때 다시 만든다 — 아직 이름을 직접 고치는 기능이 없어 저장된
+ * 이름은 전부 이렇게 만들어진 것이다.
+ *
+ * 조건이 비어 있으면(예전 데이터) 저장된 글자로 돌아간다.
+ */
+@Composable
+fun savedTripTitle(trip: SavedTrip): String {
+    val destination = trip.condition.destination ?: return trip.title
+    return stringResource(R.string.plan_saved_title, destination.shortName, daysText(trip.dayCount))
+}
+
+/** 저장된 일정의 목적지 이름. 이유는 [savedTripTitle]과 같다. */
+@Composable
+fun savedTripDestination(trip: SavedTrip): String =
+    trip.condition.destination?.shortName ?: trip.destinationName

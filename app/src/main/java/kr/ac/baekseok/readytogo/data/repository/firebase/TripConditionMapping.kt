@@ -50,6 +50,10 @@ internal fun Map<String, Any?>.toTripCondition() = TripCondition(
 private fun Destination.toMap(): Map<String, Any?> = mapOf(
     "country" to country,
     "city" to city,
+    // 영문 이름도 같이 저장한다. 없으면 영어로 바꿨을 때 저장된 일정만 한글로 남는다 —
+    // 목록을 다시 뒤져 이름을 맞추느니 조건에 같이 들고 다니는 쪽이 싸다.
+    "cityEn" to cityEn,
+    "countryEn" to countryEn,
     "lat" to location.latitude,
     "lon" to location.longitude,
     "airportCodes" to airportCodes,
@@ -66,6 +70,9 @@ private fun Map<String, Any?>.toDestination(): Destination? {
         city = city,
         location = LatLng(lat, lon),
         airportCodes = stringList("airportCodes"),
+        // 이 열이 생기기 전에 저장된 문서에는 없다. 비면 한글 이름을 그대로 쓴다.
+        cityEn = this["cityEn"] as? String ?: "",
+        countryEn = this["countryEn"] as? String ?: "",
     )
 }
 

@@ -43,6 +43,8 @@ import kr.ac.baekseok.readytogo.ui.component.PrimaryButton
 import kr.ac.baekseok.readytogo.ui.component.SectionHeader
 import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.format.dateShort
+import kr.ac.baekseok.readytogo.ui.format.savedTripDestination
+import kr.ac.baekseok.readytogo.ui.format.savedTripTitle
 import kr.ac.baekseok.readytogo.ui.format.daysText
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 import java.time.LocalDate
@@ -212,7 +214,7 @@ private fun UpcomingTripCard(trip: SavedTrip, today: LocalDate, onClick: () -> U
 
     PhotoCard(
         key = trip.destinationName,
-        title = trip.title,
+        title = savedTripTitle(trip),
         subtitle = stringResource(
             R.string.fmt_date_range_days,
             dateShort(trip.departureDate),
@@ -286,7 +288,7 @@ private fun RecentTripRow(trip: SavedTrip, onClick: () -> Unit) {
             modifier = Modifier.weight(1f),
         ) {
             Text(
-                text = trip.title,
+                text = savedTripTitle(trip),
                 style = MaterialTheme.typography.titleSmall,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -294,7 +296,7 @@ private fun RecentTripRow(trip: SavedTrip, onClick: () -> Unit) {
             Text(
                 text = stringResource(
                     R.string.home_recent_subtitle,
-                    trip.destinationName,
+                    savedTripDestination(trip),
                     daysText(trip.dayCount),
                     dateShort(trip.departureDate),
                 ),

@@ -392,4 +392,6 @@
     <string name="settings_section_data">Data</string>
     <string name="settings_place_photos">Show place photos</string>
     <string name="settings_place_photos_body">Uses more data.</string>
+    <string name="settings_photo_usage">Photos this month</string>
+    <string name="settings_photo_usage_value">%1$d / %2$d</string>
 </resources>

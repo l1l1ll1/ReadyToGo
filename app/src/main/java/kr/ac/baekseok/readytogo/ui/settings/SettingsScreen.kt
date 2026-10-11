@@ -31,6 +31,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kr.ac.baekseok.readytogo.R
+import kr.ac.baekseok.readytogo.data.AppContainer
+import kr.ac.baekseok.readytogo.data.photo.PhotoBudget
 import kr.ac.baekseok.readytogo.notification.canPostNotifications
 import kr.ac.baekseok.readytogo.data.model.AppLanguage
 import kr.ac.baekseok.readytogo.data.model.TextScale
@@ -135,6 +137,20 @@ fun SettingsScreen(
                 onCheckedChange = viewModel::setShowPlacePhotos,
             )
         }
+        item {
+            // 무료 한도가 있어서 얼마나 썼는지 보여준다. 상한에 닿으면 사진이 조용히
+            // 안 뜨는데, 그때 이유를 짐작할 데가 여기밖에 없다.
+            //
+            // 화면을 열 때마다 읽는다 — 설정 화면이 떠 있는 동안 숫자가 늘 일은 없다.
+            InfoRow(
+                label = stringResource(R.string.settings_photo_usage),
+                value = stringResource(
+                    R.string.settings_photo_usage_value,
+                    AppContainer.photoBudget.usedThisMonth(),
+                    PhotoBudget.MONTHLY_PHOTO_LIMIT,
+                ),
+            )
+        }
 
         item { SettingsSectionGap(title = stringResource(R.string.settings_section_accessibility)) }
         item {
@@ -213,6 +229,34 @@ private fun SettingsSectionGap(title: String) {
  * 눌러서 들어가거나 고르는 줄.
  * @param value 현재 고른 값. 오른쪽에 회색으로 보여줘서 들어가지 않고도 알 수 있게 한다.
  */
+/**
+ * 누를 수 없는 한 줄. 알려만 주고 바꿀 것이 없는 값에 쓴다.
+ *
+ * 라벨까지 보조 글자색인 이유: 누를 수 있는 줄들 사이에 끼어 있어서, 같은 굵기로 두면
+ * 눌러도 되는 줄처럼 보인다.
+ */
+@Composable
+private fun InfoRow(label: String, value: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = Tokens.Space.lg),
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyMedium,
+            color = LocalPalette.current.TextSecondary,
+            modifier = Modifier.weight(1f),
+        )
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodyMedium,
+            color = LocalPalette.current.TextSecondary,
+        )
+    }
+}
+
 @Composable
 private fun NavigationRow(label: String, value: String? = null, onClick: () -> Unit) {
     Row(

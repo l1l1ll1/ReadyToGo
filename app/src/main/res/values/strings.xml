@@ -422,4 +422,7 @@
     <string name="settings_section_data">데이터</string>
     <string name="settings_place_photos">장소 사진 표시</string>
     <string name="settings_place_photos_body">데이터 사용량이 늘어납니다.</string>
+    <!-- 예: "이번 달 사진    123 / 800장" -->
+    <string name="settings_photo_usage">이번 달 사진</string>
+    <string name="settings_photo_usage_value">%1$d / %2$d장</string>
 </resources>

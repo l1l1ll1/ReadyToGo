@@ -29,7 +29,7 @@ class AssetDestinationRepository(
     }
 
     override suspend fun cities(country: String): Result<List<Destination>> = runCatching {
-        // 나라 이름은 화면에 보이는 언어로 들어온다. 한글�영문 어느 쪽과도 맞춘다 �
+        // 나라 이름은 화면에 보이는 언어로 들어온다. 한글·영문 어느 쪽과도 맞춘다 —
         // 목록과 필터가 같은 열을 봐야 영어로 바꿨을 때 목록이 비지 않는다.
         // JSON이 이미 나라별 인구순으로 정렬돼 있어 여기서 다시 정렬하지 않는다.
         load().filter { it.country == country || it.countryEn == country }
@@ -60,8 +60,8 @@ class AssetDestinationRepository(
     }
 
     /**
-     * 한글�영문 이름을 **둘 다** 본다. 앱이 영어라도 "도쿄"로 찾을 수 있어야 하고,
-     * 한국어라도 "Tokyo"로 찾을 수 있어야 한다 � 키보드를 바꾸기 귀찮은 쪽이 보통이다.
+     * 한글·영문 이름을 **둘 다** 본다. 앱이 영어라도 "도쿄"로 찾을 수 있어야 하고,
+     * 한국어라도 "Tokyo"로 찾을 수 있어야 한다 — 키보드를 바꾸기 귀찮은 쪽이 보통이다.
      */
     private fun Destination.matches(keyword: String): Boolean =
         city.contains(keyword, ignoreCase = true) ||

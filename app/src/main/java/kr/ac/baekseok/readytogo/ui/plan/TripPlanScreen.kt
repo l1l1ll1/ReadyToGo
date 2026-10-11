@@ -19,12 +19,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScrollableTabRow
@@ -81,6 +85,9 @@ import kr.ac.baekseok.readytogo.ui.component.PhotoAttributionLine
 import kr.ac.baekseok.readytogo.ui.component.PlacePhotoThumb
 import kr.ac.baekseok.readytogo.ui.component.rememberPlacePhoto
 import kr.ac.baekseok.readytogo.ui.format.money
+import kr.ac.baekseok.readytogo.ui.share.placeShareText
+import kr.ac.baekseok.readytogo.ui.share.shareText
+import kr.ac.baekseok.readytogo.ui.share.tripShareText
 import kr.ac.baekseok.readytogo.ui.format.moneyRange
 import kr.ac.baekseok.readytogo.ui.format.travelLegText
 import kr.ac.baekseok.readytogo.ui.map.DayMapContent
@@ -195,6 +202,13 @@ private fun TripPlanContent(
 
     // 상세 시트를 띄울 항목. 일차 번호를 같이 들고 있어야 어느 날의 항목인지 알 수 있다.
     var openedItem by remember { mutableStateOf<Pair<Int, TimelineItem>?>(null) }
+
+    // 공유를 **누른 순간에만** 글을 만든다. 글 짓는 함수가 @Composable이라 눌렀을 때
+    // 부를 수 없어서, 깃발을 세우고 그다음 composition에서 만들어 바로 내보낸다.
+    // 매 recomposition마다 닷새치 글을 새로 짜지 않으려는 것이다.
+    var shareTripRequested by remember { mutableStateOf(false) }
+    var sharePlace by remember { mutableStateOf<TimelineItem?>(null) }
+
     val context = LocalContext.current
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -233,8 +247,14 @@ private fun TripPlanContent(
                         TextButton(onClick = onBack) { Text(stringResource(R.string.common_back)) }
                     },
                     actions = {
-                        // 계획이 완성되기 전에는 저장할 내용이 없다.
+                        // 계획이 완성되기 전에는 공유할 내용도 저장할 내용도 없다.
                         if (uiState is TripPlanUiState.Success) {
+                            IconButton(onClick = { shareTripRequested = true }) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Share,
+                                    contentDescription = stringResource(R.string.share_trip),
+                                )
+                            }
                             TextButton(onClick = onToggleSaved) {
                                 Text(
                                     stringResource(
@@ -315,6 +335,28 @@ private fun TripPlanContent(
         }
     }
 
+    // 깃발이 서 있는 동안에만 글을 만들고, 만들자마자 공유 시트를 띄운 뒤 내린다.
+    if (shareTripRequested) {
+        val plan = (uiState as? TripPlanUiState.Success)?.plan
+        if (plan == null) {
+            shareTripRequested = false
+        } else {
+            val text = tripShareText(plan, edits, pickedPlaces)
+            LaunchedEffect(text) {
+                context.shareText(text)
+                shareTripRequested = false
+            }
+        }
+    }
+
+    sharePlace?.let { item ->
+        val text = placeShareText(item)
+        LaunchedEffect(text) {
+            context.shareText(text)
+            sharePlace = null
+        }
+    }
+
     openedItem?.let { (dayNumber, item) ->
         val plan = (uiState as? TripPlanUiState.Success)?.plan
         val planCity = plan?.condition?.destination?.city.orEmpty()
@@ -346,6 +388,8 @@ private fun TripPlanContent(
             onPickFavorite = { favorite: FavoritePlace ->
                 onPickFavorite(dayNumber, item.key, favorite)
             },
+            // 추천을 못 찾은 끼니는 보낼 장소가 없다.
+            onShare = if (item is TimelineItem.NoMeal) null else ({ sharePlace = item }),
             onDelete = { onDeleteItem(dayNumber, item.key) },
             onDismiss = { openedItem = null },
         )

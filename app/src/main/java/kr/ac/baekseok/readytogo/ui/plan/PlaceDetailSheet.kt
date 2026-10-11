@@ -11,6 +11,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.Map
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -65,6 +66,8 @@ fun PlaceDetailSheet(
     dayCenter: LatLng?,
     /** 즐겨찾기를 끼워 넣을 때. null이면 끼울 수 없는 자리다. */
     onPickFavorite: ((FavoritePlace) -> Unit)?,
+    /** 이 장소 하나를 공유할 때. null이면 보낼 장소가 없는 자리다. */
+    onShare: (() -> Unit)?,
     onDelete: () -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -109,6 +112,17 @@ fun PlaceDetailSheet(
                     label = stringResource(R.string.plan_sheet_open_map),
                     onClick = {
                         onOpenMap(mapUrl)
+                        onDismiss()
+                    },
+                )
+            }
+
+            if (onShare != null) {
+                SheetAction(
+                    icon = Icons.Outlined.Share,
+                    label = stringResource(R.string.share_place),
+                    onClick = {
+                        onShare()
                         onDismiss()
                     },
                 )

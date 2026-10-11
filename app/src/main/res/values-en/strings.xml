@@ -370,6 +370,11 @@
     <string name="trips_past_done">Done</string>
     <string name="trips_past_expand">Show</string>
     <string name="trips_past_collapse">Hide</string>
+    <!-- 공유 -->
+    <string name="share_trip">Share trip</string>
+    <string name="share_place">Share</string>
+    <string name="share_footer">Planned with Readytogo</string>
+
     <string name="trips_delete_title">Delete this trip?</string>
     <string name="trips_delete_body">\"%1$s\" will be deleted. This can\'t be undone.</string>
     <string name="trips_subtitle">%1$s · %2$s – %3$s · %4$s</string>

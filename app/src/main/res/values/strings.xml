@@ -285,6 +285,14 @@
     <string name="plan_lodging_price_estimated">예상 1박 약 %1$s</string>
     <string name="plan_lodging_price">%1$s / 1박</string>
 
+    <!-- 숙소 거리 검사 -->
+    <string name="plan_lodging_distance_title">일정과의 거리</string>
+    <string name="plan_lodging_far">멀어요</string>
+    <string name="plan_lodging_mostly_far">일정 대부분이 숙소에서 멉니다 (%1$d일 중 %2$d일)</string>
+    <string name="plan_lodging_far_days">숙소에서 먼 날: %1$s</string>
+    <string name="plan_lodging_better_label">어느 날에도 덜 먼 곳</string>
+    <string name="plan_lodging_worst_day">가장 먼 날 %1$skm</string>
+
     <!-- 일정표 -->
     <string name="plan_timeline_empty">일정이 없습니다</string>
     <string name="plan_day_empty_title">이 날은 비어 있습니다</string>

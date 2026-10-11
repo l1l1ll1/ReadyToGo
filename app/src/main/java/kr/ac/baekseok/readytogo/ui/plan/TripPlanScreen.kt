@@ -71,7 +71,9 @@ import kr.ac.baekseok.readytogo.data.model.RecommendationPair
 import kr.ac.baekseok.readytogo.data.model.Restaurant
 import kr.ac.baekseok.readytogo.data.model.TripCondition
 import kr.ac.baekseok.readytogo.data.model.TripPlan
+import kr.ac.baekseok.readytogo.domain.plan.LodgingDistanceCheck
 import kr.ac.baekseok.readytogo.domain.plan.TimelineItem
+import kr.ac.baekseok.readytogo.domain.plan.checkLodgingDistance
 import kr.ac.baekseok.readytogo.domain.recommend.medianCenter
 import kr.ac.baekseok.readytogo.domain.purpose.PurposeProfiles
 import kr.ac.baekseok.readytogo.ui.component.FavoriteButton
@@ -80,6 +82,7 @@ import kr.ac.baekseok.readytogo.ui.component.PlacePhotoThumb
 import kr.ac.baekseok.readytogo.ui.component.rememberPlacePhoto
 import kr.ac.baekseok.readytogo.ui.format.money
 import kr.ac.baekseok.readytogo.ui.format.moneyRange
+import kr.ac.baekseok.readytogo.ui.format.travelLegText
 import kr.ac.baekseok.readytogo.ui.map.DayMapContent
 import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.ReadytogoTheme
@@ -365,6 +368,12 @@ private fun PlanTabContent(
     onReorderCommit: () -> Unit,
     onDeleteItem: (Int, String) -> Unit,
 ) {
+    // **편집이 바뀔 때마다 다시 잰다.** 멀어서 지운 관광지가 계속 거리 계산에 들어가면
+    // 경고가 사라지지 않는다. 계획 하나에 날짜 몇 개라 다시 계산해도 값이 싸다.
+    val distanceCheck = remember(plan, edits, pickedPlaces) {
+        plan.checkLodgingDistance(edits, pickedPlaces)
+    }
+
     when (tab) {
         PlanTab.SUMMARY -> TabColumn {
             item { SummaryHeader(plan) }
@@ -411,6 +420,12 @@ private fun PlanTabContent(
             } else {
                 item { SectionTitle(stringResource(R.string.plan_section_lodging)) }
                 item { LodgingCard(pair) }
+
+                // 편집(교체·삭제·순서)이 바뀌면 distanceCheck가 다시 계산돼 여기도 갱신된다.
+                distanceCheck?.let { check ->
+                    item { SectionTitle(stringResource(R.string.plan_lodging_distance_title)) }
+                    item { LodgingDistanceCard(check) }
+                }
             }
         }
 
@@ -780,6 +795,94 @@ private fun LodgingCard(pair: RecommendationPair<Lodging>) {
                     emphasis = if (samePrice) RowEmphasis.REVIEWS else RowEmphasis.PRICE,
                     reviewCount = alternative.item.reviewCount,
                     placeId = alternative.item.id,
+                )
+            }
+        }
+    }
+}
+
+/**
+ * 숙소가 날짜별 일정에서 얼마나 떨어져 있는지.
+ *
+ * **전부 가까우면 아무것도 띄우지 않는다.** 멀쩡한데 뜨는 경고는 다음부터 읽히지 않는다.
+ * 그래서 먼 날이 없으면 날짜 목록만 담담하게 보여준다.
+ */
+@Composable
+private fun LodgingDistanceCard(check: LodgingDistanceCheck) {
+    val palette = LocalPalette.current
+
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier.padding(Tokens.Space.lg),
+            verticalArrangement = Arrangement.spacedBy(Tokens.Space.md),
+        ) {
+            when {
+                check.mostlyFar -> Text(
+                    text = stringResource(
+                        R.string.plan_lodging_mostly_far,
+                        check.days.size,
+                        check.farDays.size,
+                    ),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = palette.Danger,
+                )
+
+                check.farDays.isNotEmpty() -> Text(
+                    // 날짜 이름을 먼저 만들어 둔다. joinToString 안에서는 리소스를 못 읽는다.
+                    text = stringResource(
+                        R.string.plan_lodging_far_days,
+                        check.farDays
+                            .map { stringResource(R.string.plan_day_tab, it.dayNumber) }
+                            .joinToString(),
+                    ),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = palette.TextSecondary,
+                )
+            }
+
+            check.days.forEach { day ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(Tokens.Space.sm),
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(
+                        text = stringResource(R.string.plan_day_tab, day.dayNumber),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = palette.TextPrimary,
+                    )
+                    Text(
+                        text = "${travelLegText(day.travel)} · ${"%.1f".format(day.travel.distanceKm)}km",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = palette.TextSecondary,
+                        modifier = Modifier.weight(1f),
+                    )
+                    if (day.isFar) {
+                        Text(
+                            text = stringResource(R.string.plan_lodging_far),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = palette.Danger,
+                        )
+                    }
+                }
+            }
+
+            // 과반이 멀 때만 나온다. 바꾸지는 않고 "이런 곳도 있다"만 보여준다 —
+            // 숙소를 바꾸려면 편집에 숙소 칸을 새로 만들어야 해서 다음으로 미뤘다.
+            check.better?.let { better ->
+                HorizontalDivider(color = palette.Divider)
+                ChoiceRow(
+                    label = stringResource(R.string.plan_lodging_better_label),
+                    overBudget = false,
+                    title = better.lodging.name,
+                    price = better.lodging.priceText(),
+                    detail = better.lodging.detailLine(),
+                    extra = stringResource(
+                        R.string.plan_lodging_worst_day,
+                        "%.1f".format(better.worstDistanceKm),
+                    ),
+                    url = better.lodging.bookingUrl,
+                    reviewCount = better.lodging.reviewCount,
                 )
             }
         }

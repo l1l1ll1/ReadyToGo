@@ -14,6 +14,13 @@
     -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
+    <!--
+      일정 생성을 앱 밖에서도 계속하기 위한 포그라운드 서비스. 34부터는 서비스 종류별 권한이 따로 있다.
+      dataSync인 이유는 PlanGenerationService 주석 참고.
+    -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+
     <application
         android:name=".ReadytogoApplication"
         android:allowBackup="true"
@@ -34,6 +41,7 @@
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
+            android:launchMode="singleTop"
             android:theme="@style/Theme.Readytogo.Starting">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -41,6 +49,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!--
+          일정 생성 중 프로세스를 붙잡아 두고 진행·완료를 알린다. 앱 안에서만 시작한다.
+          singleTop(위 activity): 알림을 누르면 떠 있는 화면이 onNewIntent로 받는다 — 새로 쌓지 않는다.
+        -->
+        <service
+            android:name=".generation.PlanGenerationService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
 
         <!-- 예약한 시각이 되면 알람이 여기로 온다. 다른 앱이 부를 일이 없어 exported=false. -->
         <receiver

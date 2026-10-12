@@ -152,6 +152,16 @@
     <string name="notification_channel_body">We remind you 7 days and 1 day before a saved trip departs.</string>
     <string name="notification_body">%1$s departs in %2$d days.</string>
 
+    <!-- 일정 생성 알림 -->
+    <string name="plan_channel_progress_name">Building itinerary</string>
+    <string name="plan_channel_done_name">Itinerary ready</string>
+    <string name="plan_notification_running_title">Building your itinerary…</string>
+    <string name="plan_notification_running_body">%1$s · keeps going if you leave the app</string>
+    <string name="plan_notification_done_title">Your itinerary is ready</string>
+    <string name="plan_notification_done_body">Tap to see your %1$s trip</string>
+    <string name="plan_notification_failed_title">Couldn\'t build your itinerary</string>
+    <string name="plan_notification_failed_body">Tap to try again</string>
+
     <!-- 공통 표기 -->
     <string name="fmt_money">$%s</string>
     <!-- "만원"은 한국어에만 있는 단위다. 영어는 이 값을 쓰지 않는다. -->

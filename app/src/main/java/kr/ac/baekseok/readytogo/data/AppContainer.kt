@@ -21,6 +21,8 @@ import kr.ac.baekseok.readytogo.data.repository.prefs.PreferencesSettingsReposit
 import kr.ac.baekseok.readytogo.data.repository.firebase.FirebaseAuthRepository
 import kr.ac.baekseok.readytogo.data.repository.firebase.FirestoreFavoriteRepository
 import kr.ac.baekseok.readytogo.data.repository.firebase.FirestoreSavedTripRepository
+import kr.ac.baekseok.readytogo.generation.PlanGenerationService
+import kr.ac.baekseok.readytogo.generation.PlanGenerator
 import kr.ac.baekseok.readytogo.notification.TripNotifications
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -70,7 +72,22 @@ object AppContainer {
         syncLanguage()
         observeSignInForPendingTrip()
         observeTripsForReminders()
+        PlanGenerationService.ensureChannels(appContext)
     }
+
+    /**
+     * 일정 생성. 결과 화면이 아니라 여기 하나만 둔다 — 앱을 나갔다 와서 결과 화면이 새로
+     * 만들어져도 진행 중인 생성과 그 결과를 이어받아야 하기 때문이다.
+     */
+    val planGenerator: PlanGenerator by lazy { PlanGenerator(appContext, appScope) }
+
+    /**
+     * 앱 화면이 지금 보이는지. MainActivity의 onStart/onStop이 바꾼다.
+     *
+     * 일정이 완성됐을 때 "일정 완성" 알림을 남길지 정하는 데만 쓴다. 보고 있으면 남기지 않는다.
+     * Activity가 하나뿐이라 카운터 없이 참/거짓으로 충분하다.
+     */
+    var isAppVisible: Boolean = false
 
     /**
      * 저장된 일정이나 알림 설정이 바뀌면 알람을 다시 깐다.

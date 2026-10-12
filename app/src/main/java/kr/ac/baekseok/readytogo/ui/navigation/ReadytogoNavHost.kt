@@ -31,6 +31,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import kr.ac.baekseok.readytogo.data.AppContainer
@@ -98,7 +99,11 @@ private const val KEY_CONDITION = "condition"
 @Composable
 fun ReadytogoNavHost(
     navController: NavHostController = rememberNavController(),
+    openPlanRequest: TripCondition? = null,
+    onOpenPlanHandled: () -> Unit = {},
 ) {
+    OpenPlanFromNotification(navController, openPlanRequest, onOpenPlanHandled)
+
     MainScaffold(navController = navController) { scaffoldModifier ->
         NavHost(
             navController = navController,
@@ -112,6 +117,44 @@ fun ReadytogoNavHost(
         }
     }
 }
+
+/**
+ * "일정 완성" 알림을 눌러 들어왔을 때 그 결과 화면을 연다.
+ *
+ * **진입 흐름(스플래시·온보딩·로그인)이 끝날 때까지 기다린다.** 앱이 새로 뜬 경우 그 사이에
+ * 끼어들어 이동하면, 스플래시가 끝나며 홈으로 보내는 이동에 결과 화면이 덮여버린다.
+ *
+ * 같은 조건의 결과 화면이 이미 맨 위에 있으면 이동하지 않는다 — 앱이 그 화면에 있던 채로
+ * 나갔다가 알림으로 돌아오는 경우가 가장 흔한데, 그때 같은 화면을 하나 더 쌓으면 안 된다.
+ */
+@Composable
+private fun OpenPlanFromNotification(
+    navController: NavHostController,
+    request: TripCondition?,
+    onHandled: () -> Unit,
+) {
+    val current by navController.currentBackStackEntryAsState()
+    LaunchedEffect(request, current) {
+        val condition = request ?: return@LaunchedEffect
+        val entry = current ?: return@LaunchedEffect
+        val route = entry.destination.route
+        if (route in ENTRY_ROUTES) return@LaunchedEffect
+
+        val alreadyOpen = route == Routes.PLAN &&
+            entry.savedStateHandle.get<TripCondition>(KEY_CONDITION) == condition
+        if (!alreadyOpen) navController.openPlan(condition)
+        onHandled()
+    }
+}
+
+/** 앱이 처음 뜰 때 지나가는 화면들. 알림으로 결과 화면을 열기 전에 이 흐름이 끝나야 한다. */
+private val ENTRY_ROUTES = setOf(
+    Routes.SPLASH,
+    Routes.ONBOARDING,
+    Routes.LOGIN,
+    Routes.AFTER_LOGIN,
+    Routes.NICKNAME_FIRST,
+)
 
 /** 스플래시 → 온보딩 → 로그인. 한 번 지나가면 back stack에 남기지 않는다. */
 private fun NavGraphBuilder.entryGraph(navController: NavHostController) {

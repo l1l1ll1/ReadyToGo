@@ -1,13 +1,11 @@
 package kr.ac.baekseok.readytogo.ui.plan
 
 import android.app.Application
-import android.os.SystemClock
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.data.AppContainer
-import kr.ac.baekseok.readytogo.data.USE_REAL_API
 import kr.ac.baekseok.readytogo.data.model.FavoriteKind
 import kr.ac.baekseok.readytogo.data.model.FavoritePlace
 import kr.ac.baekseok.readytogo.data.model.PickedPlaces
@@ -16,14 +14,7 @@ import kr.ac.baekseok.readytogo.data.model.TimelineEdits
 import kr.ac.baekseok.readytogo.data.model.TripCondition
 import kr.ac.baekseok.readytogo.data.model.TripPlan
 import kr.ac.baekseok.readytogo.data.model.canSave
-import kr.ac.baekseok.readytogo.data.repository.flight.SerpApiFlightRepository
-import kr.ac.baekseok.readytogo.data.repository.mock.MockFlightRepository
-import kr.ac.baekseok.readytogo.data.repository.mock.MockItineraryRepository
-import kr.ac.baekseok.readytogo.data.repository.mock.MockLodgingRepository
-import kr.ac.baekseok.readytogo.data.repository.mock.MockPlaceRepository
-import kr.ac.baekseok.readytogo.data.repository.places.GooglePlacesLodgingRepository
-import kr.ac.baekseok.readytogo.data.repository.places.GooglePlacesRepository
-import kr.ac.baekseok.readytogo.domain.plan.TripPlanner
+import kr.ac.baekseok.readytogo.generation.PlanGeneration
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -33,6 +24,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import java.time.LocalDate
@@ -48,47 +40,12 @@ sealed interface TripPlanUiState {
 /**
  * 결과 화면 상태 관리.
  *
- * 기본값으로 Mock 구현체를 물려둔다. **7단계에서 실제 API로 갈아끼울 곳이 여기 한 군데다** —
- * 화면 코드는 TripPlanner만 알고 있어서 어느 구현체가 붙었는지 모른다(CLAUDE.md).
+ * 일정 생성 자체는 [PlanGenerator]가 맡는다. 여기는 그 결과를 받아 보여주고,
+ * 사용자가 손본 것(편집·저장·즐겨찾기)을 관리한다.
  */
 class TripPlanViewModel(
     application: Application,
 ) : AndroidViewModel(application) {
-
-    /**
-     * 7단계 교체 지점. 하나씩 실물로 바꾼다.
-     *
-     * 장소·숙소는 Places API, 항공은 SerpApi로 바뀌었다.
-     * 키 문제나 할당량 초과로 되돌려야 하면 해당 줄을 Mock 구현체로 바꾸면 된다.
-     * (항공은 SerpApiFlightRepository가 실패 시 알아서 Mock으로 넘어간다.)
-     */
-    private val planner: TripPlanner = TripPlanner(
-        // USE_REAL_API가 false면 호출이 한 번도 나가지 않는다. 기본값이 false다 — 이유는
-        // ApiMode.kt 주석 참고. 켜면 이 세 줄이 전부 실제 구현체로 바뀐다.
-        flightRepository = if (USE_REAL_API) {
-            SerpApiFlightRepository(application)
-        } else {
-            MockFlightRepository()
-        },
-        lodgingRepository = if (USE_REAL_API) {
-            GooglePlacesLodgingRepository(application)
-        } else {
-            MockLodgingRepository()
-        },
-        placeRepository = if (USE_REAL_API) {
-            GooglePlacesRepository(application)
-        } else {
-            MockPlaceRepository()
-        },
-        itineraryRepository = MockItineraryRepository(),
-        // Mock 식당은 15곳뿐이라 5일 일정(30칸)에서 반드시 소진된다. 테스트 중 화면이 비지 않게
-        // 재사용을 허용한다. 실제 API 경로에서는 같은 집을 두 번 추천하지 않는다.
-        allowRestaurantReuse = !USE_REAL_API,
-    )
-
-    init {
-        Log.d(TAG, if (USE_REAL_API) "실제 API 사용" else "Mock 사용 — 외부 호출 없음")
-    }
 
     private val _uiState = MutableStateFlow<TripPlanUiState>(TripPlanUiState.Loading)
     val uiState: StateFlow<TripPlanUiState> = _uiState.asStateFlow()
@@ -160,21 +117,27 @@ class TripPlanViewModel(
         // 제한 시간만큼 화면이 늦게 뜬다.
         viewModelScope.launch { _edits.value = restoreEdits(condition) }
 
-        viewModelScope.launch {
-            _uiState.value = TripPlanUiState.Loading
+        // 생성은 앱 범위에서 돈다. 같은 조건이 이미 돌고 있거나 끝나 있으면 생성기가 새로 시작하지
+        // 않으므로, 앱을 나갔다 와서 이 화면이 새로 만들어져도 진행 중인 것에 그대로 이어붙는다.
+        val generator = AppContainer.planGenerator
+        _uiState.value = TripPlanUiState.Loading
+        generator.start(condition)
 
-            // 계획 하나를 만드는 데 걸리는 시간. 검색을 병렬로 바꾸는 등의 개선 효과를
-            // 눈이 아니라 숫자로 확인하기 위해 남긴다.
-            val startedAt = SystemClock.elapsedRealtime()
-            val result = planner.createPlan(condition)
-            Log.d(TAG, "계획 생성 ${SystemClock.elapsedRealtime() - startedAt}ms")
-
-            _uiState.value = result.fold(
-                onSuccess = { TripPlanUiState.Success(it) },
-                onFailure = { TripPlanUiState.Failure(it.message ?: string(R.string.plan_create_failed)) },
-            )
+        watchJob?.cancel()
+        watchJob = viewModelScope.launch {
+            generator.state.collect { state ->
+                // 다른 조건의 생성은 이 화면과 무관하다 — 지금 보여주는 것을 그대로 둔다.
+                if (state !is PlanGeneration.Done || state.condition != condition) return@collect
+                _uiState.value = state.result.fold(
+                    onSuccess = { TripPlanUiState.Success(it) },
+                    onFailure = { TripPlanUiState.Failure(it.message ?: string(R.string.plan_create_failed)) },
+                )
+            }
         }
     }
+
+    /** 생성기 상태를 지켜보는 코루틴. 다시 시도할 때 겹쳐 돌지 않게 하나만 둔다. */
+    private var watchJob: Job? = null
 
     /** 실패했을 때 다시 시도. */
     fun retry() {

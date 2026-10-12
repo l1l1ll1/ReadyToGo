@@ -225,9 +225,13 @@ private fun UpcomingTripCard(trip: SavedTrip, today: LocalDate, onClick: () -> U
             dateShort(trip.returnDate),
             daysText(trip.dayCount),
         ),
-        // 목적지가 어디든 이 카드만은 브랜드 색으로 둔다. 홈에서 가장 먼저 보이는 면이다.
+        // 대표 장소 사진. 없거나 설정에서 껐으면 아래 브랜드 색이 그대로 보인다.
+        photoPlaceId = trip.coverPlaceId,
+        // 사진이 없을 때의 바탕. 목적지가 어디든 이 카드만은 브랜드 색으로 둔다 —
+        // 홈에서 가장 먼저 보이는 면이다.
         colors = LocalPalette.current.HeroGradient,
         // 터쿼이즈 자체가 충분히 어두워서 덮개 없이도 흰 글자가 읽힌다.
+        // 사진이 얹히면 PhotoCard가 알아서 덮개를 켠다 — 밝은 사진 위 흰 글자가 묻힌다.
         scrim = false,
         height = Tokens.Size.heroCardHeight,
         onClick = onClick,

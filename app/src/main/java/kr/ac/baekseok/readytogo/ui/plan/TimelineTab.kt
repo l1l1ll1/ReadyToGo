@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,6 +23,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.DirectionsBus
 import androidx.compose.material.icons.outlined.DirectionsWalk
@@ -44,6 +46,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
@@ -117,6 +120,8 @@ fun TimelineTab(
     /** 끌기가 끝났을 때. 바뀐 순서를 이때 한 번만 저장한다. */
     onReorderCommit: () -> Unit,
     onDelete: (Int, String) -> Unit,
+    /** 여행 중 모드에서 항목을 했음/안 했음으로 바꿀 때. */
+    onToggleDone: (Int, String) -> Unit,
 ) {
     // 여행 중에는 오늘 하루만 보여준다. 길 위에서 필요한 것은 오늘 갈 곳이지 닷새치 목록이
     // 아니다. 다른 날이 궁금하면 "전체 보기"로 편다. 끄고 켜는 것은 이 화면 안에서만 산다 —
@@ -178,6 +183,19 @@ fun TimelineTab(
             pickedAttractions = edits.pickedAttractionsIn(day.dayNumber),
             picked = pickedPlaces,
         )
+
+        // 체크는 **오늘 하루에만** 붙인다. 모레 일정에까지 체크를 달면 "오늘 어디까지 했나"가
+        // 아니라 여행 전체의 할 일 목록이 되는데, 그건 이 모드가 하려는 일이 아니다.
+        val checkable = todayDayNumber != null && day.dayNumber == todayDayNumber
+        val doneKeys = if (checkable) edits.doneIn(day.dayNumber) else emptySet()
+
+        // 아직 안 한 것 중 첫 번째. 지금 갈 곳이라 한 군데만 돋운다 — 여러 곳을 돋우면
+        // 어디부터 가야 하는지가 다시 안 보인다.
+        val nextKey = if (checkable) {
+            entries.firstOrNull { it.item.key !in doneKeys }?.item?.key
+        } else {
+            null
+        }
 
         // 하루의 첫 끼니. 여기에는 놓을 수 없다 — 아침보다 앞은 하루가 시작되기 전이다.
         val firstMealKey = entries.firstOrNull { it.item !is TimelineItem.Visit }?.item?.key
@@ -293,6 +311,13 @@ fun TimelineTab(
                                 { onItemClick(day.dayNumber, entry.item) }
                             },
                             onToggleFavorite = onToggleFavorite,
+                            done = entry.item.key in doneKeys,
+                            isNext = entry.item.key == nextKey,
+                            onToggleDone = if (checkable) {
+                                { onToggleDone(day.dayNumber, entry.item.key) }
+                            } else {
+                                null
+                            },
                             dragging = isDragging,
                             modifier = handle,
                         )
@@ -422,6 +447,13 @@ private fun OngoingBanner(
 /** LazyColumn 맨 앞의 날짜 머리글. 끌기 인덱스를 항목 인덱스로 바꿀 때 빼야 한다. */
 private const val HEADER_ITEM_COUNT = 1
 
+/**
+ * 체크한 항목을 얼마나 가라앉힐지.
+ *
+ * 더 흐리게 하면 무엇을 했는지 읽히지 않고, 더 진하면 남은 일과 구분이 안 된다.
+ */
+private const val DONE_ALPHA = 0.45f
+
 @Composable
 private fun DayHeader(
     day: DayPlan,
@@ -480,6 +512,12 @@ private fun TimelineRow(
     purposes: Set<TravelPurpose>,
     onClick: (() -> Unit)?,
     onToggleFavorite: (FavoritePlace) -> Unit,
+    /** 했음으로 체크된 항목인지. 가라앉혀 그린다. */
+    done: Boolean = false,
+    /** 오늘 아직 안 한 것 중 첫 번째인지. 지금 갈 곳이라 돋운다. */
+    isNext: Boolean = false,
+    /** 체크를 켜고 끌 때. null이면 체크를 쓰지 않는 날이라 점을 누를 수 없다. */
+    onToggleDone: (() -> Unit)? = null,
     /** 지금 끌리고 있는지. 들어 올린 티를 내려고 배경을 깐다. */
     dragging: Boolean = false,
     modifier: Modifier = Modifier,
@@ -487,14 +525,21 @@ private fun TimelineRow(
     Column(
         modifier = modifier
             .clip(Tokens.Radius.card)
+            // 끌어 올린 줄과 "지금 갈 곳"에 같은 면을 깐다. 둘이 동시에 일어나지 않아
+            // 색을 나눌 이유가 없고, 강조가 두 종류면 어느 쪽이 중요한지 흐려진다.
             .background(
-                if (dragging) LocalPalette.current.PointLight else Color.Transparent,
+                if (dragging || isNext) LocalPalette.current.PointLight else Color.Transparent,
             ),
     ) {
         entry.travelFromPrevious?.let { TravelRow(it) }
 
         Row(modifier = Modifier.fillMaxWidth()) {
-            TimelineRail(icon = entry.item.icon)
+            TimelineRail(
+                icon = entry.item.icon,
+                done = done,
+                isNext = isNext,
+                onToggleDone = onToggleDone,
+            )
 
             // 사진은 설정에서 켠 경우에만 받는다(rememberPlacePhoto). 꺼져 있으면 null이라
             // 썸네일 자리 자체가 생기지 않고 지금처럼 글자만 남는다.
@@ -505,6 +550,8 @@ private fun TimelineRow(
                 horizontalArrangement = Arrangement.spacedBy(Tokens.Space.md),
                 modifier = Modifier
                     .weight(1f)
+                    // 한 일은 가라앉힌다. 지우지 않는 이유는 "들렀다"는 기록도 일정의 일부라서다.
+                    .alpha(if (done) DONE_ALPHA else 1f)
                     .clip(Tokens.Radius.card)
                     .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
                     .padding(
@@ -547,9 +594,22 @@ private fun TimelineRow(
     }
 }
 
-/** 왼쪽 세로줄과 점. 항목이 한 줄로 이어져 보이게 한다. */
+/**
+ * 왼쪽 세로줄과 점. 항목이 한 줄로 이어져 보이게 한다.
+ *
+ * 여행 중 모드에서는 이 점이 체크 버튼을 겸한다. 오른쪽에 체크 칸을 따로 두지 않은 이유:
+ * 그 자리에는 이미 ♥가 있고, 좁은 폭에 누르는 것이 둘이면 잘못 누르기 쉽다.
+ * 점은 줄 전체 클릭(상세 시트) 바깥에 있어서 눌러도 시트가 뜨지 않는다.
+ */
 @Composable
-private fun TimelineRail(icon: ImageVector) {
+private fun TimelineRail(
+    icon: ImageVector,
+    done: Boolean = false,
+    isNext: Boolean = false,
+    /** null이면 체크를 쓰지 않는 날이라 누를 수 없다. 눌리는데 아무 일도 없으면 고장으로 보인다. */
+    onToggleDone: (() -> Unit)? = null,
+) {
+    val palette = LocalPalette.current
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.width(Tokens.Size.timelineRailWidth),
@@ -559,12 +619,32 @@ private fun TimelineRail(icon: ImageVector) {
             modifier = Modifier
                 .size(Tokens.Space.xxl)
                 .clip(CircleShape)
-                .background(LocalPalette.current.PointLight),
+                .background(if (done) palette.Point else palette.PointLight)
+                // 지금 갈 곳에만 테두리를 두른다. 면 색만으로는 연한 점들 사이에서 묻힌다.
+                .then(
+                    if (isNext) {
+                        Modifier.border(Tokens.Size.timelineRing, palette.Point, CircleShape)
+                    } else {
+                        Modifier
+                    },
+                )
+                .then(
+                    if (onToggleDone != null) {
+                        Modifier.clickable(onClick = onToggleDone)
+                    } else {
+                        Modifier
+                    },
+                ),
         ) {
             Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = LocalPalette.current.PointDark,
+                imageVector = if (done) Icons.Outlined.Check else icon,
+                // 누를 수 있을 때만 읽어 준다. 그냥 장식인 점까지 읽으면 소리로 듣는 쪽이 시끄럽다.
+                contentDescription = if (onToggleDone == null) {
+                    null
+                } else {
+                    stringResource(if (done) R.string.plan_done_undo else R.string.plan_done_mark)
+                },
+                tint = if (done) palette.Surface else palette.PointDark,
                 modifier = Modifier.size(Tokens.Space.lg),
             )
         }

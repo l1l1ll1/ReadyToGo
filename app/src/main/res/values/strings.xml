@@ -316,6 +316,8 @@
     <string name="plan_ongoing_banner">여행 중 · %1$d일차</string>
     <string name="plan_show_all_days">전체 보기</string>
     <string name="plan_show_today_only">오늘만</string>
+    <string name="plan_done_mark">했음으로 표시</string>
+    <string name="plan_done_undo">안 한 것으로 되돌리기</string>
 
     <!-- 장소 상세 시트 -->
     <string name="plan_sheet_no_restaurant">추천할 식당을 찾지 못했습니다.</string>

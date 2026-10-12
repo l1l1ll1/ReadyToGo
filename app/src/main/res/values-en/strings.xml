@@ -296,6 +296,8 @@
     <string name="plan_ongoing_banner">On trip · Day %1$d</string>
     <string name="plan_show_all_days">All days</string>
     <string name="plan_show_today_only">Today only</string>
+    <string name="plan_done_mark">Mark as done</string>
+    <string name="plan_done_undo">Mark as not done</string>
 
     <!-- 장소 상세 시트 -->
     <string name="plan_sheet_no_restaurant">We couldn\'t find a restaurant to recommend.</string>

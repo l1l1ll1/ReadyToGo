@@ -156,6 +156,7 @@ fun TripPlanScreen(
         onToggleFavorite = viewModel::toggleFavorite,
         onMessageShown = viewModel::clearMessage,
         onDeleteItem = viewModel::deleteTimelineItem,
+        onToggleDone = viewModel::toggleDone,
         onReorder = viewModel::reorderDay,
         onReorderCommit = viewModel::commitEdits,
         onPickMeal = viewModel::pickMeal,
@@ -186,6 +187,7 @@ private fun TripPlanContent(
     onToggleFavorite: (FavoritePlace) -> Unit = {},
     onMessageShown: () -> Unit = {},
     onDeleteItem: (Int, String) -> Unit = { _, _ -> },
+    onToggleDone: (Int, String) -> Unit = { _, _ -> },
     onReorder: (Int, List<String>) -> Unit = { _, _ -> },
     onReorderCommit: () -> Unit = {},
     onPickMeal: (Int, String, String?) -> Unit = { _, _, _ -> },
@@ -352,6 +354,7 @@ private fun TripPlanContent(
                     onReorder = onReorder,
                     onReorderCommit = onReorderCommit,
                     onDeleteItem = onDeleteItem,
+                    onToggleDone = onToggleDone,
                 )
             }
         }
@@ -435,6 +438,7 @@ private fun PlanTabContent(
     onReorder: (Int, List<String>) -> Unit,
     onReorderCommit: () -> Unit,
     onDeleteItem: (Int, String) -> Unit,
+    onToggleDone: (Int, String) -> Unit,
 ) {
     // **편집이 바뀔 때마다 다시 잰다.** 멀어서 지운 관광지가 계속 거리 계산에 들어가면
     // 경고가 사라지지 않는다. 계획 하나에 날짜 몇 개라 다시 계산해도 값이 싸다.
@@ -516,6 +520,7 @@ private fun PlanTabContent(
             onReorder = onReorder,
             onReorderCommit = onReorderCommit,
             onDelete = onDeleteItem,
+            onToggleDone = onToggleDone,
             onToggleFavorite = onToggleFavorite,
         )
 

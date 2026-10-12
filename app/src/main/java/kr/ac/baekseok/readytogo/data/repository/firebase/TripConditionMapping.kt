@@ -99,16 +99,11 @@ internal fun TimelineEdits.toMap(): Map<String, Any?> = mapOf(
     "pickedMeals" to pickedMeals.mapKeys { it.key.toString() },
     "pickedAttractions" to pickedAttractions.mapKeys { it.key.toString() },
     "order" to order.mapKeys { it.key.toString() },
+    "done" to done.mapKeys { it.key.toString() }.mapValues { it.value.toList() },
 )
 
 internal fun Map<String, Any?>.toTimelineEdits(): TimelineEdits = TimelineEdits(
-    deleted = childMap("deleted")
-        ?.mapNotNull { (day, value) ->
-            val keys = (value as? List<*>)?.filterIsInstance<String>()?.toSet() ?: return@mapNotNull null
-            day.toIntOrNull()?.let { it to keys }
-        }
-        ?.toMap()
-        .orEmpty(),
+    deleted = dayKeySets("deleted"),
     pickedMeals = childMap("pickedMeals")
         ?.mapNotNull { (day, value) ->
             val picks = (value as? Map<*, *>)
@@ -138,4 +133,16 @@ internal fun Map<String, Any?>.toTimelineEdits(): TimelineEdits = TimelineEdits(
         }
         ?.toMap()
         .orEmpty(),
+    done = dayKeySets("done"),
 )
+
+/** "일차 → 키 집합" 꼴을 꺼낸다. 지운 항목과 체크한 항목이 같은 모양이라 함께 쓴다. */
+private fun Map<String, Any?>.dayKeySets(key: String): Map<Int, Set<String>> =
+    childMap(key)
+        ?.mapNotNull { (day, value) ->
+            val keys = (value as? List<*>)?.filterIsInstance<String>()?.toSet()
+                ?: return@mapNotNull null
+            day.toIntOrNull()?.let { it to keys }
+        }
+        ?.toMap()
+        .orEmpty()

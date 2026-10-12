@@ -27,17 +27,26 @@ data class TimelineEdits(
      * 계획이 바뀌어 키가 맞지 않으면 기본 순서로 돌아간다.
      */
     val order: Map<Int, List<String>> = emptyMap(),
+    /**
+     * 여행 중 모드에서 "했음"으로 체크한 항목의 키.
+     *
+     * **편집과 같은 곳에 두는 이유**: 저장된 일정 문서에 함께 올라가야 앱을 껐다 켜도 남는다.
+     * 체크만 따로 저장하면 같은 일정에 쓰기 경로가 둘 생겨 서로 덮어쓴다.
+     */
+    val done: Map<Int, Set<String>> = emptyMap(),
 ) {
     fun deletedIn(dayNumber: Int): Set<String> = deleted[dayNumber].orEmpty()
     fun pickedIn(dayNumber: Int): Map<String, String> = pickedMeals[dayNumber].orEmpty()
     fun pickedAttractionsIn(dayNumber: Int): Map<String, String> =
         pickedAttractions[dayNumber].orEmpty()
     fun orderIn(dayNumber: Int): List<String> = order[dayNumber].orEmpty()
+    fun doneIn(dayNumber: Int): Set<String> = done[dayNumber].orEmpty()
 
     /** 손댄 것이 하나도 없는지. 저장할 때 빈 값을 올리지 않으려고 본다. */
     val isEmpty: Boolean
         get() = deleted.values.all { it.isEmpty() } &&
             pickedMeals.values.all { it.isEmpty() } &&
             pickedAttractions.values.all { it.isEmpty() } &&
-            order.values.all { it.isEmpty() }
+            order.values.all { it.isEmpty() } &&
+            done.values.all { it.isEmpty() }
 }

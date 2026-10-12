@@ -48,6 +48,21 @@ data class SavedTrip(
     /** 아직 떠나지 않은 여행인지. 홈의 "다가오는 여행"이 이걸로 고른다. */
     fun isUpcoming(today: LocalDate): Boolean = !returnDate.isBefore(today)
 
+    /** 지금 여행 중인지. 출발일과 귀국일 당일도 여행 중으로 본다. */
+    fun isOngoing(today: LocalDate): Boolean =
+        !today.isBefore(departureDate) && !today.isAfter(returnDate)
+
+    /**
+     * 오늘이 몇 일차인지. 여행 기간이 아니면 null.
+     *
+     * 1부터 센다 — 화면과 [TimelineEdits]가 쓰는
+     * 일차 번호와 같은 값이어야 오늘 일정을 바로 집을 수 있다.
+     */
+    fun dayNumberOn(today: LocalDate): Int? {
+        if (!isOngoing(today)) return null
+        return ChronoUnit.DAYS.between(departureDate, today).toInt() + 1
+    }
+
     companion object {
         /**
          * 조건에서 id를 만든다. 같은 조건이면 항상 같은 id가 나온다.

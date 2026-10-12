@@ -94,7 +94,7 @@ class TripPlannerTest {
             day.meals.forEach { (meal, pair) ->
                 listOf(pair.qualityFirst.item, pair.withinBudget!!.item).forEach { restaurant ->
                     assertTrue(
-                        "${day.dayNumber}일차 ${meal.label}에 ${restaurant.category}인 " +
+                        "${day.dayNumber}일차 ${meal.name}에 ${restaurant.category}인 " +
                             "${restaurant.name}이(가) 추천됐다",
                         meal in restaurant.suitableMeals,
                     )
@@ -125,7 +125,7 @@ class TripPlannerTest {
             day.meals.forEach { (meal, pair) ->
                 val item = pair.qualityFirst.item
                 assertTrue(
-                    "${day.dayNumber}일차 ${meal.label}: ${item.name} ${item.priceWon}원 > 상한 ${mealCap}원",
+                    "${day.dayNumber}일차 ${meal.name}: ${item.name} ${item.priceWon}원 > 상한 ${mealCap}원",
                     item.priceWon <= mealCap,
                 )
             }

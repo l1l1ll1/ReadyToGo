@@ -284,6 +284,23 @@ class TripPlanViewModel(
     }
 
     /**
+     * 여행 중 모드에서 항목을 "했음"으로 체크한다. 다시 누르면 해제.
+     *
+     * 지우기와 달리 되돌리기 안내를 띄우지 않는다 — 체크는 한 번 더 누르면 풀리고,
+     * 걷는 중에 스낵바가 매번 올라오면 방해만 된다.
+     */
+    fun toggleDone(dayNumber: Int, key: String) {
+        updateEdits { edits ->
+            val next = if (key in edits.doneIn(dayNumber)) {
+                edits.done.minusKey(dayNumber, key)
+            } else {
+                edits.done.plusKey(dayNumber, key)
+            }
+            edits.copy(done = next)
+        }
+    }
+
+    /**
      * 끼니를 다른 후보로 바꾼다.
      *
      * 추천(점수 1등)을 다시 고르면 기록에서 지운다 — 기본값과 같은 값을 들고 있을 이유가 없고,
@@ -412,7 +429,7 @@ class TripPlanViewModel(
         }
     }
 
-    /** 일차별 집합에 키를 넣고 빼는 잔손질. 세 함수에서 같은 코드를 반복하지 않으려고 뺐다. */
+    /** 일차별 집합에 키를 넣고 빼는 잔손질. 지우기·되돌리기·체크가 같은 코드를 쓴다. */
     private fun Map<Int, Set<String>>.plusKey(dayNumber: Int, key: String) =
         this + (dayNumber to (this[dayNumber].orEmpty() + key))
 

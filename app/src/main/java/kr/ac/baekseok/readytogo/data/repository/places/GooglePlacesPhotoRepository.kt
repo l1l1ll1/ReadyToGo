@@ -11,6 +11,7 @@ import kr.ac.baekseok.readytogo.data.photo.PhotoBudget
 import kr.ac.baekseok.readytogo.data.photo.PlacePhotoCache
 import kr.ac.baekseok.readytogo.data.repository.PlacePhotoRepository
 import kr.ac.baekseok.readytogo.data.repository.await
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -66,10 +67,22 @@ class GooglePlacesPhotoRepository(
             return PlacePhoto.NONE
         }
 
-        val photo = runCatching { fetch(placeId) }
-            .onFailure { Log.w(TAG, "사진을 받지 못했다: $placeId", it) }
-            .getOrDefault(PlacePhoto.NONE)
+        // **실패와 "사진 없음"을 가른다.** 둘을 같이 캐시했더니, 목록을 빠르게 스크롤해서
+        // 요청이 취소된 장소가 "사진 없음"으로 영구히 굳었다(캐시에 유효기간이 없다).
+        // 실제로 저장 탭에서 6곳이 그렇게 굳어 있었다.
+        val photo = try {
+            fetch(placeId)
+        } catch (e: CancellationException) {
+            // 화면에서 사라져 취소된 것이지 사진이 없는 것이 아니다. 다시 그릴 때 또 묻는다.
+            // 요청이 실제로 나갔는지는 알 수 없지만, 굳히는 쪽보다 한 번 더 묻는 쪽이 싸다.
+            throw e
+        } catch (e: Exception) {
+            // 네트워크나 키 문제. **캐시에 적지 않는다** — 적으면 그 장소는 영원히 그라데이션이다.
+            Log.w(TAG, "사진을 받지 못했다(캐시하지 않음): $placeId", e)
+            return PlacePhoto.NONE
+        }
 
+        // 여기까지 왔으면 Places가 제대로 답한 것이다. 사진이 없다는 답도 기록할 값이다.
         cache.write(placeId, photo)
         if (photo.hasPhoto) budget.recordFetch()
         return photo

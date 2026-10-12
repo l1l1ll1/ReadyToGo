@@ -21,6 +21,34 @@ class PlacePhotoCache(context: Context) {
     private val preferences =
         context.applicationContext.getSharedPreferences(FILE, Context.MODE_PRIVATE)
 
+    init {
+        purgeFailuresOnce()
+    }
+
+    /**
+     * 실패까지 "사진 없음"으로 적어 두던 시절의 기록을 한 번만 지운다.
+     *
+     * 예전에는 요청이 취소되거나 실패해도 결과를 [NONE_MARKER]로 적었다. 캐시에
+     * 유효기간이 없어서 그렇게 굳은 장소는 영영 그라데이션으로 남는다 — 실제로
+     * 저장 탭 38곳 중 6곳이 그 상태였다.
+     *
+     * **진짜로 사진이 없는 곳과 구분할 방법이 없으므로** 없음 기록을 통째로 지운다.
+     * 그 6곳은 다음에 화면에 뜰 때 한 번 더 물어보게 되는데, 장소당 한 번뿐이고
+     * 사진이 정말 없으면 다시 없음으로 적힌다. 월 상한(800장)에 견주면 무시할 양이다.
+     *
+     * 받아 둔 **사진 주소는 건드리지 않는다.** 그것까지 지우면 멀쩡한 32곳을 다시 받느라
+     * 돈이 나간다.
+     */
+    private fun purgeFailuresOnce() {
+        if (preferences.getInt(KEY_VERSION, 0) >= VERSION) return
+
+        val editor = preferences.edit()
+        preferences.all.forEach { (key, value) ->
+            if (value == NONE_MARKER) editor.remove(key)
+        }
+        editor.putInt(KEY_VERSION, VERSION).apply()
+    }
+
     /**
      * 저장된 값. 아직 물어본 적 없으면 null.
      *
@@ -56,6 +84,16 @@ class PlacePhotoCache(context: Context) {
         const val FILE = "place_photos"
         const val FIELD_URL = "url"
         const val FIELD_ATTRIBUTION = "attribution"
+
+        /**
+         * 캐시 모양이 바뀐 횟수. 올리면 [purgeFailuresOnce]가 한 번 더 돈다.
+         *
+         * 1 = 실패를 "사진 없음"으로 적던 기록을 지우는 판.
+         */
+        const val VERSION = 1
+
+        /** placeId와 겹치지 않게 밑줄을 붙인다. Google place id는 ChIJ...로 시작한다. */
+        const val KEY_VERSION = "__version"
 
         /** 사진이 없는 장소. JSON을 쓰지 않는 이유는 구분만 되면 되기 때문이다. */
         const val NONE_MARKER = "none"

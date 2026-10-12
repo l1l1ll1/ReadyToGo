@@ -39,6 +39,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -101,6 +102,13 @@ fun TimelineTab(
     favoriteIds: Set<String>,
     /** 숙소에서 먼 날의 번호. 그 날 머리글에만 표시가 붙는다. */
     farDayNumbers: Set<Int>,
+    /**
+     * 오늘이 몇 일차인지. 여행 기간이 아니면 null — 그때는 여행 중 모드가 켜지지 않는다.
+     *
+     * 설정에 스위치를 두지 않은 이유: 여행 중인지는 날짜만 보면 앱이 아는 사실이고,
+     * 켜고 끄는 것을 사람 손에 맡기면 켜 놓은 채로 여행이 끝난다.
+     */
+    todayDayNumber: Int?,
     onSelectDay: (Int) -> Unit,
     onOpenMapForDay: (Int) -> Unit,
     onItemClick: (Int, TimelineItem) -> Unit,
@@ -110,22 +118,41 @@ fun TimelineTab(
     onReorderCommit: () -> Unit,
     onDelete: (Int, String) -> Unit,
 ) {
-    val day = plan.dailyPlans.firstOrNull { it.dayNumber == selectedDayNumber }
+    // 여행 중에는 오늘 하루만 보여준다. 길 위에서 필요한 것은 오늘 갈 곳이지 닷새치 목록이
+    // 아니다. 다른 날이 궁금하면 "전체 보기"로 편다. 끄고 켜는 것은 이 화면 안에서만 산다 —
+    // 저장할 만한 취향이 아니라 지금 무엇을 보고 싶은가일 뿐이다.
+    var showAllDays by rememberSaveable { mutableStateOf(false) }
+    val todayOnly = todayDayNumber != null && !showAllDays
+
+    val day = plan.dailyPlans
+        .firstOrNull { it.dayNumber == if (todayOnly) todayDayNumber else selectedDayNumber }
         ?: plan.dailyPlans.firstOrNull()
 
     Column(modifier = Modifier.fillMaxWidth()) {
-        ScrollableTabRow(
-            selectedTabIndex = ((day?.dayNumber ?: 1) - 1).coerceAtLeast(0),
-            edgePadding = 0.dp,
-        ) {
-            plan.dailyPlans.forEach { candidate ->
-                Tab(
-                    selected = candidate.dayNumber == day?.dayNumber,
-                    onClick = { onSelectDay(candidate.dayNumber) },
-                    text = {
-                        Text(stringResource(R.string.plan_day_tab, candidate.dayNumber))
-                    },
-                )
+        if (todayDayNumber != null) {
+            OngoingBanner(
+                dayNumber = todayDayNumber,
+                showingAllDays = showAllDays,
+                onToggle = { showAllDays = !showAllDays },
+            )
+        }
+
+        // 오늘만 보는 중에는 날짜 칩을 감춘다. 칩이 남아 있으면 눌러서 다른 날로 갈 수 있어
+        // "오늘만"이라는 말과 어긋난다.
+        if (!todayOnly) {
+            ScrollableTabRow(
+                selectedTabIndex = ((day?.dayNumber ?: 1) - 1).coerceAtLeast(0),
+                edgePadding = 0.dp,
+            ) {
+                plan.dailyPlans.forEach { candidate ->
+                    Tab(
+                        selected = candidate.dayNumber == day?.dayNumber,
+                        onClick = { onSelectDay(candidate.dayNumber) },
+                        text = {
+                            Text(stringResource(R.string.plan_day_tab, candidate.dayNumber))
+                        },
+                    )
+                }
             }
         }
 
@@ -345,6 +372,48 @@ private fun TrashTarget(
                 imageVector = Icons.Outlined.Delete,
                 contentDescription = stringResource(R.string.plan_drag_to_delete),
                 tint = if (active) palette.Surface else palette.TextSecondary,
+            )
+        }
+    }
+}
+
+/**
+ * 여행 중이라는 띠. 일정표 맨 위에 붙는다.
+ *
+ * 날짜만 보고 켜지므로 끌 수단이 필요하다 — 여행 중이라도 모레 일정을 확인할 일은 있다.
+ * 그 수단을 설정이 아니라 띠 안에 둔 이유: 지금 보고 있는 화면에서 바로 펴고 접는 일이라
+ * 설정으로 들어갔다 나오게 하면 두 단계가 더 생긴다.
+ */
+@Composable
+private fun OngoingBanner(
+    dayNumber: Int,
+    showingAllDays: Boolean,
+    onToggle: () -> Unit,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = Tokens.Space.lg, vertical = Tokens.Space.sm)
+            .clip(Tokens.Radius.card)
+            .background(LocalPalette.current.PointLight)
+            .padding(start = Tokens.Space.lg, end = Tokens.Space.sm),
+    ) {
+        Text(
+            text = stringResource(R.string.plan_ongoing_banner, dayNumber),
+            style = MaterialTheme.typography.titleSmall,
+            color = LocalPalette.current.PointDark,
+            modifier = Modifier.weight(1f),
+        )
+        TextButton(onClick = onToggle) {
+            Text(
+                stringResource(
+                    if (showingAllDays) {
+                        R.string.plan_show_today_only
+                    } else {
+                        R.string.plan_show_all_days
+                    },
+                ),
             )
         }
     }

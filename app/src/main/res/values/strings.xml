@@ -312,6 +312,11 @@
     <string name="plan_no_meal_title">근처 추천 식당 없음</string>
     <string name="plan_no_meal_body">이 동네에서 조건에 맞는 곳을 찾지 못했습니다.</string>
 
+    <!-- 여행 중 모드 -->
+    <string name="plan_ongoing_banner">여행 중 · %1$d일차</string>
+    <string name="plan_show_all_days">전체 보기</string>
+    <string name="plan_show_today_only">오늘만</string>
+
     <!-- 장소 상세 시트 -->
     <string name="plan_sheet_no_restaurant">추천할 식당을 찾지 못했습니다.</string>
     <string name="plan_sheet_open_map">지도에서 열기</string>

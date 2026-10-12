@@ -94,6 +94,7 @@ import kr.ac.baekseok.readytogo.ui.map.DayMapContent
 import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.ReadytogoTheme
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlin.math.roundToInt
@@ -199,6 +200,26 @@ private fun TripPlanContent(
     // 따로 화면을 띄우던 것을 탭으로 흡수했으므로 선택한 일차를 여기서 들고 있는다.
     // 일정표 탭의 날짜 칩도 같은 값을 쓴다 — 두 탭이 다른 날을 보여주면 혼란스럽다.
     var mapDayNumber by rememberSaveable { mutableStateOf(1) }
+
+    /**
+     * 오늘이 이 여행의 몇 일차인지. 여행 기간이 아니면 null.
+     *
+     * 저장된 일정이 아니라 **계획의 날짜**로 따진다 — 둘러보기로 막 만든 일정에도
+     * 여행 중 모드가 붙어야 하고, 그런 일정은 저장돼 있지 않아 SavedTrip이 없다.
+     */
+    val todayDayNumber = (uiState as? TripPlanUiState.Success)?.plan?.dailyPlans
+        ?.firstOrNull { it.date == LocalDate.now() }?.dayNumber
+
+    // 여행 중이면 일정표가 오늘 일차부터 열려야 한다. 계획이 도착해야 날짜를 알 수 있어
+    // 초기값으로는 못 정하고, 도착한 뒤 **한 번만** 맞춘다 — 매번 맞추면 사용자가 고른
+    // 다른 날이 화면이 다시 만들어질 때마다 오늘로 되돌아간다.
+    var dayPrefilled by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(todayDayNumber) {
+        if (todayDayNumber != null && !dayPrefilled) {
+            mapDayNumber = todayDayNumber
+            dayPrefilled = true
+        }
+    }
 
     // 상세 시트를 띄울 항목. 일차 번호를 같이 들고 있어야 어느 날의 항목인지 알 수 있다.
     var openedItem by remember { mutableStateOf<Pair<Int, TimelineItem>?>(null) }
@@ -318,6 +339,7 @@ private fun TripPlanContent(
                     edits = edits,
                     pickedPlaces = pickedPlaces,
                     mapDayNumber = mapDayNumber,
+                    todayDayNumber = todayDayNumber,
                     onToggleFavorite = onToggleFavorite,
                     onOpenMapForDay = { dayNumber ->
                         mapDayNumber = dayNumber
@@ -404,6 +426,8 @@ private fun PlanTabContent(
     edits: TimelineEdits,
     pickedPlaces: PickedPlaces,
     mapDayNumber: Int,
+    /** 오늘이 몇 일차인지. 여행 기간이 아니면 null. */
+    todayDayNumber: Int?,
     onToggleFavorite: (FavoritePlace) -> Unit,
     onOpenMapForDay: (Int) -> Unit,
     onSelectMapDay: (Int) -> Unit,
@@ -485,6 +509,7 @@ private fun PlanTabContent(
             pickedPlaces = pickedPlaces,
             favoriteIds = favoriteIds,
             farDayNumbers = distanceCheck?.farDays?.map { it.dayNumber }?.toSet().orEmpty(),
+            todayDayNumber = todayDayNumber,
             onSelectDay = onSelectMapDay,
             onOpenMapForDay = onOpenMapForDay,
             onItemClick = onTimelineItemClick,

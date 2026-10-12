@@ -292,6 +292,11 @@
     <string name="plan_no_meal_title">No restaurant nearby</string>
     <string name="plan_no_meal_body">We couldn\'t find a match in this area.</string>
 
+    <!-- 여행 중 모드 -->
+    <string name="plan_ongoing_banner">On trip · Day %1$d</string>
+    <string name="plan_show_all_days">All days</string>
+    <string name="plan_show_today_only">Today only</string>
+
     <!-- 장소 상세 시트 -->
     <string name="plan_sheet_no_restaurant">We couldn\'t find a restaurant to recommend.</string>
     <string name="plan_sheet_open_map">Open in Maps</string>

@@ -237,13 +237,15 @@ private fun UpcomingTripCard(trip: SavedTrip, today: LocalDate, onClick: () -> U
                 .padding(Tokens.Space.md),
         ) {
             Text(
-                // 출발일이 오늘이면 "D-0"이 아니라 "출발일"이 읽기 낫다.
                 text = when {
                     daysLeft > 0 -> stringResource(R.string.home_dday, daysLeft.toInt())
-                    daysLeft == 0L -> stringResource(R.string.home_departure_day)
-                    // 출발일이 지났다면 여행 중이다 — 끝난 여행은 이 카드에 오지 않는다(isUpcoming).
-                    // "여행 중"보다 "3일차"가 낫다: 홈에서 바로 오늘 할 일의 위치를 알려 준다.
-                    // 일정표 날짜 칩과 같은 문구를 쓴다. 두 곳이 다른 말로 같은 것을 가리키면 헷갈린다.
+                    // 떠난 뒤로는 "3일차". 끝난 여행은 이 카드에 오지 않는다(isUpcoming).
+                    //
+                    // **출발일도 1일차로 센다.** 첫날만 "출발일"로 두면 카드가 날마다
+                    // 다른 종류의 말을 하게 되고, 여행 중 모드가 이미 "1일차"로 열려 있는데
+                    // 홈만 다른 말을 쓰면 같은 날을 두 이름으로 부르는 셈이 된다.
+                    //
+                    // 일정표 날짜 칩과 같은 문구를 쓴다 — 두 곳이 다른 말로 같은 것을 가리키면 헷갈린다.
                     else -> stringResource(R.string.plan_day_tab, trip.dayNumberOn(today) ?: trip.dayCount)
                 },
                 style = MaterialTheme.typography.labelLarge,

@@ -193,6 +193,9 @@ private fun TripCard(
             daysText(trip.dayCount),
         ),
         colors = if (past) LocalPalette.current.MutedGradient else null,
+        // 지난 여행은 사진을 띄우지 않는다. 가라앉혀 두기로 한 카드에 사진을 얹으면
+        // 다가오는 여행보다 눈에 걸린다(8-1에서 정한 것).
+        photoPlaceId = trip.coverPlaceId.takeUnless { past },
         height = if (past) Tokens.Size.pastTripCardHeight else Tokens.Size.photoCardHeight,
         onClick = onClick,
         onLongClick = onLongClick,

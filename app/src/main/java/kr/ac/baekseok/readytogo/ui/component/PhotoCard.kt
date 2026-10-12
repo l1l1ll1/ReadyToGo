@@ -21,8 +21,10 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import coil3.compose.AsyncImage
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 
 /**
@@ -58,6 +60,16 @@ fun PhotoCard(
      */
     colors: List<Color>? = null,
     /**
+     * 사진을 띄울 장소 id. null이면 그라데이션만 남는다.
+     *
+     * 설정에서 장소 사진을 끄면 [rememberPlacePhoto]가 null을 돌려주므로 자동으로
+     * 그라데이션으로 떨어진다 — 이 쪽에서 설정을 따로 보지 않는다.
+     *
+     * 사진은 카드가 **화면에 보일 때** 한 번만 받고 기기에 캐시된다. 목록을 다시 열거나
+     * 앱을 재시작해도 호출이 나가지 않는다.
+     */
+    photoPlaceId: String? = null,
+    /**
      * 아래쪽을 어둡게 덮을지. 배경 색을 모르는 카드(사진 대용 그라데이션)는 켜 둬야
      * 흰 글자가 밝은 색 위에 얹히는 일을 막는다.
      *
@@ -69,6 +81,7 @@ fun PhotoCard(
     overlay: @Composable (BoxScope.() -> Unit)? = null,
 ) {
     val fill = colors ?: Tokens.placeholderGradient(key)
+    val photo = photoPlaceId?.let { rememberPlacePhoto(it) }
 
     Box(
         modifier = modifier
@@ -87,11 +100,24 @@ fun PhotoCard(
                 },
             ),
     ) {
+        // 사진이 도착하면 그라데이션 위에 덮는다. 그라데이션을 먼저 깔아 두었기 때문에
+        // 사진이 늦어도 빈 네모가 보이지 않는다.
+        if (photo != null) {
+            AsyncImage(
+                model = photo.url,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.matchParentSize(),
+            )
+        }
+
         // 아래쪽을 어둡게 덮는다. 그라데이션 색에 따라 흰 글자가 안 보이는 경우를 막는다.
         //
         // **글자가 없으면 깔지 않는다.** 온보딩처럼 제목 없이 그림 자리로만 쓰는 카드에서는
         // 지킬 글자가 없는데, 노을 그라데이션 위에 검은 덮개가 겹쳐 아래쪽이 탁해졌다.
-        if (scrim && (title.isNotEmpty() || subtitle != null)) {
+        // 사진을 얹었으면 덮개를 켠다 — 사진이 밝으면 흰 글자가 묻힌다.
+        // 배경 색을 직접 정한 카드라도 그 색은 이미 사진에 가려져 있다.
+        if ((scrim || photo != null) && (title.isNotEmpty() || subtitle != null)) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()

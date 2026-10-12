@@ -125,6 +125,8 @@ private fun SavedTrip.toMap(): Map<String, Any?> = mapOf(
     "condition" to condition.toMap(),
     // 편집이 없으면 필드를 만들지 않는다. 빈 맵 셋이 모든 문서에 붙을 이유가 없다.
     "edits" to edits.takeUnless { it.isEmpty }?.toMap(),
+    // 카드 사진에 쓸 장소 id 하나. 없는 일정도 있어 null이 그대로 들어간다.
+    "coverPlaceId" to coverPlaceId,
 )
 
 /**
@@ -148,6 +150,8 @@ private fun Map<String, Any?>.toSavedTrip(id: String): SavedTrip? {
         // 저장 시각이 없으면 오늘로 본다. 목록 정렬에만 쓰여서 틀려도 피해가 작다.
         savedAt = localDate("savedAt") ?: LocalDate.now(),
         edits = childMap("edits")?.toTimelineEdits() ?: TimelineEdits(),
+        // 이 필드가 생기기 전에 저장된 일정에는 없다. 그때는 카드가 그라데이션으로 남는다.
+        coverPlaceId = this["coverPlaceId"] as? String,
     )
 }
 

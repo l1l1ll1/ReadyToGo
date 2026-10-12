@@ -29,10 +29,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil3.compose.AsyncImage
 import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.data.model.AuthState
 import kr.ac.baekseok.readytogo.data.model.SavedTrip
@@ -41,6 +43,7 @@ import kr.ac.baekseok.readytogo.ui.component.PastTripChip
 import kr.ac.baekseok.readytogo.ui.component.PhotoCard
 import kr.ac.baekseok.readytogo.ui.component.PrimaryButton
 import kr.ac.baekseok.readytogo.ui.component.SectionHeader
+import kr.ac.baekseok.readytogo.ui.component.rememberPlacePhoto
 import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.isAppInDarkTheme
 import kr.ac.baekseok.readytogo.ui.format.dateShort
@@ -285,6 +288,10 @@ private fun RecentTripRow(trip: SavedTrip, today: LocalDate, onClick: () -> Unit
         // **다크에서는 연노랑을 쓰지 않는다.** 어두운 카키로 내려가 탁해지고, 그 위에 얹힌
         // 여러 색 아이콘이 흙빛으로 섞인다. 그때는 면을 가라앉히고 포인트 색 아이콘
         // 하나로 표식을 삼는다 — 라이트에서 연노랑이 하던 일을 색 대비가 대신한다.
+        // 대표 장소 사진이 있으면 그것을 쓴다. 사진은 목적지마다 달라도 알록달록하지 않다 —
+        // 위 걱정은 **색 그라데이션**을 썼을 때의 이야기였다. 사진이 없거나 설정에서 껐으면
+        // 아래 표식이 그대로 남는다.
+        val photo = trip.coverPlaceId?.let { rememberPlacePhoto(it) }
         val dark = isAppInDarkTheme()
         Box(
             contentAlignment = Alignment.Center,
@@ -295,12 +302,21 @@ private fun RecentTripRow(trip: SavedTrip, today: LocalDate, onClick: () -> Unit
                     if (dark) LocalPalette.current.SurfaceMuted else LocalPalette.current.Secondary,
                 ),
         ) {
-            Image(
-                painter = painterResource(R.drawable.ic_launcher_art),
-                contentDescription = null,
-                colorFilter = if (dark) ColorFilter.tint(LocalPalette.current.Point) else null,
-                modifier = Modifier.size(THUMB_ICON_SIZE),
-            )
+            if (photo != null) {
+                AsyncImage(
+                    model = photo.url,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.matchParentSize(),
+                )
+            } else {
+                Image(
+                    painter = painterResource(R.drawable.ic_launcher_art),
+                    contentDescription = null,
+                    colorFilter = if (dark) ColorFilter.tint(LocalPalette.current.Point) else null,
+                    modifier = Modifier.size(THUMB_ICON_SIZE),
+                )
+            }
         }
         Column(
             verticalArrangement = Arrangement.spacedBy(Tokens.Space.xs),

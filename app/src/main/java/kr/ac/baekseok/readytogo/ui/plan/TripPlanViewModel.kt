@@ -216,6 +216,7 @@ class TripPlanViewModel(
                 savedAt = LocalDate.now(),
                 // 지금까지 손본 것을 같이 올린다. 편집하고 나서 저장하는 순서가 흔하다.
                 edits = _edits.value,
+                coverPlaceId = coverPlaceId(),
             )
 
             // 둘러보기 중이면 저장할 곳이 없다. 일정을 기억해 두고 로그인을 권한다 —
@@ -230,6 +231,23 @@ class TripPlanViewModel(
                 .onSuccess { _message.value = string(R.string.plan_saved) }
                 .onFailure { _message.value = it.message ?: string(R.string.plan_save_failed) }
         }
+    }
+
+    /**
+     * 카드에 띄울 대표 장소. **1일차 첫 관광지, 없으면 1일차 첫 식당.**
+     *
+     * 지금 손에 있는 계획에서 id만 집어 온다 — 도시 사진을 따로 검색하지 않으므로
+     * 추가 호출이 0회다. 사진 자체는 카드가 화면에 보일 때 한 번만 받는다.
+     *
+     * 1일차를 쓰는 이유: 어느 날을 골라도 상관없다면 가장 앞의 것이 설명하기 쉽고,
+     * 나중에 일정을 편집해도 대표 장소가 널뛰지 않는다. 관광지를 먼저 보는 이유는
+     * 도시를 알아보게 하는 사진이 식당보다 관광지 쪽일 가능성이 크기 때문이다.
+     */
+    private fun coverPlaceId(): String? {
+        val day = (_uiState.value as? TripPlanUiState.Success)?.plan?.dailyPlans?.firstOrNull()
+            ?: return null
+        return day.attractions.firstOrNull()?.id
+            ?: day.meals.values.firstOrNull()?.qualityFirst?.item?.id
     }
 
     /** 식당·관광지 ♥를 켜고 끈다. */

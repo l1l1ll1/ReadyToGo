@@ -58,7 +58,6 @@
     <string name="home_empty_action">첫 일정 만들기</string>
     <string name="home_dday">D-%1$d</string>
     <string name="home_departure_day">출발일</string>
-    <string name="home_travelling">여행 중</string>
 
     <!-- 저장 탭 -->
     <string name="saved_empty_title">저장한 장소가 없습니다</string>

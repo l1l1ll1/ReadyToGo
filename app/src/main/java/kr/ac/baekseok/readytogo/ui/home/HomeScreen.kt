@@ -241,7 +241,10 @@ private fun UpcomingTripCard(trip: SavedTrip, today: LocalDate, onClick: () -> U
                 text = when {
                     daysLeft > 0 -> stringResource(R.string.home_dday, daysLeft.toInt())
                     daysLeft == 0L -> stringResource(R.string.home_departure_day)
-                    else -> stringResource(R.string.home_travelling)
+                    // 출발일이 지났다면 여행 중이다 — 끝난 여행은 이 카드에 오지 않는다(isUpcoming).
+                    // "여행 중"보다 "3일차"가 낫다: 홈에서 바로 오늘 할 일의 위치를 알려 준다.
+                    // 일정표 날짜 칩과 같은 문구를 쓴다. 두 곳이 다른 말로 같은 것을 가리키면 헷갈린다.
+                    else -> stringResource(R.string.plan_day_tab, trip.dayNumberOn(today) ?: trip.dayCount)
                 },
                 style = MaterialTheme.typography.labelLarge,
                 // D-day는 "며칠 남았는지"를 눈에 걸리게 하는 자리라 코랄을 쓴다.

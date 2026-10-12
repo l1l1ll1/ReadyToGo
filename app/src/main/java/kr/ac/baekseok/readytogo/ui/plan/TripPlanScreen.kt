@@ -212,14 +212,17 @@ private fun TripPlanContent(
     val todayDayNumber = (uiState as? TripPlanUiState.Success)?.plan?.dailyPlans
         ?.firstOrNull { it.date == LocalDate.now() }?.dayNumber
 
-    // 여행 중이면 일정표가 오늘 일차부터 열려야 한다. 계획이 도착해야 날짜를 알 수 있어
-    // 초기값으로는 못 정하고, 도착한 뒤 **한 번만** 맞춘다 — 매번 맞추면 사용자가 고른
-    // 다른 날이 화면이 다시 만들어질 때마다 오늘로 되돌아간다.
-    var dayPrefilled by rememberSaveable { mutableStateOf(false) }
+    // 여행 중이면 일정표가 오늘 일차부터 열려야 한다. 여행 중에 이 화면을 여는 이유는
+    // 예산을 다시 보려는 것이 아니라 오늘 어디로 가는지를 보려는 것이다.
+    //
+    // 계획이 도착해야 날짜를 알 수 있어 초기값으로는 못 정하고, 도착한 뒤 **한 번만**
+    // 맞춘다 — 매번 맞추면 사용자가 고른 탭과 날짜가 화면이 다시 만들어질 때마다 되돌아간다.
+    var openedOnToday by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(todayDayNumber) {
-        if (todayDayNumber != null && !dayPrefilled) {
+        if (todayDayNumber != null && !openedOnToday) {
             mapDayNumber = todayDayNumber
-            dayPrefilled = true
+            selectedTab = PlanTab.ITINERARY
+            openedOnToday = true
         }
     }
 

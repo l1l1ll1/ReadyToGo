@@ -54,7 +54,6 @@
     <string name="home_empty_action">Plan your first trip</string>
     <string name="home_dday">D-%1$d</string>
     <string name="home_departure_day">Today</string>
-    <string name="home_travelling">On the trip</string>
 
     <!-- 저장 탭 -->
     <string name="saved_empty_title">Nothing saved yet</string>

@@ -238,6 +238,14 @@ private fun MealOptionRow(
                     LocalPalette.current.TextSecondary
                 },
             )
+            // 고를 때 비교할 수 있게 후보마다 동선 근거를 붙인다. 위쪽 상세와 같은 문구다.
+            option.detourLine()?.let { line ->
+                Text(
+                    text = line,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = LocalPalette.current.TextSecondary,
+                )
+            }
         }
 
         // 지금 고른 곳. 체크 하나로 표시한다 — 목록에서 빼면 되돌릴 방법이 없어진다.

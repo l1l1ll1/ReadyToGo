@@ -76,6 +76,43 @@ data class SavedTrip(
         return ChronoUnit.DAYS.between(departureDate, today).toInt() + 1
     }
 
+    /**
+     * 기간을 바꿀 수 있는지. **출발 전만** 된다.
+     *
+     * 출발일 당일부터는 막는다 — 이미 떠난 여행의 출발일을 옮기면 체크해 둔 "했음"이 다른 날에
+     * 붙고, 날짜 시트가 오늘 이전을 고르지 못하게 막아 출발일이 강제로 밀린다.
+     */
+    fun canChangeDates(today: LocalDate): Boolean = departureDate.isAfter(today)
+
+    /**
+     * 기간만 바꾼 새 일정. **id도 새로 만든다** — id가 날짜를 품고 있어서([idFor]),
+     * 옛 id에 새 날짜를 담으면 결과 화면이 이 일정을 찾지 못한다.
+     *
+     * 편집은 일수가 같을 때만 가져간다. 편집 키가 일차 번호와 장소 id라 날짜를 옮겨도 맞지만,
+     * 일수가 바뀌면 일정을 새로 짜서 3일차가 전혀 다른 날이 된다.
+     *
+     * @param autoTitle 일수로 자동 이름을 만든다. 리소스가 필요해 밖에서 받는다.
+     *        지금 이름이 옛 자동 이름 그대로면 새 일수로 고치고, 사용자가 바꾼 이름이면 둔다.
+     */
+    fun withDates(
+        departure: LocalDate,
+        returning: LocalDate,
+        autoTitle: (dayCount: Int) -> String,
+    ): SavedTrip {
+        val newCondition = condition.copy(departureDate = departure, returnDate = returning)
+        val moved = copy(
+            id = idFor(newCondition) ?: id,
+            departureDate = departure,
+            returnDate = returning,
+            condition = newCondition,
+        )
+        val sameLength = moved.dayCount == dayCount
+        return moved.copy(
+            title = if (title == autoTitle(dayCount)) autoTitle(moved.dayCount) else title,
+            edits = if (sameLength) edits else TimelineEdits(),
+        )
+    }
+
     companion object {
         /**
          * 조건에서 id를 만든다. 같은 조건이면 항상 같은 id가 나온다.

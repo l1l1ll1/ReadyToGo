@@ -17,6 +17,14 @@ interface SavedTripRepository {
 
     suspend fun delete(id: String): Result<Unit>
 
+    /**
+     * [oldId] 문서를 지우고 [trip]을 쓴다. **한 번에** 일어난다.
+     *
+     * 기간 변경에 쓴다. id가 날짜를 품고 있어 날짜가 바뀌면 문서 id도 바뀐다.
+     * 쓰기와 지우기를 따로 부르면 중간에 실패했을 때 같은 여행이 두 장 남거나 하나도 안 남는다.
+     */
+    suspend fun replace(oldId: String, trip: SavedTrip): Result<Unit>
+
     /** 이름만 바꾼다. 일정 전체를 다시 저장하지 않아도 되게 따로 둔다. */
     suspend fun rename(id: String, title: String): Result<Unit>
 

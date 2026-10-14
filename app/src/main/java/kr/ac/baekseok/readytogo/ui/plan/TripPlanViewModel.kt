@@ -80,6 +80,33 @@ class TripPlanViewModel(
         id != null && trips.any { it.id == id }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(FLOW_TIMEOUT_MS), false)
 
+    /**
+     * 기간을 바꿀 수 있는지. **저장된 일정이고 아직 출발 전**일 때만.
+     *
+     * 저장하지 않은 계획은 바꿀 문서가 없다 — 입력 화면으로 돌아가 새로 만들면 된다.
+     */
+    val canChangeDates: StateFlow<Boolean> = combine(
+        AppContainer.savedTrips.observeAll(),
+        _uiState,
+    ) { trips, _ ->
+        val id = loadedCondition?.let { SavedTrip.idFor(it) }
+        trips.firstOrNull { it.id == id }?.canChangeDates(LocalDate.now()) == true
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(FLOW_TIMEOUT_MS), false)
+
+    /**
+     * 기간을 바꿔 새로 열어야 할 조건. 화면이 받아서 내비게이션에 담고 [clearConditionChange]로 비운다.
+     *
+     * **여기서 바로 load하지 않는 이유**: 결과 화면의 조건은 내비게이션 항목에 담겨 있다.
+     * 그쪽을 안 바꾸면 화면을 돌리거나 다시 만들 때 옛 조건으로 load가 다시 불려
+     * 지워진 문서의 일정으로 되돌아간다.
+     */
+    private val _conditionChange = MutableStateFlow<TripCondition?>(null)
+    val conditionChange: StateFlow<TripCondition?> = _conditionChange.asStateFlow()
+
+    fun clearConditionChange() {
+        _conditionChange.value = null
+    }
+
     /** 저장·즐겨찾기를 눌렀을 때 화면에 띄울 한 줄. 띄운 뒤 화면이 [clearMessage]로 비운다. */
     private val _message = MutableStateFlow<String?>(null)
     val message: StateFlow<String?> = _message.asStateFlow()
@@ -192,6 +219,53 @@ class TripPlanViewModel(
 
             AppContainer.savedTrips.save(trip)
                 .onSuccess { _message.value = string(R.string.plan_saved) }
+                .onFailure { _message.value = it.message ?: string(R.string.plan_save_failed) }
+        }
+    }
+
+    /**
+     * 저장된 일정의 기간을 바꾼다.
+     *
+     * 일수가 같으면 편집을 그대로 가져가고, 다르면 비운다(확인은 화면이 먼저 받는다).
+     * 어느 쪽이든 새 조건으로 다시 만든다 — 항공만 다시 받아 끼워 넣으면 지금 화면은 맞아도,
+     * 다음에 열 때 조건으로 전체를 다시 만들면서 끼니 예산·도착 공항이 달라져 결과가 어긋난다.
+     * 관광지·식당 검색은 위치 기준 캐시에 걸려 새로 나가는 호출은 항공 1회뿐이다.
+     *
+     * D-day 알림은 손대지 않는다. 저장 목록이 바뀌면 AppContainer가 전부 다시 예약한다.
+     */
+    fun changeDates(departure: LocalDate, returning: LocalDate) {
+        val condition = loadedCondition ?: return
+        val oldId = SavedTrip.idFor(condition) ?: return
+
+        viewModelScope.launch {
+            val trips = AppContainer.savedTrips.observeAll().first()
+            val trip = trips.firstOrNull { it.id == oldId } ?: return@launch
+
+            if (!trip.canChangeDates(LocalDate.now())) {
+                _message.value = string(R.string.plan_dates_departed)
+                return@launch
+            }
+            if (departure == trip.departureDate && returning == trip.returnDate) return@launch
+
+            val moved = trip.withDates(departure, returning) { days ->
+                savedTripTitle(trip.destinationName, days)
+            }
+            // 같은 조건·같은 날짜로 저장된 일정이 이미 있으면 덮어쓰지 않는다. 그쪽 편집이 날아간다.
+            if (trips.any { it.id == moved.id }) {
+                _message.value = string(R.string.plan_dates_duplicate)
+                return@launch
+            }
+
+            AppContainer.savedTrips.replace(oldId, moved)
+                .onSuccess {
+                    // 직전에 뺀 항목의 되돌리기 기회를 닫는다. 남아 있으면 이 안내에 "되돌리기"가
+                    // 붙는데, 눌러도 되돌아가는 것은 기간이 아니라 엉뚱한 삭제다(에뮬레이터에서 봤다).
+                    _lastDeleted.value = null
+                    if (moved.dayCount == trip.dayCount) {
+                        _message.value = string(R.string.plan_dates_moved)
+                    }
+                    _conditionChange.value = moved.condition
+                }
                 .onFailure { _message.value = it.message ?: string(R.string.plan_save_failed) }
         }
     }

@@ -346,6 +346,15 @@
     <!-- 저장할 때 자동으로 붙는 일정 이름. 예: "도쿄 5일" -->
     <string name="plan_saved_title">%1$s %2$s</string>
 
+    <!-- 저장된 일정의 기간 변경 -->
+    <string name="plan_dates_edit">여행 기간 바꾸기</string>
+    <string name="plan_dates_moved">항공권과 식당 추천이 바뀔 수 있어요</string>
+    <string name="plan_dates_duplicate">같은 날짜의 일정이 이미 저장돼 있어요</string>
+    <string name="plan_dates_departed">출발한 여행은 기간을 바꿀 수 없어요</string>
+    <string name="plan_dates_rebuild_title">일정을 새로 만들까요?</string>
+    <string name="plan_dates_rebuild_body">여행 일수가 바뀌어 편집한 내용이 사라지고 일정을 새로 만들어요.</string>
+    <string name="plan_dates_rebuild_confirm">새로 만들기</string>
+
     <!-- ===== 입력 화면 ===== -->
     <string name="common_confirm">확인</string>
 

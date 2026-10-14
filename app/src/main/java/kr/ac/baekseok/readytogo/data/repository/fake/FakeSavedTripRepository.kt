@@ -56,6 +56,14 @@ class FakeSavedTripRepository(
         return Result.success(Unit)
     }
 
+    override suspend fun replace(oldId: String, trip: SavedTrip): Result<Unit> {
+        if (!authState.value.canSave) {
+            return Result.failure(IllegalStateException(AppContainer.string(R.string.error_sign_in_to_save_trip)))
+        }
+        _trips.value = _trips.value.filterNot { it.id == oldId || it.id == trip.id } + trip
+        return Result.success(Unit)
+    }
+
     override suspend fun rename(id: String, title: String): Result<Unit> {
         _trips.value = _trips.value.map { if (it.id == id) it.copy(title = title) else it }
         return Result.success(Unit)

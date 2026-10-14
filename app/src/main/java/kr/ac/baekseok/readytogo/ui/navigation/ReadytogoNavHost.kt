@@ -22,6 +22,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -325,15 +326,21 @@ private fun NavGraphBuilder.planGraph(navController: NavHostController) {
         // previousBackStackEntry는 "NavController의 현재 화면 바로 이전"이라 위치에 따라 달라진다.
         // 지도 화면을 이 위에 쌓는 순간 previous가 입력 화면이 아니라 결과 화면 자신이 되어
         // 조건을 못 찾고 입력 화면으로 되돌아가버렸다. 자기 entry에 두면 그런 일이 없다.
-        val condition = remember(entry) {
-            entry.savedStateHandle.get<TripCondition>(KEY_CONDITION)
-                ?: navController.previousBackStackEntry
-                    ?.savedStateHandle
-                    ?.get<TripCondition>(KEY_CONDITION)
-                    ?.also { entry.savedStateHandle[KEY_CONDITION] = it }
+        //
+        // 상태로 두는 이유: 저장된 일정의 기간을 바꾸면 조건이 바뀐다. 그 값을 여기에도 갈아 끼워야
+        // 화면을 돌리거나 다시 만들 때 옛 조건(지워진 문서)으로 돌아가지 않는다.
+        var condition by remember(entry) {
+            mutableStateOf(
+                entry.savedStateHandle.get<TripCondition>(KEY_CONDITION)
+                    ?: navController.previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.get<TripCondition>(KEY_CONDITION)
+                        ?.also { entry.savedStateHandle[KEY_CONDITION] = it },
+            )
         }
+        val current = condition
 
-        if (condition == null) {
+        if (current == null) {
             // 조건 없이 결과 화면에 올 방법은 없지만, 복원 과정에서 유실되면 홈으로 되돌린다.
             // 화면을 그리는 도중에 이동시키면 안 되므로 LaunchedEffect로 미룬다.
             LaunchedEffect(Unit) {
@@ -341,11 +348,15 @@ private fun NavGraphBuilder.planGraph(navController: NavHostController) {
             }
         } else {
             TripPlanScreen(
-                condition = condition,
+                condition = current,
                 onBack = { navController.popBackStack() },
                 // 둘러보기 중 저장을 눌렀을 때. 로그인 화면을 이 위에 쌓는다 —
                 // 로그인이 끝나면 보류해둔 일정이 자동으로 저장된다(AppContainer).
                 onSignIn = { navController.navigate(Routes.LOGIN) },
+                onConditionChange = { next ->
+                    entry.savedStateHandle[KEY_CONDITION] = next
+                    condition = next
+                },
             )
         }
     }

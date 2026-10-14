@@ -324,6 +324,14 @@
     <!-- 저장할 때 자동으로 붙는 일정 이름. 예: "Tokyo, 5 days" -->
     <string name="plan_saved_title">%1$s, %2$s</string>
 
+    <string name="plan_dates_edit">Change trip dates</string>
+    <string name="plan_dates_moved">Flights and restaurant picks may change</string>
+    <string name="plan_dates_duplicate">A trip with these dates is already saved</string>
+    <string name="plan_dates_departed">You can\'t change the dates of a trip that has started</string>
+    <string name="plan_dates_rebuild_title">Rebuild the itinerary?</string>
+    <string name="plan_dates_rebuild_body">The trip length changes, so your edits will be lost and a new itinerary will be made.</string>
+    <string name="plan_dates_rebuild_confirm">Rebuild</string>
+
     <!-- ===== 입력 화면 ===== -->
     <string name="common_confirm">OK</string>
 

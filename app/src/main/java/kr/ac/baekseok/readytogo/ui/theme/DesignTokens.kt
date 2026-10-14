@@ -78,6 +78,9 @@ object Tokens {
         val photoThumbHeight = 96.dp
         val avatar = 56.dp
         val icon = 24.dp
+
+        /** 글줄 옆에 붙는 작은 아이콘(요약 머리의 기간 연필). 본문 글자 높이에 맞춘다. */
+        val inlineIcon = 18.dp
         val bottomBarHeight = 64.dp
 
         /** 버튼 높이. 손가락으로 누르는 최소 크기(48dp)보다 조금 크게 둔다. */

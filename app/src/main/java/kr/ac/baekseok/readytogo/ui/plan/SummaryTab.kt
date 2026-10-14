@@ -1,6 +1,11 @@
 package kr.ac.baekseok.readytogo.ui.plan
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material3.Icon
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,7 +48,14 @@ import kr.ac.baekseok.readytogo.ui.theme.Tokens
  * 사용자가 더해 봐야 한다. 한 줄로 보여주면 예산이 빡빡한지 여유로운지 바로 보인다.
  */
 @Composable
-fun SummaryHeader(plan: TripPlan) {
+fun SummaryHeader(
+    plan: TripPlan,
+    /**
+     * 기간 줄을 눌렀을 때. null이면 바꿀 수 없는 일정(저장 안 함·출발함)이라 연필도 안 붙는다.
+     * 눌리지 않는 줄에 연필을 붙이면 왜 안 되는지 알 수 없다.
+     */
+    onEditDates: (() -> Unit)? = null,
+) {
     val c = plan.condition
     val b = plan.budget
 
@@ -59,20 +71,45 @@ fun SummaryHeader(plan: TripPlan) {
             text = "${c.origin?.shortName ?: "-"} → ${c.destination?.shortName ?: "-"}",
             style = MaterialTheme.typography.titleLarge,
         )
-        Text(
-            text = listOfNotNull(
-                c.destination?.localizedCountry,
-                c.departureDate?.let { departure ->
-                    c.returnDate?.let { back -> "${dateWithDay(departure)} – ${dateWithDay(back)}" }
-                },
-                daysText(plan.dailyPlans.size),
-                // 방 수까지 적는 이유: 숙소 예산이 왜 그 금액인지가 인원만으로는 안 보인다.
-                adultsText(c.adults) +
-                    if (c.roomCount > 1) " · " + roomsText(c.roomCount) else "",
-            ).joinToString(" · "),
-            style = MaterialTheme.typography.bodyMedium,
-            color = LocalPalette.current.TextSecondary,
-        )
+        val infoLine = listOfNotNull(
+            c.destination?.localizedCountry,
+            c.departureDate?.let { departure ->
+                c.returnDate?.let { back -> "${dateWithDay(departure)} – ${dateWithDay(back)}" }
+            },
+            daysText(plan.dailyPlans.size),
+            // 방 수까지 적는 이유: 숙소 예산이 왜 그 금액인지가 인원만으로는 안 보인다.
+            adultsText(c.adults) +
+                if (c.roomCount > 1) " · " + roomsText(c.roomCount) else "",
+        ).joinToString(" · ")
+
+        // 기간을 바꿀 수 있으면 줄 전체를 누를 수 있게 한다. 날짜 글자만 누르게 하면 손가락에 너무 작다.
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(Tokens.Space.sm),
+            modifier = if (onEditDates == null) {
+                Modifier
+            } else {
+                Modifier.clickable(
+                    onClickLabel = stringResource(R.string.plan_dates_edit),
+                    onClick = onEditDates,
+                )
+            },
+        ) {
+            Text(
+                text = infoLine,
+                style = MaterialTheme.typography.bodyMedium,
+                color = LocalPalette.current.TextSecondary,
+                modifier = Modifier.weight(1f, fill = false),
+            )
+            if (onEditDates != null) {
+                Icon(
+                    imageVector = Icons.Outlined.Edit,
+                    contentDescription = stringResource(R.string.plan_dates_edit),
+                    tint = LocalPalette.current.Point,
+                    modifier = Modifier.size(Tokens.Size.inlineIcon),
+                )
+            }
+        }
         // **목적은 글자가 아니라 배지로 둔다.** 한 줄 글자로 적으면 바로 위 날짜·인원 줄과
         // 같은 무게로 읽혀서, 이 계획을 무엇에 맞춰 짰는지가 묻힌다. 예산 배분과 하루
         // 관광지 수가 전부 여기서 갈리므로 헤더에서 가장 먼저 눈에 걸려야 한다.

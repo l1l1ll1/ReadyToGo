@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Share
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -86,6 +87,7 @@ import kr.ac.baekseok.readytogo.ui.component.PhotoAttributionLine
 import kr.ac.baekseok.readytogo.ui.component.PlacePhotoThumb
 import kr.ac.baekseok.readytogo.ui.component.rememberPlacePhoto
 import kr.ac.baekseok.readytogo.ui.format.money
+import kr.ac.baekseok.readytogo.ui.input.DateRangeSheet
 import kr.ac.baekseok.readytogo.ui.share.placeShareText
 import kr.ac.baekseok.readytogo.ui.share.shareText
 import kr.ac.baekseok.readytogo.ui.share.tripShareText
@@ -97,10 +99,20 @@ import kr.ac.baekseok.readytogo.ui.theme.ReadytogoTheme
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import java.util.Locale
 import kotlin.math.roundToInt
 
 private val TIME = DateTimeFormatter.ofPattern("HH:mm")
+
+/** 출발일·귀국일을 모두 넣어 센 여행 일수. 기간 변경이 "날짜만 옮김"인지 가르는 기준이다. */
+private fun dayCountOf(from: LocalDate, to: LocalDate): Long = ChronoUnit.DAYS.between(from, to) + 1
+
+private fun dayCountOf(condition: TripCondition): Long? {
+    val from = condition.departureDate ?: return null
+    val to = condition.returnDate ?: return null
+    return dayCountOf(from, to)
+}
 
 
 /** 결과 화면의 탭. 순서가 화면에 나오는 순서다. */
@@ -123,6 +135,8 @@ fun TripPlanScreen(
     condition: TripCondition,
     onBack: () -> Unit,
     onSignIn: () -> Unit,
+    /** 기간을 바꿔 조건이 새로 정해졌다. 내비게이션이 담아 둔 조건을 갈아 끼운다. */
+    onConditionChange: (TripCondition) -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: TripPlanViewModel = viewModel(),
 ) {
@@ -135,6 +149,14 @@ fun TripPlanScreen(
     val lastDeleted by viewModel.lastDeleted.collectAsState()
     val favorites by viewModel.favorites.collectAsState()
     val pickedPlaces by viewModel.pickedPlaces.collectAsState()
+    val canChangeDates by viewModel.canChangeDates.collectAsState()
+    val conditionChange by viewModel.conditionChange.collectAsState()
+
+    LaunchedEffect(conditionChange) {
+        val next = conditionChange ?: return@LaunchedEffect
+        onConditionChange(next)
+        viewModel.clearConditionChange()
+    }
 
     // 조건이 바뀔 때만 다시 만든다. 중복 호출 방지는 ViewModel이 한 번 더 막는다.
     LaunchedEffect(condition) { viewModel.load(condition) }
@@ -149,6 +171,8 @@ fun TripPlanScreen(
         signInRequested = signInRequested,
         edits = edits,
         canUndoDelete = lastDeleted != null,
+        canChangeDates = canChangeDates,
+        onChangeDates = viewModel::changeDates,
         onBack = onBack,
         onSignIn = onSignIn,
         onSignInRequestShown = viewModel::clearSignInRequest,
@@ -180,6 +204,8 @@ private fun TripPlanContent(
     signInRequested: Boolean = false,
     edits: TimelineEdits = TimelineEdits(),
     canUndoDelete: Boolean = false,
+    canChangeDates: Boolean = false,
+    onChangeDates: (LocalDate, LocalDate) -> Unit = { _, _ -> },
     onBack: () -> Unit,
     onRetry: () -> Unit,
     onSignIn: () -> Unit = {},
@@ -226,6 +252,10 @@ private fun TripPlanContent(
             openedOnToday = true
         }
     }
+
+    // 기간 변경. 시트에서 고른 날짜가 일수를 바꾸면 확인을 먼저 받는다 — 편집이 사라지기 때문이다.
+    var dateSheetOpen by remember { mutableStateOf(false) }
+    var pendingDates by remember { mutableStateOf<Pair<LocalDate, LocalDate>?>(null) }
 
     // 상세 시트를 띄울 항목. 일차 번호를 같이 들고 있어야 어느 날의 항목인지 알 수 있다.
     var openedItem by remember { mutableStateOf<Pair<Int, TimelineItem>?>(null) }
@@ -359,9 +389,46 @@ private fun TripPlanContent(
                     onReorderCommit = onReorderCommit,
                     onDeleteItem = onDeleteItem,
                     onToggleDone = onToggleDone,
+                    onEditDates = if (canChangeDates) ({ dateSheetOpen = true }) else null,
                 )
             }
         }
+    }
+
+    val planCondition = (uiState as? TripPlanUiState.Success)?.plan?.condition
+    if (dateSheetOpen && planCondition != null) {
+        DateRangeSheet(
+            initialDeparture = planCondition.departureDate,
+            initialReturn = planCondition.returnDate,
+            onConfirm = { from, to ->
+                dateSheetOpen = false
+                if (dayCountOf(from, to) == dayCountOf(planCondition)) {
+                    onChangeDates(from, to)
+                } else {
+                    pendingDates = from to to
+                }
+            },
+            onDismiss = { dateSheetOpen = false },
+        )
+    }
+
+    pendingDates?.let { (from, to) ->
+        AlertDialog(
+            onDismissRequest = { pendingDates = null },
+            title = { Text(stringResource(R.string.plan_dates_rebuild_title)) },
+            text = { Text(stringResource(R.string.plan_dates_rebuild_body)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    pendingDates = null
+                    onChangeDates(from, to)
+                }) { Text(stringResource(R.string.plan_dates_rebuild_confirm)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { pendingDates = null }) {
+                    Text(stringResource(R.string.common_cancel))
+                }
+            },
+        )
     }
 
     // 깃발이 서 있는 동안에만 글을 만들고, 만들자마자 공유 시트를 띄운 뒤 내린다.
@@ -443,6 +510,8 @@ private fun PlanTabContent(
     onReorderCommit: () -> Unit,
     onDeleteItem: (Int, String) -> Unit,
     onToggleDone: (Int, String) -> Unit,
+    /** 요약 머리의 기간을 눌렀을 때. null이면 바꿀 수 없는 일정이다. */
+    onEditDates: (() -> Unit)?,
 ) {
     // **편집이 바뀔 때마다 다시 잰다.** 멀어서 지운 관광지가 계속 거리 계산에 들어가면
     // 경고가 사라지지 않는다. 계획 하나에 날짜 몇 개라 다시 계산해도 값이 싸다.
@@ -452,7 +521,7 @@ private fun PlanTabContent(
 
     when (tab) {
         PlanTab.SUMMARY -> TabColumn {
-            item { SummaryHeader(plan) }
+            item { SummaryHeader(plan, onEditDates) }
             item { SectionTitle(stringResource(R.string.plan_section_budget)) }
             item { BudgetBreakdown(plan) }
 

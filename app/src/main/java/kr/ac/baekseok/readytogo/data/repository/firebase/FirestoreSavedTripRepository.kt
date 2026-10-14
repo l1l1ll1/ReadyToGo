@@ -81,6 +81,18 @@ class FirestoreSavedTripRepository(
         Unit
     }
 
+    override suspend fun replace(oldId: String, trip: SavedTrip): Result<Unit> = runCatching {
+        val uid = requireUid()
+        val trips = db.tripsCollection(uid)
+        // 일괄 쓰기 — 둘 다 되거나 둘 다 안 된다.
+        db.batch()
+            .delete(trips.document(oldId))
+            .set(trips.document(trip.id), trip.toMap())
+            .commit()
+            .await()
+        Unit
+    }
+
     override suspend fun rename(id: String, title: String): Result<Unit> = runCatching {
         val uid = requireUid()
         // 제목만 바꾼다. set을 쓰면 나머지 필드가 지워진다.

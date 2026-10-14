@@ -105,4 +105,21 @@ data class TripPlan(
     /** 숙소는 여행 전체에 하나. 후보가 없으면 null. */
     val lodging: RecommendationPair<Lodging>?,
     val dailyPlans: List<DayPlan>,
+    /**
+     * 도착일에 내리고 출국일에 떠나는 공항. 모르면 null이고, 그때는 그 두 날도 숙소에서 시작·끝난다.
+     *
+     * 예시 항공편(Flight.isSample)이면 null이다 — 예시의 공항은 지어낸 값이라 동선 기준으로 쓰면
+     * 엉뚱한 공항 쪽으로 식당이 끌려간다.
+     */
+    val airport: AirportStop? = null,
+)
+
+/**
+ * 공항 하나. 지도 마커 제목에 코드가 필요해서 좌표와 같이 든다.
+ *
+ * 귀국편도 같은 공항에서 떠난다고 본다. 항공 검색 1차 응답이 가는 편만 주기 때문이다.
+ */
+data class AirportStop(
+    val code: String,
+    val location: LatLng,
 )

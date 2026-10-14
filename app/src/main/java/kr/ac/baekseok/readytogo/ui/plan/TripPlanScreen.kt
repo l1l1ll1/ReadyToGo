@@ -78,6 +78,7 @@ import kr.ac.baekseok.readytogo.data.model.TripPlan
 import kr.ac.baekseok.readytogo.domain.plan.LodgingDistanceCheck
 import kr.ac.baekseok.readytogo.domain.plan.TimelineItem
 import kr.ac.baekseok.readytogo.domain.plan.checkLodgingDistance
+import kr.ac.baekseok.readytogo.domain.plan.endsOf
 import kr.ac.baekseok.readytogo.domain.recommend.medianCenter
 import kr.ac.baekseok.readytogo.domain.purpose.PurposeProfiles
 import kr.ac.baekseok.readytogo.ui.component.FavoriteButton
@@ -596,6 +597,9 @@ private fun MapTab(
                 // 지도가 일정표와 같은 순서·장소를 보여야 한다. 편집을 빼면 지운 곳이 지도에 남는다.
                 edits = edits,
                 picked = pickedPlaces,
+                // 도착일은 공항에서 시작, 출국일은 공항에서 끝. 끼니 식당을 고른 기준과 같은 규칙이다.
+                ends = plan.endsOf(day),
+                airport = plan.airport,
             )
         }
     }

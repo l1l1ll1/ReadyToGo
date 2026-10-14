@@ -1,12 +1,15 @@
 package kr.ac.baekseok.readytogo.domain.plan
 
+import kr.ac.baekseok.readytogo.data.model.AirportStop
 import kr.ac.baekseok.readytogo.data.model.Attraction
 import kr.ac.baekseok.readytogo.data.model.DayPlan
+import kr.ac.baekseok.readytogo.data.model.Flight
 import kr.ac.baekseok.readytogo.data.model.MealTime
 import kr.ac.baekseok.readytogo.data.model.RecommendationPair
 import kr.ac.baekseok.readytogo.data.model.Restaurant
 import kr.ac.baekseok.readytogo.data.model.TripCondition
 import kr.ac.baekseok.readytogo.data.model.TripPlan
+import kr.ac.baekseok.readytogo.data.repository.AirportRepository
 import kr.ac.baekseok.readytogo.data.repository.FlightRepository
 import kr.ac.baekseok.readytogo.data.repository.ItineraryRepository
 import kr.ac.baekseok.readytogo.data.repository.LodgingRepository
@@ -44,6 +47,11 @@ class TripPlanner(
      * 실제 API 경로에서는 끈다 — 같은 여행에서 같은 집을 두 번 가라고 추천할 이유가 없다.
      */
     private val allowRestaurantReuse: Boolean = false,
+    /**
+     * 도착 공항 좌표를 찾는 곳. null이면 공항을 모르는 것으로 보고 도착일·출국일도 숙소 기준으로 짠다.
+     * 기본값을 null로 둔 이유: 공항이 없어도 계획은 완성돼야 하고, 기존 테스트가 손대지 않고 돈다.
+     */
+    private val airportRepository: AirportRepository? = null,
 ) {
 
     /** 진단 로그에서 "예산 내 후보 수"를 세는 데만 쓴다. 추천 로직은 이 값을 보지 않는다. */
@@ -100,6 +108,8 @@ class TripPlanner(
 
         // 5. 날짜별 계획 조립.
         val startDate = condition.departureDate ?: LocalDate.now()
+        val home = lodging?.qualityFirst?.item?.location
+        val airport = arrivalAirportOf(flights.firstOrNull())
 
         // 한 번 추천한 식당은 여행이 끝날 때까지 다시 쓰지 않는다.
         // 날짜 루프 바깥에 두어야 날짜를 넘어서도 중복이 막힌다.
@@ -119,7 +129,7 @@ class TripPlanner(
                     restaurants = restaurantsByDay[index].orEmpty(),
                     dayAttractions = dayAttractions,
                     allAttractions = plannedAttractions,
-                    home = lodging?.qualityFirst?.item?.location,
+                    ends = dayEnds(index + 1, dailyAttractions.size, home, airport?.location),
                     maxPriceWon = budget.mealWon,
                     usedRestaurantIds = usedRestaurantIds,
                     widenSearch = {
@@ -146,7 +156,21 @@ class TripPlanner(
             flights = flights,
             lodging = lodging,
             dailyPlans = dailyPlans,
+            airport = airport,
         )
+    }
+
+    /**
+     * 최저가 항공편의 도착 공항. 귀국편도 이 공항에서 떠난다고 본다(가는 편만 받기 때문).
+     *
+     * 예시 항공편이면 쓰지 않는다 — 실제 검색이 실패해 지어낸 공항이라, 동선 기준으로 쓰면
+     * 하네다로 내리는 여행에서 나리타 쪽으로 식당이 끌려갈 수 있다. 좌표를 못 찾아도 null이다.
+     */
+    private suspend fun arrivalAirportOf(flight: Flight?): AirportStop? {
+        if (flight == null || flight.isSample) return null
+        val code = flight.arrivalAirport
+        val location = airportRepository?.locationOf(code) ?: return null
+        return AirportStop(code, location)
     }
 
     /** 끼니를 몇 칸 채웠고 그중 몇이 예산을 넘었는지. */
@@ -169,7 +193,7 @@ class TripPlanner(
 
     /** 동시에 보낸 검색 결과를 한 번에 받기 위한 묶음. */
     private data class SearchResults(
-        val flights: List<kr.ac.baekseok.readytogo.data.model.Flight>,
+        val flights: List<Flight>,
         val attractions: List<Attraction>,
         val lodgings: List<kr.ac.baekseok.readytogo.data.model.Lodging>,
     )
@@ -283,8 +307,8 @@ class TripPlanner(
         restaurants: List<Restaurant>,
         dayAttractions: List<Attraction>,
         allAttractions: List<Attraction>,
-        /** 하루를 시작하고 끝내는 곳(숙소). 아침의 "앞", 저녁의 "뒤"가 된다. */
-        home: LatLng?,
+        /** 하루를 시작하고 끝내는 곳(숙소, 도착일·출국일은 공항). 아침의 "앞", 저녁의 "뒤"가 된다. */
+        ends: DayEnds,
         maxPriceWon: Long?,
         usedRestaurantIds: MutableSet<String>,
         /** 4단계에서 쓰는 추가 검색. 하루에 한 번만 불린다. */
@@ -301,16 +325,18 @@ class TripPlanner(
         for (meal in MealTime.entries) {
             // 동선은 **바로 앞 → 식당 → 바로 뒤** 우회 거리로 잰다. 그날 중심까지 거리로 고르면
             // 아침이 마지막 관광지 쪽에, 저녁이 숙소 반대편에 잡혀 지도 선이 교차했다.
-            // 숙소를 모르면 하루의 시작과 끝을 정할 수 없어 예전처럼 중심 기준으로 둔다.
-            val route = if (home == null) {
+            // 시작이나 끝을 모르면(숙소 없음) 우회 거리를 잴 수 없어 예전처럼 중심 기준으로 둔다.
+            val dayStart = ends.start
+            val dayEnd = ends.end
+            val route = if (dayStart == null || dayEnd == null) {
                 RouteBasis.Center(anchors)
             } else {
                 val (from, to) = mealNeighbours(
                     meal = meal,
                     attractions = dayAttractions,
                     pickedMeals = picked.mapValues { it.value.qualityFirst.item.location },
-                    dayStart = home,
-                    dayEnd = home,
+                    dayStart = dayStart,
+                    dayEnd = dayEnd,
                 )
                 RouteBasis.Detour(from, to)
             }

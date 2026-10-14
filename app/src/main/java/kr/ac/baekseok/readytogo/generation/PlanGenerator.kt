@@ -6,6 +6,7 @@ import android.util.Log
 import kr.ac.baekseok.readytogo.data.USE_REAL_API
 import kr.ac.baekseok.readytogo.data.model.TripCondition
 import kr.ac.baekseok.readytogo.data.model.TripPlan
+import kr.ac.baekseok.readytogo.data.repository.asset.AssetAirportRepository
 import kr.ac.baekseok.readytogo.data.repository.flight.SerpApiFlightRepository
 import kr.ac.baekseok.readytogo.data.repository.mock.MockFlightRepository
 import kr.ac.baekseok.readytogo.data.repository.mock.MockItineraryRepository
@@ -75,6 +76,8 @@ class PlanGenerator(
             // Mock 식당은 15곳뿐이라 5일 일정(30칸)에서 반드시 소진된다. 테스트 중 화면이 비지 않게
             // 재사용을 허용한다. 실제 API 경로에서는 같은 집을 두 번 추천하지 않는다.
             allowRestaurantReuse = !USE_REAL_API,
+            // 앱에 든 표를 읽을 뿐이라 외부 호출이 없다. Mock 경로에서도 그대로 쓴다.
+            airportRepository = AssetAirportRepository(context),
         )
     }
 

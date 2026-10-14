@@ -430,10 +430,13 @@
     <string name="map_legend_attraction">관광지 (방문 순서)</string>
     <string name="map_legend_lodging">숙소</string>
     <string name="map_legend_restaurant">식당</string>
+    <string name="map_legend_airport">공항</string>
+    <string name="map_legend_airport_off_screen">공항 (화면 밖)</string>
     <!-- 마커를 눌렀을 때 뜨는 말풍선 -->
     <string name="map_attraction_snippet">%1$d분 · ★%2$s</string>
     <string name="map_restaurant_snippet">%1$s · %2$s</string>
     <string name="map_lodging_title">숙소 · %1$s</string>
+    <string name="map_airport_title">공항 · %1$s</string>
     <string name="map_lodging_snippet">%1$s / 1박</string>
 
     <!-- ===== 로그인·탈퇴 ===== -->

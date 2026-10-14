@@ -37,11 +37,13 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
 import kr.ac.baekseok.readytogo.R
+import kr.ac.baekseok.readytogo.data.model.AirportStop
 import kr.ac.baekseok.readytogo.data.model.DayPlan
 import kr.ac.baekseok.readytogo.data.model.Lodging
 import kr.ac.baekseok.readytogo.data.model.MealTime
 import kr.ac.baekseok.readytogo.data.model.PickedPlaces
 import kr.ac.baekseok.readytogo.data.model.TimelineEdits
+import kr.ac.baekseok.readytogo.domain.plan.DayEnds
 import kr.ac.baekseok.readytogo.domain.plan.TimelineItem
 import kr.ac.baekseok.readytogo.domain.plan.toTimeline
 import kr.ac.baekseok.readytogo.domain.recommend.distanceKm
@@ -104,6 +106,10 @@ fun DayMapContent(
     modifier: Modifier = Modifier,
     edits: TimelineEdits = TimelineEdits(),
     picked: PickedPlaces = PickedPlaces(),
+    /** 선이 시작하고 끝나는 곳. 보통 숙소, 도착일·출국일은 공항이다([kr.ac.baekseok.readytogo.domain.plan.dayEnds]). */
+    ends: DayEnds = DayEnds(lodging?.location, lodging?.location),
+    /** 계획의 공항. 이날 선의 시작이나 끝일 때만 마커를 찍는다. */
+    airport: AirportStop? = null,
 ) {
     val texts = rememberMapSpotTexts()
 
@@ -119,11 +125,16 @@ fun DayMapContent(
             picked = picked,
         ).map { it.item }
     }
-    val spots = remember(items, lodging, texts) {
-        items.toMapSpots(lodging, texts).spreadOverlapping()
+    // 공항은 이날 선이 거기서 시작하거나 끝날 때만 찍는다. 중간 날에 찍으면 가지도 않는 곳이 보인다.
+    val airportToday = airport?.takeIf { it.location == ends.start || it.location == ends.end }
+    val spots = remember(items, lodging, airportToday, texts) {
+        // 공항은 펼치기에서 뺀다. 수십 km 떨어진 점이 끼면 겹침 기준(일정 폭의 비율)이 커져
+        // 시내의 멀쩡한 마커까지 밀어낸다.
+        items.toMapSpots(lodging, texts).spreadOverlapping() +
+            listOfNotNull(airportToday?.toMapSpot(texts))
     }
-    val route = remember(items, lodging) {
-        dayRoute(lodging?.location, items.map { it.location })
+    val route = remember(items, ends) {
+        dayRoute(ends.start, ends.end, items.map { it.location })
     }
 
     Box(modifier = modifier.fillMaxSize()) {
@@ -136,18 +147,19 @@ fun DayMapContent(
 }
 
 /**
- * 그날 동선 선이 지나갈 좌표. **숙소 → 일정표 순서대로 → 숙소**.
+ * 그날 동선 선이 지나갈 좌표. **시작점 → 일정표 순서대로 → 끝점**.
+ * 시작·끝은 보통 숙소이고, 도착일은 공항에서 시작해 출국일은 공항에서 끝난다.
  *
  * - 좌표가 없는 항목(추천 못 찾은 끼니)은 건너뛰고 다음 항목으로 바로 잇는다.
  *   거기서 선을 끊으면 끼니 하나 비었다고 하루 동선이 두 동강 난다.
- * - 장소가 하나도 없으면 숙소만 왕복하는 선이 되므로 아무것도 그리지 않는다.
+ * - 장소가 하나도 없으면 숙소(또는 공항)만 오가는 선이 되므로 아무것도 그리지 않는다.
  * - 마커를 펼치기 전의 원래 좌표·순서로 만든다. 펼치기는 묶음 단위로 목록을 다시 늘어놓아
  *   순서가 섞이기 때문이다(전에는 그 때문에 1→3→2로 이어지기도 했다).
  */
-internal fun dayRoute(lodging: AppLatLng?, stops: List<AppLatLng?>): List<AppLatLng> {
+internal fun dayRoute(start: AppLatLng?, end: AppLatLng?, stops: List<AppLatLng?>): List<AppLatLng> {
     val places = stops.filterNotNull()
     if (places.isEmpty()) return emptyList()
-    return listOfNotNull(lodging) + places + listOfNotNull(lodging)
+    return listOfNotNull(start) + places + listOfNotNull(end)
 }
 
 @Composable
@@ -172,8 +184,14 @@ private fun DayMap(spots: List<MapSpot>, route: List<AppLatLng>) {
     // 장소가 정해지면 전부 화면에 들어오도록 카메라를 맞춘다.
     // 한 곳뿐이면 감쌀 영역이 없어서 bounds 대신 고정 줌을 쓴다.
     // 범례 높이가 재어지면 다시 맞춘다 — 첫 프레임에는 높이가 0이라 마커가 범례 밑에 깔린다.
+    //
+    // 공항은 카메라 범위에서 뺀다. 나리타는 도심에서 60km라 넣으면 도착일·출국일 지도가 도시 전체로
+    // 줄어 정작 그날 동선이 안 보인다. 선은 화면 밖 공항 쪽으로 이어지므로 방향은 알 수 있다.
     LaunchedEffect(spots, legendHeightPx) {
-        val positions = spots.map { it.position.toGms() }
+        val positions = spots
+            .filter { it.kind != SpotKind.AIRPORT }
+            .ifEmpty { spots }
+            .map { it.position.toGms() }
         if (positions.size == 1) {
             cameraPositionState.move(
                 CameraUpdateFactory.newLatLngZoom(positions.first(), SINGLE_PLACE_ZOOM)
@@ -207,7 +225,24 @@ private fun DayMap(spots: List<MapSpot>, route: List<AppLatLng>) {
             }
         }
 
+        // 공항이 지금 화면에 보이는지. 카메라에서 공항을 빼서 대개 화면 밖인데, 범례에 "공항"만 있고
+        // 마커가 안 보이면 빠뜨린 것처럼 보인다. 하네다처럼 시내에 가까우면 화면 안에 들어오기도 하고,
+        // 사용자가 지도를 끌어 공항을 보면 표시가 사라져야 하므로 고정값이 아니라 보이는 영역으로 판단한다.
+        val airportSpot = spots.firstOrNull { it.kind == SpotKind.AIRPORT }
+        // projection은 Compose 상태가 아니라 읽기만 해서는 지도를 움직여도 다시 계산되지 않는다
+        // (실제로 끌어서 나리타를 화면에 넣어도 "화면 밖"이 남았다). 상태인 position·isMoving을 키로 삼아
+        // 카메라가 움직이거나 멈출 때마다 보이는 영역을 다시 읽는다.
+        val cameraPosition = cameraPositionState.position
+        val cameraMoving = cameraPositionState.isMoving
+        val visibleBounds = remember(cameraPosition, cameraMoving) {
+            cameraPositionState.projection?.visibleRegion?.latLngBounds
+        }
+        val airportOffScreen = airportSpot != null &&
+            visibleBounds?.contains(airportSpot.position.toGms()) != true
+
         MapLegend(
+            showAirport = airportSpot != null,
+            airportOffScreen = airportOffScreen,
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .padding(LEGEND_MARGIN)
@@ -219,8 +254,12 @@ private fun DayMap(spots: List<MapSpot>, route: List<AppLatLng>) {
 /** 범례 카드와 지도 가장자리 사이 여백. 지도 아래쪽을 비울 때도 같은 값을 더한다. */
 private val LEGEND_MARGIN = 12.dp
 
+/**
+ * @param showAirport 공항 마커가 있는 날(도착일·출국일)만 범례에 공항을 넣는다.
+ * @param airportOffScreen 공항이 지금 화면 밖이면 "화면 밖"을 붙인다. 선이 그쪽으로 나가는 이유가 된다.
+ */
 @Composable
-private fun MapLegend(modifier: Modifier = Modifier) {
+private fun MapLegend(showAirport: Boolean, airportOffScreen: Boolean, modifier: Modifier = Modifier) {
     Card(modifier = modifier) {
         Column(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
@@ -234,6 +273,14 @@ private fun MapLegend(modifier: Modifier = Modifier) {
             LegendRow(MARKER_RED, stringResource(R.string.map_legend_attraction))
             LegendRow(MARKER_AZURE, stringResource(R.string.map_legend_lodging))
             LegendRow(MARKER_ORANGE, stringResource(R.string.map_legend_restaurant))
+            if (showAirport) {
+                LegendRow(
+                    MARKER_VIOLET,
+                    stringResource(
+                        if (airportOffScreen) R.string.map_legend_airport_off_screen else R.string.map_legend_airport,
+                    ),
+                )
+            }
         }
     }
 }
@@ -242,6 +289,7 @@ private fun MapLegend(modifier: Modifier = Modifier) {
 private val MARKER_RED = Color(0xFFD32F2F)
 private val MARKER_AZURE = Color(0xFF1976D2)
 private val MARKER_ORANGE = Color(0xFFF9A825)
+private val MARKER_VIOLET = Color(0xFF7B1FA2)
 
 @Composable
 private fun LegendRow(color: Color, label: String) {
@@ -361,6 +409,7 @@ internal enum class SpotKind(val markerHue: Float) {
     ATTRACTION(BitmapDescriptorFactory.HUE_RED),
     LODGING(BitmapDescriptorFactory.HUE_AZURE),
     RESTAURANT(BitmapDescriptorFactory.HUE_ORANGE),
+    AIRPORT(BitmapDescriptorFactory.HUE_VIOLET),
 }
 
 private fun AppLatLng.toGms() = GmsLatLng(latitude, longitude)
@@ -413,6 +462,13 @@ private fun List<TimelineItem>.toMapSpots(lodging: Lodging?, texts: MapSpotTexts
     return itemSpots + listOfNotNull(lodgingSpot)
 }
 
+private fun AirportStop.toMapSpot(texts: MapSpotTexts) = MapSpot(
+    position = location,
+    title = texts.airportTitle.format(code),
+    snippet = "",
+    kind = SpotKind.AIRPORT,
+)
+
 /**
  * 마커 말풍선에 들어갈 글자.
  *
@@ -426,6 +482,7 @@ private data class MapSpotTexts(
     val restaurantSnippet: String,
     val lodgingTitle: String,
     val lodgingSnippet: String,
+    val airportTitle: String,
     /** 금액 표기도 언어마다 다르다("12,000원" / "KRW 12,000"). */
     val money: (Long) -> String,
 )
@@ -437,6 +494,7 @@ private fun rememberMapSpotTexts(): MapSpotTexts {
     val restaurantSnippet = stringResource(R.string.map_restaurant_snippet)
     val lodgingTitle = stringResource(R.string.map_lodging_title)
     val lodgingSnippet = stringResource(R.string.map_lodging_snippet)
+    val airportTitle = stringResource(R.string.map_airport_title)
     val moneyPattern = stringResource(R.string.fmt_money)
 
     return remember(
@@ -445,6 +503,7 @@ private fun rememberMapSpotTexts(): MapSpotTexts {
         restaurantSnippet,
         lodgingTitle,
         lodgingSnippet,
+        airportTitle,
         moneyPattern,
     ) {
         MapSpotTexts(
@@ -453,6 +512,7 @@ private fun rememberMapSpotTexts(): MapSpotTexts {
             restaurantSnippet = restaurantSnippet,
             lodgingTitle = lodgingTitle,
             lodgingSnippet = lodgingSnippet,
+            airportTitle = airportTitle,
             money = { moneyPattern.format("%,d".format(it)) },
         )
     }

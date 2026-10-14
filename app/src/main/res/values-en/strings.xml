@@ -405,9 +405,12 @@
     <string name="map_legend_attraction">Attractions (in order)</string>
     <string name="map_legend_lodging">Stay</string>
     <string name="map_legend_restaurant">Restaurant</string>
+    <string name="map_legend_airport">Airport</string>
+    <string name="map_legend_airport_off_screen">Airport (off screen)</string>
     <string name="map_attraction_snippet">%1$d min · ★%2$s</string>
     <string name="map_restaurant_snippet">%1$s · %2$s</string>
     <string name="map_lodging_title">Stay · %1$s</string>
+    <string name="map_airport_title">Airport · %1$s</string>
     <string name="map_lodging_snippet">%1$s per night</string>
 
     <!-- ===== 로그인·탈퇴 ===== -->

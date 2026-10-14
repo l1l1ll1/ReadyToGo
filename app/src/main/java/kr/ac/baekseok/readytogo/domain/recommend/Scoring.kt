@@ -101,10 +101,51 @@ fun routeScore(target: LatLng, anchors: List<LatLng>): Double {
     return (1.0 - distanceKm(target, center) / ROUTE_ZERO_DISTANCE_KM).coerceIn(0.0, 1.0)
 }
 
+/**
+ * 앞 장소 → [target] → 뒤 장소로 들렀다 갈 때, 바로 가는 것보다 **더 가는 거리(km)**.
+ *
+ * 끼니 식당은 중심점까지의 거리가 아니라 이 값으로 동선을 잰다. 중심에 가까워도 앞뒤 일정과
+ * 반대 방향이면 지도 선이 왕복하며 교차한다 — 그날 중심이 같아도 아침은 숙소 쪽, 저녁은
+ * 마지막 관광지 쪽이 맞다. 앞뒤를 잇는 선 위에 있으면 0이다.
+ */
+fun detourKm(from: LatLng, target: LatLng, to: LatLng): Double =
+    // 부동소수 오차로 아주 작은 음수가 나올 수 있어 0으로 막는다.
+    (distanceKm(from, target) + distanceKm(target, to) - distanceKm(from, to)).coerceAtLeast(0.0)
+
+/**
+ * 동선 점수를 무엇에 비추어 잴지.
+ *
+ * 숙소는 여행 내내 오가는 곳이라 일정 전체의 중심이 기준이고, 식당은 한 번 들르는 곳이라
+ * 바로 앞뒤 일정이 기준이다. 점수 함수와 추천 로직은 같고 기준만 다르다.
+ */
+sealed interface RouteBasis {
+    /** 0~1. 동선에 잘 맞을수록 1. */
+    fun score(target: LatLng): Double
+
+    /** 일정 중심점까지의 거리로 잰다. [routeScore] 참고. */
+    data class Center(val anchors: List<LatLng>) : RouteBasis {
+        override fun score(target: LatLng) = routeScore(target, anchors)
+    }
+
+    /**
+     * [from] → 후보 → [to] 우회 거리로 잰다.
+     *
+     * 0이 되는 거리를 [ROUTE_ZERO_DISTANCE_KM]로 중심 기준과 맞췄다. "10km 더 가면 동선 밖"이라는
+     * 뜻을 그대로 두어야 평점 0.5 + 동선 0.5의 균형이 기존 숙소 점수와 같은 감각으로 유지된다.
+     */
+    data class Detour(val from: LatLng, val to: LatLng) : RouteBasis {
+        override fun score(target: LatLng) =
+            (1.0 - detourKm(from, target, to) / ROUTE_ZERO_DISTANCE_KM).coerceIn(0.0, 1.0)
+    }
+}
+
 /** 총점 = 평점 점수 × 가중치 + 동선 점수 × 가중치. 0.0 ~ 1.0 */
 fun totalScore(candidate: ScoredCandidate, anchors: List<LatLng>): Double =
+    totalScore(candidate, RouteBasis.Center(anchors))
+
+fun totalScore(candidate: ScoredCandidate, route: RouteBasis): Double =
     ScoreWeights.RATING * ratingScore(candidate.rating, candidate.reviewCount) +
-        ScoreWeights.ROUTE * routeScore(candidate.location, anchors)
+        ScoreWeights.ROUTE * route.score(candidate.location)
 
 /**
  * 두 좌표 사이의 거리(km). 하버사인 공식으로 지구를 구로 근사한다.

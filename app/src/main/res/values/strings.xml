@@ -297,6 +297,9 @@
     <string name="plan_reviews">리뷰 %1$s</string>
     <string name="plan_rating_reviews">★%1$s (리뷰 %2$s)</string>
     <string name="plan_distance_from_center">일정 중심에서 %1$skm</string>
+    <!-- 끼니 식당의 동선 근거. 앞뒤 일정 사이에 들렀다 갈 때 더 가는 거리다. -->
+    <string name="plan_meal_detour">동선에서 %1$skm 돌아감</string>
+    <string name="plan_meal_on_the_way">가는 길에 있음</string>
     <string name="plan_price_upper_bound">%1$s 이하</string>
     <string name="plan_price_estimated">%1$s (추정)</string>
     <string name="plan_lodging_price_estimated">예상 1박 약 %1$s</string>

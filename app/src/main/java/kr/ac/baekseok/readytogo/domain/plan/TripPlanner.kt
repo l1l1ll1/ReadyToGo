@@ -17,6 +17,7 @@ import kr.ac.baekseok.readytogo.domain.price.CityPriceIndex
 import kr.ac.baekseok.readytogo.data.model.LatLng
 import kr.ac.baekseok.readytogo.domain.recommend.distanceKm
 import kr.ac.baekseok.readytogo.domain.recommend.medianCenter
+import kr.ac.baekseok.readytogo.domain.recommend.RouteBasis
 import kr.ac.baekseok.readytogo.domain.recommend.recommendPair
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -118,6 +119,7 @@ class TripPlanner(
                     restaurants = restaurantsByDay[index].orEmpty(),
                     dayAttractions = dayAttractions,
                     allAttractions = plannedAttractions,
+                    home = lodging?.qualityFirst?.item?.location,
                     maxPriceWon = budget.mealWon,
                     usedRestaurantIds = usedRestaurantIds,
                     widenSearch = {
@@ -281,12 +283,14 @@ class TripPlanner(
         restaurants: List<Restaurant>,
         dayAttractions: List<Attraction>,
         allAttractions: List<Attraction>,
+        /** 하루를 시작하고 끝내는 곳(숙소). 아침의 "앞", 저녁의 "뒤"가 된다. */
+        home: LatLng?,
         maxPriceWon: Long?,
         usedRestaurantIds: MutableSet<String>,
         /** 4단계에서 쓰는 추가 검색. 하루에 한 번만 불린다. */
         widenSearch: suspend () -> List<Restaurant>,
     ): Map<MealTime, RecommendationPair<Restaurant>> {
-        // 일정이 비는 날(도착 당일 등)은 그 도시 전체 일정을 기준으로 삼는다.
+        // 숙소가 없을 때만 쓰는 예전 기준. 일정이 비는 날은 도시 전체 일정을 기준으로 삼는다.
         // 기준점이 아예 없으면 동선 점수가 모두 0이 되어 평점만으로 순위가 정해져버린다.
         val anchors = dayAttractions.ifEmpty { allAttractions }.map { it.location }
 
@@ -295,7 +299,23 @@ class TripPlanner(
         val picked = mutableMapOf<MealTime, RecommendationPair<Restaurant>>()
 
         for (meal in MealTime.entries) {
-            var pair = selectForMeal(meal, available, anchors, maxPriceWon, usedRestaurantIds)
+            // 동선은 **바로 앞 → 식당 → 바로 뒤** 우회 거리로 잰다. 그날 중심까지 거리로 고르면
+            // 아침이 마지막 관광지 쪽에, 저녁이 숙소 반대편에 잡혀 지도 선이 교차했다.
+            // 숙소를 모르면 하루의 시작과 끝을 정할 수 없어 예전처럼 중심 기준으로 둔다.
+            val route = if (home == null) {
+                RouteBasis.Center(anchors)
+            } else {
+                val (from, to) = mealNeighbours(
+                    meal = meal,
+                    attractions = dayAttractions,
+                    pickedMeals = picked.mapValues { it.value.qualityFirst.item.location },
+                    dayStart = home,
+                    dayEnd = home,
+                )
+                RouteBasis.Detour(from, to)
+            }
+
+            var pair = selectForMeal(meal, available, route, maxPriceWon, usedRestaurantIds)
 
             // 4단계 — 여기까지 못 채웠으면 반경을 넓혀 한 번 더 찾는다.
             // 하루에 한 번으로 제한한다. 끼니마다 넓히면 호출이 세 배가 된다.
@@ -303,7 +323,7 @@ class TripPlanner(
                 widened = true
                 available = (available + widenSearch()).distinctBy { it.id }
                 android.util.Log.d("TripPlan", "  ${dayNumber}일차 ${meal.name}: 반경 넓혀 재검색")
-                pair = selectForMeal(meal, available, anchors, maxPriceWon, usedRestaurantIds)
+                pair = selectForMeal(meal, available, route, maxPriceWon, usedRestaurantIds)
             }
 
             if (pair == null) {
@@ -341,7 +361,7 @@ class TripPlanner(
     private fun selectForMeal(
         meal: MealTime,
         restaurants: List<Restaurant>,
-        anchors: List<LatLng>,
+        route: RouteBasis,
         maxPriceWon: Long?,
         usedRestaurantIds: Set<String>,
     ): RecommendationPair<Restaurant>? {
@@ -378,12 +398,12 @@ class TripPlanner(
         //
         // 평점 4.0짜리 한 곳보다 3.5 이상 두 곳이 낫다고 본다. 비교할 대상이 있어야 선택이 된다.
         stages.forEach { stage ->
-            val pair = recommendPair(stage, anchors, maxPriceWon)
+            val pair = recommendPair(stage, route, maxPriceWon)
             if (pair?.withinBudget != null) return pair
         }
 
         // 어느 단계에서도 둘을 못 채웠다. 후보가 정말 하나인 경우다 — 하나라도 보여준다.
-        return stages.firstNotNullOfOrNull { recommendPair(it, anchors, maxPriceWon) }
+        return stages.firstNotNullOfOrNull { recommendPair(it, route, maxPriceWon) }
     }
 
     /**

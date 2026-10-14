@@ -107,4 +107,33 @@ class ScoringTest {
         assertEquals(tokyoStation.latitude, center.latitude, 0.0001)
         assertEquals(tokyoStation.longitude, center.longitude, 0.0001)
     }
+
+    @Test
+    fun `앞뒤를 잇는 선 위에 있으면 우회 거리는 0이고 동선 점수는 만점이다`() {
+        val midway = LatLng(
+            (shinjuku.latitude + tokyoStation.latitude) / 2,
+            (shinjuku.longitude + tokyoStation.longitude) / 2,
+        )
+        assertEquals(0.0, detourKm(shinjuku, midway, tokyoStation), 0.01)
+        assertEquals(1.0, RouteBasis.Detour(shinjuku, tokyoStation).score(midway), 0.01)
+    }
+
+    @Test
+    fun `되돌아가는 방향이면 왕복만큼 우회한다`() {
+        // 신주쿠 → 도쿄역으로 가는데 신주쿠 서쪽(약 3km)에 들르면 6km 가까이 더 간다.
+        val west = LatLng(35.6896, 139.6676)
+        val detour = detourKm(shinjuku, west, tokyoStation)
+        assertTrue("왕복 거리 근처여야 한다: $detour", detour in 5.0..7.5)
+    }
+
+    @Test
+    fun `중심에서 같은 거리라도 앞뒤 일정 방향에 있는 쪽이 동선 점수가 높다`() {
+        // 숙소(신주쿠) → 아침 → 첫 관광지(도쿄역). 신주쿠에서 같은 3km인데 하나는 도쿄역 쪽,
+        // 하나는 반대쪽이다. 중심 기준으로는 비기지만 우회 기준으로는 갈려야 한다.
+        val onTheWay = LatLng(35.6868, 139.7336)
+        val opposite = LatLng(35.6924, 139.6676)
+        val route = RouteBasis.Detour(shinjuku, tokyoStation)
+
+        assertTrue(route.score(onTheWay) > route.score(opposite))
+    }
 }

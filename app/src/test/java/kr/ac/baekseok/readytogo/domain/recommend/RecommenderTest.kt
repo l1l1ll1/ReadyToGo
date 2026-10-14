@@ -228,4 +228,31 @@ class RecommenderTest {
 
         assertEquals("established", result.qualityFirst.item.id)
     }
+
+    @Test
+    fun `우회 기준이면 근거로 중심 거리 대신 우회 거리를 내보낸다`() {
+        val next = LatLng(35.6812, 139.7671) // 도쿄역
+        val item = restaurant("a", 4.0, 10_000)
+
+        val result = recommendPair(listOf(item), RouteBasis.Detour(anchor, next), maxPriceWon = null)!!
+
+        // 출발점과 같은 자리라 들러도 더 가는 거리가 없다.
+        assertEquals(0.0, result.qualityFirst.detourKm!!, 0.01)
+        assertNull(result.qualityFirst.distanceFromCenterKm)
+    }
+
+    @Test
+    fun `평점이 같으면 다음 일정 방향에 있는 식당이 추천된다`() {
+        val next = LatLng(35.6812, 139.7671) // 도쿄역
+        val onTheWay = restaurant("onTheWay", 4.2, 10_000, location = LatLng(35.6868, 139.7336))
+        val opposite = restaurant("opposite", 4.2, 10_000, location = LatLng(35.6924, 139.6676))
+
+        val result = recommendPair(
+            listOf(opposite, onTheWay),
+            RouteBasis.Detour(anchor, next),
+            maxPriceWon = null,
+        )!!
+
+        assertEquals("onTheWay", result.qualityFirst.item.id)
+    }
 }

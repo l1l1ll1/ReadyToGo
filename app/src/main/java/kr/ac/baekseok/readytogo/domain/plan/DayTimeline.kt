@@ -148,16 +148,11 @@ fun DayPlan.toTimeline(
         )
     }
 
-    // 관광지를 점심 전후로 나눈다. 한 곳뿐이면 점심 뒤에 둔다 — 아침 먹고 바로 나가는 것보다
-    // 점심 먹고 움직이는 쪽이 실제 여행에 가깝다.
-    val splitAt = if (visits.size <= 1) 0 else (visits.size + 1) / 2
-
-    val ordered = buildList {
-        add(mealItem(MealTime.BREAKFAST))
-        addAll(visits.take(splitAt))
-        add(mealItem(MealTime.LUNCH))
-        addAll(visits.drop(splitAt))
-        add(mealItem(MealTime.DINNER))
+    val ordered = dayLayout(visits.size).map { slot ->
+        when (slot) {
+            is DaySlot.Visit -> visits[slot.index]
+            is DaySlot.Meal -> mealItem(slot.meal)
+        }
     }
 
     // 사용자가 끌어서 바꾼 순서가 있으면 그것을 따른다.
@@ -210,6 +205,68 @@ fun DayPlan.toTimeline(
 
         TimelineEntry(item = item, travelFromPrevious = travel)
     }
+}
+
+/** 하루 기본 배치의 한 칸. 관광지는 그날 목록의 순번, 끼니는 끼니 종류로 가리킨다. */
+sealed interface DaySlot {
+    data class Visit(val index: Int) : DaySlot
+    data class Meal(val meal: MealTime) : DaySlot
+}
+
+/**
+ * 하루 기본 배치: **아침 → 관광지 절반 → 점심 → 남은 관광지 → 저녁**.
+ *
+ * 타임라인과 끼니 식당 선택([TripPlanner])이 함께 쓴다. 식당은 바로 앞뒤 항목을 보고
+ * 고르므로, 두 곳이 배치를 따로 들고 있으면 언젠가 어긋나 엉뚱한 앞뒤로 고르게 된다.
+ *
+ * 관광지가 한 곳뿐이면 점심 뒤에 둔다 — 아침 먹고 바로 나가는 것보다
+ * 점심 먹고 움직이는 쪽이 실제 여행에 가깝다.
+ */
+fun dayLayout(visitCount: Int): List<DaySlot> {
+    val splitAt = if (visitCount <= 1) 0 else (visitCount + 1) / 2
+    return buildList {
+        add(DaySlot.Meal(MealTime.BREAKFAST))
+        (0 until splitAt).forEach { add(DaySlot.Visit(it)) }
+        add(DaySlot.Meal(MealTime.LUNCH))
+        (splitAt until visitCount).forEach { add(DaySlot.Visit(it)) }
+        add(DaySlot.Meal(MealTime.DINNER))
+    }
+}
+
+/**
+ * 한 끼니 식당을 고를 때 기준이 되는 **바로 앞 좌표와 바로 뒤 좌표**.
+ *
+ * - 앞: 직전 칸. 관광지면 그 좌표, 끼니면 이미 고른 식당([pickedMeals]). 하루의 첫 칸이면 [dayStart].
+ * - 뒤: 다음 **관광지**. 사이에 낀 끼니는 아직 고르지 않았으므로 건너뛴다. 없으면 [dayEnd].
+ *   (관광지 한 곳인 날의 아침은 점심을 건너뛰어 그 관광지를 본다.)
+ *
+ * 끼니는 아침 → 점심 → 저녁 순으로 고르므로, 앞쪽 끼니는 항상 이미 정해져 있다.
+ * 앞 끼니를 못 채웠으면(후보 없음) 그 칸을 건너뛰고 더 앞을 본다.
+ */
+fun mealNeighbours(
+    meal: MealTime,
+    attractions: List<Attraction>,
+    pickedMeals: Map<MealTime, LatLng>,
+    dayStart: LatLng,
+    dayEnd: LatLng,
+): Pair<LatLng, LatLng> {
+    val layout = dayLayout(attractions.size)
+    val at = layout.indexOf(DaySlot.Meal(meal))
+
+    val from = layout.subList(0, at).asReversed().firstNotNullOfOrNull { slot ->
+        when (slot) {
+            is DaySlot.Visit -> attractions[slot.index].location
+            is DaySlot.Meal -> pickedMeals[slot.meal]
+        }
+    } ?: dayStart
+
+    val to = layout.subList(at + 1, layout.size)
+        .filterIsInstance<DaySlot.Visit>()
+        .firstOrNull()
+        ?.let { attractions[it.index].location }
+        ?: dayEnd
+
+    return from to to
 }
 
 /**

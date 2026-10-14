@@ -319,11 +319,37 @@ private fun MealDetail(item: TimelineItem.Meal) {
             fontWeight = FontWeight.Bold,
             color = if (overBudget) LocalPalette.current.Accent else LocalPalette.current.TextPrimary,
         )
+        item.shown.detourLine()?.let { line ->
+            Text(
+                text = line,
+                style = MaterialTheme.typography.bodyMedium,
+                color = LocalPalette.current.TextSecondary,
+            )
+        }
 
         // 무엇으로 바꿀 수 있는지는 아래 "다른 선택지" 목록이 전부 보여준다.
         // 전에는 바뀔 한 곳만 미리 적었는데, 고를 수 있는 곳이 늘면서 쓸모가 없어졌다.
     }
 }
+
+/**
+ * 왜 이 식당이 추천됐는지 동선 근거 한 줄. 점수를 우회 거리로 매기므로 근거도 우회 거리다.
+ *
+ * 즐겨찾기에서 직접 끼운 곳은 점수를 매기지 않아 값이 없고, 그때는 줄을 그리지 않는다.
+ * 소수 첫째 자리에서 0.0으로 보일 만큼 작으면 "0.0km 돌아감"보다 "가는 길에 있음"이 바로 읽힌다.
+ */
+@Composable
+private fun Recommendation<*>.detourLine(): String? {
+    val km = detourKm ?: return null
+    return if (km < ON_THE_WAY_KM) {
+        stringResource(R.string.plan_meal_on_the_way)
+    } else {
+        stringResource(R.string.plan_meal_detour, "%.1f".format(km))
+    }
+}
+
+/** 이보다 덜 돌아가면 "가는 길"로 본다. 소수 첫째 자리로 표시하면 0.0이 되는 크기다. */
+private const val ON_THE_WAY_KM = 0.05
 
 @Composable
 private fun SheetAction(

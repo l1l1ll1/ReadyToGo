@@ -276,6 +276,8 @@
     <string name="plan_reviews">%1$s reviews</string>
     <string name="plan_rating_reviews">★%1$s (%2$s reviews)</string>
     <string name="plan_distance_from_center">%1$s km from the trip center</string>
+    <string name="plan_meal_detour">%1$s km off the route</string>
+    <string name="plan_meal_on_the_way">On the way</string>
     <string name="plan_price_upper_bound">Up to %1$s</string>
     <string name="plan_price_estimated">%1$s (est.)</string>
     <string name="plan_lodging_price_estimated">About %1$s per night (est.)</string>

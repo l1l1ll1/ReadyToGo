@@ -16,6 +16,11 @@ data class Recommendation<T>(
      * 점수만 보여주면 왜 이게 추천됐는지 알 수 없어, 근거가 되는 거리를 같이 내보낸다.
      */
     val distanceFromCenterKm: Double? = null,
+    /**
+     * 앞뒤 일정 사이에 들렀다 갈 때 더 가는 거리(km). 끼니 식당에만 채워진다.
+     * 식당은 중심 거리가 아니라 이 값으로 동선 점수를 매기므로, 근거도 이 값을 보여준다.
+     */
+    val detourKm: Double? = null,
 )
 
 /**

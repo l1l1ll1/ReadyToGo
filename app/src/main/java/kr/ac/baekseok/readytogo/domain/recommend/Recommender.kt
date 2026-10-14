@@ -25,10 +25,18 @@ const val QUALITY_PRICE_MULTIPLIER = 2.0
  */
 const val ALTERNATIVE_COUNT = 5
 
+/** 일정 중심 기준으로 고른다. 숙소가 이 경우다. */
+fun <T : ScoredCandidate> recommendPair(
+    candidates: List<T>,
+    anchors: List<LatLng>,
+    maxPriceWon: Long?,
+): RecommendationPair<T>? = recommendPair(candidates, RouteBasis.Center(anchors), maxPriceWon)
+
 /**
  * 후보들 중에서 "품질 우선"과 "예산 내" 두 가지를 고른다(CLAUDE.md 추천 로직).
  *
- * @param anchors 동선 점수의 기준 장소들. 숙소는 여행 전체 관광지, 식당은 그날 관광지를 넘긴다.
+ * @param route 동선 점수의 기준. 숙소는 일정 전체 중심([RouteBasis.Center]),
+ *        끼니 식당은 바로 앞뒤 일정 사이의 우회 거리([RouteBasis.Detour])다.
  * @param maxPriceWon **이 항목 하나에 쓸 수 있는 상한(원)**. 여행 총예산이 아니다.
  *        숙소 1박 가격을 총예산과 비교하면 거의 모든 후보가 "예산 내"가 되어 버리므로,
  *        총예산을 항공·숙박·식비로 나누는 일은 호출부(3~4단계)가 하고 여기는 상한만 받는다.
@@ -37,14 +45,14 @@ const val ALTERNATIVE_COUNT = 5
  */
 fun <T : ScoredCandidate> recommendPair(
     candidates: List<T>,
-    anchors: List<LatLng>,
+    route: RouteBasis,
     maxPriceWon: Long?,
 ): RecommendationPair<T>? {
     if (candidates.isEmpty()) return null
 
     // 점수 내림차순. 점수가 같으면 싼 쪽이 위로 온다.
     val ranked = candidates
-        .map { it to totalScore(it, anchors) }
+        .map { it to totalScore(it, route) }
         .sortedWith(
             compareByDescending<Pair<T, Double>> { it.second }.thenBy { it.first.priceWon }
         )
@@ -82,30 +90,35 @@ fun <T : ScoredCandidate> recommendPair(
             } else {
                 // 더 싼 후보가 없다(숙소는 같은 등급이면 값이 같아 흔하다).
                 // 가격으로 못 가르면 동선으로 가른다.
-                others.maxBy { routeScore(it.first.location, anchors) } to AlternativeKind.CLOSEST
+                others.maxBy { route.score(it.first.location) } to AlternativeKind.CLOSEST
             }
         }
     }
 
     return RecommendationPair(
-        qualityFirst = best.toRecommendation(maxPriceWon, anchors),
-        withinBudget = runnerUp?.toRecommendation(maxPriceWon, anchors),
+        qualityFirst = best.toRecommendation(maxPriceWon, route),
+        withinBudget = runnerUp?.toRecommendation(maxPriceWon, route),
         alternativeKind = kind,
         // 사용자가 직접 고를 수 있게 상위 후보를 더 들고 간다(로드맵 6, 대안 교체).
         // 추천 두 칸에 이미 나온 곳은 뺀다 — 같은 곳이 목록에 또 있으면 고를 것이 없다.
         alternatives = others
             .filter { runnerUp == null || it.first !== runnerUp.first }
             .take(ALTERNATIVE_COUNT)
-            .map { it.toRecommendation(maxPriceWon, anchors) },
+            .map { it.toRecommendation(maxPriceWon, route) },
     )
 }
 
 private fun <T : ScoredCandidate> Pair<T, Double>.toRecommendation(
     maxPriceWon: Long?,
-    anchors: List<LatLng>,
+    route: RouteBasis,
 ): Recommendation<T> = Recommendation(
     item = first,
     score = second,
     overBudget = maxPriceWon != null && first.priceWon > maxPriceWon,
-    distanceFromCenterKm = medianCenter(anchors)?.let { distanceKm(first.location, it) },
+    // 점수를 매긴 기준과 같은 거리를 근거로 내보낸다. 우회 거리로 골라 놓고 중심 거리를
+    // 보여주면 왜 이곳인지 설명이 안 된다.
+    distanceFromCenterKm = (route as? RouteBasis.Center)
+        ?.let { medianCenter(it.anchors) }
+        ?.let { distanceKm(first.location, it) },
+    detourKm = (route as? RouteBasis.Detour)?.let { detourKm(it.from, first.location, it.to) },
 )

@@ -529,6 +529,8 @@ private fun PlanTabContent(
 
         PlanTab.MAP -> MapTab(
             plan = plan,
+            edits = edits,
+            pickedPlaces = pickedPlaces,
             selectedDayNumber = mapDayNumber,
             onSelectDay = onSelectMapDay,
         )
@@ -553,7 +555,13 @@ private fun TabColumn(content: androidx.compose.foundation.lazy.LazyListScope.()
  * 지도를 그리는 코드는 [DayMapContent] 한 곳에만 둔다.
  */
 @Composable
-private fun MapTab(plan: TripPlan, selectedDayNumber: Int, onSelectDay: (Int) -> Unit) {
+private fun MapTab(
+    plan: TripPlan,
+    edits: TimelineEdits,
+    pickedPlaces: PickedPlaces,
+    selectedDayNumber: Int,
+    onSelectDay: (Int) -> Unit,
+) {
     val day = plan.dailyPlans.firstOrNull { it.dayNumber == selectedDayNumber }
         ?: plan.dailyPlans.firstOrNull()
 
@@ -585,6 +593,9 @@ private fun MapTab(plan: TripPlan, selectedDayNumber: Int, onSelectDay: (Int) ->
                 day = day,
                 // 아직 사용자가 고르기 전이라 "추천" 쪽을 대표로 찍는다.
                 lodging = plan.lodging?.qualityFirst?.item,
+                // 지도가 일정표와 같은 순서·장소를 보여야 한다. 편집을 빼면 지운 곳이 지도에 남는다.
+                edits = edits,
+                picked = pickedPlaces,
             )
         }
     }

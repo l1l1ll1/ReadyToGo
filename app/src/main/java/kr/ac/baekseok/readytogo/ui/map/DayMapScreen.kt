@@ -2,6 +2,7 @@ package kr.ac.baekseok.readytogo.ui.map
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,9 +16,14 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -34,7 +40,10 @@ import kr.ac.baekseok.readytogo.R
 import kr.ac.baekseok.readytogo.data.model.DayPlan
 import kr.ac.baekseok.readytogo.data.model.Lodging
 import kr.ac.baekseok.readytogo.data.model.MealTime
-import kr.ac.baekseok.readytogo.data.model.Restaurant
+import kr.ac.baekseok.readytogo.data.model.PickedPlaces
+import kr.ac.baekseok.readytogo.data.model.TimelineEdits
+import kr.ac.baekseok.readytogo.domain.plan.TimelineItem
+import kr.ac.baekseok.readytogo.domain.plan.toTimeline
 import kr.ac.baekseok.readytogo.domain.recommend.distanceKm
 import kotlin.math.PI
 import kotlin.math.cos
@@ -93,19 +102,52 @@ fun DayMapContent(
     day: DayPlan,
     lodging: Lodging?,
     modifier: Modifier = Modifier,
+    edits: TimelineEdits = TimelineEdits(),
+    picked: PickedPlaces = PickedPlaces(),
 ) {
     val texts = rememberMapSpotTexts()
-    val spots = remember(day, lodging, texts) {
-        day.toMapSpots(lodging, texts).spreadOverlapping()
+
+    // **일정표 탭과 같은 타임라인을 쓴다.** 전에는 원본 계획을 그대로 찍어서 지운 곳이
+    // 지도에 남고, 끌어서 바꾼 순서와 바꿔 끼운 장소가 반영되지 않았다.
+    // 순서·교체·삭제 규칙은 toTimeline 한 곳에만 두어야 두 화면이 어긋나지 않는다.
+    val items = remember(day, edits, picked) {
+        day.toTimeline(
+            deletedKeys = edits.deletedIn(day.dayNumber),
+            pickedMeals = edits.pickedIn(day.dayNumber),
+            customOrder = edits.orderIn(day.dayNumber),
+            pickedAttractions = edits.pickedAttractionsIn(day.dayNumber),
+            picked = picked,
+        ).map { it.item }
+    }
+    val spots = remember(items, lodging, texts) {
+        items.toMapSpots(lodging, texts).spreadOverlapping()
+    }
+    val route = remember(items, lodging) {
+        dayRoute(lodging?.location, items.map { it.location })
     }
 
     Box(modifier = modifier.fillMaxSize()) {
         if (spots.isEmpty()) {
             EmptyMapNotice()
         } else {
-            DayMap(spots)
+            DayMap(spots, route)
         }
     }
+}
+
+/**
+ * 그날 동선 선이 지나갈 좌표. **숙소 → 일정표 순서대로 → 숙소**.
+ *
+ * - 좌표가 없는 항목(추천 못 찾은 끼니)은 건너뛰고 다음 항목으로 바로 잇는다.
+ *   거기서 선을 끊으면 끼니 하나 비었다고 하루 동선이 두 동강 난다.
+ * - 장소가 하나도 없으면 숙소만 왕복하는 선이 되므로 아무것도 그리지 않는다.
+ * - 마커를 펼치기 전의 원래 좌표·순서로 만든다. 펼치기는 묶음 단위로 목록을 다시 늘어놓아
+ *   순서가 섞이기 때문이다(전에는 그 때문에 1→3→2로 이어지기도 했다).
+ */
+internal fun dayRoute(lodging: AppLatLng?, stops: List<AppLatLng?>): List<AppLatLng> {
+    val places = stops.filterNotNull()
+    if (places.isEmpty()) return emptyList()
+    return listOfNotNull(lodging) + places + listOfNotNull(lodging)
 }
 
 @Composable
@@ -119,12 +161,18 @@ private fun EmptyMapNotice() {
 }
 
 @Composable
-private fun DayMap(spots: List<MapSpot>) {
+private fun DayMap(spots: List<MapSpot>, route: List<AppLatLng>) {
     val cameraPositionState = rememberCameraPositionState()
+
+    // 범례 카드의 실제 높이. 지도 아래쪽을 이만큼 비워 두면 카메라가 그 위 영역에만 장소를 담는다.
+    // 고정값으로 두지 않는 이유: 글자 크기 설정(접근성)과 언어에 따라 카드 높이가 달라진다.
+    var legendHeightPx by remember { mutableIntStateOf(0) }
+    val legendSpace = with(LocalDensity.current) { legendHeightPx.toDp() } + LEGEND_MARGIN
 
     // 장소가 정해지면 전부 화면에 들어오도록 카메라를 맞춘다.
     // 한 곳뿐이면 감쌀 영역이 없어서 bounds 대신 고정 줌을 쓴다.
-    LaunchedEffect(spots) {
+    // 범례 높이가 재어지면 다시 맞춘다 — 첫 프레임에는 높이가 0이라 마커가 범례 밑에 깔린다.
+    LaunchedEffect(spots, legendHeightPx) {
         val positions = spots.map { it.position.toGms() }
         if (positions.size == 1) {
             cameraPositionState.move(
@@ -140,11 +188,12 @@ private fun DayMap(spots: List<MapSpot>) {
         GoogleMap(
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState,
+            // 범례가 마커를 가리던 문제(1일차 식당 두 곳이 범례 밑에 숨었다).
+            contentPadding = PaddingValues(bottom = legendSpace),
         ) {
-            // 관광지만 순서대로 잇는다. 숙소·식당까지 이으면 선이 뒤엉켜 동선이 안 보인다.
-            val routePoints = spots.filter { it.kind == SpotKind.ATTRACTION }.map { it.position.toGms() }
-            if (routePoints.size >= 2) {
-                Polyline(points = routePoints, width = 8f)
+            // 두 점 이상이어야 선이 된다. 숙소가 있으면 관광지 한 곳뿐인 도착일에도 왕복 선이 생긴다.
+            if (route.size >= 2) {
+                Polyline(points = route.map { it.toGms() }, width = 8f)
             }
 
             spots.forEach { spot ->
@@ -158,9 +207,17 @@ private fun DayMap(spots: List<MapSpot>) {
             }
         }
 
-        MapLegend(modifier = Modifier.align(Alignment.BottomStart).padding(12.dp))
+        MapLegend(
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(LEGEND_MARGIN)
+                .onSizeChanged { legendHeightPx = it.height },
+        )
     }
 }
+
+/** 범례 카드와 지도 가장자리 사이 여백. 지도 아래쪽을 비울 때도 같은 값을 더한다. */
+private val LEGEND_MARGIN = 12.dp
 
 @Composable
 private fun MapLegend(modifier: Modifier = Modifier) {
@@ -309,31 +366,39 @@ internal enum class SpotKind(val markerHue: Float) {
 private fun AppLatLng.toGms() = GmsLatLng(latitude, longitude)
 
 /**
- * 하루치 계획을 지도 지점 목록으로 바꾼다.
+ * 편집이 반영된 하루 타임라인을 지도 지점 목록으로 바꾼다.
  *
- * 식당은 "추천"(첫 번째 선택지)만 찍는다. 두 선택지를 다 찍으면 한 끼에 마커가 둘씩,
- * 하루에 여섯 개가 되어 관광지 동선이 묻힌다.
+ * 식당은 지금 일정표에 보이는 곳(고른 곳, 없으면 추천)만 찍는다. 두 선택지를 다 찍으면
+ * 한 끼에 마커가 둘씩 생겨 동선이 묻힌다. 관광지 번호는 일정표에 나오는 차례를 따른다.
  */
-private fun DayPlan.toMapSpots(lodging: Lodging?, texts: MapSpotTexts): List<MapSpot> {
-    val attractionSpots = attractions.mapIndexed { index, attraction ->
-        MapSpot(
-            position = attraction.location,
-            title = "${index + 1}. ${attraction.name}",
-            snippet = texts.attractionSnippet
-                .format(attraction.stayMinutes, attraction.rating.toString()),
-            kind = SpotKind.ATTRACTION,
-        )
-    }
-
-    val mealSpots = MealTime.entries.mapNotNull { meal ->
-        val restaurant: Restaurant = meals[meal]?.qualityFirst?.item ?: return@mapNotNull null
-        MapSpot(
-            position = restaurant.location,
-            title = "${texts.mealLabels[meal]} · ${restaurant.name}",
-            snippet = texts.restaurantSnippet
-                .format(restaurant.category, texts.money(restaurant.priceWon)),
-            kind = SpotKind.RESTAURANT,
-        )
+private fun List<TimelineItem>.toMapSpots(lodging: Lodging?, texts: MapSpotTexts): List<MapSpot> {
+    var visitNumber = 0
+    val itemSpots = mapNotNull { item ->
+        when (item) {
+            is TimelineItem.Visit -> {
+                visitNumber++
+                val attraction = item.attraction
+                MapSpot(
+                    position = attraction.location,
+                    title = "$visitNumber. ${attraction.name}",
+                    snippet = texts.attractionSnippet
+                        .format(attraction.stayMinutes, attraction.rating.toString()),
+                    kind = SpotKind.ATTRACTION,
+                )
+            }
+            is TimelineItem.Meal -> {
+                val restaurant = item.restaurant
+                MapSpot(
+                    position = restaurant.location,
+                    title = "${texts.mealLabels[item.meal]} · ${restaurant.name}",
+                    snippet = texts.restaurantSnippet
+                        .format(restaurant.category, texts.money(restaurant.priceWon)),
+                    kind = SpotKind.RESTAURANT,
+                )
+            }
+            // 장소가 아니라 찍을 좌표가 없다.
+            is TimelineItem.NoMeal -> null
+        }
     }
 
     val lodgingSpot = lodging?.let {
@@ -345,7 +410,7 @@ private fun DayPlan.toMapSpots(lodging: Lodging?, texts: MapSpotTexts): List<Map
         )
     }
 
-    return attractionSpots + mealSpots + listOfNotNull(lodgingSpot)
+    return itemSpots + listOfNotNull(lodgingSpot)
 }
 
 /**

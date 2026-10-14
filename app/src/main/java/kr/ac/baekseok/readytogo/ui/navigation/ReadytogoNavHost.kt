@@ -43,7 +43,6 @@ import kr.ac.baekseok.readytogo.ui.home.HomeScreen
 import kr.ac.baekseok.readytogo.ui.input.TripInputScreen
 import kr.ac.baekseok.readytogo.ui.main.MainScaffold
 import kr.ac.baekseok.readytogo.ui.main.MainTab
-import kr.ac.baekseok.readytogo.ui.map.DayMapScreen
 import kr.ac.baekseok.readytogo.ui.onboarding.OnboardingScreen
 import kr.ac.baekseok.readytogo.ui.plan.TripPlanScreen
 import kr.ac.baekseok.readytogo.ui.plan.TripPlanUiState

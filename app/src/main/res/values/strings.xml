@@ -239,6 +239,21 @@
     <string name="plan_save_removed">저장을 해제했습니다.</string>
     <string name="plan_save_failed">저장하지 못했습니다.</string>
     <string name="plan_item_removed">일정에서 뺐습니다.</string>
+    <!-- ⑨-1 말로 일정 고치기 -->
+    <string name="plan_text_edit_hint">예: 오후 하나 빼고 저녁은 숙소 근처로</string>
+    <string name="plan_text_edit_send">고치기</string>
+    <string name="plan_text_edit_sign_in_hint">로그인하면 말로 일정을 고칠 수 있어요.</string>
+    <string name="plan_text_edit_not_understood">무엇을 바꿀지 이해하지 못했어요. 예: "점심 다른 걸로", "오후 하나 빼줘"</string>
+    <string name="plan_text_edit_applied">%1$d가지를 바꿨어요.</string>
+    <string name="plan_text_edit_partly_applied">%1$d가지를 바꿨어요. 못 한 것: %2$s</string>
+    <string name="plan_text_edit_none_applied">바꾸지 못했어요: %1$s</string>
+    <string name="plan_text_edit_reject_unknown">일정에 없는 항목</string>
+    <string name="plan_text_edit_reject_meal_fixed">끼니는 빼거나 옮길 수 없음</string>
+    <string name="plan_text_edit_reject_position">옮길 수 없는 자리</string>
+    <string name="plan_text_edit_reject_no_candidate">조건에 맞는 다른 식당 없음</string>
+    <string name="plan_text_edit_sign_in">로그인이 필요해요.</string>
+    <string name="plan_text_edit_too_many">요청이 많아요. 1분 뒤에 다시 해 주세요.</string>
+    <string name="plan_text_edit_unavailable">지금은 처리할 수 없어요. 잠시 후 다시 해 주세요.</string>
 
     <!-- 섹션 제목 -->
     <string name="plan_section_budget">예산 분해</string>

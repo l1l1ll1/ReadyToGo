@@ -222,6 +222,21 @@
     <string name="plan_save_removed">Removed from saved trips.</string>
     <string name="plan_save_failed">We couldn\'t save it.</string>
     <string name="plan_item_removed">Removed from the itinerary.</string>
+    <!-- ⑨-1 Edit by text -->
+    <string name="plan_text_edit_hint">e.g. Drop one afternoon stop, dinner near the hotel</string>
+    <string name="plan_text_edit_send">Apply</string>
+    <string name="plan_text_edit_sign_in_hint">Sign in to edit your plan by typing.</string>
+    <string name="plan_text_edit_not_understood">I couldn\'t tell what to change. e.g. "Different lunch", "Remove one afternoon stop"</string>
+    <string name="plan_text_edit_applied">Made %1$d change(s).</string>
+    <string name="plan_text_edit_partly_applied">Made %1$d change(s). Skipped: %2$s</string>
+    <string name="plan_text_edit_none_applied">Nothing changed: %1$s</string>
+    <string name="plan_text_edit_reject_unknown">item not in the plan</string>
+    <string name="plan_text_edit_reject_meal_fixed">meals can\'t be removed or moved</string>
+    <string name="plan_text_edit_reject_position">can\'t move there</string>
+    <string name="plan_text_edit_reject_no_candidate">no other restaurant fits</string>
+    <string name="plan_text_edit_sign_in">Please sign in.</string>
+    <string name="plan_text_edit_too_many">Too many requests. Try again in a minute.</string>
+    <string name="plan_text_edit_unavailable">Can\'t process this right now. Please try again shortly.</string>
 
     <!-- 섹션 제목 -->
     <string name="plan_section_budget">Budget breakdown</string>

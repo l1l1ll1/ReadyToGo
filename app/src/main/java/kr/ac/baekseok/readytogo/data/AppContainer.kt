@@ -13,6 +13,8 @@ import kr.ac.baekseok.readytogo.data.repository.NoPlacePhotoRepository
 import kr.ac.baekseok.readytogo.data.repository.PlacePhotoRepository
 import kr.ac.baekseok.readytogo.data.repository.places.GooglePlacesPhotoRepository
 import kr.ac.baekseok.readytogo.data.repository.FavoriteRepository
+import kr.ac.baekseok.readytogo.data.repository.DayEditAssistant
+import kr.ac.baekseok.readytogo.data.repository.firebase.FunctionsDayEditAssistant
 import kr.ac.baekseok.readytogo.data.repository.SavedTripRepository
 import kr.ac.baekseok.readytogo.data.repository.UserProfileRepository
 import kr.ac.baekseok.readytogo.data.repository.firebase.FirestoreUserProfileRepository
@@ -135,6 +137,9 @@ object AppContainer {
     // AuthRepository 전체가 아니라 상태 Flow만 넘겨 서로를 참조하지 않게 한다.
     val savedTrips: SavedTripRepository by lazy { FirestoreSavedTripRepository(auth.authState) }
     val favorites: FavoriteRepository by lazy { FirestoreFavoriteRepository(auth.authState) }
+
+    /** 말로 일정 고치기(⑨-1). 함수가 로그인 토큰을 검사하므로 로그인 사용자만 쓴다. */
+    val dayEditAssistant: DayEditAssistant by lazy { FunctionsDayEditAssistant() }
 
     /** 닉네임처럼 계정에 딸린 값. 이름·이메일은 Google이 주지만 닉네임은 우리가 저장한다. */
     val userProfile: UserProfileRepository by lazy {

@@ -119,6 +119,7 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
+    implementation(libs.firebase.functions)
 
     // Google 계정 선택창. 예전 GoogleSignInClient는 deprecated라 Credential Manager를 쓴다.
     implementation(libs.androidx.credentials)

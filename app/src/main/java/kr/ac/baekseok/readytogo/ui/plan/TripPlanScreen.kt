@@ -146,7 +146,7 @@ fun TripPlanScreen(
     val message by viewModel.message.collectAsState()
     val signInRequested by viewModel.signInRequested.collectAsState()
     val edits by viewModel.edits.collectAsState()
-    val lastDeleted by viewModel.lastDeleted.collectAsState()
+    val canUndo by viewModel.canUndo.collectAsState()
     val favorites by viewModel.favorites.collectAsState()
     val pickedPlaces by viewModel.pickedPlaces.collectAsState()
     val canChangeDates by viewModel.canChangeDates.collectAsState()
@@ -170,7 +170,7 @@ fun TripPlanScreen(
         message = message,
         signInRequested = signInRequested,
         edits = edits,
-        canUndoDelete = lastDeleted != null,
+        canUndoDelete = canUndo,
         canChangeDates = canChangeDates,
         onChangeDates = viewModel::changeDates,
         onBack = onBack,
@@ -186,8 +186,8 @@ fun TripPlanScreen(
         onReorderCommit = viewModel::commitEdits,
         onPickMeal = viewModel::pickMeal,
         onPickFavorite = viewModel::pickFavorite,
-        onUndoDelete = viewModel::undoDelete,
-        onUndoExpired = viewModel::clearLastDeleted,
+        onUndoDelete = viewModel::undoEdit,
+        onUndoExpired = viewModel::clearUndo,
         modifier = modifier,
     )
 }

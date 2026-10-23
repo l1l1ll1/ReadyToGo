@@ -14,6 +14,14 @@ import kr.ac.baekseok.readytogo.data.model.TimelineEdits
 import kr.ac.baekseok.readytogo.data.model.TripCondition
 import kr.ac.baekseok.readytogo.data.model.TripPlan
 import kr.ac.baekseok.readytogo.data.model.canSave
+import kr.ac.baekseok.readytogo.data.model.DayPlan
+import kr.ac.baekseok.readytogo.data.model.LatLng
+import kr.ac.baekseok.readytogo.data.repository.DayEditException
+import kr.ac.baekseok.readytogo.domain.edit.EditCommand
+import kr.ac.baekseok.readytogo.domain.edit.RejectReason
+import kr.ac.baekseok.readytogo.domain.edit.applyCommands
+import kr.ac.baekseok.readytogo.domain.edit.summarizeDay
+import kr.ac.baekseok.readytogo.domain.plan.toTimeline
 import kr.ac.baekseok.readytogo.generation.PlanGeneration
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -260,7 +268,7 @@ class TripPlanViewModel(
                 .onSuccess {
                     // 직전에 뺀 항목의 되돌리기 기회를 닫는다. 남아 있으면 이 안내에 "되돌리기"가
                     // 붙는데, 눌러도 되돌아가는 것은 기간이 아니라 엉뚱한 삭제다(에뮬레이터에서 봤다).
-                    _lastDeleted.value = null
+                    _undoEdits.value = null
                     if (moved.dayCount == trip.dayCount) {
                         _message.value = string(R.string.plan_dates_moved)
                     }
@@ -310,33 +318,123 @@ class TripPlanViewModel(
     /**
      * 타임라인에서 항목을 뺀다. 지운 것은 계획에 남아 있고 화면에서만 빠진다.
      *
-     * 방금 뺀 것을 [lastDeleted]에 남겨 되돌릴 수 있게 한다 — 되돌리기가 없으면 실수로 뺐을 때
+     * 뺀 직전의 편집을 [canUndo] 뒤에 남겨 되돌릴 수 있게 한다 — 되돌리기가 없으면 실수로 뺐을 때
      * 계획을 처음부터 다시 만들어야 하고, 그건 Places·SerpApi 호출이 또 나가는 일이다.
      */
     fun deleteTimelineItem(dayNumber: Int, key: String) {
+        _undoEdits.value = _edits.value
         updateEdits { edits ->
             edits.copy(deleted = edits.deleted.plusKey(dayNumber, key))
         }
-        _lastDeleted.value = dayNumber to key
         _message.value = string(R.string.plan_item_removed)
     }
 
-    /** 방금 뺀 항목. 되돌리기를 보여줄 근거다. */
-    private val _lastDeleted = MutableStateFlow<Pair<Int, String>?>(null)
-    val lastDeleted: StateFlow<Pair<Int, String>?> = _lastDeleted.asStateFlow()
+    /**
+     * 되돌릴 때 돌아갈 편집. 되돌리기 버튼을 보여줄 근거다.
+     *
+     * **뺀 키 하나가 아니라 편집 전체를 들고 있는다.** 말로 고치기는 한 번에 빼기·끼니 교체·
+     * 순서 변경을 함께 하는데, 키 하나만 기억하면 그중 일부만 되돌아간다.
+     */
+    private val _undoEdits = MutableStateFlow<TimelineEdits?>(null)
+    val canUndo: StateFlow<Boolean> = _undoEdits.map { it != null }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
-    fun undoDelete() {
-        val (dayNumber, key) = _lastDeleted.value ?: return
-        updateEdits { edits ->
-            edits.copy(deleted = edits.deleted.minusKey(dayNumber, key))
-        }
-        _lastDeleted.value = null
+    fun undoEdit() {
+        val previous = _undoEdits.value ?: return
+        updateEdits { previous }
+        _undoEdits.value = null
     }
 
     /** 되돌리기 기회가 지났다. 스낵바가 사라질 때 화면이 부른다. */
-    fun clearLastDeleted() {
-        _lastDeleted.value = null
+    fun clearUndo() {
+        _undoEdits.value = null
     }
+
+    /** 말로 고치기를 쓸 수 있는지. 함수가 로그인 토큰을 요구한다. */
+    val canEditByText: StateFlow<Boolean> = AppContainer.auth.authState.map { it.canSave }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(FLOW_TIMEOUT_MS), false)
+
+    /** 함수 응답을 기다리는 중. 입력창이 버튼 대신 진행 표시를 띄우고 중복 전송을 막는다. */
+    private val _editingByText = MutableStateFlow(false)
+    val editingByText: StateFlow<Boolean> = _editingByText.asStateFlow()
+
+    /**
+     * 문장으로 그날 일정을 고친다(⑨-1).
+     *
+     * 함수는 명령만 돌려주고, 검증과 실행은 [applyCommands]가 손 편집과 같은 규칙으로 한다.
+     * 명령이 여러 개여도 저장은 한 번, 되돌리기도 한 번이다.
+     */
+    fun editByText(dayNumber: Int, sentence: String) {
+        val text = sentence.trim()
+        if (text.isEmpty() || _editingByText.value) return
+        val plan = (_uiState.value as? TripPlanUiState.Success)?.plan ?: return
+        val day = plan.dailyPlans.firstOrNull { it.dayNumber == dayNumber } ?: return
+        val lodging = plan.lodging?.qualityFirst?.item?.location
+
+        viewModelScope.launch {
+            _editingByText.value = true
+            val before = _edits.value
+            val entries = day.toTimeline(
+                deletedKeys = before.deletedIn(dayNumber),
+                pickedMeals = before.pickedIn(dayNumber),
+                customOrder = before.orderIn(dayNumber),
+                pickedAttractions = before.pickedAttractionsIn(dayNumber),
+                picked = _pickedPlaces.value,
+            )
+            val summary = summarizeDay(entries, lodging)
+
+            AppContainer.dayEditAssistant.interpret(text, summary)
+                .onSuccess { reply ->
+                    // 비용 확인용. 문장은 남기지 않는다.
+                    Log.d(TAG, "editByText 명령 ${reply.commands} 토큰 in=${reply.inputTokens} out=${reply.outputTokens}")
+                    applyTextEdit(day, before, reply.commands, summary.keyByAlias, lodging)
+                }
+                .onFailure { _message.value = string(textEditFailureRes(it)) }
+            _editingByText.value = false
+        }
+    }
+
+    private fun applyTextEdit(
+        day: DayPlan,
+        before: TimelineEdits,
+        commands: List<EditCommand>,
+        keyByAlias: Map<String, String>,
+        lodging: LatLng?,
+    ) {
+        if (commands.isEmpty()) {
+            _message.value = string(R.string.plan_text_edit_not_understood)
+            return
+        }
+        // 기다리는 동안 손으로 고친 것이 있으면 그 위에 얹는다. before에 얹으면 그 사이 편집이 사라진다.
+        val result = applyCommands(day, _edits.value, commands, keyByAlias, lodging, _pickedPlaces.value)
+        val skipped = result.rejections.joinToString(", ") { string(it.reason.labelRes()) }
+
+        if (result.appliedCount == 0) {
+            _message.value = string(R.string.plan_text_edit_none_applied, skipped)
+            return
+        }
+        _undoEdits.value = _edits.value
+        updateEdits { result.edits }
+        _message.value = if (result.rejections.isEmpty()) {
+            string(R.string.plan_text_edit_applied, result.appliedCount)
+        } else {
+            string(R.string.plan_text_edit_partly_applied, result.appliedCount, skipped)
+        }
+    }
+
+    private fun RejectReason.labelRes(): Int = when (this) {
+        RejectReason.UNKNOWN_ITEM -> R.string.plan_text_edit_reject_unknown
+        RejectReason.MEAL_FIXED -> R.string.plan_text_edit_reject_meal_fixed
+        RejectReason.BAD_POSITION -> R.string.plan_text_edit_reject_position
+        RejectReason.NO_CANDIDATE -> R.string.plan_text_edit_reject_no_candidate
+    }
+
+    private fun textEditFailureRes(error: Throwable): Int =
+        when ((error as? DayEditException)?.reason) {
+            DayEditException.Reason.SIGN_IN_REQUIRED -> R.string.plan_text_edit_sign_in
+            DayEditException.Reason.TOO_MANY_REQUESTS -> R.string.plan_text_edit_too_many
+            else -> R.string.plan_text_edit_unavailable
+        }
 
     /**
      * 여행 중 모드에서 항목을 "했음"으로 체크한다. 다시 누르면 해제.

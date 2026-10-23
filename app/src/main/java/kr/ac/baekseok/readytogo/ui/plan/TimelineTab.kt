@@ -122,6 +122,8 @@ fun TimelineTab(
     onDelete: (Int, String) -> Unit,
     /** 여행 중 모드에서 항목을 했음/안 했음으로 바꿀 때. */
     onToggleDone: (Int, String) -> Unit,
+    /** 말로 고치기 입력창. 보고 있는 날에 적용된다. */
+    textEdit: TextEditControls = TextEditControls(),
 ) {
     // 여행 중에는 오늘 하루만 보여준다. 길 위에서 필요한 것은 오늘 갈 곳이지 닷새치 목록이
     // 아니다. 다른 날이 궁금하면 "전체 보기"로 편다. 끄고 켜는 것은 이 화면 안에서만 산다 —
@@ -165,6 +167,9 @@ fun TimelineTab(
             EmptyState(title = stringResource(R.string.plan_timeline_empty), description = "")
             return@Column
         }
+
+        // 날짜 칩 바로 아래 — 문장이 어느 날에 적용되는지가 칩으로 보인다.
+        TextEditBar(dayNumber = day.dayNumber, controls = textEdit)
 
         val savedOrder = edits.orderIn(day.dayNumber)
 

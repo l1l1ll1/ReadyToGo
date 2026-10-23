@@ -151,6 +151,8 @@ fun TripPlanScreen(
     val pickedPlaces by viewModel.pickedPlaces.collectAsState()
     val canChangeDates by viewModel.canChangeDates.collectAsState()
     val conditionChange by viewModel.conditionChange.collectAsState()
+    val canEditByText by viewModel.canEditByText.collectAsState()
+    val editingByText by viewModel.editingByText.collectAsState()
 
     LaunchedEffect(conditionChange) {
         val next = conditionChange ?: return@LaunchedEffect
@@ -182,6 +184,12 @@ fun TripPlanScreen(
         onMessageShown = viewModel::clearMessage,
         onDeleteItem = viewModel::deleteTimelineItem,
         onToggleDone = viewModel::toggleDone,
+        textEdit = TextEditControls(
+            enabled = canEditByText,
+            busy = editingByText,
+            onSubmit = viewModel::editByText,
+            onSignIn = onSignIn,
+        ),
         onReorder = viewModel::reorderDay,
         onReorderCommit = viewModel::commitEdits,
         onPickMeal = viewModel::pickMeal,
@@ -215,6 +223,7 @@ private fun TripPlanContent(
     onMessageShown: () -> Unit = {},
     onDeleteItem: (Int, String) -> Unit = { _, _ -> },
     onToggleDone: (Int, String) -> Unit = { _, _ -> },
+    textEdit: TextEditControls = TextEditControls(),
     onReorder: (Int, List<String>) -> Unit = { _, _ -> },
     onReorderCommit: () -> Unit = {},
     onPickMeal: (Int, String, String?) -> Unit = { _, _, _ -> },
@@ -389,6 +398,7 @@ private fun TripPlanContent(
                     onReorderCommit = onReorderCommit,
                     onDeleteItem = onDeleteItem,
                     onToggleDone = onToggleDone,
+                    textEdit = textEdit,
                     onEditDates = if (canChangeDates) ({ dateSheetOpen = true }) else null,
                 )
             }
@@ -510,6 +520,7 @@ private fun PlanTabContent(
     onReorderCommit: () -> Unit,
     onDeleteItem: (Int, String) -> Unit,
     onToggleDone: (Int, String) -> Unit,
+    textEdit: TextEditControls,
     /** 요약 머리의 기간을 눌렀을 때. null이면 바꿀 수 없는 일정이다. */
     onEditDates: (() -> Unit)?,
 ) {
@@ -594,6 +605,7 @@ private fun PlanTabContent(
             onReorderCommit = onReorderCommit,
             onDelete = onDeleteItem,
             onToggleDone = onToggleDone,
+            textEdit = textEdit,
             onToggleFavorite = onToggleFavorite,
         )
 

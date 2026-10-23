@@ -387,30 +387,29 @@ class TripPlanViewModel(
                 .onSuccess { reply ->
                     // 비용 확인용. 문장은 남기지 않는다.
                     Log.d(TAG, "editByText 명령 ${reply.commands} 토큰 in=${reply.inputTokens} out=${reply.outputTokens}")
-                    applyTextEdit(day, before, reply.commands, summary.keyByAlias, lodging)
+                    applyTextEdit(day, reply.commands, summary.keyByAlias, lodging)
                 }
-                .onFailure { _message.value = string(textEditFailureRes(it)) }
+                .onFailure { showWithoutUndo(string(textEditFailureRes(it))) }
             _editingByText.value = false
         }
     }
 
     private fun applyTextEdit(
         day: DayPlan,
-        before: TimelineEdits,
         commands: List<EditCommand>,
         keyByAlias: Map<String, String>,
         lodging: LatLng?,
     ) {
         if (commands.isEmpty()) {
-            _message.value = string(R.string.plan_text_edit_not_understood)
+            showWithoutUndo(string(R.string.plan_text_edit_not_understood))
             return
         }
-        // 기다리는 동안 손으로 고친 것이 있으면 그 위에 얹는다. before에 얹으면 그 사이 편집이 사라진다.
+        // 지금 편집 위에 얹는다. 보내기 전 값에 얹으면 기다리는 동안 손으로 고친 것이 사라진다.
         val result = applyCommands(day, _edits.value, commands, keyByAlias, lodging, _pickedPlaces.value)
         val skipped = result.rejections.joinToString(", ") { string(it.reason.labelRes()) }
 
         if (result.appliedCount == 0) {
-            _message.value = string(R.string.plan_text_edit_none_applied, skipped)
+            showWithoutUndo(string(R.string.plan_text_edit_none_applied, skipped))
             return
         }
         _undoEdits.value = _edits.value
@@ -420,6 +419,15 @@ class TripPlanViewModel(
         } else {
             string(R.string.plan_text_edit_partly_applied, result.appliedCount, skipped)
         }
+    }
+
+    /**
+     * 아무것도 바꾸지 않은 안내. **되돌리기 기회를 닫는다.** 남아 있으면 이 안내에 "되돌리기"가
+     * 붙는데, 누르면 되돌아가는 것은 직전의 다른 편집이다(에뮬레이터에서 봤다).
+     */
+    private fun showWithoutUndo(text: String) {
+        _undoEdits.value = null
+        _message.value = text
     }
 
     private fun RejectReason.labelRes(): Int = when (this) {

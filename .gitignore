@@ -28,3 +28,10 @@ local.properties
 # OS
 .DS_Store
 Thumbs.db
+
+# Cloud Functions
+# 의존성과 tsc 산출물은 package.json·src에서 다시 만들 수 있어 커밋하지 않는다.
+functions/node_modules/
+functions/lib/
+# 옛 functions.config() 로컬 값. 비밀값이 들어갈 수 있어 제외한다(비밀은 secrets:set으로 관리).
+.runtimeconfig.json

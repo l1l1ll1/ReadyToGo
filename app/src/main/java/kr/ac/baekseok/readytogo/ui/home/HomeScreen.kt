@@ -1,5 +1,10 @@
 package kr.ac.baekseok.readytogo.ui.home
 
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -235,15 +240,18 @@ private fun UpcomingTripCard(trip: SavedTrip, today: LocalDate, onClick: () -> U
             dateShort(trip.returnDate),
             daysText(trip.dayCount),
         ),
-        // 대표 장소 사진. 없거나 설정에서 껐으면 아래 브랜드 색이 그대로 보인다.
+        // 대표 장소 사진. 없거나 설정에서 껐으면 아래 브랜드 단색 + 원 장식이 보인다.
         photoPlaceId = trip.coverPlaceId,
-        // 사진이 없을 때의 바탕. 목적지가 어디든 이 카드만은 브랜드 색으로 둔다 —
-        // 홈에서 가장 먼저 보이는 면이다.
-        colors = LocalPalette.current.HeroGradient,
-        // 터쿼이즈 자체가 충분히 어두워서 덮개 없이도 흰 글자가 읽힌다.
+        // 사진이 없을 때의 바탕(⑫). 그라데이션 대신 **단색**이고, 깊은 쪽 터쿼이즈를 쓴다 —
+        // 포인트 원색(#20B8C4) 위 흰 글자는 대비가 모자라다. HeroGradient의 끝 색이 모드·고대비마다
+        // 이미 그 역할로 맞춰져 있어 새 색을 만들지 않는다.
+        colors = LocalPalette.current.HeroGradient.last().let { listOf(it, it) },
+        // 단색 자체가 충분히 어두워서 덮개 없이도 흰 글자가 읽힌다.
         // 사진이 얹히면 PhotoCard가 알아서 덮개를 켠다 — 밝은 사진 위 흰 글자가 묻힌다.
         scrim = false,
         height = Tokens.Size.heroCardHeight,
+        shape = Tokens.Radius.hero,
+        decoration = { HeroRings() },
         onClick = onClick,
     ) {
         Surface(
@@ -266,9 +274,10 @@ private fun UpcomingTripCard(trip: SavedTrip, today: LocalDate, onClick: () -> U
                     else -> stringResource(R.string.plan_day_tab, trip.dayNumberOn(today) ?: trip.dayCount)
                 },
                 style = MaterialTheme.typography.labelLarge,
-                // D-day는 "며칠 남았는지"를 눈에 걸리게 하는 자리라 코랄을 쓴다.
-                // 터쿼이즈로 두면 카드 배경과 같은 계열이라 배지가 배경에 묻힌다.
-                color = LocalPalette.current.Accent,
+                // 배지 글자는 터쿼이즈(⑫). 예전 코랄은 ⑫부터 경고색(주황)과
+                // 겹쳐 "주의"로 읽힌다. 흰 배지가 단색 카드 위에서 이미 충분히 눈에 걸린다.
+                // PointDark는 "배지 면 위 글자" 역할이라 라이트에선 깊은 터쿼이즈, 다크에선 밝은 민트다.
+                color = LocalPalette.current.PointDark,
                 modifier = Modifier.padding(
                     horizontal = Tokens.Space.md,
                     vertical = Tokens.Space.sm,
@@ -368,3 +377,35 @@ private val THUMB_ICON_SIZE = Tokens.Space.xxl * 1.4f
 
 /** 빈 목록 자리의 그림 진하기. 글자보다 눈에 들어오면 주인공이 바뀐다. */
 private const val EMPTY_STATE_ART_ALPHA = 0.35f
+
+/**
+ * 히어로 카드 오른쪽의 원 무늬(design/mockup/home). 사진이 없을 때 단색 면이 밋밋하지 않게 한다.
+ *
+ * 흰색을 아주 옅게 겹쳐 그린다 — 브랜드 색이 바뀌어도 무늬가 그 색을 따라간다.
+ * 크기는 카드 높이에 비례해서, 카드 높이를 바꿔도 구도가 유지된다.
+ */
+@Composable
+private fun BoxScope.HeroRings() {
+    Canvas(modifier = Modifier.matchParentSize()) {
+        val center = Offset(size.width * RING_CENTER_X, size.height * RING_CENTER_Y)
+        val h = size.height
+        drawCircle(Color.White.copy(alpha = RING_FILL_ALPHA), radius = h * RING_OUTER, center = center)
+        drawCircle(
+            Color.White.copy(alpha = RING_LINE_ALPHA),
+            radius = h * RING_MIDDLE,
+            center = center,
+            style = Stroke(width = h * RING_STROKE),
+        )
+        drawCircle(Color.White.copy(alpha = RING_FILL_ALPHA), radius = h * RING_INNER, center = center)
+    }
+}
+
+// 원 무늬 비율. 카드 폭·높이에 대한 비율이라 화면 크기와 무관하다. 시안을 보고 맞춘 값이다.
+private const val RING_CENTER_X = 0.82f
+private const val RING_CENTER_Y = 0.42f
+private const val RING_OUTER = 0.72f
+private const val RING_MIDDLE = 0.48f
+private const val RING_INNER = 0.30f
+private const val RING_STROKE = 0.09f
+private const val RING_FILL_ALPHA = 0.10f
+private const val RING_LINE_ALPHA = 0.14f

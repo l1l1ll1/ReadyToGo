@@ -78,6 +78,11 @@ fun PhotoCard(
      */
     scrim: Boolean = true,
     modifier: Modifier = Modifier,
+    /**
+     * 사진이 없을 때 바탕 위에 그리는 장식(홈 히어로의 원 무늬, ⑫). 사진보다 아래에 그려서
+     * 사진이 도착하면 저절로 가려진다 — 이 쪽에서 사진 유무를 따로 보지 않는다.
+     */
+    decoration: (@Composable BoxScope.() -> Unit)? = null,
     overlay: @Composable (BoxScope.() -> Unit)? = null,
 ) {
     val fill = colors ?: Tokens.placeholderGradient(key)
@@ -100,6 +105,8 @@ fun PhotoCard(
                 },
             ),
     ) {
+        decoration?.invoke(this)
+
         // 사진이 도착하면 그라데이션 위에 덮는다. 그라데이션을 먼저 깔아 두었기 때문에
         // 사진이 늦어도 빈 네모가 보이지 않는다.
         if (photo != null) {

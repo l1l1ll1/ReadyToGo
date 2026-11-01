@@ -241,6 +241,10 @@
     <string name="plan_text_edit_too_many">Too many requests. Try again in a minute.</string>
     <string name="plan_text_edit_unavailable">Can\'t process this right now. Please try again shortly.</string>
     <string name="review_card_title">%1$d review note(s)</string>
+    <string name="review_short_long">A day runs long</string>
+    <string name="review_short_same_kind">Same kind of food back to back</string>
+    <string name="review_short_closed">A stop is closed that day</string>
+    <string name="review_short_rainy">Outdoor stops on a rainy day</string>
     <string name="review_card_hint">Spots in this plan worth a second look.</string>
     <string name="review_loading">Loading explanations…</string>
     <string name="review_fix">Fix</string>

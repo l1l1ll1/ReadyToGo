@@ -90,30 +90,6 @@ fun HomeScreen(
                 onOpenTrip = onOpenTrip,
                 onSeeAllTrips = onSeeAllTrips,
             )
-
-            // 새 여행 만들기는 이 화면에서 가장 자주 하는 일이라 목록과 같이 스크롤되면 안 된다.
-            // 목록 맨 위 버튼을 FAB로 옮겨 어디까지 내려가도 손에 닿게 한다.
-            ExtendedFloatingActionButton(
-                onClick = onCreateTrip,
-                // ⑫부터 포인트 민트. 예전에 코랄을 쓴 이유는 탭 바가 같은 터쿼이즈 띠라 버튼이
-                // 바닥에 하나 더 있는 것처럼 보여서였는데, 탭 바가 흰 pill이 되며 그 걱정이 사라졌다.
-                // 코랄 주황은 경고(예산 초과 등)와 겹쳐 "주의"로 읽히기도 했다.
-                // 위치는 그대로 오른쪽 아래 — 탭 바가 Scaffold 아래 칸에 따로 있어 겹치지 않는다.
-                containerColor = LocalPalette.current.Point,
-                contentColor = LocalPalette.current.Surface,
-                shape = Tokens.Radius.button,
-                elevation = FloatingActionButtonDefaults.elevation(
-                    defaultElevation = Tokens.Elevation.none,
-                    pressedElevation = Tokens.Elevation.none,
-                    focusedElevation = Tokens.Elevation.none,
-                    hoveredElevation = Tokens.Elevation.none,
-                ),
-                icon = { Icon(Icons.Filled.Add, contentDescription = null) },
-                text = { Text(stringResource(R.string.home_create_trip)) },
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(Tokens.Space.lg),
-            )
         }
     }
 }
@@ -130,12 +106,18 @@ private fun HomeList(
             start = Tokens.Space.screenHorizontal,
             end = Tokens.Space.screenHorizontal,
             top = Tokens.Space.xl,
-            // FAB에 가려지지 않게 아래를 더 비운다.
-            bottom = Tokens.Space.xxl * 3,
+            bottom = Tokens.Space.xl,
         ),
         verticalArrangement = Arrangement.spacedBy(Tokens.Space.lg),
     ) {
-        item { Greeting(state.authState, state.nickname, hasUpcoming = state.upcoming != null) }
+        item {
+            Greeting(
+                authState = state.authState,
+                nickname = state.nickname,
+                hasUpcoming = state.upcoming != null,
+                onCreateTrip = onCreateTrip,
+            )
+        }
 
         // 다가오는 여행이 없으면 카드를 아예 내린다. 빈 카드는 자리만 차지한다.
         state.upcoming?.let { trip ->
@@ -221,9 +203,17 @@ private fun HomeList(
  *
  * 다가오는 여행이 있으면 큰 제목이 "다음 여행"이 되어 바로 아래 히어로 카드의 머리 역할을 한다.
  * 없으면 "어디로 갈까요?"로 새 여행 만들기를 권한다.
+ *
+ * 제목 줄 오른쪽의 "새 여행 만들기" pill: 예전에는 떠 있는 버튼(FAB)이었는데 2열 카드가 생기며
+ * 오른쪽 카드를 가렸다. 제목 줄에 두면 아무것도 가리지 않고, 홈을 열자마자 눈에 들어온다.
  */
 @Composable
-private fun Greeting(authState: AuthState, nickname: String?, hasUpcoming: Boolean) {
+private fun Greeting(
+    authState: AuthState,
+    nickname: String?,
+    hasUpcoming: Boolean,
+    onCreateTrip: () -> Unit,
+) {
     val name = when (authState) {
         // 사용자가 정한 닉네임이 먼저다. 아직 없으면(옛 계정) Google 계정 이름으로 부른다.
         is AuthState.SignedIn -> nickname ?: authState.user.displayName
@@ -241,10 +231,37 @@ private fun Greeting(authState: AuthState, nickname: String?, hasUpcoming: Boole
             style = MaterialTheme.typography.bodyLarge,
             color = LocalPalette.current.TextSecondary,
         )
-        Text(
-            text = stringResource(if (hasUpcoming) R.string.home_upcoming else R.string.home_title_no_trip),
-            style = MaterialTheme.typography.headlineMedium,
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(Tokens.Space.md),
+        ) {
+            Text(
+                text = stringResource(if (hasUpcoming) R.string.home_upcoming else R.string.home_title_no_trip),
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.weight(1f),
+            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(Tokens.Space.xs),
+                modifier = Modifier
+                    .clip(Tokens.Radius.button)
+                    .background(LocalPalette.current.Point)
+                    .clickable(onClick = onCreateTrip)
+                    .padding(horizontal = Tokens.Space.md, vertical = Tokens.Space.sm),
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = null,
+                    tint = LocalPalette.current.Surface,
+                    modifier = Modifier.size(Tokens.Size.inlineIcon),
+                )
+                Text(
+                    text = stringResource(R.string.home_create_trip),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = LocalPalette.current.Surface,
+                )
+            }
+        }
         if (authState is AuthState.Guest) {
             Text(
                 text = stringResource(R.string.home_guest_note),
@@ -404,9 +421,9 @@ private fun HomeReviewCard(review: HomeReview, city: String, onClick: () -> Unit
             horizontalArrangement = Arrangement.spacedBy(Tokens.Space.md),
         ) {
             Text(
-                text = review.firstFact,
+                text = review.title,
                 style = MaterialTheme.typography.bodyLarge,
-                maxLines = 2,
+                maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.weight(1f),
             )

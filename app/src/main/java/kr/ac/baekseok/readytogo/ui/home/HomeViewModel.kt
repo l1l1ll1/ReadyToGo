@@ -8,7 +8,8 @@ import kr.ac.baekseok.readytogo.data.model.AuthState
 import kr.ac.baekseok.readytogo.data.model.SavedTrip
 import kr.ac.baekseok.readytogo.domain.review.reviewPlan
 import kr.ac.baekseok.readytogo.generation.PlanGeneration
-import kr.ac.baekseok.readytogo.ui.plan.ReviewFactWriter
+import kr.ac.baekseok.readytogo.R
+import kr.ac.baekseok.readytogo.domain.review.ReviewIssue
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -32,8 +33,8 @@ data class HomeUiState(
     val review: HomeReview? = null,
 )
 
-/** 홈 검토 카드 한 장. 문제가 여럿이면 첫 문제만 문장으로 보여주고 건수로 나머지를 알린다. */
-data class HomeReview(val count: Int, val firstFact: String)
+/** 홈 검토 카드 한 장. 문제가 여럿이면 첫 문제의 종류만 짧게 보여주고 건수로 나머지를 알린다. */
+data class HomeReview(val count: Int, val title: String)
 
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -74,8 +75,18 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         val plan = done.result.getOrNull() ?: return null
         val issues = reviewPlan(plan, trip.edits)
         if (issues.isEmpty()) return null
-        val writer = ReviewFactWriter(getApplication<Application>().resources)
-        return HomeReview(issues.size, writer.fact(issues.first(), plan))
+        return HomeReview(issues.size, getApplication<Application>().getString(shortTitleOf(issues.first())))
+    }
+
+    /**
+     * 규칙별 짧은 제목. 홈은 "무슨 종류의 문제가 있다"만 알리고, 장소 이름이 든 긴 사실 문장은
+     * 결과 화면 요약 탭에 둔다 — 홈 카드에 두 줄짜리 문장이 잘려 보이면 무엇이 문제인지 오히려 안 읽혔다.
+     */
+    private fun shortTitleOf(issue: ReviewIssue): Int = when (issue) {
+        is ReviewIssue.LongDay -> R.string.review_short_long
+        is ReviewIssue.SameKind -> R.string.review_short_same_kind
+        is ReviewIssue.Closed -> R.string.review_short_closed
+        is ReviewIssue.Rainy -> R.string.review_short_rainy
     }
 
     private companion object {

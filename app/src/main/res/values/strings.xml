@@ -260,6 +260,11 @@
     <!-- 일정 검토관(⑨-2). 사실 문장은 서버에도 그대로 보내므로 규칙 결과만 적는다.
          조사는 코드가 받침에 맞춰 이름 뒤에 붙여 넘긴다(ui/format/KoreanParticle.kt). 여기 적지 않는다. -->
     <string name="review_card_title">검토 %1$d건</string>
+    <!-- 홈 검토 카드의 짧은 제목(⑫). 자세한 사실 문장은 결과 화면 요약 탭에 있다. -->
+    <string name="review_short_long">하루가 길어요</string>
+    <string name="review_short_same_kind">같은 종류 식당이 연달아 나와요</string>
+    <string name="review_short_closed">쉬는 날 가는 곳이 있어요</string>
+    <string name="review_short_rainy">비 예보 날 실외 관광지가 있어요</string>
     <string name="review_card_hint">이 일정에서 손보면 좋을 곳이에요.</string>
     <string name="review_loading">설명을 불러오는 중…</string>
     <string name="review_fix">고치기</string>

@@ -231,9 +231,9 @@ private fun MealOptionRow(
             Text(
                 text = restaurant.priceText().replace("\n", " · "),
                 style = MaterialTheme.typography.bodySmall,
-                // 예산 초과는 코랄. 붉은 Danger는 되돌릴 수 없는 일에만 쓴다.
+                // 예산 초과는 주의색(주황, ⑫). 붉은 Danger는 되돌릴 수 없는 일에만 쓴다.
                 color = if (option.overBudget) {
-                    LocalPalette.current.Accent
+                    LocalPalette.current.Warning
                 } else {
                     LocalPalette.current.TextSecondary
                 },
@@ -303,14 +303,14 @@ private fun MealDetail(item: TimelineItem.Meal) {
             Text(
                 text = stringResource(item.meal.labelRes),
                 style = MaterialTheme.typography.labelLarge,
-                color = if (overBudget) LocalPalette.current.Accent else LocalPalette.current.Point,
+                color = if (overBudget) LocalPalette.current.Warning else LocalPalette.current.Point,
                 fontWeight = FontWeight.Bold,
             )
             if (overBudget) {
                 Text(
                     text = stringResource(R.string.plan_over_budget_suffix),
                     style = MaterialTheme.typography.labelLarge,
-                    color = LocalPalette.current.Accent,
+                    color = LocalPalette.current.Warning,
                 )
             }
         }
@@ -325,7 +325,7 @@ private fun MealDetail(item: TimelineItem.Meal) {
             text = restaurant.priceText(),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
-            color = if (overBudget) LocalPalette.current.Accent else LocalPalette.current.TextPrimary,
+            color = if (overBudget) LocalPalette.current.Warning else LocalPalette.current.TextPrimary,
         )
         item.shown.detourLine()?.let { line ->
             Text(

@@ -768,7 +768,7 @@ private fun BudgetBreakdown(plan: TripPlan) {
                     style = MaterialTheme.typography.bodySmall,
                     // 예산 초과는 코랄이다. 붉은 Danger는 삭제·탈퇴처럼 되돌릴 수 없는
                     // 일에만 쓴다 — 예산을 넘은 건 잘못이 아니라 눈에 걸려야 할 것이다.
-                    color = LocalPalette.current.Accent,
+                    color = LocalPalette.current.Warning,
                 )
             }
         }
@@ -1024,7 +1024,7 @@ private fun LodgingDistanceLine(check: LodgingDistanceCheck) {
                 check.farDays.size,
             ),
             style = MaterialTheme.typography.bodyMedium,
-            color = palette.Danger,
+            color = palette.Warning,
         )
 
         check.farDays.isNotEmpty() -> Text(
@@ -1078,7 +1078,7 @@ private fun LodgingDistanceCard(check: LodgingDistanceCheck) {
                         Text(
                             text = stringResource(R.string.plan_lodging_far),
                             style = MaterialTheme.typography.labelMedium,
-                            color = palette.Danger,
+                            color = palette.Warning,
                         )
                     }
                 }
@@ -1201,8 +1201,8 @@ private fun ChoiceRow(
     placeId: String? = null,
 ) {
     val accent: Color =
-        // 예산 초과는 코랄. 붉은 Danger는 되돌릴 수 없는 일에만 쓴다(SummaryTab 주석 참고).
-        if (overBudget) LocalPalette.current.Accent else LocalPalette.current.Point
+        // 예산 초과는 주의색(주황, ⑫). 붉은 Danger는 되돌릴 수 없는 일에만 쓴다(SummaryTab 주석 참고).
+        if (overBudget) LocalPalette.current.Warning else LocalPalette.current.Point
     val open = rememberUrlOpener(url)
     val photo = placeId?.let { rememberPlacePhoto(it) }
 
@@ -1278,6 +1278,10 @@ private fun Lodging.detailLine(): String = "${ratingReviews(rating, reviewCount)
 @Composable
 internal fun Restaurant.detailLine(): String =
     "$category · ${ratingReviews(rating, reviewCount)} · $address"
+
+/** 일정표 한 줄용(⑫, design/mockup/timeline) — 주소를 뺀다. 주소는 상세 시트에 있다. */
+@Composable
+internal fun Restaurant.shortDetailLine(): String = "$category · ${ratingReviews(rating, reviewCount)}"
 
 /** "★4.2 (리뷰 15,935)" — 숙소·식당이 같은 모양으로 적는다. */
 @Composable

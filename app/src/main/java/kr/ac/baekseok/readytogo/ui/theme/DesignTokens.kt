@@ -176,7 +176,7 @@ object Tokens {
         val trashTarget = 40.dp
 
         /** 타임라인 왼쪽 세로줄. 점(32dp) 폭에 맞춰야 선과 점의 중심이 어긋나지 않는다. */
-        val timelineRailWidth = 32.dp
+        val timelineRailWidth = 44.dp
         val timelineLineWidth = 2.dp
 
         /** "다음 갈 곳" 점에 두르는 테두리. 선 굵기와 같은 값이지만 쓰임이 달라 따로 둔다. */

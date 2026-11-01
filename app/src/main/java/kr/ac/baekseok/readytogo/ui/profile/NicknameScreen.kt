@@ -86,7 +86,7 @@ fun NicknameScreen(
                             NicknameViewModel.MAX_LENGTH,
                         ),
                         color = if (state.tooLong) {
-                            LocalPalette.current.Danger
+                            LocalPalette.current.Warning
                         } else {
                             LocalPalette.current.TextSecondary
                         },
@@ -107,7 +107,7 @@ fun NicknameScreen(
                 Text(
                     text = state.error.orEmpty(),
                     style = MaterialTheme.typography.bodyMedium,
-                    color = LocalPalette.current.Danger,
+                    color = LocalPalette.current.Warning,
                 )
             }
 

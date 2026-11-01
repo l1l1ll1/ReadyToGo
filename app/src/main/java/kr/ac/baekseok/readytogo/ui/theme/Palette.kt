@@ -65,6 +65,9 @@ data class AppPalette(
      */
     val Warning: Color,
 
+    /** 끼니 아이콘(크림 원 위의 갈색, design/mockup/timeline). 크림 바탕 위에서 읽히는 진한 노랑 계열. */
+    val MealIcon: Color,
+
     /** 주의 카드 바탕(복숭아). 글자는 [Warning]. */
     val WarningSurface: Color,
     val Heart: Color,
@@ -120,6 +123,7 @@ val LightPalette = AppPalette(
     Danger = Color(0xFFD03A2C),
     Warning = Color(0xFFA8441C),
     WarningSurface = Color(0xFFFFF1EA),
+    MealIcon = Color(0xFF9A7414),
 
     // 즐겨찾기 ♥ 채운 상태. 코랄과 구분돼야 눌린 게 보인다.
     Heart = Color(0xFFE0245E),
@@ -169,6 +173,7 @@ val LightHighContrastPalette = LightPalette.copy(
     Danger = Color(0xFF9B1C12),
     Warning = Color(0xFF7F2E0E),
     WarningSurface = Color(0xFFFFE4D6),
+    MealIcon = Color(0xFF6B4F00),
     Heart = Color(0xFFB0124C),
 
     HeroGradient = listOf(
@@ -223,6 +228,7 @@ val DarkPalette = LightPalette.copy(
     Danger = Color(0xFFFF6B5C),
     Warning = Color(0xFFFFB08A),
     WarningSurface = Color(0xFF3A241A),
+    MealIcon = Color(0xFFE6C45C),
     Heart = Color(0xFFFF4D7D),
 
     // 어두운 화면에서 원래 터쿼이즈는 너무 밝게 튄다. 한 단계 깊게.
@@ -265,6 +271,7 @@ val DarkHighContrastPalette = DarkPalette.copy(
     Danger = Color(0xFFFF8A7D),
     Warning = Color(0xFFFFC2A3),
     WarningSurface = Color(0xFF4A2B1C),
+    MealIcon = Color(0xFFFFD98A),
     Heart = Color(0xFFFF7098),
 )
 

@@ -108,7 +108,7 @@ fun LoginScreen(
                 Text(
                     text = error.orEmpty(),
                     style = MaterialTheme.typography.bodyMedium,
-                    color = LocalPalette.current.Danger,
+                    color = LocalPalette.current.Warning,
                     modifier = Modifier.padding(bottom = Tokens.Space.md),
                 )
             }

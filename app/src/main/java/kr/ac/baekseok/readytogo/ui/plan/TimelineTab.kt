@@ -1,5 +1,6 @@
 package kr.ac.baekseok.readytogo.ui.plan
 
+import kr.ac.baekseok.readytogo.ui.component.DashedDivider
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -431,7 +432,8 @@ private fun TrashTarget(
             modifier = Modifier
                 .size(Tokens.Size.trashTarget)
                 .clip(CircleShape)
-                .background(if (active) palette.Accent else palette.SurfaceMuted)
+                // 놓으면 지워진다 — 되돌릴 수 없는 쪽이라 빨강(Danger). 주황(주의)과 구분한다.
+                .background(if (active) palette.Danger else palette.SurfaceMuted)
                 .onGloballyPositioned { onBounds(it.boundsInWindow()) },
         ) {
             Icon(
@@ -531,7 +533,7 @@ private fun DayHeader(
                 Text(
                     text = stringResource(R.string.plan_lodging_far_from_stay),
                     style = MaterialTheme.typography.labelMedium,
-                    color = LocalPalette.current.Danger,
+                    color = LocalPalette.current.Warning,
                 )
             }
         }
@@ -572,11 +574,20 @@ private fun TimelineRow(
                 if (dragging || isNext) LocalPalette.current.PointLight else Color.Transparent,
             ),
     ) {
-        entry.travelFromPrevious?.let { TravelRow(it) }
+        // 항목 사이는 점선(design/mockup/timeline). 이동 시간은 점선 바로 아래 작은 줄로 남긴다 —
+        // 시안의 시각(09:00) 대신 이 앱이 아는 것은 이동 시간이다.
+        entry.travelFromPrevious?.let {
+            DashedDivider(modifier = Modifier.padding(vertical = Tokens.Space.sm))
+            TravelRow(it)
+        }
 
-        Row(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
             TimelineRail(
                 icon = entry.item.icon,
+                isMeal = entry.item !is TimelineItem.Visit,
                 done = done,
                 isNext = isNext,
                 onToggleDone = onToggleDone,
@@ -636,21 +647,28 @@ private fun TimelineRow(
 }
 
 /**
- * 왼쪽 세로줄과 점. 항목이 한 줄로 이어져 보이게 한다.
+ * 왼쪽 원 아이콘(design/mockup/timeline). 끼니는 크림, 관광지는 민트 원 — 한눈에 무엇인지 갈린다.
+ * ⑫부터 세로 연결선은 없다. 항목 사이는 점선이 나눈다.
  *
- * 여행 중 모드에서는 이 점이 체크 버튼을 겸한다. 오른쪽에 체크 칸을 따로 두지 않은 이유:
+ * 여행 중 모드에서는 이 원이 체크 버튼을 겸한다. 오른쪽에 체크 칸을 따로 두지 않은 이유:
  * 그 자리에는 이미 ♥가 있고, 좁은 폭에 누르는 것이 둘이면 잘못 누르기 쉽다.
- * 점은 줄 전체 클릭(상세 시트) 바깥에 있어서 눌러도 시트가 뜨지 않는다.
+ * 원은 줄 전체 클릭(상세 시트) 바깥에 있어서 눌러도 시트가 뜨지 않는다.
  */
 @Composable
 private fun TimelineRail(
     icon: ImageVector,
+    isMeal: Boolean,
     done: Boolean = false,
     isNext: Boolean = false,
     /** null이면 체크를 쓰지 않는 날이라 누를 수 없다. 눌리는데 아무 일도 없으면 고장으로 보인다. */
     onToggleDone: (() -> Unit)? = null,
 ) {
     val palette = LocalPalette.current
+    val fill = when {
+        done -> palette.Point
+        isMeal -> palette.Secondary
+        else -> palette.PointLight
+    }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.width(Tokens.Size.timelineRailWidth),
@@ -658,9 +676,9 @@ private fun TimelineRail(
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
-                .size(Tokens.Space.xxl)
+                .size(Tokens.Size.timelineRailWidth)
                 .clip(CircleShape)
-                .background(if (done) palette.Point else palette.PointLight)
+                .background(fill)
                 // 지금 갈 곳에만 테두리를 두른다. 면 색만으로는 연한 점들 사이에서 묻힌다.
                 .then(
                     if (isNext) {
@@ -685,17 +703,15 @@ private fun TimelineRail(
                 } else {
                     stringResource(if (done) R.string.plan_done_undo else R.string.plan_done_mark)
                 },
-                tint = if (done) palette.Surface else palette.PointDark,
-                modifier = Modifier.size(Tokens.Space.lg),
+                // 크림 원 위는 갈색 쪽이 읽힌다(시안). 민트 원 위는 깊은 터쿼이즈.
+                tint = when {
+                    done -> palette.Surface
+                    isMeal -> palette.MealIcon
+                    else -> palette.PointDark
+                },
+                modifier = Modifier.size(Tokens.Size.icon),
             )
         }
-        // 점 아래로 선을 늘려 다음 항목까지 이어 붙인다.
-        Box(
-            modifier = Modifier
-                .width(Tokens.Size.timelineLineWidth)
-                .height(Tokens.Size.timelineLineHeight)
-                .background(LocalPalette.current.Divider),
-        )
     }
 }
 
@@ -733,14 +749,12 @@ private fun VisitContent(item: TimelineItem.Visit, purposes: Set<TravelPurpose>)
                 )
             } else {
                 "★${attraction.rating}"
-            },
+            } + " · " + durationText(item.stayMinutes),
+        // 종류·평점과 머무는 시간을 한 줄로(⑫, design/mockup/timeline).
         style = MaterialTheme.typography.bodyMedium,
         color = LocalPalette.current.TextSecondary,
-    )
-    Text(
-        text = durationText(item.stayMinutes),
-        style = MaterialTheme.typography.labelMedium,
-        color = LocalPalette.current.TextSecondary,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
     )
 }
 
@@ -754,8 +768,8 @@ private fun VisitContent(item: TimelineItem.Visit, purposes: Set<TravelPurpose>)
 private fun MealContent(item: TimelineItem.Meal) {
     val restaurant = item.restaurant
     val overBudget = item.shown.overBudget
-    // 예산 초과는 코랄. 붉은 Danger는 되돌릴 수 없는 일에만 쓴다(SummaryTab 주석 참고).
-    val accent = if (overBudget) LocalPalette.current.Accent else LocalPalette.current.Point
+    // 예산 초과는 주의색(주황, ⑫). 붉은 Danger는 되돌릴 수 없는 일에만 쓴다.
+    val accent = if (overBudget) LocalPalette.current.Warning else LocalPalette.current.Point
 
     Row(verticalAlignment = Alignment.CenterVertically) {
         Text(
@@ -779,21 +793,18 @@ private fun MealContent(item: TimelineItem.Meal) {
         overflow = TextOverflow.Ellipsis,
     )
     Text(
-        text = restaurant.detailLine(),
+        text = restaurant.shortDetailLine(),
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
         style = MaterialTheme.typography.bodyMedium,
         color = LocalPalette.current.TextSecondary,
     )
+    // 가격과 머무는 시간을 한 줄로(⑫). priceText()는 원화·현지 통화를 줄바꿈으로 주므로 " · "로 잇는다.
     Text(
-        // priceText()가 원화와 현지 통화를 줄바꿈으로 함께 돌려준다.
-        text = restaurant.priceText(),
+        text = restaurant.priceText().replace("\n", " · ") + " · " + durationText(item.stayMinutes),
         style = MaterialTheme.typography.bodyMedium,
-        color = if (overBudget) accent else LocalPalette.current.TextPrimary,
-        fontWeight = FontWeight.Bold,
-    )
-    Text(
-        text = durationText(item.stayMinutes),
-        style = MaterialTheme.typography.labelMedium,
-        color = LocalPalette.current.TextSecondary,
+        color = if (overBudget) accent else LocalPalette.current.TextSecondary,
+        maxLines = 2,
     )
 }
 

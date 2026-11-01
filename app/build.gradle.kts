@@ -22,6 +22,28 @@ val mapsApiKey: String = localProperties.getProperty("MAPS_API_KEY", "")
 /** SerpApi(항공권) 키. 없으면 Mock 항공 데이터로 동작한다. */
 val serpApiKey: String = localProperties.getProperty("SERPAPI_KEY", "")
 
+/**
+ * 릴리스 서명 정보. local.properties의 RELEASE_KEYSTORE_PROPERTIES가 가리키는 파일에서 읽는다.
+ *
+ * **키 파일과 비밀번호는 저장소 밖에 둔다.** 저장소가 공개라 경로조차 소스에 적지 않고
+ * (local.properties도 커밋하지 않는다), 파일이 없으면 서명 없이 빌드된다 — 저장소를 받은
+ * 사람도 assembleRelease까지는 돌려 볼 수 있다.
+ *
+ * 파일 형식: storeFile, storePassword, keyAlias, keyPassword. storeFile이 상대 경로면
+ * 그 properties 파일이 있는 폴더 기준이다.
+ */
+val releaseSigning: Properties? = localProperties.getProperty("RELEASE_KEYSTORE_PROPERTIES")
+    ?.let { file(it) }
+    ?.takeIf { it.exists() }
+    ?.let { propsFile ->
+        Properties().apply {
+            propsFile.inputStream().use { load(it) }
+            // 상대 경로를 절대 경로로 바꿔 둔다. signingConfig는 모듈 폴더 기준으로 풀기 때문이다.
+            val store = File(getProperty("storeFile"))
+            setProperty("storeFile", (if (store.isAbsolute) store else File(propsFile.parentFile, store.path)).path)
+        }
+    }
+
 android {
     namespace = "kr.ac.baekseok.readytogo"
     // androidx.core 1.19.0 / lifecycle 2.11.0이 compileSdk 37 이상을 요구한다.
@@ -47,8 +69,22 @@ android {
         buildConfigField("String", "SERPAPI_KEY", "\"$serpApiKey\"")
     }
 
+    signingConfigs {
+        if (releaseSigning != null) {
+            create("release") {
+                storeFile = file(releaseSigning.getProperty("storeFile"))
+                storePassword = releaseSigning.getProperty("storePassword")
+                keyAlias = releaseSigning.getProperty("keyAlias")
+                keyPassword = releaseSigning.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
+            signingConfig = signingConfigs.findByName("release")
+            // 코드 축소는 끈다. Firebase·Places가 리플렉션을 써서 규칙을 잘못 쓰면 실행 중에만
+            // 깨지는데, 포트폴리오 APK에서 몇 MB 줄이는 것보다 그 위험이 크다.
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

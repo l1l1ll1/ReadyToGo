@@ -24,6 +24,7 @@ import kr.ac.baekseok.readytogo.data.repository.exchange.OpenExchangeRateReposit
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.suspendCancellableCoroutine
+import java.time.DayOfWeek
 import java.util.Locale
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -185,6 +186,7 @@ class GooglePlacesRepository(
             address = shortFormattedAddress ?: "",
             mapUrl = googleMapsUri?.toString() ?: "",
             suitableMeals = suitableMeals(),
+            openDays = openDays(),
         )
     }
 
@@ -230,6 +232,7 @@ class GooglePlacesRepository(
             types = placeTypes.orEmpty(),
             // 식당과 같은 필드다. 상세 시트에서 지도 앱으로 넘기는 데 쓴다.
             mapUrl = googleMapsUri?.toString().orEmpty(),
+            openDays = openDays(),
         )
     }
 
@@ -263,6 +266,20 @@ class GooglePlacesRepository(
             types.any { it in DINNER_ONLY_TYPES } -> setOf(MealTime.DINNER)
             else -> setOf(MealTime.LUNCH, MealTime.DINNER)
         }
+    }
+
+    /**
+     * 문을 여는 요일. 영업시간이 없으면 null(모름).
+     *
+     * 요일만 본다 — 일정표에 시각이 없어서(DayTimeline 참고) "몇 시에 닫는다"는 판정할 수 없다.
+     * 닫는 시각이 없는 구간은 24시간 영업이라 모든 요일로 본다(Places가 일요일 0시 하나로 준다).
+     */
+    private fun Place.openDays(): Set<DayOfWeek>? {
+        val periods = openingHours?.periods?.takeIf { it.isNotEmpty() } ?: return null
+        if (periods.any { it.close == null }) return DayOfWeek.entries.toSet()
+        return periods.mapNotNull { period ->
+            period.open?.day?.let { DayOfWeek.valueOf(it.name) }
+        }.toSet()
     }
 
     private companion object {
@@ -316,6 +333,9 @@ class GooglePlacesRepository(
             Place.Field.PRIMARY_TYPE,
             Place.Field.PRIMARY_TYPE_DISPLAY_NAME,
             Place.Field.GOOGLE_MAPS_URI,
+            // 정기 영업시간. 일정 검토관이 방문일 휴무를 찾는다. 평점·가격대와 같은
+            // Enterprise 등급 필드라 이미 내는 요금에서 단가가 오르지 않는다.
+            Place.Field.OPENING_HOURS,
         )
 
         /** 점심·저녁용. 20칸을 전부 실제 식당으로 채우기 위해 카페를 섞지 않는다. */

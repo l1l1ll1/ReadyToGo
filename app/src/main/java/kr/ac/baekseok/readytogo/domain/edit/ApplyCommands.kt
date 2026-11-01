@@ -61,7 +61,7 @@ fun applyCommands(
             pickedAttractions = current.pickedAttractionsIn(day.dayNumber),
             picked = picked,
         )
-        val step = Step(day.dayNumber, current, entries, keyByAlias, lodging)
+        val step = Step(day, current, entries, keyByAlias, lodging)
         when (val outcome = step.apply(command)) {
             is Outcome.Applied -> {
                 current = outcome.edits
@@ -80,12 +80,14 @@ private sealed interface Outcome {
 
 /** 명령 하나를 지금 화면([entries]) 기준으로 검사하고 반영한다. */
 private class Step(
-    val dayNumber: Int,
+    val day: DayPlan,
     val edits: TimelineEdits,
     val entries: List<TimelineEntry>,
     val keyByAlias: Map<String, String>,
     val lodging: LatLng?,
 ) {
+    private val dayNumber get() = day.dayNumber
+
     fun apply(command: EditCommand): Outcome = when (command) {
         is EditCommand.Remove -> remove(command)
         is EditCommand.Move -> move(command)
@@ -134,7 +136,7 @@ private class Step(
             .map { it.restaurant.id }
             .toSet()
 
-        val chosen = pickMealFor(command.basis, meal, previous, lodging, takenIds)
+        val chosen = pickMealFor(command.basis, meal, previous, lodging, takenIds, day.date.dayOfWeek)
             ?: return Outcome.Rejected(RejectReason.NO_CANDIDATE)
 
         // 추천(점수 1등)으로 돌아가면 기록을 지운다 — pickMeal과 같은 규칙.

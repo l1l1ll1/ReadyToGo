@@ -3,8 +3,10 @@ package kr.ac.baekseok.readytogo.domain.edit
 import kr.ac.baekseok.readytogo.data.model.LatLng
 import kr.ac.baekseok.readytogo.data.model.Recommendation
 import kr.ac.baekseok.readytogo.data.model.Restaurant
+import kr.ac.baekseok.readytogo.data.model.isClosedOn
 import kr.ac.baekseok.readytogo.domain.plan.TimelineItem
 import kr.ac.baekseok.readytogo.domain.recommend.distanceKm
+import java.time.DayOfWeek
 
 /**
  * 기준에 맞는 다른 식당. 없으면 null.
@@ -16,6 +18,8 @@ import kr.ac.baekseok.readytogo.domain.recommend.distanceKm
  *
  * @param previous 바로 앞 일정의 좌표. 하루 첫 끼니면 숙소.
  * @param takenIds 그날 다른 끼니에 이미 나온 식당. 점심과 저녁이 같은 집이 되지 않게 뺀다.
+ * @param visitDay 방문 요일. 그날 쉬는 식당은 후보에서 뺀다 — 검토관이 "휴무"를 고치라고
+ *        했는데 또 쉬는 집으로 바뀌면 고친 게 아니다. 영업시간을 모르는 곳은 남긴다.
  */
 fun pickMealFor(
     basis: MealBasis,
@@ -23,9 +27,13 @@ fun pickMealFor(
     previous: LatLng?,
     lodging: LatLng?,
     takenIds: Set<String>,
+    visitDay: DayOfWeek? = null,
 ): Recommendation<Restaurant>? {
     val current = meal.restaurant
-    val others = meal.options.filter { it.item.id != current.id && it.item.id !in takenIds }
+    val others = meal.options.filter { option ->
+        option.item.id != current.id && option.item.id !in takenIds &&
+            (visitDay == null || !option.item.openDays.isClosedOn(visitDay))
+    }
 
     val better = when (basis) {
         MealBasis.NEAR_LODGING -> others.closerTo(lodging ?: return null, current)

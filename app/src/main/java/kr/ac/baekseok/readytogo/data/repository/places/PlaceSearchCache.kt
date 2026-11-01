@@ -7,6 +7,7 @@ import kr.ac.baekseok.readytogo.data.model.LatLng
 import kr.ac.baekseok.readytogo.data.model.Lodging
 import kr.ac.baekseok.readytogo.data.model.MealTime
 import kr.ac.baekseok.readytogo.data.model.Restaurant
+import java.time.DayOfWeek
 import java.util.Locale
 import org.json.JSONArray
 import org.json.JSONObject
@@ -140,6 +141,7 @@ private fun Restaurant.toJson() = JSONObject().apply {
     put("address", address)
     put("mapUrl", mapUrl)
     put("suitableMeals", JSONArray().apply { suitableMeals.forEach { put(it.name) } })
+    openDays?.let { put("openDays", it.toJson()) }
 }
 
 private fun JSONObject.toRestaurant() = Restaurant(
@@ -159,6 +161,7 @@ private fun JSONObject.toRestaurant() = Restaurant(
     suitableMeals = getJSONArray("suitableMeals").let { array ->
         (0 until array.length()).map { MealTime.valueOf(array.getString(it)) }.toSet()
     },
+    openDays = readOpenDays(),
 )
 
 private fun Attraction.toJson() = JSONObject().apply {
@@ -173,6 +176,7 @@ private fun Attraction.toJson() = JSONObject().apply {
     put("reviewCount", reviewCount)
     put("types", JSONArray().apply { types.forEach { put(it) } })
     put("mapUrl", mapUrl)
+    openDays?.let { put("openDays", it.toJson()) }
 }
 
 private fun JSONObject.toAttraction() = Attraction(
@@ -189,7 +193,19 @@ private fun JSONObject.toAttraction() = Attraction(
     },
     // 예전 캐시에는 없던 필드다. optString으로 읽어 캐시를 버리지 않게 한다.
     mapUrl = optString("mapUrl"),
+    openDays = readOpenDays(),
 )
+
+private fun Set<DayOfWeek>.toJson() = JSONArray().apply { forEach { put(it.name) } }
+
+/**
+ * 영업시간을 받기 전의 캐시에는 이 필드가 없다. 그때는 null(모름)로 읽어 캐시를 살린다 —
+ * 캐시 키를 바꿔 전부 버리면 목적지마다 Places 검색이 다시 나간다. 7일이 지나면 저절로 채워진다.
+ */
+private fun JSONObject.readOpenDays(): Set<DayOfWeek>? {
+    val array = optJSONArray("openDays") ?: return null
+    return (0 until array.length()).map { DayOfWeek.valueOf(array.getString(it)) }.toSet()
+}
 
 private fun Lodging.toJson() = JSONObject().apply {
     put("id", id)

@@ -1,5 +1,7 @@
 package kr.ac.baekseok.readytogo.data.model
 
+import java.time.DayOfWeek
+
 /**
  * 점수 기반 추천(평점 + 동선)의 대상이 갖춰야 할 최소 정보.
  *
@@ -86,6 +88,12 @@ data class Restaurant(
      * 채우면 되고, 추천 로직은 이 집합만 보면 된다.
      */
     val suitableMeals: Set<MealTime>,
+    /**
+     * 문을 여는 요일. null이면 **모른다**(Places가 안 줬거나, 영업시간을 받기 전의 캐시).
+     * 일정 검토관이 "방문일에 휴무"를 찾는 데 쓴다 — 모르는 것을 휴무로 단정하지 않으려고
+     * 빈 집합이 아니라 null로 둔다.
+     */
+    val openDays: Set<DayOfWeek>? = null,
 ) : ScoredCandidate
 
 /**
@@ -118,4 +126,9 @@ data class Attraction(
      * 중간에 끼우면 기존 호출이 전부 어긋난다. 실제로 한 번 겪었다.
      */
     val mapUrl: String = "",
+    /** 문을 여는 요일. null이면 모른다([Restaurant.openDays]와 같은 규칙). */
+    val openDays: Set<DayOfWeek>? = null,
 )
+
+/** 영업 요일을 알고 [day]가 빠져 있으면 휴무. 모르면 휴무가 아니다(검사하지 않는다). */
+fun Set<DayOfWeek>?.isClosedOn(day: DayOfWeek): Boolean = this != null && day !in this

@@ -6,17 +6,18 @@
   런처가 보여주는 것은 가운데 72dp뿐이고, 원형 마스크면 66dp까지 줄어든다.
   원본은 1024 캔버스를 꽉 채우고 있어 그대로 넣으면 바깥의 별·점선이 잘려 나간다.
 
-  여백은 24dp(그림 60dp)다. 처음엔 18dp(그림 72dp = 안전 영역 꽉)로 두었는데, 원형 마스크는
+  여백은 22dp(그림 64dp)다. 처음엔 18dp(그림 72dp = 안전 영역 꽉)로 두었는데, 원형 마스크는
   지름 66dp라 정사각형 그림의 모서리가 원 밖으로 나간다. 핀의 오른쪽 위 끝이 중심에서 그림 폭의
-  약 0.48 — 72dp면 35dp로 반지름 33dp를 넘어 잘렸다("핀 삐져나감"). 60dp면 29dp라 원 안에 든다.
+  약 0.48 — 72dp면 35dp로 반지름 33dp를 넘어 잘렸다("핀 삐져나감"). 64dp면 31dp라 원 안에 든다.
+  60dp도 해 봤는데 아이콘이 작아 보였다. 64dp에서는 오른쪽 위 작은 별 끝이 살짝 잘린다.
   바깥의 작은 별·옅은 얼룩은 장식이라 조금 잘려도 구도가 무너지지 않는다.
   원본 PNG는 건드리지 않아 디자인이 바뀌면 파일만 갈아 끼우면 된다.
 -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:drawable="@drawable/ic_launcher_art"
-        android:left="24dp"
-        android:top="24dp"
-        android:right="24dp"
-        android:bottom="24dp" />
+        android:left="22dp"
+        android:top="22dp"
+        android:right="22dp"
+        android:bottom="22dp" />
 </layer-list>

@@ -39,6 +39,7 @@ object Tokens {
 
     /** 4dp 배수로만 쓴다. 눈대중으로 5, 7, 13을 섞으면 줄이 안 맞는다. */
     object Space {
+        val none = 0.dp
         val xs = 4.dp
         val sm = 8.dp
         val md = 12.dp
@@ -50,13 +51,29 @@ object Tokens {
         val screenHorizontal = 20.dp
     }
 
-    /** 둥근 모서리 16dp가 기본이다(앱 구조에서 확정). 작은 칩만 더 둥글게 쓴다. */
+    /**
+     * 둥근 모서리. ⑫에서 16dp → 24dp로 키웠다 — 그림자를 없앤 흰 카드는 모서리가 커야
+     * 민트그레이 바탕 위에서 "떠 있는 면"으로 읽힌다(design/mockup). 버튼과 칩은 pill.
+     */
     object Radius {
-        val card = RoundedCornerShape(16.dp)
-        val sheet = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
-        val button = RoundedCornerShape(12.dp)
+        val card = RoundedCornerShape(24.dp)
+
+        /** 홈의 다가오는 여행처럼 화면에서 가장 큰 카드. 일반 카드보다 한 단계 둥글다. */
+        val hero = RoundedCornerShape(28.dp)
+        val sheet = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp)
+
+        /**
+         * 목록 줄을 이어 붙여 카드 한 장처럼 보이게 할 때 위·가운데·아래 조각(일정표).
+         * 목록이 LazyColumn이라 카드 하나로 감쌀 수 없어 줄마다 조각을 칠한다.
+         */
+        val cardTop = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
+        val cardMiddle = RoundedCornerShape(0.dp)
+        val cardBottom = RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
+        val button = RoundedCornerShape(50)
         val chip = RoundedCornerShape(50)
-        val image = RoundedCornerShape(16.dp)
+
+        /** 카드 안의 사진·썸네일. 카드(24)보다 작아야 안쪽 여백과 곡선이 겹쳐 보이지 않는다. */
+        val image = RoundedCornerShape(20.dp)
     }
 
     object FontSize {
@@ -133,16 +150,47 @@ object Tokens {
         /** "다음 갈 곳" 점에 두르는 테두리. 선 굵기와 같은 값이지만 쓰임이 달라 따로 둔다. */
         val timelineRing = 2.dp
         val timelineLineHeight = 28.dp
+
+        /** 점선 구분선 굵기와 점 하나·틈 하나의 길이. */
+        val divider = 1.dp
+        val dividerDash = 4.dp
     }
 
     /**
-     * 카드 띄우는 정도. 그림자를 세게 주면 흰 배경이 탁해 보여서 0~2dp만 쓴다.
-     * 구분은 그림자보다 [Palette.SurfaceMuted] 배경으로 한다.
+     * 카드 띄우는 정도. ⑫부터 **그림자를 쓰지 않는다** — 구분은 민트그레이 바탕과 흰 카드의
+     * 색 차이로 한다. 그림자를 얹으면 둥근 흰 카드가 탁한 회색 테두리를 두른다.
      */
     object Elevation {
         val none = 0.dp
-        val card = 1.dp
-        val raised = 2.dp
+        val card = 0.dp
+        val raised = 0.dp
+    }
+
+    /**
+     * 모션. Compose 내장 애니메이션만 쓰고, 길이는 150~300ms 안에서 고른다.
+     * 시스템 "애니메이션 제거"를 켜면 직접 만든 효과(눌림·펄스·하이라이트)는 꺼진다(LocalReduceMotion).
+     */
+    object Motion {
+        /** 눌림, 색 바뀜처럼 손가락 바로 아래의 반응. */
+        const val shortMs = 150
+
+        /** 펼침, 탭 선택 표시 이동. */
+        const val mediumMs = 220
+
+        /** 화면 전환, 시트 뒤 화면 축소. */
+        const val longMs = 300
+
+        /** 말로 고치기로 바뀐 항목을 잠깐 칠해 두는 시간. 너무 짧으면 무엇이 바뀌었는지 못 본다. */
+        const val highlightMs = 600
+
+        /** AI 응답을 기다리는 동안 테두리가 한 번 밝아졌다 어두워지는 주기. */
+        const val pulseMs = 900
+
+        const val pressScale = 0.96f
+        const val dragLiftScale = 1.03f
+
+        /** 시트가 올라왔을 때 뒤 화면을 살짝 줄여 시트가 앞에 있다는 것을 보여준다. */
+        const val sheetBackdropScale = 0.97f
     }
 
     /**

@@ -70,7 +70,7 @@ fun AccountScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(Tokens.Radius.card)
-                        .background(LocalPalette.current.SurfaceMuted)
+                        .background(LocalPalette.current.Surface)
                         .padding(Tokens.Space.lg),
                 ) {
                     InitialAvatar(name = state.user.displayName)

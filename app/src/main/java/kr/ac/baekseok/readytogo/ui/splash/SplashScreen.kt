@@ -83,8 +83,9 @@ fun SplashScreen(
         onReady(authState)
     }
 
-    // 지금 테마가 아니라 **라이트 한 벌의 배경**을 그대로 쓴다. 위 주석 참고.
-    Surface(color = LightPalette.Background, modifier = Modifier.fillMaxSize()) {
+    // 지금 테마가 아니라 **라이트 한 벌의 흰색**을 그대로 쓴다. 위 주석 참고. Background가 아니라
+    // Surface인 이유: ⑫부터 Background는 민트그레이라 시스템 시작 화면(흰색)과 이어지지 않는다.
+    Surface(color = LightPalette.Surface, modifier = Modifier.fillMaxSize()) {
         Box(contentAlignment = Alignment.Center) {
             Image(
                 painter = painterResource(R.drawable.splash_art),

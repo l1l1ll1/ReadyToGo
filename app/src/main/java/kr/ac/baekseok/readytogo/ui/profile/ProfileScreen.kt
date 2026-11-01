@@ -131,7 +131,7 @@ private fun SignedInHeader(name: String, email: String) {
         modifier = Modifier
             .fillMaxWidth()
             .clip(Tokens.Radius.card)
-            .background(LocalPalette.current.SurfaceMuted)
+            .background(LocalPalette.current.Surface)
             .padding(Tokens.Space.lg),
     ) {
         InitialAvatar(name = name)
@@ -153,7 +153,7 @@ private fun GuestHeader(onSignIn: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .clip(Tokens.Radius.card)
-            .background(LocalPalette.current.SurfaceMuted)
+            .background(LocalPalette.current.Surface)
             .padding(Tokens.Space.lg),
     ) {
         Text(

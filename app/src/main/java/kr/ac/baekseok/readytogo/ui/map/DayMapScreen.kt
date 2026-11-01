@@ -14,6 +14,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -37,6 +38,7 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
 import kr.ac.baekseok.readytogo.R
+import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.data.model.AirportStop
 import kr.ac.baekseok.readytogo.data.model.DayPlan
 import kr.ac.baekseok.readytogo.data.model.Lodging
@@ -78,6 +80,7 @@ fun DayMapScreen(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.map_title, day.dayNumber)) },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = LocalPalette.current.Background),
                 navigationIcon = {
                     TextButton(onClick = onBack) { Text(stringResource(R.string.common_back)) }
                 },

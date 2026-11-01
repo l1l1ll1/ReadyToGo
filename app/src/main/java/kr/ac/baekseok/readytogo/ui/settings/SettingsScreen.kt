@@ -13,7 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.HorizontalDivider
+import kr.ac.baekseok.readytogo.ui.component.DashedDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
@@ -243,7 +243,7 @@ fun SettingsScreen(
 @Composable
 private fun SettingsSectionGap(title: String) {
     Column {
-        HorizontalDivider(
+        DashedDivider(
             color = LocalPalette.current.Divider,
             modifier = Modifier.padding(vertical = Tokens.Space.lg),
         )

@@ -14,7 +14,7 @@ import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.Map
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
+import kr.ac.baekseok.readytogo.ui.component.DashedDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -103,7 +103,7 @@ fun PlaceDetailSheet(
                 )
             }
 
-            HorizontalDivider(color = LocalPalette.current.Divider)
+            DashedDivider(color = LocalPalette.current.Divider)
 
             val mapUrl = item.mapUrl
             if (mapUrl.isNotBlank()) {
@@ -172,7 +172,7 @@ private fun MealOptions(
     val options = item.options
     if (options.size <= 1) return
 
-    HorizontalDivider(color = LocalPalette.current.Divider)
+    DashedDivider(color = LocalPalette.current.Divider)
 
     Text(
         text = stringResource(R.string.plan_sheet_other_options),
@@ -402,7 +402,7 @@ private fun SavedPlaces(
     onPick: (FavoritePlace) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    HorizontalDivider(color = LocalPalette.current.Divider)
+    DashedDivider(color = LocalPalette.current.Divider)
 
     Text(
         text = stringResource(R.string.plan_sheet_saved_places),

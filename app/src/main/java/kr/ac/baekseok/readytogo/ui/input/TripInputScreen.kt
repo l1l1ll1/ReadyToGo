@@ -216,7 +216,7 @@ private fun RouteCard(
         modifier = Modifier
             .fillMaxWidth()
             .clip(Tokens.Radius.card)
-            .background(LocalPalette.current.SurfaceMuted)
+            .background(LocalPalette.current.Surface)
             .padding(vertical = Tokens.Space.lg),
     ) {
         RouteEnd(
@@ -287,7 +287,7 @@ private fun DateCard(
             .fillMaxWidth()
             .clip(Tokens.Radius.card)
             .clickable(onClick = onClick)
-            .background(LocalPalette.current.SurfaceMuted)
+            .background(LocalPalette.current.Surface)
             .padding(Tokens.Space.lg),
     ) {
         Icon(

@@ -149,7 +149,7 @@ private fun FavoriteRow(
             .fillMaxWidth()
             .clip(Tokens.Radius.card)
             .clickable(onClick = onClick)
-            .background(LocalPalette.current.SurfaceMuted)
+            .background(LocalPalette.current.Surface)
             .padding(Tokens.Space.md),
     ) {
         val photo = rememberPlacePhoto(place.placeId)

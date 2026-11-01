@@ -20,7 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AcUnit
@@ -162,6 +162,8 @@ fun TimelineTab(
             ScrollableTabRow(
                 selectedTabIndex = ((day?.dayNumber ?: 1) - 1).coerceAtLeast(0),
                 edgePadding = 0.dp,
+                // 바탕과 같은 색. 기본값(흰색)이면 민트그레이 화면 위에 흰 띠가 따로 뜬다.
+                containerColor = LocalPalette.current.Background,
             ) {
                 plan.dailyPlans.forEach { candidate ->
                     Tab(
@@ -293,10 +295,18 @@ fun TimelineTab(
                     }
                 }
 
-                items(entries, key = { it.item.key }) { entry ->
+                itemsIndexed(entries, key = { _, entry -> entry.item.key }) { index, entry ->
                     // **관광지만 끌 수 있다.** 끼니는 하루의 뼈대라 자리가 고정이고,
                     // 식당을 바꾸는 일은 상세 시트의 "다른 선택지"가 맡는다.
                     val draggable = entry.item is TimelineItem.Visit
+
+                    // 줄마다 카드 조각을 칠해 하루 일정이 흰 카드 한 장으로 보이게 한다(⑫).
+                    val segment = when {
+                        entries.size == 1 -> Tokens.Radius.card
+                        index == 0 -> Tokens.Radius.cardTop
+                        index == entries.lastIndex -> Tokens.Radius.cardBottom
+                        else -> Tokens.Radius.cardMiddle
+                    }
 
                     ReorderableItem(
                         state = reorderState,
@@ -305,6 +315,14 @@ fun TimelineTab(
                         // "아침 위로는 못 올린다"를 지키는 가장 확실한 방법이다 —
                         // 콜백에서 거절하면 라이브러리는 이미 옮긴 줄 알고 그려서 튄다.
                         enabled = entry.item.key != firstMealKey,
+                        modifier = Modifier
+                            .background(LocalPalette.current.Surface, segment)
+                            .padding(horizontal = Tokens.Space.md)
+                            // 카드의 첫 줄·끝 줄에만 위·아래 여백 — 점 아이콘이 카드 가장자리에 붙지 않게.
+                            .padding(
+                                top = if (index == 0) Tokens.Space.md else Tokens.Space.none,
+                                bottom = if (index == entries.lastIndex) Tokens.Space.md else Tokens.Space.none,
+                            ),
                     ) { isDragging ->
                         val handle = if (draggable) {
                             Modifier.longPressDraggableHandle(

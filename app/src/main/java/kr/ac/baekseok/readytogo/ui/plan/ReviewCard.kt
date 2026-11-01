@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ExpandLess
 import androidx.compose.material.icons.outlined.ExpandMore
-import androidx.compose.material3.HorizontalDivider
+import kr.ac.baekseok.readytogo.ui.component.DashedDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -67,7 +67,7 @@ fun ReviewCard(controls: ReviewControls) {
         modifier = Modifier
             .fillMaxWidth()
             .clip(Tokens.Radius.card)
-            .background(palette.SurfaceMuted),
+            .background(palette.Surface),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -99,7 +99,7 @@ fun ReviewCard(controls: ReviewControls) {
 
         if (expanded) {
             controls.items.forEach { item ->
-                HorizontalDivider(color = palette.Divider)
+                DashedDivider(color = palette.Divider)
                 ReviewRow(item, controls.loading, onFix = { controls.onFix(item.issue) })
             }
         }

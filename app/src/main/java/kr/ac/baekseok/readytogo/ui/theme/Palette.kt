@@ -59,7 +59,14 @@ data class AppPalette(
     val TextSecondary: Color,
     val Divider: Color,
     val Danger: Color,
+    /**
+     * 주의 글자(예산 초과·숙소가 멂·검토·비 예보). [WarningSurface] 면 위에 얹는다.
+     * 빨강([Danger])과 나누는 이유: 빨강은 되돌릴 수 없는 일(삭제)에만 써야 정말 위험할 때 눈에 걸린다.
+     */
     val Warning: Color,
+
+    /** 주의 카드 바탕(복숭아). 글자는 [Warning]. */
+    val WarningSurface: Color,
     val Heart: Color,
 
     /**
@@ -95,21 +102,24 @@ val LightPalette = AppPalette(
     Accent = Color(0xFFFF805E),
     OnAccent = Color(0xFFFFFFFF),
 
-    Background = Color(0xFFFFFFFF),
+    // 민트그레이 바탕 위에 흰 카드를 띄운다(⑫). 흰 바탕에 회색 카드였을 때보다 카드 경계가
+    // 그림자 없이도 또렷하고, 포인트 터쿼이즈와 같은 가족이라 화면이 한 톤으로 읽힌다.
+    Background = Color(0xFFEEF3F2),
     Surface = Color(0xFFFFFFFF),
-    // 카드는 아주 옅은 회색으로 띄워 경계선 없이 구분한다.
-    SurfaceMuted = Color(0xFFF4F6F8),
+    // 흰 카드 안의 옅은 칸(입력 칸, 보조 버튼 바탕). 카드 자체는 Surface다.
+    SurfaceMuted = Color(0xFFF3F7F6),
 
     TextPrimary = Color(0xFF233B5D),
     // 보조 글자는 같은 네이비의 60%다. 별도 회색을 쓰면 두 색 계열이 섞여 탁해진다.
     TextSecondary = Color(0xFF233B5D).copy(alpha = 0.6f),
 
     // 선은 거의 안 보일 정도로만. 큰 사진 카드가 주인공이라 선이 끼면 지저분해진다.
-    Divider = Color(0xFFE4E8EC),
+    Divider = Color(0xFFD5DEDC),
 
     // 삭제·탈퇴처럼 되돌릴 수 없는 일에만 쓴다. 예산 초과 같은 "주의"는 Accent 쪽이다.
     Danger = Color(0xFFD03A2C),
-    Warning = Color(0xFFB26B00),
+    Warning = Color(0xFFA8441C),
+    WarningSurface = Color(0xFFFFF1EA),
 
     // 즐겨찾기 ♥ 채운 상태. 코랄과 구분돼야 눌린 게 보인다.
     Heart = Color(0xFFE0245E),
@@ -130,7 +140,7 @@ val LightPalette = AppPalette(
 /**
  * 라이트 + 고대비 한 벌.
  *
- * **흰 배경은 그대로 둔다.** 배경까지 검게 뒤집으면 큰 카드 위 글자 대비가 다시 무너지고,
+ * **밝은 바탕은 그대로 둔다.** 배경까지 검게 뒤집으면 큰 카드 위 글자 대비가 다시 무너지고,
  * 이 앱의 분위기가 아니게 된다(CLAUDE.md 디자인). 대신 **흐린 것들을 진하게** 만든다:
  * 보조 글자, 선, 포인트·강조 컬러가 대상이다.
  *
@@ -148,7 +158,7 @@ val LightHighContrastPalette = LightPalette.copy(
     SecondaryBold = Color(0xFFFFE38A),
     Accent = Color(0xFFC9472A),
 
-    SurfaceMuted = Color(0xFFEAEEF2),
+    SurfaceMuted = Color(0xFFE3EAE9),
 
     TextPrimary = Color(0xFF0F1F33),
     TextSecondary = Color(0xFF0F1F33),
@@ -157,7 +167,8 @@ val LightHighContrastPalette = LightPalette.copy(
     Divider = Color(0xFF8D96A0),
 
     Danger = Color(0xFF9B1C12),
-    Warning = Color(0xFF6E4200),
+    Warning = Color(0xFF7F2E0E),
+    WarningSurface = Color(0xFFFFE4D6),
     Heart = Color(0xFFB0124C),
 
     HeroGradient = listOf(
@@ -178,9 +189,9 @@ val LightHighContrastPalette = LightPalette.copy(
  * **순검정을 쓰지 않는다.** 글자가 네이비 가족이라 순검정 배경에서는 색이 따로 놀고,
  * OLED에서 스크롤할 때 잔상이 남는다. 같은 네이비를 어둡게 내린 값으로 깐다.
  *
- * **[SurfaceMuted]가 [Background]보다 밝다.** 라이트에서는 카드를 옅은 회색으로 "가라앉혀"
- * 구분했는데, 어두운 화면에서는 반대로 **떠올려야** 면이 보인다. 라이트 값을 그냥 뒤집으면
- * 카드가 배경에 묻힌다.
+ * **카드([Surface])가 [Background]보다 밝다.** 라이트와 같은 구조다 — 바탕 위에 카드를
+ * 떠올려 구분한다(⑫부터 라이트도 민트그레이 바탕 + 흰 카드). [SurfaceMuted]는 카드 안의 칸이라
+ * 카드보다 한 단계 더 밝다.
  *
  * **[PointDark]와 [PointLight]는 값이 서로 뒤바뀐다.** 두 이름은 밝기가 아니라 역할이다 —
  * PointLight는 칩·배지의 *면*, PointDark는 그 면 위의 *글자*다. 면이 어두워지면 글자는
@@ -198,18 +209,20 @@ val DarkPalette = LightPalette.copy(
     SecondaryBold = Color(0xFFE6C45C),
     Accent = Color(0xFFFF9470),
 
-    Background = Color(0xFF121820),
-    Surface = Color(0xFF1A2230),
-    SurfaceMuted = Color(0xFF222C3C),
+    // 라이트의 민트그레이와 같은 가족으로 — 네이비보다 청록 쪽으로 기운 어두운 바탕.
+    Background = Color(0xFF121A1C),
+    Surface = Color(0xFF1B2528),
+    SurfaceMuted = Color(0xFF233033),
 
     TextPrimary = Color(0xFFE8EDF5),
     TextSecondary = Color(0xFFE8EDF5).copy(alpha = 0.65f),
 
-    Divider = Color(0xFF2E3A4C),
+    Divider = Color(0xFF2F3D40),
 
     // 어두운 바탕에서는 진한 빨강이 바탕에 먹힌다. 밝혀야 "주의"로 읽힌다.
     Danger = Color(0xFFFF6B5C),
-    Warning = Color(0xFFE8A33D),
+    Warning = Color(0xFFFFB08A),
+    WarningSurface = Color(0xFF3A241A),
     Heart = Color(0xFFFF4D7D),
 
     // 어두운 화면에서 원래 터쿼이즈는 너무 밝게 튄다. 한 단계 깊게.
@@ -238,19 +251,20 @@ val DarkHighContrastPalette = DarkPalette.copy(
     SecondaryBold = Color(0xFFFFD98A),
     Accent = Color(0xFFFFA98C),
 
-    Background = Color(0xFF0A0E14),
-    Surface = Color(0xFF141C28),
-    SurfaceMuted = Color(0xFF1E2836),
+    Background = Color(0xFF0A1012),
+    Surface = Color(0xFF142022),
+    SurfaceMuted = Color(0xFF1C2B2E),
 
     TextPrimary = Color(0xFFFFFFFF),
     // 알파를 빼고 흰색을 그대로 쓴다. 라이트 고대비가 네이비 60%를 버린 것과 같은 이유다.
     TextSecondary = Color(0xFFD6DEE9),
 
     // 선이 보여야 섹션 경계가 읽힌다.
-    Divider = Color(0xFF5C6B7E),
+    Divider = Color(0xFF5C7276),
 
     Danger = Color(0xFFFF8A7D),
-    Warning = Color(0xFFFFBE5E),
+    Warning = Color(0xFFFFC2A3),
+    WarningSurface = Color(0xFF4A2B1C),
     Heart = Color(0xFFFF7098),
 )
 

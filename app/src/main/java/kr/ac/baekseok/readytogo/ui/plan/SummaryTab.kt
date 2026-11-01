@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.HorizontalDivider
+import kr.ac.baekseok.readytogo.ui.component.DashedDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -64,7 +64,7 @@ fun SummaryHeader(
         modifier = Modifier
             .fillMaxWidth()
             .clip(Tokens.Radius.card)
-            .background(LocalPalette.current.SurfaceMuted)
+            .background(LocalPalette.current.Surface)
             .padding(Tokens.Space.lg),
     ) {
         Text(
@@ -131,7 +131,7 @@ fun SummaryHeader(
         val total = b.totalWon
         val planned = plan.plannedSpendWon()
         if (total != null) {
-            HorizontalDivider(
+            DashedDivider(
                 color = LocalPalette.current.Divider,
                 modifier = Modifier.padding(vertical = Tokens.Space.sm),
             )

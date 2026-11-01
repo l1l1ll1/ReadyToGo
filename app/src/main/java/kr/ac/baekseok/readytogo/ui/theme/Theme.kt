@@ -93,7 +93,8 @@ private fun colorSchemeOf(palette: AppPalette, dark: Boolean) = (
     if (dark) darkColorScheme() else lightColorScheme()
     ).copy(
     primary = palette.Point,
-    onPrimary = palette.Background,
+    // 버튼 위 글자는 카드색(라이트 흰색). Background는 ⑫부터 민트그레이라 글자가 탁해진다.
+    onPrimary = palette.Surface,
     primaryContainer = palette.PointLight,
     onPrimaryContainer = palette.PointDark,
 
@@ -105,9 +106,9 @@ private fun colorSchemeOf(palette: AppPalette, dark: Boolean) = (
 
     // tertiary는 코랄. Material이 "세 번째 강조"로 쓰는 자리에 그대로 맞는다.
     tertiary = palette.Accent,
-    onTertiary = palette.Background,
+    onTertiary = palette.Surface,
     tertiaryContainer = palette.Accent,
-    onTertiaryContainer = palette.Background,
+    onTertiaryContainer = palette.Surface,
 
     // 스낵바의 동작 버튼("되돌리기")이 inversePrimary를 쓴다. 지정하지 않으면 Material 기본
     // 연보라가 어두운 스낵바 위에 남는다. 어두운 배경에서 읽히는 밝은 청록을 쓴다.
@@ -123,10 +124,11 @@ private fun colorSchemeOf(palette: AppPalette, dark: Boolean) = (
     // Card·AlertDialog·BottomSheet는 surfaceContainer 계열을 기본 배경으로 쓴다.
     // 지정하지 않으면 Material의 기본 보라빛이 그대로 나와 흰 배경 화면에 보라 카드가 올라온다.
     surfaceContainerLowest = palette.Background,
-    surfaceContainerLow = palette.SurfaceMuted,
-    surfaceContainer = palette.SurfaceMuted,
-    surfaceContainerHigh = palette.SurfaceMuted,
-    surfaceContainerHighest = palette.SurfaceMuted,
+    // ⑫: 카드·시트·대화상자는 흰 카드(Surface)다. 민트그레이 바탕 위에 떠야 하므로.
+    surfaceContainerLow = palette.Surface,
+    surfaceContainer = palette.Surface,
+    surfaceContainerHigh = palette.Surface,
+    surfaceContainerHighest = palette.Surface,
 
     // outline은 **글자 색으로도 쓰인다**(예: "일정 중심에서 1.2km").
     // 선 색인 Divider를 넣었더니 글자가 배경에 묻혀 안 보였다. 읽히는 회색을 따로 둔다.
@@ -134,7 +136,7 @@ private fun colorSchemeOf(palette: AppPalette, dark: Boolean) = (
     outlineVariant = palette.Divider,
 
     error = palette.Danger,
-    onError = palette.Background,
+    onError = palette.Surface,
 )
 
 /**

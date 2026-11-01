@@ -12,7 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.HorizontalDivider
+import kr.ac.baekseok.readytogo.ui.component.DashedDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -52,7 +52,7 @@ fun AboutScreen(onOpenPrivacy: () -> Unit) {
 
         item {
             Column {
-                HorizontalDivider(
+                DashedDivider(
                     color = LocalPalette.current.Divider,
                     modifier = Modifier.padding(vertical = Tokens.Space.lg),
                 )
@@ -63,7 +63,7 @@ fun AboutScreen(onOpenPrivacy: () -> Unit) {
 
         item {
             Column {
-                HorizontalDivider(
+                DashedDivider(
                     color = LocalPalette.current.Divider,
                     modifier = Modifier.padding(vertical = Tokens.Space.lg),
                 )
@@ -75,7 +75,7 @@ fun AboutScreen(onOpenPrivacy: () -> Unit) {
 
         item {
             Column {
-                HorizontalDivider(
+                DashedDivider(
                     color = LocalPalette.current.Divider,
                     modifier = Modifier.padding(vertical = Tokens.Space.lg),
                 )

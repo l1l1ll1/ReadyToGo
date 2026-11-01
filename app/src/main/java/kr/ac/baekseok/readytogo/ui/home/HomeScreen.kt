@@ -237,7 +237,7 @@ private fun UpcomingTripCard(trip: SavedTrip, today: LocalDate, onClick: () -> U
         onClick = onClick,
     ) {
         Surface(
-            color = LocalPalette.current.Background,
+            color = LocalPalette.current.Surface,
             shape = Tokens.Radius.chip,
             modifier = Modifier
                 .align(Alignment.TopEnd)
@@ -283,7 +283,7 @@ private fun RecentTripRow(trip: SavedTrip, today: LocalDate, onClick: () -> Unit
             .fillMaxWidth()
             .clip(Tokens.Radius.card)
             .clickable(onClick = onClick)
-            .background(LocalPalette.current.SurfaceMuted)
+            .background(LocalPalette.current.Surface)
             .padding(Tokens.Space.md),
     ) {
         // 목록 줄의 썸네일은 사진 자리가 아니라 **표식**이다. 목적지마다 색이 달라지면
@@ -301,7 +301,7 @@ private fun RecentTripRow(trip: SavedTrip, today: LocalDate, onClick: () -> Unit
             contentAlignment = Alignment.Center,
             modifier = Modifier
                 .size(THUMB_SIZE)
-                .clip(Tokens.Radius.button)
+                .clip(Tokens.Radius.image)
                 .background(
                     if (dark) LocalPalette.current.SurfaceMuted else LocalPalette.current.Secondary,
                 ),

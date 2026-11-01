@@ -209,7 +209,7 @@ private fun TripCard(
         }
         if (daysLeft >= 0) {
             Surface(
-                color = LocalPalette.current.Background,
+                color = LocalPalette.current.Surface,
                 shape = Tokens.Radius.chip,
                 modifier = Modifier
                     .align(Alignment.TopEnd)

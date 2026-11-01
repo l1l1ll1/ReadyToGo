@@ -143,7 +143,7 @@ fun SecondaryButton(
         onClick = onClick,
         shape = Tokens.Radius.button,
         colors = ButtonDefaults.buttonColors(
-            containerColor = LocalPalette.current.SurfaceMuted,
+            containerColor = LocalPalette.current.Surface,
             contentColor = LocalPalette.current.TextPrimary,
         ),
         modifier = modifier

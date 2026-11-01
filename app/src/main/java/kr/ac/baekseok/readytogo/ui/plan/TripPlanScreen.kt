@@ -27,7 +27,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
+import kr.ac.baekseok.readytogo.ui.component.DashedDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -41,6 +41,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -324,6 +325,8 @@ private fun TripPlanContent(
             Column {
                 TopAppBar(
                     title = { Text(stringResource(R.string.plan_title)) },
+                    // 바탕과 같은 색. 기본값(흰색)이면 민트그레이 화면 위에 흰 띠가 뜬다.
+                    colors = TopAppBarDefaults.topAppBarColors(containerColor = LocalPalette.current.Background),
                     navigationIcon = {
                         TextButton(onClick = onBack) { Text(stringResource(R.string.common_back)) }
                     },
@@ -352,6 +355,7 @@ private fun TripPlanContent(
                     ScrollableTabRow(
                         selectedTabIndex = selectedTab.ordinal,
                         edgePadding = 0.dp,
+                        containerColor = LocalPalette.current.Background,
                     ) {
                         PlanTab.entries.forEach { tab ->
                             Tab(
@@ -677,6 +681,7 @@ private fun MapTab(
         ScrollableTabRow(
             selectedTabIndex = (day?.dayNumber ?: 1) - 1,
             edgePadding = 0.dp,
+            containerColor = LocalPalette.current.Background,
         ) {
             plan.dailyPlans.forEach { candidate ->
                 Tab(
@@ -871,7 +876,7 @@ private fun PurposeShareBar(plan: TripPlan) {
         modifier = Modifier.padding(bottom = Tokens.Space.xs),
     )
 
-    HorizontalDivider(color = palette.Divider)
+    DashedDivider(color = palette.Divider)
 }
 
 @Composable
@@ -1086,7 +1091,7 @@ private fun LodgingDistanceCard(check: LodgingDistanceCheck) {
             // 과반이 멀 때만 나온다. 바꾸지는 않고 "이런 곳도 있다"만 보여준다 —
             // 숙소를 바꾸려면 편집에 숙소 칸을 새로 만들어야 해서 다음으로 미뤘다.
             check.better?.let { better ->
-                HorizontalDivider(color = palette.Divider)
+                DashedDivider(color = palette.Divider)
                 ChoiceRow(
                     label = stringResource(R.string.plan_lodging_better_label),
                     overBudget = false,

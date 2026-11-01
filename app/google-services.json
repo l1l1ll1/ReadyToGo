@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "405182419016-sc2m7rovpcjbbjnhfe0dkhcvcist4f8q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "kr.ac.baekseok.readytogo",
+            "certificate_hash": "00a0909bf30c4c0871d7d0ca673b5d03417d91d5"
+          }
+        },
+        {
           "client_id": "405182419016-vdtpn8cdkc53olg3vt9ae47pb43vnpfr.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

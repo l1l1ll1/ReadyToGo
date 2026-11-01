@@ -2,6 +2,8 @@ package kr.ac.baekseok.readytogo.domain.plan
 
 import kr.ac.baekseok.readytogo.data.model.Attraction
 import kr.ac.baekseok.readytogo.data.model.TravelPurpose
+import kr.ac.baekseok.readytogo.domain.purpose.IndoorOutdoor
+import kr.ac.baekseok.readytogo.domain.purpose.Shelter
 import kr.ac.baekseok.readytogo.domain.recommend.attractionScore
 
 /**
@@ -15,7 +17,11 @@ import kr.ac.baekseok.readytogo.domain.recommend.attractionScore
  *
  * @param candidates 관광지 검색 결과 전체
  * @param dailyAttractions 날짜별로 배치된 관광지
- * @return 날짜별 후보. 점수 높은 순, 날마다 [MAX_ALTERNATIVES]곳까지
+ * **실내 후보 하나는 꼭 남긴다.** 상위 [MAX_ALTERNATIVES]곳에 실내가 없으면 점수가 가장 높은 실내를
+ * 뒤에 하나 덧붙인다. 비 오는 날 고치기는 실내로만 바꾸는데, 그날 근처가 공원뿐이면 고칠 길이
+ * 없었다(삿포로 4일차: 근처 5곳이 전부 공원·전망대, 맥주 박물관은 6위 밖).
+ *
+ * @return 날짜별 후보. 점수 높은 순, 날마다 [MAX_ALTERNATIVES]곳(+ 실내 1곳)까지
  */
 fun alternativesByDay(
     candidates: List<Attraction>,
@@ -28,9 +34,10 @@ fun alternativesByDay(
     return dailyAttractions.map { day ->
         // 관광지가 없는 날은 기준점이 없다. 그때는 여행 전체 배치를 기준으로 본다.
         val anchors = (day.ifEmpty { dailyAttractions.flatten() }).map { it.location }
-        spare
-            .sortedByDescending { attractionScore(it, anchors, purposes) }
-            .take(MAX_ALTERNATIVES)
+        val ranked = spare.sortedByDescending { attractionScore(it, anchors, purposes) }
+        val top = ranked.take(MAX_ALTERNATIVES)
+        val indoor = ranked.firstOrNull { IndoorOutdoor.of(it) == Shelter.INDOOR }
+        if (indoor == null || indoor in top) top else top + indoor
     }
 }
 

@@ -67,6 +67,26 @@ class PlaceSwapTest {
         assertEquals("far", result[1].first().id)
     }
 
+    @Test
+    fun `상위 5곳에 실내가 없으면 가장 나은 실내 하나를 덧붙인다`() {
+        val day1 = listOf(place("d1", 35.0))
+        val parks = (1..6).map { place("park$it", 35.0 + it * 0.01, "park") }
+        val museum = place("museum", 36.0, "museum")
+
+        val result = alternativesByDay(day1 + parks + museum, listOf(day1), emptySet()).single()
+
+        assertEquals(6, result.size)
+        assertEquals("museum", result.last().id)
+    }
+
+    @Test
+    fun `상위 5곳에 실내가 이미 있으면 덧붙이지 않는다`() {
+        val day1 = listOf(place("d1", 35.0))
+        val spare = listOf(place("museum", 35.01, "museum")) + (1..6).map { place("park$it", 35.0 + it * 0.02, "park") }
+
+        assertEquals(5, alternativesByDay(day1 + spare, listOf(day1), emptySet()).single().size)
+    }
+
     // ---- 교체 기준 ----
 
     private val current = place("cur", 35.5, "park")

@@ -15,6 +15,8 @@ import kr.ac.baekseok.readytogo.data.repository.places.GooglePlacesPhotoReposito
 import kr.ac.baekseok.readytogo.data.repository.FavoriteRepository
 import kr.ac.baekseok.readytogo.data.repository.DayEditAssistant
 import kr.ac.baekseok.readytogo.data.repository.firebase.FunctionsDayEditAssistant
+import kr.ac.baekseok.readytogo.data.repository.firebase.FunctionsPlanReviewer
+import kr.ac.baekseok.readytogo.data.repository.PlanReviewer
 import kr.ac.baekseok.readytogo.data.repository.SavedTripRepository
 import kr.ac.baekseok.readytogo.data.repository.UserProfileRepository
 import kr.ac.baekseok.readytogo.data.repository.firebase.FirestoreUserProfileRepository
@@ -140,6 +142,9 @@ object AppContainer {
 
     /** 말로 일정 고치기(⑨-1). 함수가 로그인 토큰을 검사하므로 로그인 사용자만 쓴다. */
     val dayEditAssistant: DayEditAssistant by lazy { FunctionsDayEditAssistant() }
+
+    /** 일정 검토관(⑨-2). 문제는 앱 규칙이 찾고, 이것은 설명과 고칠 명령만 붙인다. 로그인 사용자만. */
+    val planReviewer: PlanReviewer by lazy { FunctionsPlanReviewer() }
 
     /** 닉네임처럼 계정에 딸린 값. 이름·이메일은 Google이 주지만 닉네임은 우리가 저장한다. */
     val userProfile: UserProfileRepository by lazy {

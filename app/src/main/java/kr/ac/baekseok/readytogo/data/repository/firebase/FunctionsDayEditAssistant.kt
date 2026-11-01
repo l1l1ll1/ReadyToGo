@@ -17,8 +17,7 @@ import kr.ac.baekseok.readytogo.domain.edit.parseCommands
  */
 class FunctionsDayEditAssistant : DayEditAssistant {
 
-    // 함수를 서울 리전에 배포했다. 리전을 안 맞추면 기본(us-central1)으로 가서 404가 난다.
-    private val callable = FirebaseFunctions.getInstance(REGION).getHttpsCallable(FUNCTION_NAME)
+    private val callable = FirebaseFunctions.getInstance(FUNCTIONS_REGION).getHttpsCallable(FUNCTION_NAME)
 
     override suspend fun interpret(sentence: String, summary: DaySummary): Result<AssistantReply> =
         try {
@@ -31,36 +30,44 @@ class FunctionsDayEditAssistant : DayEditAssistant {
                     outputTokens = (usage?.get("output") as? Number)?.toInt() ?: 0,
                 ),
             )
-        } catch (e: FirebaseFunctionsException) {
-            val reason = when (e.code) {
-                FirebaseFunctionsException.Code.UNAUTHENTICATED -> DayEditException.Reason.SIGN_IN_REQUIRED
-                FirebaseFunctionsException.Code.RESOURCE_EXHAUSTED -> DayEditException.Reason.TOO_MANY_REQUESTS
-                else -> DayEditException.Reason.UNAVAILABLE
-            }
-            Result.failure(DayEditException(reason, e))
         } catch (e: Exception) {
-            // 네트워크 끊김 등. 함수까지 가지도 못했다.
-            Result.failure(DayEditException(DayEditException.Reason.UNAVAILABLE, e))
+            Result.failure(e.toDayEditException())
         }
 
     /** 요청 형식은 functions/src/editDay.ts의 DayItem과 같다. */
     private fun requestOf(sentence: String, summary: DaySummary): Map<String, Any?> = mapOf(
         "sentence" to sentence,
-        "items" to summary.items.map { item ->
-            mapOf(
-                "id" to item.id,
-                "kind" to if (item.isMeal) "meal" else "place",
-                "name" to item.name,
-                "category" to item.category,
-                "stayMin" to item.stayMinutes,
-                "moveMin" to item.moveMinutes,
-                "lodgingKm" to item.lodgingKm,
-            )
-        },
+        "items" to summary.toWireItems(),
     )
 
     private companion object {
-        const val REGION = "asia-northeast3"
         const val FUNCTION_NAME = "editDay"
     }
+}
+
+// 함수를 서울 리전에 배포했다. 리전을 안 맞추면 기본(us-central1)으로 가서 404가 난다.
+internal const val FUNCTIONS_REGION = "asia-northeast3"
+
+/** 하루 요약의 전송 형식. functions/src/editDay.ts의 DayItem과 같다. 일정 검토도 같은 형식을 쓴다. */
+internal fun DaySummary.toWireItems(): List<Map<String, Any?>> = items.map { item ->
+    mapOf(
+        "id" to item.id,
+        "kind" to if (item.isMeal) "meal" else "place",
+        "name" to item.name,
+        "category" to item.category,
+        "stayMin" to item.stayMinutes,
+        "moveMin" to item.moveMinutes,
+        "lodgingKm" to item.lodgingKm,
+    )
+}
+
+/** callable 실패를 화면 문구가 갈리는 이유로 바꾼다. 말로 고치기와 일정 검토가 같은 규칙을 쓴다. */
+internal fun Exception.toDayEditException(): DayEditException {
+    val reason = when ((this as? FirebaseFunctionsException)?.code) {
+        FirebaseFunctionsException.Code.UNAUTHENTICATED -> DayEditException.Reason.SIGN_IN_REQUIRED
+        FirebaseFunctionsException.Code.RESOURCE_EXHAUSTED -> DayEditException.Reason.TOO_MANY_REQUESTS
+        // 그 밖의 함수 오류, 또는 네트워크 끊김처럼 함수까지 가지도 못한 경우.
+        else -> DayEditException.Reason.UNAVAILABLE
+    }
+    return DayEditException(reason, this)
 }

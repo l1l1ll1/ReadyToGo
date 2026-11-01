@@ -103,7 +103,8 @@ export function reviewTools(issueIds: string[]): Anthropic.Tool[] {
   const explain: Anthropic.Tool = {
     name: "explain",
     description:
-      "문제 하나가 왜 여행에 불편한지 한국어 한 문장(40자 안팎)으로 말한다. " +
+      "문제 하나가 왜 여행에 불편한지 한 문장(40자 안팎)으로 말한다. " +
+      "문제 문장과 같은 언어로 쓴다(앱 화면 언어다). " +
       "문제마다 정확히 한 번 호출한다.",
     strict: true,
     input_schema: {

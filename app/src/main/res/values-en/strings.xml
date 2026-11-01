@@ -237,6 +237,16 @@
     <string name="plan_text_edit_sign_in">Please sign in.</string>
     <string name="plan_text_edit_too_many">Too many requests. Try again in a minute.</string>
     <string name="plan_text_edit_unavailable">Can\'t process this right now. Please try again shortly.</string>
+    <string name="review_card_title">%1$d review note(s)</string>
+    <string name="review_card_hint">Spots in this plan worth a second look.</string>
+    <string name="review_loading">Loading explanations…</string>
+    <string name="review_fix">Fix</string>
+    <string name="review_fixed">Fixed.</string>
+    <string name="review_fix_failed">Couldn\'t find an automatic fix. Please change it in the itinerary.</string>
+    <string name="review_fact_long">Day %1$d takes %2$s of visits and travel, longer than the fullest day of this trip (%3$s).</string>
+    <string name="review_fact_same_kind">Day %1$d %2$s, %3$s (%4$s), is the same kind as the meal right before it: day %5$d %6$s, %7$s.</string>
+    <string name="review_fact_closed_place">%3$s on day %1$d (%2$s) is closed that day of the week.</string>
+    <string name="review_fact_closed_meal">%4$s for %3$s on day %1$d (%2$s) is closed that day of the week.</string>
 
     <!-- 섹션 제목 -->
     <string name="plan_section_budget">Budget breakdown</string>

@@ -153,6 +153,8 @@ fun TripPlanScreen(
     val conditionChange by viewModel.conditionChange.collectAsState()
     val canEditByText by viewModel.canEditByText.collectAsState()
     val editingByText by viewModel.editingByText.collectAsState()
+    val reviewItems by viewModel.reviewItems.collectAsState()
+    val reviewLoading by viewModel.reviewLoading.collectAsState()
 
     LaunchedEffect(conditionChange) {
         val next = conditionChange ?: return@LaunchedEffect
@@ -190,6 +192,12 @@ fun TripPlanScreen(
             onSubmit = viewModel::editByText,
             onSignIn = onSignIn,
         ),
+        review = ReviewControls(
+            items = reviewItems,
+            loading = reviewLoading,
+            onExpand = viewModel::expandReview,
+            onFix = viewModel::fixIssue,
+        ),
         onReorder = viewModel::reorderDay,
         onReorderCommit = viewModel::commitEdits,
         onPickMeal = viewModel::pickMeal,
@@ -224,6 +232,7 @@ private fun TripPlanContent(
     onDeleteItem: (Int, String) -> Unit = { _, _ -> },
     onToggleDone: (Int, String) -> Unit = { _, _ -> },
     textEdit: TextEditControls = TextEditControls(),
+    review: ReviewControls = ReviewControls(),
     onReorder: (Int, List<String>) -> Unit = { _, _ -> },
     onReorderCommit: () -> Unit = {},
     onPickMeal: (Int, String, String?) -> Unit = { _, _, _ -> },
@@ -399,6 +408,7 @@ private fun TripPlanContent(
                     onDeleteItem = onDeleteItem,
                     onToggleDone = onToggleDone,
                     textEdit = textEdit,
+                    review = review,
                     onEditDates = if (canChangeDates) ({ dateSheetOpen = true }) else null,
                 )
             }
@@ -521,6 +531,8 @@ private fun PlanTabContent(
     onDeleteItem: (Int, String) -> Unit,
     onToggleDone: (Int, String) -> Unit,
     textEdit: TextEditControls,
+    /** 요약 탭의 검토 카드. 문제가 없으면 카드가 없다. */
+    review: ReviewControls,
     /** 요약 머리의 기간을 눌렀을 때. null이면 바꿀 수 없는 일정이다. */
     onEditDates: (() -> Unit)?,
 ) {
@@ -533,6 +545,10 @@ private fun PlanTabContent(
     when (tab) {
         PlanTab.SUMMARY -> TabColumn {
             item { SummaryHeader(plan, onEditDates) }
+            // 머리 바로 아래 — 예산보다 먼저 봐야 한다. 쉬는 날 가는 곳은 예산과 상관없이 헛걸음이다.
+            if (review.items.isNotEmpty()) {
+                item { ReviewCard(review) }
+            }
             item { SectionTitle(stringResource(R.string.plan_section_budget)) }
             item { BudgetBreakdown(plan) }
 

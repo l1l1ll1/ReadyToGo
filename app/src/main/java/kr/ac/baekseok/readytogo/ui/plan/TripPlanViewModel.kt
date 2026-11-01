@@ -22,6 +22,13 @@ import kr.ac.baekseok.readytogo.domain.edit.RejectReason
 import kr.ac.baekseok.readytogo.domain.edit.applyCommands
 import kr.ac.baekseok.readytogo.domain.edit.summarizeDay
 import kr.ac.baekseok.readytogo.domain.plan.toTimeline
+import kr.ac.baekseok.readytogo.data.repository.ReviewQuestion
+import kr.ac.baekseok.readytogo.domain.review.ReviewAdvice
+import kr.ac.baekseok.readytogo.domain.review.ReviewIssue
+import kr.ac.baekseok.readytogo.domain.review.applyFirst
+import kr.ac.baekseok.readytogo.domain.review.defaultFixes
+import kr.ac.baekseok.readytogo.domain.review.editedTimeline
+import kr.ac.baekseok.readytogo.domain.review.reviewPlan
 import kr.ac.baekseok.readytogo.generation.PlanGeneration
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -36,7 +43,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import java.time.LocalDate
+import java.time.format.TextStyle
 import java.time.temporal.ChronoUnit
+import java.util.Locale
 
 /** 결과 화면의 상태. Repository가 실제 API처럼 시간이 걸리므로 로딩과 실패를 구분해 들고 있어야 한다. */
 sealed interface TripPlanUiState {
@@ -541,6 +550,137 @@ class TripPlanViewModel(
         }
     }
 
+    // ---- 일정 검토관(⑨-2) ----
+    // _pickedPlaces보다 아래에 둔다. 위에 두면 combine이 아직 초기화되지 않은 흐름을 잡는다.
+
+    /**
+     * 규칙이 찾은 문제. **계획·편집이 바뀔 때마다 다시 잰다**(규칙만, AI 호출 없음).
+     * 생성 직후 1회와 편집 저장 뒤 재검사가 이것 하나로 된다. 비어 있으면 카드가 없다.
+     */
+    val reviewIssues: StateFlow<List<ReviewIssue>> = combine(_uiState, _edits, _pickedPlaces) { state, edits, picked ->
+        (state as? TripPlanUiState.Success)?.plan?.let { reviewPlan(it, edits, picked) }.orEmpty()
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
+    /**
+     * AI 답. **문제 id가 아니라 문제 전체로 찾는다** — 같은 날 같은 끼니라도 식당이 바뀌면
+     * 다른 문제다. 같은 문제는 다시 묻지 않으므로, 하나를 고친 뒤 남은 문제로 호출이 또 나가지 않는다.
+     */
+    private val _reviewAdvice = MutableStateFlow<Map<ReviewIssue, ReviewAdvice>>(emptyMap())
+    val reviewAdvice: StateFlow<Map<ReviewIssue, ReviewAdvice>> = _reviewAdvice.asStateFlow()
+
+    private val _reviewLoading = MutableStateFlow(false)
+    val reviewLoading: StateFlow<Boolean> = _reviewLoading.asStateFlow()
+
+    /** 카드에 그릴 줄. 사실 문장(규칙)과 AI 설명을 문제마다 붙인다. */
+    val reviewItems: StateFlow<List<ReviewItemUi>> = combine(reviewIssues, _reviewAdvice) { issues, advice ->
+        val plan = (_uiState.value as? TripPlanUiState.Success)?.plan ?: return@combine emptyList()
+        issues.map { ReviewItemUi(it, reviewFact(it, plan), advice[it]?.why) }
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
+    /**
+     * 카드를 펼쳤다. 아직 답이 없는 문제만 모아 **한 번** 묻는다.
+     *
+     * 둘러보기면 묻지 않는다 — 함수가 로그인 토큰을 요구한다. 카드에는 규칙 문장만 보이고
+     * "고치기"는 규칙의 기본 수정으로 동작한다.
+     */
+    fun expandReview() {
+        if (!canEditByText.value || _reviewLoading.value) return
+        val plan = (_uiState.value as? TripPlanUiState.Success)?.plan ?: return
+        val pending = reviewIssues.value.filter { it !in _reviewAdvice.value }.take(MAX_REVIEW_ISSUES)
+        if (pending.isEmpty()) return
+
+        val lodging = plan.lodging?.qualityFirst?.item?.location
+        val summaries = pending.map { it.dayNumber }.distinct().associateWith { dayNumber ->
+            val day = plan.dailyPlans.first { it.dayNumber == dayNumber }
+            summarizeDay(day.editedTimeline(_edits.value, _pickedPlaces.value), lodging)
+        }
+        val questions = pending.map { ReviewQuestion(it.id, it.dayNumber, reviewFact(it, plan)) }
+
+        viewModelScope.launch {
+            _reviewLoading.value = true
+            AppContainer.planReviewer.review(questions, summaries)
+                .onSuccess { reply ->
+                    Log.d(TAG, "review 문제 ${pending.size}건 토큰 in=${reply.inputTokens} out=${reply.outputTokens}")
+                    // 답이 빠진 문제도 빈 답으로 채운다. 안 그러면 펼칠 때마다 같은 것을 다시 묻는다.
+                    _reviewAdvice.update { known ->
+                        known + pending.associateWith { issue ->
+                            (reply.advice[issue.id] ?: ReviewAdvice("", emptyList()))
+                                .copy(keyByAlias = summaries.getValue(issue.dayNumber).keyByAlias)
+                        }
+                    }
+                }
+                .onFailure { showWithoutUndo(string(textEditFailureRes(it))) }
+            _reviewLoading.value = false
+        }
+    }
+
+    /**
+     * 문제 하나를 고친다. AI 명령을 먼저, 하나도 먹히지 않으면 규칙의 기본 수정을 시도한다.
+     * 실행은 말로 고치기와 같은 [applyCommands] 경로라 저장·되돌리기도 같다.
+     */
+    fun fixIssue(issue: ReviewIssue) {
+        val plan = (_uiState.value as? TripPlanUiState.Success)?.plan ?: return
+        val day = plan.dailyPlans.firstOrNull { it.dayNumber == issue.dayNumber } ?: return
+        val lodging = plan.lodging?.qualityFirst?.item?.location
+        val edits = _edits.value
+        val picked = _pickedPlaces.value
+        val summary = summarizeDay(day.editedTimeline(edits, picked), lodging)
+
+        val advice = _reviewAdvice.value[issue]?.takeIf { it.commands.isNotEmpty() }
+        val result = advice?.let { applyFirst(day, edits, listOf(it.commands), it.keyByAlias, lodging, picked) }
+            ?: applyFirst(day, edits, defaultFixes(issue, day, edits, picked, summary), summary.keyByAlias, lodging, picked)
+
+        if (result == null) {
+            showWithoutUndo(string(R.string.review_fix_failed))
+            return
+        }
+        _undoEdits.value = edits
+        updateEdits { result.edits }
+        _message.value = string(R.string.review_fixed)
+    }
+
+    /**
+     * 서버에 보낼 사실 문장. 화면의 항목 제목도 이것이다 — AI 설명이 없어도(둘러보기·실패) 무엇이
+     * 문제인지는 보여야 한다. 화면 언어로 쓰고, 모델은 같은 언어로 답한다.
+     */
+    private fun reviewFact(issue: ReviewIssue, plan: TripPlan): String = when (issue) {
+        is ReviewIssue.LongDay -> string(
+            R.string.review_fact_long,
+            issue.dayNumber,
+            minutesText(issue.minutes),
+            minutesText(issue.limitMinutes),
+        )
+        is ReviewIssue.SameKind -> string(
+            R.string.review_fact_same_kind,
+            issue.dayNumber,
+            string(issue.meal.labelRes),
+            issue.restaurantName,
+            issue.category,
+            issue.previousDay,
+            string(issue.previousMeal.labelRes),
+            issue.previousName,
+        )
+        is ReviewIssue.Closed -> {
+            val weekday = plan.dailyPlans.first { it.dayNumber == issue.dayNumber }.date.dayOfWeek
+                .getDisplayName(TextStyle.FULL, Locale.getDefault())
+            when (val meal = issue.meal) {
+                null -> string(R.string.review_fact_closed_place, issue.dayNumber, weekday, issue.name)
+                else -> string(R.string.review_fact_closed_meal, issue.dayNumber, weekday, string(meal.labelRes), issue.name)
+            }
+        }
+    }
+
+    /** "3시간 20분". 화면의 durationText는 Composable이라 여기서 못 쓴다 — 같은 문자열 리소스를 쓴다. */
+    private fun minutesText(minutes: Int): String {
+        val hours = minutes / MINUTES_PER_HOUR
+        val rest = minutes % MINUTES_PER_HOUR
+        return when {
+            hours == 0 -> string(R.string.fmt_duration_m, rest)
+            rest == 0 -> string(R.string.fmt_duration_h, hours)
+            else -> string(R.string.fmt_duration_hm, hours, rest)
+        }
+    }
+
     /**
      * 편집을 저장된 일정에 붙인다.
      *
@@ -628,5 +768,10 @@ class TripPlanViewModel(
          * 도는 일이라 화면이 늦어지지는 않는다.
          */
         const val RESTORE_EDITS_TIMEOUT_MS = 3_000L
+
+        /** 한 번에 묻는 문제 수. 서버의 MAX_ISSUES(functions/src/reviewIssues.ts)와 같다 — 넘으면 거절된다. */
+        const val MAX_REVIEW_ISSUES = 8
+
+        const val MINUTES_PER_HOUR = 60
     }
 }

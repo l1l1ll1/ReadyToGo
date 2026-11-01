@@ -23,7 +23,7 @@ const MAX_SENTENCE_LENGTH = 200;
 const MAX_ITEMS = 20;
 
 /** 앱이 보내는 하루 일정의 한 줄. 별칭 id(a1, m_lunch)를 쓴다. */
-interface DayItem {
+export interface DayItem {
   id: string;
   kind: "meal" | "place";
   name: string;
@@ -138,14 +138,14 @@ function parseRequest(data: unknown): EditDayRequest {
 }
 
 /**
- * 일정을 한 줄씩 적는다. JSON 그대로 보내는 것보다 따옴표·키 이름이 빠져 토큰이 적다.
+ * 일정 한 줄. JSON 그대로 보내는 것보다 따옴표·키 이름이 빠져 토큰이 적다.
+ * 일정 검토(reviewIssues)도 같은 형식을 쓴다 — 모델이 보는 일정 모양이 같아야 한다.
  * 예) a1 | 관광지 | 센소지 | buddhist_temple | 체류 90분 | 이동 15분 | 숙소 3.1km
- * @param {EditDayRequest} request 검사를 통과한 요청
- * @return {string} 모델에 줄 사용자 메시지
+ * @param {DayItem} item 일정 항목
+ * @return {string} 한 줄
  */
-function renderUserMessage(request: EditDayRequest): string {
-  const {sentence, items} = request;
-  const lines = items.map((item) => [
+export function renderItemLine(item: DayItem): string {
+  return [
     item.id,
     item.kind === "meal" ? "끼니" : "관광지",
     item.name,
@@ -153,6 +153,15 @@ function renderUserMessage(request: EditDayRequest): string {
     `체류 ${item.stayMin}분`,
     `이동 ${item.moveMin}분`,
     item.lodgingKm == null ? "숙소 거리 모름" : `숙소 ${item.lodgingKm}km`,
-  ].join(" | "));
+  ].join(" | ");
+}
+
+/**
+ * @param {EditDayRequest} request 검사를 통과한 요청
+ * @return {string} 모델에 줄 사용자 메시지
+ */
+function renderUserMessage(request: EditDayRequest): string {
+  const {sentence, items} = request;
+  const lines = items.map(renderItemLine);
   return `오늘 일정(시간 순):\n${lines.join("\n")}\n\n사용자: ${sentence}`;
 }

@@ -11,3 +11,4 @@ initializeApp();
 setGlobalOptions({maxInstances: 2});
 
 export {editDay} from "./editDay";
+export {reviewIssues} from "./reviewIssues";

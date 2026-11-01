@@ -280,7 +280,10 @@
     README(한국어 + 영문 요약, Mermaid)·docs/(scoring, agent-pipeline, costs)·LICENSE(MIT)·NOTICE, 스크린샷 4장 새로 촬영
   - 중간에 찾은 것: 실내/실외 표가 세부 본업 타입(city_park, public_bath)을 몰라 새 데이터에서 비 규칙이 꺼졌다 → 표 보강
 - **⑫ UI 개선 진행 중** (design/mockup 시안 기준): 토큰·탭바·홈·결과 머리·요약·일정표·AI 도우미 시트·글줄(FitText)·모션 완료.
-  남음: 시안 없는 화면(입력 폼·설정·여행·저장 탭) 톤 맞추기 → README 스크린샷·GIF·Release 재작업
+  시안 없는 화면 톤 맞추기 완료 — 고르는 칩 하나로(PillChip: 남색 선택·흰 바탕·테두리 없음, 흰 카드 안에선 배경색),
+  입력 폼 인원·예산·목적을 흰 카드로, 설정은 섹션마다 흰 카드 + 화살표, 입력·설정 머리는 둥근 뒤로(ScreenTopBar),
+  여행·저장 탭에 큰 제목(TabHeader). AI 도우미: 도착일엔 "오후 하나 빼줘" 칩 숨김, 미리보기 아이콘 빼기·바꾸기·순서 셋.
+  남음: README 스크린샷·GIF·Release 재작업
 - **미확인**: 지도에 체크·끌어서 순서 바꾸기 반영(같은 toTimeline 경로라 될 것으로 보나 에뮬레이터에서 직접은 안 해 봄)
 - **보류**: 스토어 등록 시 Hosting 배포 필요 — 지금은 방침을 앱 안 WebView(assets의 hosting/privacy.html)로만 보여준다.
   firebase.json에 hosting 설정은 해 두었으니 `npx firebase deploy --only hosting` 뒤 PrivacyScreen의 PRIVACY_URL에 주소를 넣으면 된다.

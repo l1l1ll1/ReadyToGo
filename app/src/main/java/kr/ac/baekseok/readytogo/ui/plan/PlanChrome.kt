@@ -1,5 +1,6 @@
 package kr.ac.baekseok.readytogo.ui.plan
 
+import kr.ac.baekseok.readytogo.ui.component.RoundIconButton
 import kr.ac.baekseok.readytogo.ui.theme.pressClickable
 import kr.ac.baekseok.readytogo.ui.theme.pressScale
 import kr.ac.baekseok.readytogo.ui.theme.motionTween
@@ -108,20 +109,6 @@ fun PlanTopBar(
     }
 }
 
-/** 흰 원 안의 아이콘 버튼(시안의 뒤로·공유·저장, 시트 닫기). */
-@Composable
-fun RoundIconButton(icon: ImageVector, description: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = modifier
-            .size(Tokens.Size.roundButton)
-            .clip(CircleShape)
-            .background(LocalPalette.current.Surface)
-            .pressClickable(role = Role.Button, onClickLabel = description, onClick = onClick),
-    ) {
-        Icon(icon, contentDescription = description, tint = LocalPalette.current.TextPrimary)
-    }
-}
 
 /**
  * 결과 화면 탭(design/mockup/summary) — 흰 pill 묶음 안에서 고른 칸만 짙은 남색으로 채운다.

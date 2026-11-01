@@ -12,11 +12,12 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.FilterChip
+import kr.ac.baekseok.readytogo.ui.component.PillChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -125,6 +126,11 @@ fun BudgetSection(
             valueRange = 0f..1f,
             // steps를 주지 않는 이유: 10만원 단위면 눈금이 수십 개라 막대가 점선처럼 보인다.
             // 값을 끊는 건 toBudgetWon에서 하므로 눈금은 없어도 된다.
+            // 남은 구간을 M3 기본(연노랑) 대신 배경색으로 — 노랑은 이 앱에서 "고른 상태"로 읽혔다.
+            colors = SliderDefaults.colors(
+                inactiveTrackColor = LocalPalette.current.Background,
+                inactiveTickColor = LocalPalette.current.Background,
+            ),
         )
 
         Row(
@@ -153,11 +159,11 @@ fun BudgetSection(
             verticalArrangement = Arrangement.spacedBy(Tokens.Space.sm),
         ) {
             BudgetRange.quickOptionsFor(adults).forEach { amount ->
-                FilterChip(
+                PillChip(
+                    text = moneyShort(amount),
                     selected = budgetWon == amount,
                     onClick = { onBudgetSelected(amount) },
-                    label = { Text(moneyShort(amount)) },
-                    shape = Tokens.Radius.chip,
+                    container = LocalPalette.current.Background,
                 )
             }
         }

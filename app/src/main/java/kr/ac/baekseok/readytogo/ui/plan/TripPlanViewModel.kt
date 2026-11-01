@@ -484,10 +484,10 @@ class TripPlanViewModel(
         val lines = old.mapNotNull { before ->
             val after = newByKey[before.key]
             when {
-                after == null -> PreviewLine(before.label(), string(R.string.plan_text_edit_preview_removed))
-                after.placeId != before.placeId -> PreviewLine(before.label(), after.label())
+                after == null -> PreviewLine(before.label(), string(R.string.plan_text_edit_preview_removed), PreviewKind.REMOVED)
+                after.placeId != before.placeId -> PreviewLine(before.label(), after.label(), PreviewKind.SWAPPED)
                 keptOld.indexOf(before.key) != keptNew.indexOf(before.key) ->
-                    PreviewLine(before.label(), string(R.string.plan_text_edit_preview_moved))
+                    PreviewLine(before.label(), string(R.string.plan_text_edit_preview_moved), PreviewKind.MOVED)
                 else -> null
             }
         }

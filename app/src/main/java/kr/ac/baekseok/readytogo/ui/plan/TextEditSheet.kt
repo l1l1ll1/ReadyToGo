@@ -1,10 +1,14 @@
 package kr.ac.baekseok.readytogo.ui.plan
 
+import kr.ac.baekseok.readytogo.ui.component.RoundIconButton
 import kr.ac.baekseok.readytogo.ui.component.FitText
 import kr.ac.baekseok.readytogo.ui.component.DashedDivider
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.semantics.Role
 import androidx.compose.material.icons.outlined.SwapHoriz
+import androidx.compose.material.icons.outlined.SwapVert
+import androidx.compose.material.icons.outlined.RemoveCircleOutline
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.material.icons.automirrored.outlined.ArrowForward
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -190,8 +194,9 @@ fun TextEditSheet(
             }
 
             // 예시 칩 — 누르면 입력창에 채워진다(바로 보내지는 않는다. 고쳐 쓸 수 있게).
-            val chips = listOf(
-                stringResource(R.string.plan_text_edit_chip_1),
+            // 도착일은 관광지가 한 곳뿐이고 점심 뒤에 오지 않아 "오후 하나 빼줘"가 늘 "이해하지 못했어요"로 끝난다.
+            val chips = listOfNotNull(
+                stringResource(R.string.plan_text_edit_chip_1).takeIf { dayNumber != ARRIVAL_DAY },
                 stringResource(R.string.plan_text_edit_chip_2),
                 stringResource(R.string.plan_text_edit_chip_3),
             )
@@ -368,7 +373,7 @@ private fun PreviewRow(line: PreviewLine) {
                 .clip(CircleShape)
                 .background(palette.PointLight),
         ) {
-            Icon(Icons.Outlined.SwapHoriz, contentDescription = null, tint = palette.PointDark)
+            Icon(line.kind.icon(), contentDescription = null, tint = palette.PointDark)
         }
         FitText(
             text = "${line.before} → ${line.after}",
@@ -382,3 +387,13 @@ private fun PreviewRow(line: PreviewLine) {
 // AI 버튼 대기 펄스의 테두리 진하기 범위.
 private const val PULSE_MIN_ALPHA = 0.15f
 private const val PULSE_MAX_ALPHA = 0.9f
+
+/** 첫날이 도착일이다(일정 생성이 항상 그렇게 만든다). */
+private const val ARRIVAL_DAY = 1
+
+/** 빼기는 빼는 표시, 바꾸기는 좌우 교환, 순서는 위아래 교환 — 일정표가 위아래로 흐르기 때문이다. */
+private fun PreviewKind.icon(): ImageVector = when (this) {
+    PreviewKind.REMOVED -> Icons.Outlined.RemoveCircleOutline
+    PreviewKind.SWAPPED -> Icons.Outlined.SwapHoriz
+    PreviewKind.MOVED -> Icons.Outlined.SwapVert
+}

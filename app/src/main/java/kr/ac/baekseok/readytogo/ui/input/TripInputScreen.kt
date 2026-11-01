@@ -1,5 +1,6 @@
 package kr.ac.baekseok.readytogo.ui.input
 
+import kr.ac.baekseok.readytogo.ui.component.ScreenTopBar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -28,7 +29,7 @@ import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.RemoveCircleOutline
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
+import kr.ac.baekseok.readytogo.ui.component.PillChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -93,19 +94,7 @@ fun TripInputScreen(
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = LocalPalette.current.Background,
-        topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.input_title)) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.common_back))
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = LocalPalette.current.Background,
-                ),
-            )
-        },
+        topBar = { ScreenTopBar(title = stringResource(R.string.input_title), onBack = onBack) },
         bottomBar = {
             // CTA를 하단에 고정한다. 스크롤 끝까지 내려가야 버튼이 나오면 못 찾는 사람이 생긴다.
             CreatePlanBar(
@@ -136,23 +125,29 @@ fun TripInputScreen(
                 onClick = { showDateSheet = true },
             )
 
-            PartySection(
-                adults = condition.adults,
-                roomCount = condition.roomCount,
-                onChange = viewModel::onAdultsChange,
-            )
+            FormCard {
+                PartySection(
+                    adults = condition.adults,
+                    roomCount = condition.roomCount,
+                    onChange = viewModel::onAdultsChange,
+                )
+            }
 
-            BudgetSection(
-                budgetWon = condition.budgetWon ?: TripInputViewModel.DEFAULT_BUDGET_WON,
-                adults = condition.adults,
-                onBudgetSelected = viewModel::onBudgetSelected,
-                onBudgetTyped = viewModel::onBudgetTyped,
-            )
+            FormCard {
+                BudgetSection(
+                    budgetWon = condition.budgetWon ?: TripInputViewModel.DEFAULT_BUDGET_WON,
+                    adults = condition.adults,
+                    onBudgetSelected = viewModel::onBudgetSelected,
+                    onBudgetTyped = viewModel::onBudgetTyped,
+                )
+            }
 
-            PurposeSection(
-                selected = condition.purposes,
-                onToggle = viewModel::onPurposeToggle,
-            )
+            FormCard {
+                PurposeSection(
+                    selected = condition.purposes,
+                    onToggle = viewModel::onPurposeToggle,
+                )
+            }
 
             // 마지막 칩이 하단 바에 딱 붙어 빽빽해 보인다. 영어처럼 칩이 두 줄로
             // 넘어가는 언어에서 더 심하다. 스크롤 끝에 숨 쉴 자리를 둔다.
@@ -395,18 +390,12 @@ private fun PurposeSection(
             modifier = Modifier.fillMaxWidth(),
         ) {
             TravelPurpose.entries.forEach { purpose ->
-                FilterChip(
+                PillChip(
+                    text = stringResource(purpose.labelRes),
                     selected = purpose in selected,
                     onClick = { onToggle(purpose) },
-                    label = { Text(text = stringResource(purpose.labelRes), maxLines = 1) },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = purpose.icon,
-                            contentDescription = null,
-                            modifier = Modifier.size(FilterChipDefaults.IconSize),
-                        )
-                    },
-                    shape = Tokens.Radius.chip,
+                    icon = purpose.icon,
+                    container = LocalPalette.current.Background,
                 )
             }
         }
@@ -454,5 +443,22 @@ private fun CreatePlanBar(
                 onClick = onClick,
             )
         }
+    }
+}
+
+/**
+ * 인원·예산·목적을 담는 흰 카드. 위의 노선·날짜 카드와 같은 바탕에 올려 다섯 덩어리가
+ * 같은 무게로 읽히게 한다 — 앞 둘만 카드면 아래 셋이 배경에 떠 있는 것처럼 보였다.
+ */
+@Composable
+private fun FormCard(content: @Composable () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(Tokens.Radius.card)
+            .background(LocalPalette.current.Surface)
+            .padding(Tokens.Space.lg),
+    ) {
+        content()
     }
 }

@@ -1,5 +1,6 @@
 package kr.ac.baekseok.readytogo.ui.navigation
 
+import kr.ac.baekseok.readytogo.ui.component.ScreenTopBar
 import kr.ac.baekseok.readytogo.ui.theme.LocalReduceMotion
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideOutHorizontally
@@ -479,22 +480,7 @@ private fun TitledScreen(
 ) {
     Scaffold(
         containerColor = LocalPalette.current.Background,
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text(title) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.common_back),
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = LocalPalette.current.Background,
-                ),
-            )
-        },
+        topBar = { ScreenTopBar(title = title, onBack = onBack) },
     ) { padding ->
         Box(modifier = Modifier.padding(padding)) { content() }
     }

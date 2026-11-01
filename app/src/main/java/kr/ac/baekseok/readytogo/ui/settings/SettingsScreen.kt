@@ -5,6 +5,11 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
+import androidx.compose.ui.draw.clip
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
+import androidx.compose.material3.Icon
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -92,107 +97,110 @@ fun SettingsScreen(
         contentPadding = PaddingValues(
             start = Tokens.Space.screenHorizontal,
             end = Tokens.Space.screenHorizontal,
-            top = Tokens.Space.lg,
+            top = Tokens.Space.sm,
             bottom = Tokens.Space.xxl,
         ),
-        verticalArrangement = Arrangement.spacedBy(Tokens.Space.xs),
+        verticalArrangement = Arrangement.spacedBy(Tokens.Space.xl),
     ) {
-        item { SectionHeader(title = stringResource(R.string.settings_section_account)) }
         item {
-            NavigationRow(
-                label = stringResource(R.string.settings_account),
-                onClick = onOpenAccount,
-            )
+            SettingsGroup(title = stringResource(R.string.settings_section_account)) {
+                NavigationRow(
+                    label = stringResource(R.string.settings_account),
+                    onClick = onOpenAccount,
+                )
+            }
         }
 
-        item { SettingsSectionGap(title = stringResource(R.string.settings_section_language)) }
         item {
-            NavigationRow(
-                label = stringResource(R.string.settings_language),
-                value = stringResource(settings.language.labelRes),
-                onClick = { showLanguagePicker = true },
-            )
+            SettingsGroup(title = stringResource(R.string.settings_section_language)) {
+                NavigationRow(
+                    label = stringResource(R.string.settings_language),
+                    value = stringResource(settings.language.labelRes),
+                    onClick = { showLanguagePicker = true },
+                )
+            }
         }
 
-        item { SettingsSectionGap(title = stringResource(R.string.settings_section_notification)) }
         item {
-            ToggleRow(
-                label = stringResource(R.string.settings_notify_week),
-                checked = settings.notifyBeforeWeek,
-                onCheckedChange = { toggleNotification(it, viewModel::setNotifyBeforeWeek) },
-            )
-        }
-        item {
-            ToggleRow(
-                label = stringResource(R.string.settings_notify_day),
-                checked = settings.notifyBeforeDay,
-                onCheckedChange = { toggleNotification(it, viewModel::setNotifyBeforeDay) },
-            )
+            SettingsGroup(title = stringResource(R.string.settings_section_notification)) {
+                ToggleRow(
+                    label = stringResource(R.string.settings_notify_week),
+                    checked = settings.notifyBeforeWeek,
+                    onCheckedChange = { toggleNotification(it, viewModel::setNotifyBeforeWeek) },
+                )
+                RowDivider()
+                ToggleRow(
+                    label = stringResource(R.string.settings_notify_day),
+                    checked = settings.notifyBeforeDay,
+                    onCheckedChange = { toggleNotification(it, viewModel::setNotifyBeforeDay) },
+                )
+            }
         }
 
-        item { SettingsSectionGap(title = stringResource(R.string.settings_section_data)) }
         item {
-            ToggleRow(
-                label = stringResource(R.string.settings_place_photos),
-                description = stringResource(R.string.settings_place_photos_body),
-                checked = settings.showPlacePhotos,
-                onCheckedChange = viewModel::setShowPlacePhotos,
-            )
-        }
-        item {
-            // 무료 한도가 있어서 얼마나 썼는지 보여준다. 상한에 닿으면 사진이 조용히
-            // 안 뜨는데, 그때 이유를 짐작할 데가 여기밖에 없다.
-            //
-            // 화면을 열 때마다 읽는다 — 설정 화면이 떠 있는 동안 숫자가 늘 일은 없다.
-            InfoRow(
-                label = stringResource(R.string.settings_photo_usage),
-                value = stringResource(
-                    R.string.settings_photo_usage_value,
-                    AppContainer.photoBudget.usedThisMonth(),
-                    PhotoBudget.MONTHLY_PHOTO_LIMIT,
-                ),
-            )
+            SettingsGroup(title = stringResource(R.string.settings_section_data)) {
+                ToggleRow(
+                    label = stringResource(R.string.settings_place_photos),
+                    description = stringResource(R.string.settings_place_photos_body),
+                    checked = settings.showPlacePhotos,
+                    onCheckedChange = viewModel::setShowPlacePhotos,
+                )
+                RowDivider()
+                // 무료 한도가 있어서 얼마나 썼는지 보여준다. 상한에 닿으면 사진이 조용히
+                // 안 뜨는데, 그때 이유를 짐작할 데가 여기밖에 없다.
+                //
+                // 화면을 열 때마다 읽는다 — 설정 화면이 떠 있는 동안 숫자가 늘 일은 없다.
+                InfoRow(
+                    label = stringResource(R.string.settings_photo_usage),
+                    value = stringResource(
+                        R.string.settings_photo_usage_value,
+                        AppContainer.photoBudget.usedThisMonth(),
+                        PhotoBudget.MONTHLY_PHOTO_LIMIT,
+                    ),
+                )
+            }
         }
 
         // 다크 모드는 접근성이 아니라 취향이다. 고대비와 같은 칸에 두면 뜻이 섞인다.
-        item { SettingsSectionGap(title = stringResource(R.string.settings_section_display)) }
         item {
-            NavigationRow(
-                label = stringResource(R.string.settings_theme),
-                value = stringResource(settings.theme.labelRes),
-                onClick = { showThemePicker = true },
-            )
+            SettingsGroup(title = stringResource(R.string.settings_section_display)) {
+                NavigationRow(
+                    label = stringResource(R.string.settings_theme),
+                    value = stringResource(settings.theme.labelRes),
+                    onClick = { showThemePicker = true },
+                )
+            }
         }
 
-        item { SettingsSectionGap(title = stringResource(R.string.settings_section_accessibility)) }
         item {
-            NavigationRow(
-                label = stringResource(R.string.settings_text_scale),
-                value = stringResource(settings.textScale.labelRes),
-                onClick = { showTextScalePicker = true },
-            )
-        }
-        item {
-            ToggleRow(
-                label = stringResource(R.string.settings_high_contrast),
-                description = stringResource(R.string.settings_high_contrast_body),
-                checked = settings.highContrast,
-                onCheckedChange = viewModel::setHighContrast,
-            )
+            SettingsGroup(title = stringResource(R.string.settings_section_accessibility)) {
+                NavigationRow(
+                    label = stringResource(R.string.settings_text_scale),
+                    value = stringResource(settings.textScale.labelRes),
+                    onClick = { showTextScalePicker = true },
+                )
+                RowDivider()
+                ToggleRow(
+                    label = stringResource(R.string.settings_high_contrast),
+                    description = stringResource(R.string.settings_high_contrast_body),
+                    checked = settings.highContrast,
+                    onCheckedChange = viewModel::setHighContrast,
+                )
+            }
         }
 
-        item { SettingsSectionGap(title = stringResource(R.string.settings_section_help)) }
         item {
-            NavigationRow(
-                label = stringResource(R.string.profile_support),
-                onClick = onOpenSupport,
-            )
-        }
-        item {
-            NavigationRow(
-                label = stringResource(R.string.profile_about),
-                onClick = onOpenAbout,
-            )
+            SettingsGroup(title = stringResource(R.string.settings_section_help)) {
+                NavigationRow(
+                    label = stringResource(R.string.profile_support),
+                    onClick = onOpenSupport,
+                )
+                RowDivider()
+                NavigationRow(
+                    label = stringResource(R.string.profile_about),
+                    onClick = onOpenAbout,
+                )
+            }
         }
     }
 
@@ -239,16 +247,30 @@ fun SettingsScreen(
     }
 }
 
-/** 섹션 사이 간격 + 제목. 첫 섹션만 간격이 없어야 해서 따로 쓴다. */
+/**
+ * 섹션 = 제목 + 흰 카드 한 장(결과 화면·홈 카드와 같은 바탕). 전에는 줄이 배경 위에 그대로 놓이고
+ * 점선으로만 섹션을 갈라, 카드로 된 다른 화면들 사이에서 이 화면만 문서처럼 보였다.
+ */
 @Composable
-private fun SettingsSectionGap(title: String) {
-    Column {
-        DashedDivider(
-            color = LocalPalette.current.Divider,
-            modifier = Modifier.padding(vertical = Tokens.Space.lg),
-        )
+private fun SettingsGroup(title: String, content: @Composable () -> Unit) {
+    Column(verticalArrangement = Arrangement.spacedBy(Tokens.Space.sm)) {
         SectionHeader(title = title)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(Tokens.Radius.card)
+                .background(LocalPalette.current.Surface)
+                .padding(horizontal = Tokens.Space.lg),
+        ) {
+            content()
+        }
     }
+}
+
+/** 같은 카드 안 줄 사이 점선(일정표 항목 사이와 같은 선). */
+@Composable
+private fun RowDivider() {
+    DashedDivider(color = LocalPalette.current.Divider)
 }
 
 /**
@@ -304,6 +326,12 @@ private fun NavigationRow(label: String, value: String? = null, onClick: () -> U
                 color = LocalPalette.current.TextSecondary,
             )
         }
+        // 프로필 메뉴와 같은 화살표 — 들어가는 줄과 토글 줄이 한 카드에 섞여도 구분된다.
+        Icon(
+            imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
+            contentDescription = null,
+            tint = LocalPalette.current.TextSecondary,
+        )
     }
 }
 

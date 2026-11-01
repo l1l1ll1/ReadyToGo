@@ -1,5 +1,7 @@
 package kr.ac.baekseok.readytogo.ui.saved
 
+import kr.ac.baekseok.readytogo.ui.component.TabHeader
+import kr.ac.baekseok.readytogo.ui.component.FitText
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,7 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.FilterChip
+import kr.ac.baekseok.readytogo.ui.component.PillChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -77,6 +79,12 @@ fun SavedScreen(
                 verticalArrangement = Arrangement.spacedBy(Tokens.Space.sm),
             ) {
                 item {
+                    TabHeader(
+                        title = stringResource(R.string.profile_saved_places),
+                        modifier = Modifier.padding(bottom = Tokens.Space.sm),
+                    )
+                }
+                item {
                     KindFilter(
                         selected = state.filter,
                         counts = state.countsByKind,
@@ -118,19 +126,17 @@ private fun KindFilter(
         horizontalArrangement = Arrangement.spacedBy(Tokens.Space.sm),
         modifier = Modifier.padding(bottom = Tokens.Space.sm),
     ) {
-        FilterChip(
+        PillChip(
+            text = stringResource(R.string.saved_filter_all, total),
             selected = selected == null,
             onClick = { onSelect(null) },
-            label = { Text(stringResource(R.string.saved_filter_all, total)) },
-            shape = Tokens.Radius.chip,
         )
         FavoriteKind.entries.forEach { kind ->
             val count = counts[kind] ?: 0
-            FilterChip(
+            PillChip(
+                text = "${stringResource(kind.labelRes)} $count",
                 selected = selected == kind,
                 onClick = { onSelect(kind) },
-                label = { Text("${stringResource(kind.labelRes)} $count") },
-                shape = Tokens.Radius.chip,
             )
         }
     }
@@ -159,12 +165,8 @@ private fun FavoriteRow(
             verticalArrangement = Arrangement.spacedBy(Tokens.Space.xs),
             modifier = Modifier.weight(1f),
         ) {
-            Text(
-                text = place.name,
-                style = MaterialTheme.typography.titleSmall,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
+            // 말줄임 대신 한 줄에 맞춰 줄인다(FitText) — 일정표·홈 카드와 같은 규칙.
+            FitText(text = place.name, style = MaterialTheme.typography.titleSmall)
             Text(
                 // 관광지는 Places 카테고리가 없어 비어 있다. 그때는 종류 이름으로 채운다.
                 text = "${place.category.ifBlank { stringResource(place.kind.labelRes) }} · " +

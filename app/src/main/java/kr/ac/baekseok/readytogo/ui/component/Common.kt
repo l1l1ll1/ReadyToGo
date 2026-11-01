@@ -223,3 +223,23 @@ fun EmptyState(
         }
     }
 }
+
+/**
+ * 탭 화면 맨 위의 큰 제목(여행·저장 탭). 홈의 "다음 여행"과 같은 크기로 맞춘다 — 탭을 넘길 때
+ * 제목 자리가 같아야 네 탭이 한 앱으로 읽힌다. 전에는 제목 없이 안내 문장이나 칩부터 시작했다.
+ *
+ * @param caption 제목 아래 한 줄 안내(없으면 생략).
+ */
+@Composable
+fun TabHeader(title: String, caption: String? = null, modifier: Modifier = Modifier) {
+    Column(verticalArrangement = Arrangement.spacedBy(Tokens.Space.xs), modifier = modifier) {
+        Text(text = title, style = MaterialTheme.typography.headlineMedium)
+        if (caption != null) {
+            Text(
+                text = caption,
+                style = MaterialTheme.typography.bodyMedium,
+                color = LocalPalette.current.TextSecondary,
+            )
+        }
+    }
+}

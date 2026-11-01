@@ -41,5 +41,8 @@ data class TextEditPreview(
     val notice: String?,
 )
 
-/** 미리보기 한 줄. [after]는 바뀐 장소 이름, 또는 "빼기"·"순서 바꿈". */
-data class PreviewLine(val before: String, val after: String)
+/** 미리보기 한 줄. [after]는 바뀐 장소 이름, 또는 "빼기"·"순서 바꿈". [kind]로 시트가 아이콘을 고른다. */
+data class PreviewLine(val before: String, val after: String, val kind: PreviewKind)
+
+/** 미리보기 줄의 종류 — 셋을 같은 아이콘으로 보이면 뺀 것과 바꾼 것을 한눈에 구분하지 못한다. */
+enum class PreviewKind { REMOVED, SWAPPED, MOVED }

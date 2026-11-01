@@ -1,5 +1,6 @@
 package kr.ac.baekseok.readytogo.ui.trips
 
+import kr.ac.baekseok.readytogo.ui.component.TabHeader
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -88,14 +89,13 @@ fun TripsScreen(
                 // 길게 누르기는 눌러보지 않으면 알 수 없다. 한 줄로 알려준다.
                 // **카드가 보일 때만.** 지난 여행만 있고 그마저 접혀 있으면 누를 카드가
                 // 없는데 안내만 떠서 화면이 비어 보인다.
-                if (state.upcoming.isNotEmpty() || pastExpanded) {
-                    item {
-                        Text(
-                            text = stringResource(R.string.trips_long_press_hint),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = LocalPalette.current.TextSecondary,
-                        )
-                    }
+                item {
+                    TabHeader(
+                        title = stringResource(R.string.tab_trips),
+                        caption = stringResource(R.string.trips_long_press_hint)
+                            .takeIf { state.upcoming.isNotEmpty() || pastExpanded },
+                        modifier = Modifier.padding(bottom = Tokens.Space.sm),
+                    )
                 }
 
                 if (state.upcoming.isNotEmpty()) {

@@ -1,7 +1,7 @@
 package kr.ac.baekseok.readytogo.data.repository
 
 import kr.ac.baekseok.readytogo.data.model.LatLng
-import kr.ac.baekseok.readytogo.domain.weather.DailyWeather
+import kr.ac.baekseok.readytogo.domain.weather.WeatherForecast
 import java.time.LocalDate
 
 /**
@@ -15,5 +15,5 @@ interface WeatherRepository {
      * 받지 못한 날은 결과에 없다. 실패해도 계획은 그대로 보여야 하므로 예외를 던지지 않고
      * 빈 결과를 돌려준다 — 날씨는 덧붙이는 정보다.
      */
-    suspend fun dailyForecast(location: LatLng, dates: List<LocalDate>): Map<LocalDate, DailyWeather>
+    suspend fun dailyForecast(location: LatLng, dates: List<LocalDate>): WeatherForecast
 }

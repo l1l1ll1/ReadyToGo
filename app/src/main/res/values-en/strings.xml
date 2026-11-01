@@ -234,6 +234,7 @@
     <string name="plan_text_edit_reject_meal_fixed">meals can\'t be removed or moved</string>
     <string name="plan_text_edit_reject_position">can\'t move there</string>
     <string name="plan_text_edit_reject_no_candidate">no other place fits</string>
+    <string name="plan_text_edit_reject_no_indoor">no indoor place nearby</string>
     <string name="plan_text_edit_sign_in">Please sign in.</string>
     <string name="plan_text_edit_too_many">Too many requests. Try again in a minute.</string>
     <string name="plan_text_edit_unavailable">Can\'t process this right now. Please try again shortly.</string>
@@ -243,6 +244,7 @@
     <string name="review_fix">Fix</string>
     <string name="review_fixed">Fixed.</string>
     <string name="review_fix_failed">Couldn\'t find an automatic fix. Please change it in the itinerary.</string>
+    <string name="review_fix_no_indoor">No indoor place nearby. Please change it in the itinerary.</string>
     <string name="review_fact_long">Day %1$d takes %2$s of visits and travel, longer than the fullest day of this trip (%3$s).</string>
     <string name="review_meal_ref">Day %1$d %2$s, %3$s</string>
     <string name="review_fact_same_kind">%1$s is the same kind (%3$s) as the meal right before it: %2$s.</string>
@@ -250,7 +252,9 @@
     <string name="review_fact_closed_place">%3$s on day %1$d (%2$s) is closed that day of the week.</string>
     <string name="review_fact_closed_meal">%4$s for %3$s on day %1$d (%2$s) is closed that day of the week.</string>
     <string name="review_fact_rainy">Day %1$d has a %2$d%% chance of rain or snow, with outdoor stops: %3$s.</string>
-    <string name="weather_attribution">Weather: Open-Meteo</string>
+    <string name="weather_too_early">Weather appears from 7 days before departure</string>
+    <string name="weather_updated_just_now">Weather · updated just now · Open-Meteo</string>
+    <string name="weather_updated_hours">Weather · updated %1$dh ago · Open-Meteo</string>
     <string name="weather_clear">Clear</string>
     <string name="weather_cloudy">Cloudy</string>
     <string name="weather_rain">Rain</string>

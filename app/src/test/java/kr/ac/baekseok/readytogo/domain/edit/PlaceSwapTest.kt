@@ -70,8 +70,9 @@ class PlaceSwapTest {
     @Test
     fun `상위 5곳에 실내가 없으면 가장 나은 실내 하나를 덧붙인다`() {
         val day1 = listOf(place("d1", 35.0))
-        val parks = (1..6).map { place("park$it", 35.0 + it * 0.01, "park") }
-        val museum = place("museum", 36.0, "museum")
+        // 공원은 바로 옆(100m 간격), 박물관은 3.3km — 5km 안이지만 점수로는 7위다.
+        val parks = (1..6).map { place("park$it", 35.0 + it * 0.001, "park") }
+        val museum = place("museum", 35.03, "museum")
 
         val result = alternativesByDay(day1 + parks + museum, listOf(day1), emptySet()).single()
 
@@ -91,6 +92,23 @@ class PlaceSwapTest {
 
     private val current = place("cur", 35.5, "park")
     private val previous = LatLng(35.0, 139.5)
+
+    @Test
+    fun `그날 중심에서 5km 넘는 실내는 덧붙이지 않는다`() {
+        val day1 = listOf(place("d1", 35.0))
+        val parks = (1..6).map { place("park$it", 35.0 + it * 0.001, "park") }
+        val farMuseum = place("museum", 35.1, "museum") // 약 11km
+
+        assertEquals(5, alternativesByDay(day1 + parks + farMuseum, listOf(day1), emptySet()).single().size)
+    }
+
+    @Test
+    fun `실내 - 그날 중심에서 5km 넘으면 고르지 않는다`() {
+        val center = LatLng(35.5, 139.5)
+        val alts = listOf(place("far", 35.6, "museum"), place("near", 35.53, "museum"))
+        assertEquals("near", pickPlaceFor(PlaceBasis.INDOOR, current, alts, previous, emptySet(), null, center)?.id)
+        assertNull(pickPlaceFor(PlaceBasis.INDOOR, current, alts.take(1), previous, emptySet(), null, center))
+    }
 
     @Test
     fun `실내 - 점수 순 후보 중 첫 실내`() {
@@ -127,9 +145,9 @@ class PlaceSwapTest {
     private val day = DayPlan(
         date = LocalDate.of(2026, 11, 2), // 월요일
         dayNumber = 2,
-        attractions = listOf(place("a", 35.1, "park"), place("b", 35.2, "park")),
+        attractions = listOf(place("a", 35.1, "park"), place("b", 35.12, "park")),
         meals = emptyMap(),
-        alternatives = listOf(place("onOtherDay", 35.15, "museum"), place("museum", 35.15, "museum")),
+        alternatives = listOf(place("onOtherDay", 35.11, "museum"), place("museum", 35.11, "museum")),
     )
 
     @Test
@@ -157,7 +175,8 @@ class PlaceSwapTest {
 
         val result = applyCommands(empty, TimelineEdits(), listOf(EditCommand.SwapPlace(alias, PlaceBasis.INDOOR)), summary.keyByAlias, null)
 
-        assertEquals(RejectReason.NO_CANDIDATE, result.rejections.single().reason)
+        // 실내 교체가 실패하면 "근처에 실내 없음"으로 구체적으로 알린다.
+        assertEquals(RejectReason.NO_INDOOR_NEARBY, result.rejections.single().reason)
     }
 
     @Test

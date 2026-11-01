@@ -30,7 +30,7 @@ import kr.ac.baekseok.readytogo.domain.review.applyFirst
 import kr.ac.baekseok.readytogo.domain.review.defaultFixes
 import kr.ac.baekseok.readytogo.domain.review.editedTimeline
 import kr.ac.baekseok.readytogo.domain.review.reviewPlan
-import kr.ac.baekseok.readytogo.domain.weather.DailyWeather
+import kr.ac.baekseok.readytogo.domain.weather.WeatherForecast
 import kr.ac.baekseok.readytogo.ui.format.Particle
 import kr.ac.baekseok.readytogo.ui.format.withParticle
 import kr.ac.baekseok.readytogo.generation.PlanGeneration
@@ -451,6 +451,7 @@ class TripPlanViewModel(
         RejectReason.MEAL_FIXED -> R.string.plan_text_edit_reject_meal_fixed
         RejectReason.BAD_POSITION -> R.string.plan_text_edit_reject_position
         RejectReason.NO_CANDIDATE -> R.string.plan_text_edit_reject_no_candidate
+        RejectReason.NO_INDOOR_NEARBY -> R.string.plan_text_edit_reject_no_indoor
     }
 
     private fun textEditFailureRes(error: Throwable): Int =
@@ -564,8 +565,8 @@ class TripPlanViewModel(
      * 날짜별 예보(⑨-3). D-7 안의 날만 들어 있다. 날짜 칩 아이콘과 비 규칙이 함께 쓴다.
      * 계획이 도착한 뒤 한 번 받는다 — 실패하면 비어 있고 화면은 그대로다.
      */
-    private val _weather = MutableStateFlow<Map<LocalDate, DailyWeather>>(emptyMap())
-    val weather: StateFlow<Map<LocalDate, DailyWeather>> = _weather.asStateFlow()
+    private val _weather = MutableStateFlow(WeatherForecast())
+    val weather: StateFlow<WeatherForecast> = _weather.asStateFlow()
 
     private fun loadWeather(plan: TripPlan) {
         val location = plan.condition.destination?.location ?: return
@@ -580,7 +581,7 @@ class TripPlanViewModel(
      */
     val reviewIssues: StateFlow<List<ReviewIssue>> =
         combine(_uiState, _edits, _pickedPlaces, _weather) { state, edits, picked, weather ->
-            (state as? TripPlanUiState.Success)?.plan?.let { reviewPlan(it, edits, picked, weather) }.orEmpty()
+            (state as? TripPlanUiState.Success)?.plan?.let { reviewPlan(it, edits, picked, weather.days) }.orEmpty()
         }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     /**
@@ -668,7 +669,9 @@ class TripPlanViewModel(
             ?: applyFirst(day, edits, defaultFixes(issue, day, edits, picked, summary), summary.keyByAlias, lodging, picked, others)
 
         if (result == null) {
-            showWithoutUndo(string(R.string.review_fix_failed))
+            // 비 문제는 실내로만 고치므로 실패 이유가 하나다. 막연한 "못 찾았어요"보다 왜인지 알린다.
+            val reason = if (issue is ReviewIssue.Rainy) R.string.review_fix_no_indoor else R.string.review_fix_failed
+            showWithoutUndo(string(reason))
             return
         }
         _undoEdits.value = edits

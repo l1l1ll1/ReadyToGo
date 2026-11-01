@@ -5,6 +5,8 @@ import kr.ac.baekseok.readytogo.data.model.TravelPurpose
 import kr.ac.baekseok.readytogo.domain.purpose.IndoorOutdoor
 import kr.ac.baekseok.readytogo.domain.purpose.Shelter
 import kr.ac.baekseok.readytogo.domain.recommend.attractionScore
+import kr.ac.baekseok.readytogo.domain.recommend.distanceKm
+import kr.ac.baekseok.readytogo.domain.recommend.medianCenter
 
 /**
  * 날마다 관광지 예비 후보. 관광지 교체(swap_place)가 여기서 고른다.
@@ -15,12 +17,13 @@ import kr.ac.baekseok.readytogo.domain.recommend.attractionScore
  *
  * 저장된 일정도 열 때 계획을 다시 만들므로 여기서 다시 계산된다(저장 형식 변경 없음).
  *
+ * **실내 후보 하나는 꼭 남긴다.** 상위 [MAX_ALTERNATIVES]곳에 실내가 없으면 그날 동선 중심에서
+ * [LODGING_FAR_KM] 안의 실내 중 점수가 가장 높은 곳을 뒤에 하나 덧붙인다. 비 오는 날 고치기는 실내로만
+ * 바꾸는데, 그날 근처가 공원뿐이면 고칠 길이 없었다(삿포로 4일차: 근처 5곳이 전부 공원·전망대).
+ * 5km 밖의 실내는 덧붙이지 않는다 — 교체에서도 고르지 않으므로([kr.ac.baekseok.readytogo.domain.edit.pickPlaceFor]) 들고 있을 이유가 없다.
+ *
  * @param candidates 관광지 검색 결과 전체
  * @param dailyAttractions 날짜별로 배치된 관광지
- * **실내 후보 하나는 꼭 남긴다.** 상위 [MAX_ALTERNATIVES]곳에 실내가 없으면 점수가 가장 높은 실내를
- * 뒤에 하나 덧붙인다. 비 오는 날 고치기는 실내로만 바꾸는데, 그날 근처가 공원뿐이면 고칠 길이
- * 없었다(삿포로 4일차: 근처 5곳이 전부 공원·전망대, 맥주 박물관은 6위 밖).
- *
  * @return 날짜별 후보. 점수 높은 순, 날마다 [MAX_ALTERNATIVES]곳(+ 실내 1곳)까지
  */
 fun alternativesByDay(
@@ -36,7 +39,10 @@ fun alternativesByDay(
         val anchors = (day.ifEmpty { dailyAttractions.flatten() }).map { it.location }
         val ranked = spare.sortedByDescending { attractionScore(it, anchors, purposes) }
         val top = ranked.take(MAX_ALTERNATIVES)
-        val indoor = ranked.firstOrNull { IndoorOutdoor.of(it) == Shelter.INDOOR }
+        val center = medianCenter(day.map { it.location })
+        val indoor = ranked.firstOrNull {
+            IndoorOutdoor.of(it) == Shelter.INDOOR && (center == null || distanceKm(it.location, center) <= LODGING_FAR_KM)
+        }
         if (indoor == null || indoor in top) top else top + indoor
     }
 }

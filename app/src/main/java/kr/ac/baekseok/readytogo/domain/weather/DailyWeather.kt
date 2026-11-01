@@ -38,6 +38,36 @@ fun skyOf(code: Int): Sky = when (code) {
 fun forecastDates(tripDates: List<LocalDate>, today: LocalDate): List<LocalDate> =
     tripDates.filter { !it.isBefore(today) && !it.isAfter(today.plusDays(FORECAST_WINDOW_DAYS)) }
 
+/** 여행 날짜가 예보 기간과 어떤 관계인지. 날짜 칩 아래 안내 문구가 이것으로 갈린다. */
+enum class ForecastWindow {
+    /** 여행이 아직 7일보다 멀다 — "출발 7일 전부터 표시" 안내. */
+    TOO_EARLY,
+
+    /** 여행 날짜 중 하나라도 7일 안 — 예보를 묻는다. */
+    IN_RANGE,
+
+    /** 여행이 이미 끝났다 — 아무것도 적지 않는다. */
+    OVER,
+}
+
+fun forecastWindow(tripDates: List<LocalDate>, today: LocalDate): ForecastWindow = when {
+    forecastDates(tripDates, today).isNotEmpty() -> ForecastWindow.IN_RANGE
+    tripDates.any { it.isAfter(today.plusDays(FORECAST_WINDOW_DAYS)) } -> ForecastWindow.TOO_EARLY
+    else -> ForecastWindow.OVER
+}
+
+/**
+ * 예보 묶음.
+ *
+ * @param fetchedAtMillis 이 예보를 받은 시각. "N시간 전 갱신"에 쓴다 — 캐시가 6시간이라
+ *        화면에 보이는 예보가 얼마나 묵었는지 알려야 한다. 받지 못했으면 null.
+ */
+data class WeatherForecast(
+    val days: Map<LocalDate, DailyWeather> = emptyMap(),
+    val window: ForecastWindow = ForecastWindow.OVER,
+    val fetchedAtMillis: Long? = null,
+)
+
 /** 예보를 믿고 일정을 바꾸라고 할 수 있는 기간(일). 사용자가 정한 값이다(D-7). */
 const val FORECAST_WINDOW_DAYS = 7L
 

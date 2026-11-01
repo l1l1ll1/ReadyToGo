@@ -40,4 +40,12 @@ class DailyWeatherTest {
         val trip = listOf(LocalDate.of(2026, 12, 24), LocalDate.of(2026, 12, 25))
         assertEquals(emptyList<LocalDate>(), forecastDates(trip, today))
     }
+
+    @Test
+    fun `여행이 7일 안이면 IN_RANGE, 멀면 TOO_EARLY, 끝났으면 OVER`() {
+        val today = LocalDate.of(2026, 11, 1)
+        assertEquals(ForecastWindow.IN_RANGE, forecastWindow(listOf(today.plusDays(7), today.plusDays(8)), today))
+        assertEquals(ForecastWindow.TOO_EARLY, forecastWindow(listOf(today.plusDays(8)), today))
+        assertEquals(ForecastWindow.OVER, forecastWindow(listOf(today.minusDays(1)), today))
+    }
 }

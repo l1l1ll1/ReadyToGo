@@ -29,6 +29,9 @@ import androidx.compose.material.icons.outlined.WaterDrop
 import androidx.compose.material.icons.outlined.WbSunny
 import kr.ac.baekseok.readytogo.domain.weather.DailyWeather
 import kr.ac.baekseok.readytogo.domain.weather.Sky
+import kr.ac.baekseok.readytogo.domain.weather.ForecastWindow
+import kr.ac.baekseok.readytogo.domain.weather.WeatherForecast
+import java.util.concurrent.TimeUnit
 import java.time.LocalDate
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Delete
@@ -131,8 +134,8 @@ fun TimelineTab(
     onToggleDone: (Int, String) -> Unit,
     /** 말로 고치기 입력창. 보고 있는 날에 적용된다. */
     textEdit: TextEditControls = TextEditControls(),
-    /** 날짜별 예보(D-7 안의 날만). 있는 날의 칩에 아이콘이 붙는다. */
-    weather: Map<LocalDate, DailyWeather> = emptyMap(),
+    /** 날짜별 예보(D-7 안의 날만). 있는 날의 칩에 아이콘이 붙고, 칩 줄 아래에 갱신 시각·안내가 붙는다. */
+    weather: WeatherForecast = WeatherForecast(),
 ) {
     // 여행 중에는 오늘 하루만 보여준다. 길 위에서 필요한 것은 오늘 갈 곳이지 닷새치 목록이
     // 아니다. 다른 날이 궁금하면 "전체 보기"로 편다. 끄고 켜는 것은 이 화면 안에서만 산다 —
@@ -165,15 +168,14 @@ fun TimelineTab(
                         selected = candidate.dayNumber == day?.dayNumber,
                         onClick = { onSelectDay(candidate.dayNumber) },
                         text = {
-                            DayChipLabel(candidate.dayNumber, weather[candidate.date])
+                            DayChipLabel(candidate.dayNumber, weather.days[candidate.date])
                         },
                     )
                 }
             }
-            // Open-Meteo는 CC BY 4.0이라 출처를 밝혀야 한다. 날씨를 보여줄 때만 적는다.
-            if (weather.isNotEmpty()) {
+            weatherNotice(weather)?.let { notice ->
                 Text(
-                    text = stringResource(R.string.weather_attribution),
+                    text = notice,
                     style = MaterialTheme.typography.labelSmall,
                     color = LocalPalette.current.TextSecondary,
                     modifier = Modifier
@@ -897,4 +899,24 @@ private fun Sky.labelRes(): Int = when (this) {
     Sky.CLOUDY -> R.string.weather_cloudy
     Sky.RAIN -> R.string.weather_rain
     Sky.SNOW -> R.string.weather_snow
+}
+
+/**
+ * 날짜 칩 줄 아래 한 줄. 날씨가 왜 안 보이는지, 보이면 얼마나 묵었는지 알린다.
+ *
+ * - 7일보다 먼 여행: 아이콘이 없는 이유("출발 7일 전부터").
+ * - 예보를 받았으면: 받은 지 몇 시간 됐는지 + 출처. 캐시가 6시간이라 아침에 받은 예보를 오후에 보게 된다.
+ *   출처(Open-Meteo, CC BY 4.0)는 날씨를 보여줄 때 반드시 적어야 해서 같은 줄에 둔다.
+ * - 여행이 끝났거나 받지 못했으면 아무것도 적지 않는다.
+ */
+@Composable
+private fun weatherNotice(weather: WeatherForecast): String? {
+    if (weather.window == ForecastWindow.TOO_EARLY) return stringResource(R.string.weather_too_early)
+    val fetchedAt = weather.fetchedAtMillis ?: return null
+    val hours = TimeUnit.MILLISECONDS.toHours(System.currentTimeMillis() - fetchedAt).toInt()
+    return if (hours < 1) {
+        stringResource(R.string.weather_updated_just_now)
+    } else {
+        stringResource(R.string.weather_updated_hours, hours)
+    }
 }

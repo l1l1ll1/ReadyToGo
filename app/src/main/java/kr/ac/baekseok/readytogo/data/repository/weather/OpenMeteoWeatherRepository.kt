@@ -8,6 +8,9 @@ import kr.ac.baekseok.readytogo.data.model.LatLng
 import kr.ac.baekseok.readytogo.data.repository.WeatherRepository
 import kr.ac.baekseok.readytogo.domain.weather.DailyWeather
 import kr.ac.baekseok.readytogo.domain.weather.forecastDates
+import kr.ac.baekseok.readytogo.domain.weather.ForecastWindow
+import kr.ac.baekseok.readytogo.domain.weather.WeatherForecast
+import kr.ac.baekseok.readytogo.domain.weather.forecastWindow
 import kr.ac.baekseok.readytogo.domain.weather.skyOf
 import org.json.JSONObject
 import java.net.HttpURLConnection
@@ -28,19 +31,22 @@ class OpenMeteoWeatherRepository(context: Context) : WeatherRepository {
 
     private val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
-    override suspend fun dailyForecast(location: LatLng, dates: List<LocalDate>): Map<LocalDate, DailyWeather> {
+    override suspend fun dailyForecast(location: LatLng, dates: List<LocalDate>): WeatherForecast {
         // 디버그 빌드에서만 0이 아닐 수 있다(WeatherDebugShift 참고).
         val shift = WeatherDebugShift.days()
         val today = LocalDate.now().plusDays(shift)
+        val window = forecastWindow(dates, today)
+        if (window != ForecastWindow.IN_RANGE) return WeatherForecast(window = window)
         val wanted = forecastDates(dates, today)
-        if (wanted.isEmpty()) return emptyMap()
 
         // 실제로 물어보는 날짜. 디버그 이동이 있으면 그만큼 당겨 "지금 받을 수 있는 예보"를 묻는다.
         val start = wanted.min().minusDays(shift)
         val end = wanted.max().minusDays(shift)
-        val body = cached(location, start, end) ?: fetch(location, start, end) ?: return emptyMap()
+        val key = keyOf(location, start, end)
+        if (cached(key) == null) fetch(location, start, end, key)
+        val body = cached(key) ?: return WeatherForecast(window = window)
 
-        return runCatching { parse(body) }
+        val days = runCatching { parse(body) }
             .getOrElse {
                 Log.w(TAG, "날씨 응답을 읽지 못했다", it)
                 emptyMap()
@@ -48,9 +54,11 @@ class OpenMeteoWeatherRepository(context: Context) : WeatherRepository {
             .mapKeys { (date, _) -> date.plusDays(shift) }
             .mapValues { (date, weather) -> weather.copy(date = date) }
             .filterKeys { it in wanted }
+        return WeatherForecast(days, window, prefs.getLong(key + SAVED_AT_SUFFIX, 0L).takeIf { days.isNotEmpty() })
     }
 
-    private suspend fun fetch(location: LatLng, start: LocalDate, end: LocalDate): String? =
+    /** 받아서 캐시에 넣는다. 결과는 [cached]로 읽는다 — 받은 시각도 함께 남아야 "N시간 전"을 적을 수 있다. */
+    private suspend fun fetch(location: LatLng, start: LocalDate, end: LocalDate, key: String) {
         withContext(Dispatchers.IO) {
             runCatching {
                 val url = String.format(
@@ -69,21 +77,20 @@ class OpenMeteoWeatherRepository(context: Context) : WeatherRepository {
                     connection.disconnect()
                 }
                 Log.d(TAG, "날씨 호출 $start~$end")
+                // commit: 바로 다음 줄에서 다시 읽는다. apply는 비동기라 읽을 때 아직 없을 수 있다.
                 prefs.edit()
-                    .putString(keyOf(location, start, end), body)
-                    .putLong(keyOf(location, start, end) + SAVED_AT_SUFFIX, System.currentTimeMillis())
-                    .apply()
-                body
-            }
-                .onFailure { Log.w(TAG, "날씨를 받지 못했다", it) }
-                .getOrNull()
+                    .putString(key, body)
+                    .putLong(key + SAVED_AT_SUFFIX, System.currentTimeMillis())
+                    .commit()
+            }.onFailure { Log.w(TAG, "날씨를 받지 못했다", it) }
         }
+    }
 
-    private fun cached(location: LatLng, start: LocalDate, end: LocalDate): String? {
-        val key = keyOf(location, start, end)
+    /** 유효기간 안의 캐시. 없거나 지났으면 null. */
+    private fun cached(key: String): String? {
         val savedAt = prefs.getLong(key + SAVED_AT_SUFFIX, 0L)
         if (System.currentTimeMillis() - savedAt > TTL_MILLIS) return null
-        return prefs.getString(key, null)?.also { Log.d(TAG, "날씨 캐시 사용 $start~$end") }
+        return prefs.getString(key, null)
     }
 
     /** 좌표는 소수 둘째 자리(약 1km). 도시 날씨라 그보다 촘촘할 이유가 없다. */

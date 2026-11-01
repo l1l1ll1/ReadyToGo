@@ -9,6 +9,7 @@ import kr.ac.baekseok.readytogo.domain.plan.TimelineEntry
 import kr.ac.baekseok.readytogo.domain.plan.TimelineItem
 import kr.ac.baekseok.readytogo.domain.plan.moveAfter
 import kr.ac.baekseok.readytogo.domain.plan.toTimeline
+import kr.ac.baekseok.readytogo.domain.recommend.medianCenter
 
 /** 명령을 실행하지 않은 이유. 스낵바에 그대로 옮겨 적는다. */
 enum class RejectReason {
@@ -23,6 +24,9 @@ enum class RejectReason {
 
     /** 기준에 맞는 다른 식당·관광지가 없다. */
     NO_CANDIDATE,
+
+    /** 실내로 바꾸려 했는데 그날 동선 근처(5km)에 실내 후보가 없다. "다른 곳 없음"보다 구체적으로 알린다. */
+    NO_INDOOR_NEARBY,
 }
 
 data class Rejection(val command: EditCommand, val reason: RejectReason)
@@ -118,7 +122,11 @@ private class Step(
             previous = previous,
             takenIds = taken,
             visitDay = day.date.dayOfWeek,
-        ) ?: return Outcome.Rejected(RejectReason.NO_CANDIDATE)
+            // 그날 화면에 있는 관광지의 중앙값. 숙소 거리 검사(dayCenters)와 같은 중심이다.
+            dayCenter = medianCenter(entries.mapNotNull { (it.item as? TimelineItem.Visit)?.attraction?.location }),
+        ) ?: return Outcome.Rejected(
+            if (command.basis == PlaceBasis.INDOOR) RejectReason.NO_INDOOR_NEARBY else RejectReason.NO_CANDIDATE,
+        )
 
         // 즐겨찾기 끼우기와 같은 기록(자리 키 → 장소 id)이라 저장 형식이 늘지 않는다.
         val next = edits.pickedAttractionsIn(dayNumber) + (item.key to chosen.id)

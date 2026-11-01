@@ -98,7 +98,7 @@ import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.ReadytogoTheme
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 import java.time.LocalDate
-import kr.ac.baekseok.readytogo.domain.weather.DailyWeather
+import kr.ac.baekseok.readytogo.domain.weather.WeatherForecast
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.Locale
@@ -238,7 +238,7 @@ private fun TripPlanContent(
     onToggleDone: (Int, String) -> Unit = { _, _ -> },
     textEdit: TextEditControls = TextEditControls(),
     review: ReviewControls = ReviewControls(),
-    weather: Map<LocalDate, DailyWeather> = emptyMap(),
+    weather: WeatherForecast = WeatherForecast(),
     onReorder: (Int, List<String>) -> Unit = { _, _ -> },
     onReorderCommit: () -> Unit = {},
     onPickMeal: (Int, String, String?) -> Unit = { _, _, _ -> },
@@ -541,7 +541,7 @@ private fun PlanTabContent(
     /** 요약 탭의 검토 카드. 문제가 없으면 카드가 없다. */
     review: ReviewControls,
     /** 날짜별 예보. 일정표 날짜 칩 아이콘에 쓴다. */
-    weather: Map<LocalDate, DailyWeather>,
+    weather: WeatherForecast,
     /** 요약 머리의 기간을 눌렀을 때. null이면 바꿀 수 없는 일정이다. */
     onEditDates: (() -> Unit)?,
 ) {

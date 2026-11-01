@@ -1,5 +1,10 @@
 package kr.ac.baekseok.readytogo.ui.plan
 
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.AnnotatedString
+import kr.ac.baekseok.readytogo.ui.component.FitText
 import kr.ac.baekseok.readytogo.ui.component.DashedDivider
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -718,12 +723,7 @@ private fun TimelineRail(
 @Composable
 private fun VisitContent(item: TimelineItem.Visit, purposes: Set<TravelPurpose>) {
     val attraction = item.attraction
-    Text(
-        text = attraction.name,
-        style = MaterialTheme.typography.titleSmall,
-        maxLines = 2,
-        overflow = TextOverflow.Ellipsis,
-    )
+    FitText(text = attraction.name, style = MaterialTheme.typography.titleSmall)
 
     // **이 곳이 어떤 목적에 맞아서 들어왔는지** 보여준다. 점수에 목적 일치 가산점을 준
     // 바로 그 판정이라(AttractionScoring), 태그가 붙은 곳이 상위에 온 이유가 드러난다.
@@ -739,23 +739,52 @@ private fun VisitContent(item: TimelineItem.Visit, purposes: Set<TravelPurpose>)
         }
     }
 
-    Text(
-        text = stringResource(R.string.plan_attraction) + " · " +
-            if (attraction.reviewCount > 0) {
-                stringResource(
-                    R.string.plan_rating_reviews,
-                    attraction.rating.toString(),
-                    "%,d".format(attraction.reviewCount),
-                )
-            } else {
-                "★${attraction.rating}"
-            } + " · " + durationText(item.stayMinutes),
-        // 종류·평점과 머무는 시간을 한 줄로(⑫, design/mockup/timeline).
+    // ⑫ 관광지는 두 줄: 종류·평점 / 머무는 시간(끼니와 같은 기준, 가격 줄만 없다).
+    FitText(
+        variants = ratingLineVariants(stringResource(R.string.plan_attraction), attraction.rating, attraction.reviewCount),
         style = MaterialTheme.typography.bodyMedium,
         color = LocalPalette.current.TextSecondary,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
     )
+    Text(
+        text = durationText(item.stayMinutes),
+        style = MaterialTheme.typography.bodyMedium,
+        color = LocalPalette.current.TextSecondary,
+    )
+}
+
+/**
+ * "종류 · ★평점 (리뷰 N)" 한 줄의 후보. 넘치면 리뷰 수 괄호를 먼저 뺀다 — 평점은 남겨야
+ * 왜 추천됐는지 보인다. 리뷰가 없으면 처음부터 괄호가 없다.
+ */
+@Composable
+internal fun ratingLineVariants(category: String, rating: Double, reviewCount: Int): List<AnnotatedString> {
+    val short = AnnotatedString("$category · ★$rating")
+    if (reviewCount <= 0) return listOf(short)
+    val full = AnnotatedString(
+        "$category · " + stringResource(R.string.plan_rating_reviews, rating.toString(), "%,d".format(reviewCount)),
+    )
+    return listOf(full, short)
+}
+
+/**
+ * 가격 줄의 후보: 원화(기본 글자) + 바로 옆 현지 통화(한 단계 작고 연한 회색). 넘치면 현지 통화를 뺀다.
+ * [priceText]는 원화와 현지 통화를 줄바꿈으로 붙여 준다.
+ */
+@Composable
+internal fun priceLineVariants(priceText: String, krwColor: Color): List<AnnotatedString> {
+    val parts = priceText.split("\n")
+    val krw = AnnotatedString(parts.first(), SpanStyle(color = krwColor))
+    val local = parts.getOrNull(1) ?: return listOf(krw)
+    val localStyle = SpanStyle(
+        color = LocalPalette.current.TextSecondary,
+        fontSize = MaterialTheme.typography.labelSmall.fontSize,
+    )
+    val both = buildAnnotatedString {
+        append(krw)
+        append("  ")
+        withStyle(localStyle) { append(local) }
+    }
+    return listOf(both, krw)
 }
 
 /**
@@ -786,25 +815,25 @@ private fun MealContent(item: TimelineItem.Meal) {
             )
         }
     }
-    Text(
+    FitText(
         text = restaurant.name,
         style = MaterialTheme.typography.titleSmall,
-        maxLines = 2,
-        overflow = TextOverflow.Ellipsis,
     )
-    Text(
-        text = restaurant.shortDetailLine(),
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
+    // ⑫ 세 줄: 종류·평점 / 가격(원화 + 작은 엔화) / 머무는 시간. 어느 줄도 말줄임·넘김 없이
+    // 넘치면 리뷰 수 괄호 → 엔화 순으로 뺀다(FitText).
+    FitText(
+        variants = ratingLineVariants(restaurant.category, restaurant.rating, restaurant.reviewCount),
         style = MaterialTheme.typography.bodyMedium,
         color = LocalPalette.current.TextSecondary,
     )
-    // 가격과 머무는 시간을 한 줄로(⑫). priceText()는 원화·현지 통화를 줄바꿈으로 주므로 " · "로 잇는다.
-    Text(
-        text = restaurant.priceText().replace("\n", " · ") + " · " + durationText(item.stayMinutes),
+    FitText(
+        variants = priceLineVariants(restaurant.priceText(), if (overBudget) accent else LocalPalette.current.TextPrimary),
         style = MaterialTheme.typography.bodyMedium,
-        color = if (overBudget) accent else LocalPalette.current.TextSecondary,
-        maxLines = 2,
+    )
+    Text(
+        text = durationText(item.stayMinutes),
+        style = MaterialTheme.typography.bodyMedium,
+        color = LocalPalette.current.TextSecondary,
     )
 }
 

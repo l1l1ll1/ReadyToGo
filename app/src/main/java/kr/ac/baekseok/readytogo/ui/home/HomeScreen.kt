@@ -1,5 +1,6 @@
 package kr.ac.baekseok.readytogo.ui.home
 
+import kr.ac.baekseok.readytogo.ui.component.FitText
 import kr.ac.baekseok.readytogo.ui.format.nightsText
 import kr.ac.baekseok.readytogo.ui.component.DashedDivider
 import androidx.compose.ui.res.pluralStringResource
@@ -337,12 +338,10 @@ private fun HeroTripCard(trip: SavedTrip, today: LocalDate, onClick: () -> Unit)
                 style = MaterialTheme.typography.bodyLarge,
                 color = Color.White.copy(alpha = HERO_SUBTEXT_ALPHA),
             )
-            Text(
+            FitText(
                 text = savedTripDestination(trip),
                 style = MaterialTheme.typography.displaySmall,
                 color = Color.White,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
             )
         }
 
@@ -420,11 +419,9 @@ private fun HomeReviewCard(review: HomeReview, city: String, onClick: () -> Unit
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(Tokens.Space.md),
         ) {
-            Text(
+            FitText(
                 text = review.title,
                 style = MaterialTheme.typography.bodyLarge,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.weight(1f),
             )
             Icon(
@@ -483,17 +480,11 @@ private fun RecentTripCard(
                 )
             }
         }
-        Text(
-            text = savedTripTitle(trip),
-            style = MaterialTheme.typography.titleSmall,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-        Text(
+        FitText(text = savedTripTitle(trip), style = MaterialTheme.typography.titleSmall)
+        FitText(
             text = "${dateShort(trip.departureDate)} · ${daysText(trip.dayCount)}",
             style = MaterialTheme.typography.bodyMedium,
             color = palette.TextSecondary,
-            maxLines = 1,
         )
     }
 }

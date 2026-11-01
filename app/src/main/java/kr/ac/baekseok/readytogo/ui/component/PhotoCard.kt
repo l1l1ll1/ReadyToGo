@@ -149,20 +149,19 @@ fun PhotoCard(
                 .padding(Tokens.Space.lg),
             verticalArrangement = Arrangement.spacedBy(Tokens.Space.xs),
         ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium.copy(shadow = PhotoTextShadow),
-                color = Color.White,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-            )
+            // 말줄임·넘김 없이 한 줄(⑫). 길면 글자를 조금 줄인다(FitText).
+            if (title.isNotEmpty()) {
+                FitText(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium.copy(shadow = PhotoTextShadow),
+                    color = Color.White,
+                )
+            }
             if (subtitle != null) {
-                Text(
+                FitText(
                     text = subtitle,
                     style = MaterialTheme.typography.bodyMedium.copy(shadow = PhotoTextShadow),
                     color = Color.White.copy(alpha = 0.9f),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
                 )
             }
         }

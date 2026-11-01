@@ -1,5 +1,6 @@
 package kr.ac.baekseok.readytogo.ui.plan
 
+import kr.ac.baekseok.readytogo.ui.component.FitText
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -215,28 +216,20 @@ private fun MealOptionRow(
         PlacePhotoThumb(placeId = restaurant.id, photo = photo, size = Tokens.Size.placeThumb)
 
         Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = restaurant.name,
-                style = MaterialTheme.typography.titleSmall,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-            Text(
-                text = restaurant.detailLine(),
+            // 일정표와 같은 기준(⑫): 한 줄씩, 넘치면 리뷰 수 → 현지 통화 순으로 뺀다. 주소는 위 상세에 있다.
+            FitText(text = restaurant.name, style = MaterialTheme.typography.titleSmall)
+            FitText(
+                variants = ratingLineVariants(restaurant.category, restaurant.rating, restaurant.reviewCount),
                 style = MaterialTheme.typography.bodySmall,
                 color = LocalPalette.current.TextSecondary,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
             )
-            Text(
-                text = restaurant.priceText().replace("\n", " · "),
-                style = MaterialTheme.typography.bodySmall,
+            FitText(
                 // 예산 초과는 주의색(주황, ⑫). 붉은 Danger는 되돌릴 수 없는 일에만 쓴다.
-                color = if (option.overBudget) {
-                    LocalPalette.current.Warning
-                } else {
-                    LocalPalette.current.TextSecondary
-                },
+                variants = priceLineVariants(
+                    restaurant.priceText(),
+                    if (option.overBudget) LocalPalette.current.Warning else LocalPalette.current.TextSecondary,
+                ),
+                style = MaterialTheme.typography.bodySmall,
             )
             // 고를 때 비교할 수 있게 후보마다 동선 근거를 붙인다. 위쪽 상세와 같은 문구다.
             option.detourLine()?.let { line ->
@@ -440,18 +433,11 @@ private fun SavedPlaceRow(favorite: FavoritePlace, far: Boolean, onClick: () -> 
         PlacePhotoThumb(placeId = favorite.placeId, photo = photo, size = Tokens.Size.placeThumb)
 
         Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = favorite.name,
-                style = MaterialTheme.typography.titleSmall,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-            Text(
+            FitText(text = favorite.name, style = MaterialTheme.typography.titleSmall)
+            FitText(
                 text = favorite.category.ifBlank { stringResource(favorite.kind.labelRes) },
                 style = MaterialTheme.typography.bodySmall,
                 color = LocalPalette.current.TextSecondary,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
             )
         }
 

@@ -1,5 +1,6 @@
 package kr.ac.baekseok.readytogo.ui.plan
 
+import kr.ac.baekseok.readytogo.ui.component.FitText
 import kr.ac.baekseok.readytogo.ui.format.nightsText
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -357,12 +358,7 @@ fun ItineraryHighlights(plan: TripPlan) {
                 )
 
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = attraction.name,
-                        style = MaterialTheme.typography.titleSmall,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
+                    FitText(text = attraction.name, style = MaterialTheme.typography.titleSmall)
                     Text(
                         text = "★${attraction.rating}" +
                             if (attraction.reviewCount > 0) {

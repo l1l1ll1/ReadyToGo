@@ -1,5 +1,6 @@
 package kr.ac.baekseok.readytogo.ui.plan
 
+import kr.ac.baekseok.readytogo.ui.component.FitText
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -72,13 +73,7 @@ fun PlanTopBar(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.weight(1f),
         ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                textAlign = TextAlign.Center,
-            )
+            FitText(text = title, style = MaterialTheme.typography.titleMedium)
             if (subtitle != null) {
                 Text(
                     text = subtitle,

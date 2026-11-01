@@ -29,6 +29,8 @@ import kr.ac.baekseok.readytogo.domain.review.applyFirst
 import kr.ac.baekseok.readytogo.domain.review.defaultFixes
 import kr.ac.baekseok.readytogo.domain.review.editedTimeline
 import kr.ac.baekseok.readytogo.domain.review.reviewPlan
+import kr.ac.baekseok.readytogo.ui.format.Particle
+import kr.ac.baekseok.readytogo.ui.format.withParticle
 import kr.ac.baekseok.readytogo.generation.PlanGeneration
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -654,20 +656,31 @@ class TripPlanViewModel(
             R.string.review_fact_same_kind,
             issue.dayNumber,
             string(issue.meal.labelRes),
-            issue.restaurantName,
+            issue.restaurantName.particle(Particle.SUBJECT),
             issue.category,
             issue.previousDay,
             string(issue.previousMeal.labelRes),
-            issue.previousName,
+            issue.previousName.particle(Particle.AND),
         )
         is ReviewIssue.Closed -> {
             val weekday = plan.dailyPlans.first { it.dayNumber == issue.dayNumber }.date.dayOfWeek
                 .getDisplayName(TextStyle.FULL, Locale.getDefault())
+            val name = issue.name.particle(Particle.TOPIC)
             when (val meal = issue.meal) {
-                null -> string(R.string.review_fact_closed_place, issue.dayNumber, weekday, issue.name)
-                else -> string(R.string.review_fact_closed_meal, issue.dayNumber, weekday, string(meal.labelRes), issue.name)
+                null -> string(R.string.review_fact_closed_place, issue.dayNumber, weekday, name)
+                else -> string(R.string.review_fact_closed_meal, issue.dayNumber, weekday, string(meal.labelRes), name)
             }
         }
+    }
+
+    /**
+     * 한국어 화면이면 받침에 맞는 조사를 붙인다. 영어 문장은 조사가 없어 이름 그대로 넘긴다 —
+     * 같은 인자를 두 언어 문자열이 함께 쓰기 때문에 여기서 가른다.
+     * 앱 안 언어 설정을 따라야 해서 기기 Locale이 아니라 리소스의 언어를 본다.
+     */
+    private fun String.particle(particle: Particle): String {
+        val language = getApplication<Application>().resources.configuration.locales[0].language
+        return if (language == Locale.KOREAN.language) withParticle(this, particle) else this
     }
 
     /** "3시간 20분". 화면의 durationText는 Composable이라 여기서 못 쓴다 — 같은 문자열 리소스를 쓴다. */

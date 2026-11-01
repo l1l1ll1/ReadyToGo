@@ -254,7 +254,8 @@
     <string name="plan_text_edit_sign_in">로그인이 필요해요.</string>
     <string name="plan_text_edit_too_many">요청이 많아요. 1분 뒤에 다시 해 주세요.</string>
     <string name="plan_text_edit_unavailable">지금은 처리할 수 없어요. 잠시 후 다시 해 주세요.</string>
-    <!-- 일정 검토관(⑨-2). 사실 문장은 서버에도 그대로 보내므로 규칙 결과만 적는다. -->
+    <!-- 일정 검토관(⑨-2). 사실 문장은 서버에도 그대로 보내므로 규칙 결과만 적는다.
+         조사는 코드가 받침에 맞춰 이름 뒤에 붙여 넘긴다(ui/format/KoreanParticle.kt). 여기 적지 않는다. -->
     <string name="review_card_title">검토 %1$d건</string>
     <string name="review_card_hint">이 일정에서 손보면 좋을 곳이에요.</string>
     <string name="review_loading">설명을 불러오는 중…</string>
@@ -262,9 +263,9 @@
     <string name="review_fixed">고쳤어요.</string>
     <string name="review_fix_failed">자동으로 고칠 방법을 찾지 못했어요. 일정표에서 직접 바꿔 주세요.</string>
     <string name="review_fact_long">%1$d일차는 머무는 시간과 이동을 합쳐 %2$s예요. 이번 일정에서 가장 꽉 찬 날(%3$s)보다 길어요.</string>
-    <string name="review_fact_same_kind">%1$d일차 %2$s %3$s(%4$s)이(가) 바로 앞 끼니인 %5$d일차 %6$s %7$s와(과) 같은 종류예요.</string>
-    <string name="review_fact_closed_place">%1$d일차(%2$s)에 가는 %3$s은(는) 그 요일에 쉬어요.</string>
-    <string name="review_fact_closed_meal">%1$d일차(%2$s) %3$s %4$s은(는) 그 요일에 쉬어요.</string>
+    <string name="review_fact_same_kind">%1$d일차 %2$s %3$s 바로 앞 끼니인 %5$d일차 %6$s %7$s 같은 종류(%4$s)예요.</string>
+    <string name="review_fact_closed_place">%1$d일차(%2$s)에 가는 %3$s 그 요일에 쉬어요.</string>
+    <string name="review_fact_closed_meal">%1$d일차(%2$s) %3$s %4$s 그 요일에 쉬어요.</string>
 
     <!-- 섹션 제목 -->
     <string name="plan_section_budget">예산 분해</string>

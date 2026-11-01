@@ -223,6 +223,7 @@
     <string name="plan_save_failed">We couldn\'t save it.</string>
     <string name="plan_item_removed">Removed from the itinerary.</string>
     <!-- ⑨-1 Edit by text -->
+    <string name="plan_text_edit_title">Edit by sentence</string>
     <string name="plan_text_edit_hint">e.g. Drop one afternoon stop, dinner near the hotel</string>
     <string name="plan_text_edit_send">Apply</string>
     <string name="plan_text_edit_sign_in_hint">Sign in to edit your plan by typing.</string>

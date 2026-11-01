@@ -47,6 +47,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -132,10 +133,13 @@ fun TimelineTab(
     onDelete: (Int, String) -> Unit,
     /** 여행 중 모드에서 항목을 했음/안 했음으로 바꿀 때. */
     onToggleDone: (Int, String) -> Unit,
-    /** 말로 고치기 입력창. 보고 있는 날에 적용된다. */
-    textEdit: TextEditControls = TextEditControls(),
     /** 날짜별 예보(D-7 안의 날만). 있는 날의 칩에 아이콘이 붙고, 칩 줄 아래에 갱신 시각·안내가 붙는다. */
     weather: WeatherForecast = WeatherForecast(),
+    /**
+     * 지금 보여주는 날이 바뀔 때. 말로 고치기 시트가 이 날을 고친다 — 여행 중 "오늘만" 보기에서는
+     * 고른 날짜 칩이 아니라 오늘이 보이므로, 화면 밖에서 날짜를 짐작하면 다른 날을 고치게 된다.
+     */
+    onShownDay: (Int) -> Unit = {},
 ) {
     // 여행 중에는 오늘 하루만 보여준다. 길 위에서 필요한 것은 오늘 갈 곳이지 닷새치 목록이
     // 아니다. 다른 날이 궁금하면 "전체 보기"로 편다. 끄고 켜는 것은 이 화면 안에서만 산다 —
@@ -187,13 +191,13 @@ fun TimelineTab(
             }
         }
 
+        LaunchedEffect(day?.dayNumber) { day?.dayNumber?.let(onShownDay) }
+
         if (day == null) {
             EmptyState(title = stringResource(R.string.plan_timeline_empty), description = "")
             return@Column
         }
 
-        // 날짜 칩 바로 아래 — 문장이 어느 날에 적용되는지가 칩으로 보인다.
-        TextEditBar(dayNumber = day.dayNumber, controls = textEdit)
 
         val savedOrder = edits.orderIn(day.dayNumber)
 
@@ -272,7 +276,8 @@ fun TimelineTab(
                     start = Tokens.Space.lg,
                     end = Tokens.Space.lg,
                     top = Tokens.Space.md,
-                    bottom = Tokens.Space.xxl,
+                    // 오른쪽 아래 "말로 고치기" 버튼에 마지막 줄이 가리지 않게 버튼 높이만큼 더 띄운다.
+                    bottom = Tokens.Space.xxl + Tokens.Size.aiButton,
                 ),
             ) {
                 item {

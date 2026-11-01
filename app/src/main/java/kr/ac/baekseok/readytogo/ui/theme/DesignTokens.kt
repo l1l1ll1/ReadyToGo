@@ -100,6 +100,12 @@ object Tokens {
         val inlineIcon = 18.dp
         val bottomBarHeight = 64.dp
 
+        /** 떠 있는 탭 바(⑫). 아이콘 + 글자 두 줄이 pill 안에서 답답하지 않은 높이. */
+        val tabBarHeight = 72.dp
+
+        /** 결과 화면의 "말로 고치기" 원형 버튼. 탭 바보다 조금 작게 — 주인공은 일정표다. */
+        val aiButton = 64.dp
+
         /** 버튼 높이. 손가락으로 누르는 최소 크기(48dp)보다 조금 크게 둔다. */
         val button = 52.dp
         val loadingStroke = 2.dp

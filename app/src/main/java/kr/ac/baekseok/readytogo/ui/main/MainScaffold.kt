@@ -10,18 +10,12 @@ import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Place
-import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.annotation.StringRes
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -73,38 +67,14 @@ fun MainScaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
             if (!onTab) return@Scaffold
-            NavigationBar(containerColor = LocalPalette.current.Background) {
-                MainTab.entries.forEach { tab ->
-                    // hierarchy로 보는 이유: 탭 주소가 중첩 그래프 안에 있어도 선택 상태가 유지된다.
-                    val selected = currentDestination?.hierarchy
-                        ?.any { it.route == tab.route } == true
-
-                    val label = stringResource(tab.labelRes)
-                    NavigationBarItem(
-                        selected = selected,
-                        onClick = {
-                            if (!selected) navController.switchTab(tab)
-                        },
-                        // **색을 직접 지정한다.** 기본값은 Material이 colorScheme에서 골라 오는데,
-                        // secondaryContainer(연노랑)를 쓰는 바람에 선택된 탭 글자가
-                        // 흰 바탕에 연노랑으로 나와 읽히지 않았다.
-                        colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = LocalPalette.current.PointDark,
-                            selectedTextColor = LocalPalette.current.PointDark,
-                            indicatorColor = LocalPalette.current.PointLight,
-                            unselectedIconColor = LocalPalette.current.TextSecondary,
-                            unselectedTextColor = LocalPalette.current.TextSecondary,
-                        ),
-                        icon = {
-                            Icon(
-                                imageVector = if (selected) tab.selectedIcon else tab.icon,
-                                contentDescription = label,
-                            )
-                        },
-                        label = { Text(label) },
-                    )
-                }
+            // hierarchy로 보는 이유: 탭 주소가 중첩 그래프 안에 있어도 선택 상태가 유지된다.
+            val selectedIndex = MainTab.entries.indexOfFirst { tab ->
+                currentDestination?.hierarchy?.any { it.route == tab.route } == true
             }
+            FloatingTabBar(
+                selectedIndex = selectedIndex,
+                onSelect = { tab -> navController.switchTab(tab) },
+            )
         },
     ) { padding ->
         // 하단 바 높이만 넘긴다. 바가 없는 화면에서는 0이 되어 영향이 없다.

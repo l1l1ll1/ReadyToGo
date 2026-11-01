@@ -240,6 +240,7 @@
     <string name="plan_save_failed">저장하지 못했습니다.</string>
     <string name="plan_item_removed">일정에서 뺐습니다.</string>
     <!-- ⑨-1 말로 일정 고치기 -->
+    <string name="plan_text_edit_title">말로 일정 고치기</string>
     <string name="plan_text_edit_hint">예: 오후 하나 빼고 저녁은 숙소 근처로</string>
     <string name="plan_text_edit_send">고치기</string>
     <string name="plan_text_edit_sign_in_hint">로그인하면 말로 일정을 고칠 수 있어요.</string>

@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -81,10 +82,19 @@ fun HomeScreen(
             // 목록 맨 위 버튼을 FAB로 옮겨 어디까지 내려가도 손에 닿게 한다.
             ExtendedFloatingActionButton(
                 onClick = onCreateTrip,
-                // 코랄은 "지금 눌러야 할 것"에 쓴다. 터쿼이즈로 두면 탭 바와 같은 색이라
-                // 바닥에 버튼이 하나 더 있는 것처럼 보인다.
-                containerColor = LocalPalette.current.Accent,
-                contentColor = LocalPalette.current.OnAccent,
+                // ⑫부터 포인트 민트. 예전에 코랄을 쓴 이유는 탭 바가 같은 터쿼이즈 띠라 버튼이
+                // 바닥에 하나 더 있는 것처럼 보여서였는데, 탭 바가 흰 pill이 되며 그 걱정이 사라졌다.
+                // 코랄 주황은 경고(예산 초과 등)와 겹쳐 "주의"로 읽히기도 했다.
+                // 위치는 그대로 오른쪽 아래 — 탭 바가 Scaffold 아래 칸에 따로 있어 겹치지 않는다.
+                containerColor = LocalPalette.current.Point,
+                contentColor = LocalPalette.current.Surface,
+                shape = Tokens.Radius.button,
+                elevation = FloatingActionButtonDefaults.elevation(
+                    defaultElevation = Tokens.Elevation.none,
+                    pressedElevation = Tokens.Elevation.none,
+                    focusedElevation = Tokens.Elevation.none,
+                    hoveredElevation = Tokens.Elevation.none,
+                ),
                 icon = { Icon(Icons.Filled.Add, contentDescription = null) },
                 text = { Text(stringResource(R.string.home_create_trip)) },
                 modifier = Modifier

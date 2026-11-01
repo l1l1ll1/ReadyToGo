@@ -285,6 +285,11 @@ private fun TripPlanContent(
     // 상세 시트를 띄울 항목. 일차 번호를 같이 들고 있어야 어느 날의 항목인지 알 수 있다.
     var openedItem by remember { mutableStateOf<Pair<Int, TimelineItem>?>(null) }
 
+    // 말로 고치기 시트와 그 시트가 고칠 날. 일정표 탭은 여행 중 "오늘만" 보기에서 날짜 칩과 다른 날을
+    // 보여주므로, 지도 탭이 아니면 일정표가 알려 준 날을 쓴다.
+    var textEditSheetOpen by rememberSaveable { mutableStateOf(false) }
+    var shownDayNumber by rememberSaveable { mutableStateOf(1) }
+
     // 공유를 **누른 순간에만** 글을 만든다. 글 짓는 함수가 @Composable이라 눌렀을 때
     // 부를 수 없어서, 깃발을 세우고 그다음 composition에서 만들어 바로 내보낸다.
     // 매 recomposition마다 닷새치 글을 새로 짜지 않으려는 것이다.
@@ -321,6 +326,13 @@ private fun TripPlanContent(
     Scaffold(
         modifier = modifier.fillMaxSize(),
         snackbarHost = { SnackbarHost(snackbarHostState) },
+        // 말로 고치기는 "보고 있는 날"이 있는 일정표·지도 탭에서만 띄운다. 요약·항공·숙소에서는 고칠 날이 없다.
+        floatingActionButton = {
+            val onDayTab = selectedTab == PlanTab.ITINERARY || selectedTab == PlanTab.MAP
+            if (uiState is TripPlanUiState.Success && onDayTab) {
+                AiEditButton(busy = textEdit.busy, onClick = { textEditSheetOpen = true })
+            }
+        },
         topBar = {
             Column {
                 TopAppBar(
@@ -417,13 +429,21 @@ private fun TripPlanContent(
                     onReorderCommit = onReorderCommit,
                     onDeleteItem = onDeleteItem,
                     onToggleDone = onToggleDone,
-                    textEdit = textEdit,
                     review = review,
                     weather = weather,
+                    onShownDay = { shownDayNumber = it },
                     onEditDates = if (canChangeDates) ({ dateSheetOpen = true }) else null,
                 )
             }
         }
+    }
+
+    if (textEditSheetOpen && uiState is TripPlanUiState.Success) {
+        TextEditSheet(
+            dayNumber = if (selectedTab == PlanTab.MAP) mapDayNumber else shownDayNumber,
+            controls = textEdit,
+            onDismiss = { textEditSheetOpen = false },
+        )
     }
 
     val planCondition = (uiState as? TripPlanUiState.Success)?.plan?.condition
@@ -541,7 +561,8 @@ private fun PlanTabContent(
     onReorderCommit: () -> Unit,
     onDeleteItem: (Int, String) -> Unit,
     onToggleDone: (Int, String) -> Unit,
-    textEdit: TextEditControls,
+    /** 일정표가 지금 보여주는 날. 말로 고치기 시트가 이 날을 고친다. */
+    onShownDay: (Int) -> Unit,
     /** 요약 탭의 검토 카드. 문제가 없으면 카드가 없다. */
     review: ReviewControls,
     /** 날짜별 예보. 일정표 날짜 칩 아이콘에 쓴다. */
@@ -634,8 +655,8 @@ private fun PlanTabContent(
             onReorderCommit = onReorderCommit,
             onDelete = onDeleteItem,
             onToggleDone = onToggleDone,
-            textEdit = textEdit,
             weather = weather,
+            onShownDay = onShownDay,
             onToggleFavorite = onToggleFavorite,
         )
 

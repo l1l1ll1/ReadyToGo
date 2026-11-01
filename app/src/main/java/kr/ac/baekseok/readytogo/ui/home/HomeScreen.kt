@@ -1,5 +1,13 @@
 package kr.ac.baekseok.readytogo.ui.home
 
+import kr.ac.baekseok.readytogo.ui.format.nightsText
+import kr.ac.baekseok.readytogo.ui.component.DashedDivider
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.material.icons.outlined.StarOutline
+import androidx.compose.material.icons.automirrored.outlined.ArrowForward
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.geometry.Offset
@@ -121,22 +129,25 @@ private fun HomeList(
         contentPadding = PaddingValues(
             start = Tokens.Space.screenHorizontal,
             end = Tokens.Space.screenHorizontal,
-            top = Tokens.Space.lg,
+            top = Tokens.Space.xl,
             // FAB에 가려지지 않게 아래를 더 비운다.
-            bottom = Tokens.Space.xxl * 2,
+            bottom = Tokens.Space.xxl * 3,
         ),
         verticalArrangement = Arrangement.spacedBy(Tokens.Space.lg),
     ) {
-        item { Greeting(state.authState, state.nickname) }
+        item { Greeting(state.authState, state.nickname, hasUpcoming = state.upcoming != null) }
 
         // 다가오는 여행이 없으면 카드를 아예 내린다. 빈 카드는 자리만 차지한다.
         state.upcoming?.let { trip ->
             item {
-                Column(verticalArrangement = Arrangement.spacedBy(Tokens.Space.sm)) {
-                    SectionHeader(title = stringResource(R.string.home_upcoming))
-                    UpcomingTripCard(
-                        trip = trip,
-                        today = state.today,
+                HeroTripCard(trip = trip, today = state.today, onClick = { onOpenTrip(trip) })
+            }
+            // 검토 0건이거나 계획을 아직 만들지 않았으면 카드가 없다(HomeViewModel.reviewOf).
+            state.review?.let { review ->
+                item {
+                    HomeReviewCard(
+                        review = review,
+                        city = savedTripDestination(trip),
                         onClick = { onOpenTrip(trip) },
                     )
                 }
@@ -160,8 +171,6 @@ private fun HomeList(
                     //
                     // **단색으로 칠하지 않고 알파만 낮춘다.** 그림이 여러 색이라 tint를 걸면
                     // 알파가 있는 곳이 전부 한 색으로 뭉개져 덩어리가 된다.
-                    // (모노크롬용 drawable은 <bitmap> XML이라 painterResource로 못 읽는다 —
-                    //  그걸 넣었다가 "Only VectorDrawables and rasterized asset types" 로 죽었다.)
                     Image(
                         painter = painterResource(R.drawable.ic_launcher_art),
                         contentDescription = null,
@@ -187,15 +196,34 @@ private fun HomeList(
                 }
             }
         } else {
-            items(state.recent, key = { it.id }) { trip ->
-                RecentTripRow(trip = trip, today = state.today, onClick = { onOpenTrip(trip) })
+            // 2열 카드(design/mockup/home). LazyColumn 안이라 격자 대신 두 장씩 한 줄로 묶는다.
+            items(state.recent.chunked(2), key = { row -> row.first().id }) { row ->
+                Row(horizontalArrangement = Arrangement.spacedBy(Tokens.Space.md)) {
+                    row.forEachIndexed { index, trip ->
+                        RecentTripCard(
+                            trip = trip,
+                            today = state.today,
+                            // 왼쪽·오른쪽 블록 색을 엇갈려 칠한다. 같은 색이 나란히 서면 한 덩어리로 보인다.
+                            alternate = index == 1,
+                            onClick = { onOpenTrip(trip) },
+                            modifier = Modifier.weight(1f),
+                        )
+                    }
+                    if (row.size == 1) Spacer(Modifier.weight(1f))
+                }
             }
         }
     }
 }
 
+/**
+ * 맨 위 — 작은 인사말과 큰 제목(design/mockup/home).
+ *
+ * 다가오는 여행이 있으면 큰 제목이 "다음 여행"이 되어 바로 아래 히어로 카드의 머리 역할을 한다.
+ * 없으면 "어디로 갈까요?"로 새 여행 만들기를 권한다.
+ */
 @Composable
-private fun Greeting(authState: AuthState, nickname: String?) {
+private fun Greeting(authState: AuthState, nickname: String?, hasUpcoming: Boolean) {
     val name = when (authState) {
         // 사용자가 정한 닉네임이 먼저다. 아직 없으면(옛 계정) Google 계정 이름으로 부른다.
         is AuthState.SignedIn -> nickname ?: authState.user.displayName
@@ -210,7 +238,12 @@ private fun Greeting(authState: AuthState, nickname: String?) {
             } else {
                 stringResource(R.string.home_greeting)
             },
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.bodyLarge,
+            color = LocalPalette.current.TextSecondary,
+        )
+        Text(
+            text = stringResource(if (hasUpcoming) R.string.home_upcoming else R.string.home_title_no_trip),
+            style = MaterialTheme.typography.headlineMedium,
         )
         if (authState is AuthState.Guest) {
             Text(
@@ -223,107 +256,199 @@ private fun Greeting(authState: AuthState, nickname: String?) {
 }
 
 /**
- * 다가오는 여행 카드. D-day를 사진 위 오른쪽에 배지로 올린다.
+ * 다음 여행 히어로 카드(design/mockup/home). 위에 칩 두 개(D-day, 기간·인원), 아래에 기간과 도시명을
+ * 크게, 오른쪽 아래에 여는 화살표. 사진이 있으면 사진, 없으면 깊은 터쿼이즈 단색 + 원 무늬.
  *
- * D-day를 제목보다 눈에 띄게 두는 이유: 이 카드를 보는 이유가 "며칠 남았나"다.
+ * 시안의 예산 칸은 넣지 않는다 — 새 기능 범위 밖이다. 화살표는 카드를 누른 것과 같다.
  */
 @Composable
-private fun UpcomingTripCard(trip: SavedTrip, today: LocalDate, onClick: () -> Unit) {
+private fun HeroTripCard(trip: SavedTrip, today: LocalDate, onClick: () -> Unit) {
     val daysLeft = trip.daysUntil(today)
+    val nights = trip.dayCount - 1
+    val days = daysText(trip.dayCount)
+    val length = if (nights > 0) "${nightsText(nights)} $days" else days
+    val people = pluralStringResource(R.plurals.people_count, trip.condition.adults, trip.condition.adults)
 
     PhotoCard(
         key = trip.destinationName,
-        title = savedTripTitle(trip),
-        subtitle = stringResource(
-            R.string.fmt_date_range_days,
-            dateShort(trip.departureDate),
-            dateShort(trip.returnDate),
-            daysText(trip.dayCount),
-        ),
-        // 대표 장소 사진. 없거나 설정에서 껐으면 아래 브랜드 단색 + 원 장식이 보인다.
+        title = "",
+        // 대표 장소 사진. 없거나 설정에서 껐으면 아래 단색 + 원 무늬가 보인다.
         photoPlaceId = trip.coverPlaceId,
-        // 사진이 없을 때의 바탕(⑫). 그라데이션 대신 **단색**이고, 깊은 쪽 터쿼이즈를 쓴다 —
-        // 포인트 원색(#20B8C4) 위 흰 글자는 대비가 모자라다. HeroGradient의 끝 색이 모드·고대비마다
-        // 이미 그 역할로 맞춰져 있어 새 색을 만들지 않는다.
+        // 그라데이션 대신 **단색**이고, 깊은 쪽 터쿼이즈를 쓴다 — 포인트 원색 위 흰 글자는 대비가
+        // 모자라다. HeroGradient의 끝 색이 모드·고대비마다 이미 그 역할로 맞춰져 있다.
         colors = LocalPalette.current.HeroGradient.last().let { listOf(it, it) },
-        // 단색 자체가 충분히 어두워서 덮개 없이도 흰 글자가 읽힌다.
-        // 사진이 얹히면 PhotoCard가 알아서 덮개를 켠다 — 밝은 사진 위 흰 글자가 묻힌다.
         scrim = false,
+        overlayHasText = true,
         height = Tokens.Size.heroCardHeight,
         shape = Tokens.Radius.hero,
         decoration = { HeroRings() },
         onClick = onClick,
     ) {
-        Surface(
-            color = LocalPalette.current.Surface,
-            shape = Tokens.Radius.chip,
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(Tokens.Space.sm),
             modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(Tokens.Space.md),
+                .align(Alignment.TopStart)
+                .padding(Tokens.Space.lg),
         ) {
-            Text(
-                text = when {
+            HeroChip(
+                when {
                     daysLeft > 0 -> stringResource(R.string.home_dday, daysLeft.toInt())
                     // 떠난 뒤로는 "3일차". 끝난 여행은 이 카드에 오지 않는다(isUpcoming).
-                    //
-                    // **출발일도 1일차로 센다.** 첫날만 "출발일"로 두면 카드가 날마다
-                    // 다른 종류의 말을 하게 되고, 여행 중 모드가 이미 "1일차"로 열려 있는데
-                    // 홈만 다른 말을 쓰면 같은 날을 두 이름으로 부르는 셈이 된다.
-                    //
-                    // 일정표 날짜 칩과 같은 문구를 쓴다 — 두 곳이 다른 말로 같은 것을 가리키면 헷갈린다.
+                    // **출발일도 1일차로 센다.** 여행 중 모드·일정표 날짜 칩과 같은 이름을 쓴다.
                     else -> stringResource(R.string.plan_day_tab, trip.dayNumberOn(today) ?: trip.dayCount)
                 },
-                style = MaterialTheme.typography.labelLarge,
-                // 배지 글자는 터쿼이즈(⑫). 예전 코랄은 ⑫부터 경고색(주황)과
-                // 겹쳐 "주의"로 읽힌다. 흰 배지가 단색 카드 위에서 이미 충분히 눈에 걸린다.
-                // PointDark는 "배지 면 위 글자" 역할이라 라이트에선 깊은 터쿼이즈, 다크에선 밝은 민트다.
-                color = LocalPalette.current.PointDark,
-                modifier = Modifier.padding(
-                    horizontal = Tokens.Space.md,
-                    vertical = Tokens.Space.sm,
+            )
+            HeroChip("$length · $people")
+        }
+
+        Column(
+            verticalArrangement = Arrangement.spacedBy(Tokens.Space.xs),
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(
+                    start = Tokens.Space.lg,
+                    bottom = Tokens.Space.lg,
+                    end = Tokens.Size.heroArrow + Tokens.Space.xl,
                 ),
+        ) {
+            Text(
+                text = stringResource(
+                    R.string.fmt_date_range,
+                    dateShort(trip.departureDate),
+                    dateShort(trip.returnDate),
+                ),
+                style = MaterialTheme.typography.bodyLarge,
+                color = Color.White.copy(alpha = HERO_SUBTEXT_ALPHA),
+            )
+            Text(
+                text = savedTripDestination(trip),
+                style = MaterialTheme.typography.displaySmall,
+                color = Color.White,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(Tokens.Space.lg)
+                .size(Tokens.Size.heroArrow)
+                .clip(Tokens.Radius.card)
+                .background(LocalPalette.current.Surface)
+                .clickable(onClick = onClick),
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Outlined.ArrowForward,
+                contentDescription = stringResource(R.string.plan_title),
+                tint = LocalPalette.current.TextPrimary,
+            )
+        }
+    }
+}
+
+/** 히어로 위 반투명 칩. 바탕 색·사진이 비치게 해 카드와 한 덩어리로 보인다. */
+@Composable
+private fun HeroChip(text: String) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.labelMedium,
+        color = Color.White,
+        modifier = Modifier
+            .clip(Tokens.Radius.chip)
+            .background(Color.White.copy(alpha = HERO_CHIP_ALPHA))
+            .padding(horizontal = Tokens.Space.md, vertical = Tokens.Space.sm),
+    )
+}
+
+/**
+ * 홈 검토 카드(design/mockup/home). 결과 화면 요약 탭 카드의 요약판 — 첫 문제 한 줄과 건수만.
+ * 누르면 그 여행 결과 화면으로 간다(고치기는 거기서).
+ */
+@Composable
+private fun HomeReviewCard(review: HomeReview, city: String, onClick: () -> Unit) {
+    val palette = LocalPalette.current
+    Column(
+        verticalArrangement = Arrangement.spacedBy(Tokens.Space.md),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(Tokens.Radius.card)
+            .background(palette.Surface)
+            .clickable(onClick = onClick)
+            .padding(Tokens.Space.lg),
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(Tokens.Space.md),
+        ) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .size(Tokens.Size.reviewIcon)
+                    .clip(CircleShape)
+                    .background(palette.PointLight),
+            ) {
+                Icon(Icons.Outlined.StarOutline, contentDescription = null, tint = palette.PointDark)
+            }
+            Text(
+                text = stringResource(R.string.review_card_title, review.count),
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.weight(1f),
+            )
+            Text(text = city, style = MaterialTheme.typography.bodyMedium, color = palette.TextSecondary)
+        }
+        DashedDivider()
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(Tokens.Space.md),
+        ) {
+            Text(
+                text = review.firstFact,
+                style = MaterialTheme.typography.bodyLarge,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f),
+            )
+            Icon(
+                imageVector = Icons.AutoMirrored.Outlined.ArrowForward,
+                contentDescription = null,
+                tint = palette.TextPrimary,
             )
         }
     }
 }
 
 /**
- * 최근 일정 한 줄. 작은 사진 + 제목·날짜.
+ * 최근 일정 2열 카드(design/mockup/home). 위에 색 블록(사진 자리), 아래 제목과 날짜.
  *
- * **지난 여행도 섞어 둔다.** "최근"은 최근에 저장한 것이지 앞으로 갈 것이 아니다 —
- * 다녀온 일정을 다시 열어보는 경우가 많다. 대신 다녀온 것에는 칩을 붙여 구분한다.
+ * 블록은 사진이 있으면 사진, 없으면 연한 민트·크림 단색이다. 예전 목록 줄에 넣던 앱 그림 표식은
+ * 시안에 없어 뺐다 — 카드가 두 장씩 서면 그림이 반복돼 오히려 산만했다.
  */
 @Composable
-private fun RecentTripRow(trip: SavedTrip, today: LocalDate, onClick: () -> Unit) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(Tokens.Space.md),
-        modifier = Modifier
-            .fillMaxWidth()
+private fun RecentTripCard(
+    trip: SavedTrip,
+    today: LocalDate,
+    alternate: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val palette = LocalPalette.current
+    val photo = trip.coverPlaceId?.let { rememberPlacePhoto(it) }
+    Column(
+        verticalArrangement = Arrangement.spacedBy(Tokens.Space.sm),
+        modifier = modifier
             .clip(Tokens.Radius.card)
+            .background(palette.Surface)
             .clickable(onClick = onClick)
-            .background(LocalPalette.current.Surface)
             .padding(Tokens.Space.md),
     ) {
-        // 목록 줄의 썸네일은 사진 자리가 아니라 **표식**이다. 목적지마다 색이 달라지면
-        // 다섯 줄이 알록달록해져 제목이 안 읽힌다. 한 가지 바탕에 작은 아이콘만 얹는다.
-        //
-        // **다크에서는 연노랑을 쓰지 않는다.** 어두운 카키로 내려가 탁해지고, 그 위에 얹힌
-        // 여러 색 아이콘이 흙빛으로 섞인다. 그때는 면을 가라앉히고 포인트 색 아이콘
-        // 하나로 표식을 삼는다 — 라이트에서 연노랑이 하던 일을 색 대비가 대신한다.
-        // 대표 장소 사진이 있으면 그것을 쓴다. 사진은 목적지마다 달라도 알록달록하지 않다 —
-        // 위 걱정은 **색 그라데이션**을 썼을 때의 이야기였다. 사진이 없거나 설정에서 껐으면
-        // 아래 표식이 그대로 남는다.
-        val photo = trip.coverPlaceId?.let { rememberPlacePhoto(it) }
-        val dark = isAppInDarkTheme()
         Box(
-            contentAlignment = Alignment.Center,
             modifier = Modifier
-                .size(THUMB_SIZE)
+                .fillMaxWidth()
+                .height(Tokens.Size.recentBlockHeight)
                 .clip(Tokens.Radius.image)
-                .background(
-                    if (dark) LocalPalette.current.SurfaceMuted else LocalPalette.current.Secondary,
-                ),
+                .background(if (alternate) palette.Secondary else palette.PointLight),
         ) {
             if (photo != null) {
                 AsyncImage(
@@ -332,48 +457,35 @@ private fun RecentTripRow(trip: SavedTrip, today: LocalDate, onClick: () -> Unit
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.matchParentSize(),
                 )
-            } else {
-                Image(
-                    painter = painterResource(R.drawable.ic_launcher_art),
-                    contentDescription = null,
-                    colorFilter = if (dark) ColorFilter.tint(LocalPalette.current.Point) else null,
-                    modifier = Modifier.size(THUMB_ICON_SIZE),
+            }
+            if (!trip.isUpcoming(today)) {
+                PastTripChip(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(Tokens.Space.sm),
                 )
             }
         }
-        Column(
-            verticalArrangement = Arrangement.spacedBy(Tokens.Space.xs),
-            modifier = Modifier.weight(1f),
-        ) {
-            Text(
-                text = savedTripTitle(trip),
-                style = MaterialTheme.typography.titleSmall,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-            Text(
-                text = stringResource(
-                    R.string.home_recent_subtitle,
-                    savedTripDestination(trip),
-                    daysText(trip.dayCount),
-                    dateShort(trip.departureDate),
-                ),
-                style = MaterialTheme.typography.bodyMedium,
-                color = LocalPalette.current.TextSecondary,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
-        if (!trip.isUpcoming(today)) {
-            PastTripChip()
-        }
+        Text(
+            text = savedTripTitle(trip),
+            style = MaterialTheme.typography.titleSmall,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Text(
+            text = "${dateShort(trip.departureDate)} · ${daysText(trip.dayCount)}",
+            style = MaterialTheme.typography.bodyMedium,
+            color = palette.TextSecondary,
+            maxLines = 1,
+        )
     }
 }
 
-private val THUMB_SIZE = Tokens.Space.xxl * 2
+/** 히어로 칩 바탕의 흰색 진하기. 시안처럼 바탕이 비치되 글자가 떠 보일 만큼. */
+private const val HERO_CHIP_ALPHA = 0.20f
 
-/** 썸네일 안 아이콘. 네모를 꽉 채우면 표식이 아니라 잘린 그림처럼 보인다. */
-private val THUMB_ICON_SIZE = Tokens.Space.xxl * 1.4f
+/** 히어로 기간 줄. 도시명보다 한 단계 흐리게 둬 도시명이 주인공이 되게 한다. */
+private const val HERO_SUBTEXT_ALPHA = 0.85f
 
 /** 빈 목록 자리의 그림 진하기. 글자보다 눈에 들어오면 주인공이 바뀐다. */
 private const val EMPTY_STATE_ART_ALPHA = 0.35f

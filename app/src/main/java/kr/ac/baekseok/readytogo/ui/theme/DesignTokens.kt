@@ -76,13 +76,20 @@ object Tokens {
         val image = RoundedCornerShape(20.dp)
     }
 
+    /**
+     * 글자 크기(⑫부터 design/mockup 기준). 시안 780px ≈ 360dp(2.17배)로 재서 맞췄다.
+     * - display: 히어로 도시명·큰 금액. headline: 화면 큰 제목("다음 여행"). sheetTitle: 시트 제목.
+     * - title: 상단 바 제목. section: 카드 제목·섹션 머리. body·caption·label: 본문·보조·칩.
+     */
     object FontSize {
-        val display = 32.sp
-        val title = 22.sp
-        val section = 18.sp
-        val body = 15.sp
-        val caption = 13.sp
-        val label = 11.sp
+        val display = 34.sp
+        val headline = 28.sp
+        val sheetTitle = 24.sp
+        val title = 20.sp
+        val section = 17.sp
+        val body = 16.sp
+        val caption = 14.sp
+        val label = 13.sp
     }
 
     /** 카드 높이 등 반복되는 크기. */
@@ -123,7 +130,16 @@ object Tokens {
          * 일반 사진 카드(180dp)보다 크게 둔다 — 홈에서 가장 먼저 보여야 할 것이
          * "다음에 어디 가는지"이고, 같은 높이면 아래 목록과 구분되지 않는다.
          */
-        val heroCardHeight = 220.dp
+        val heroCardHeight = 260.dp
+
+        /** 히어로 카드 오른쪽 아래 화살표 버튼(⑫). 손가락에 넉넉한 정사각형. */
+        val heroArrow = 56.dp
+
+        /** 홈 최근 일정 2열 카드 위쪽 색 블록(사진 자리). */
+        val recentBlockHeight = 72.dp
+
+        /** 홈 검토 카드 왼쪽 아이콘 원. */
+        val reviewIcon = 48.dp
 
         /** 빈 목록 자리에 옅게 까는 아이콘 심볼. 글자보다 커지면 주인공이 바뀐다. */
         val emptyStateSymbol = 96.dp

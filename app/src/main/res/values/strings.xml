@@ -18,7 +18,7 @@
     <string name="common_sign_in">로그인</string>
     <string name="common_favorite_add">즐겨찾기 추가</string>
     <string name="common_favorite_remove">즐겨찾기 해제</string>
-    <string name="common_see_all">모두 보기</string>
+    <string name="common_see_all">전체 보기</string>
 
     <!-- 하단 탭 -->
     <string name="tab_home">홈</string>
@@ -46,11 +46,12 @@
     <string name="login_guest_note">둘러보기는 일정을 만들 수 있지만 저장되지 않습니다.</string>
 
     <!-- 홈 -->
-    <string name="home_greeting_named">%1$s 님, 어디로 갈까요?</string>
-    <string name="home_greeting">어디로 갈까요?</string>
+    <string name="home_greeting_named">안녕하세요, %1$s님</string>
+    <string name="home_greeting">안녕하세요</string>
+    <string name="home_title_no_trip">어디로 갈까요?</string>
     <string name="home_guest_note">둘러보기 중입니다. 로그인하면 일정을 저장할 수 있습니다.</string>
     <string name="home_create_trip">새 여행 만들기</string>
-    <string name="home_upcoming">다가오는 여행</string>
+    <string name="home_upcoming">다음 여행</string>
     <string name="home_recent">최근 일정</string>
     <string name="home_empty_guest_title">저장은 로그인이 필요합니다</string>
     <string name="home_empty_title">아직 만든 일정이 없습니다</string>
@@ -449,6 +450,7 @@
     <string name="common_save_failed">저장하지 못했습니다.</string>
     <!-- 예: "10.20 – 10.24 · 5일" — 홈과 여행 탭이 같이 쓴다. -->
     <string name="fmt_date_range_days">%1$s – %2$s · %3$s</string>
+    <string name="fmt_date_range">%1$s – %2$s</string>
 
     <!-- ===== 여행 탭 ===== -->
     <string name="trips_empty_title">저장된 일정이 없습니다</string>

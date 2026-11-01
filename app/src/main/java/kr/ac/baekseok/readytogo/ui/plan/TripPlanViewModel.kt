@@ -31,8 +31,6 @@ import kr.ac.baekseok.readytogo.domain.review.defaultFixes
 import kr.ac.baekseok.readytogo.domain.review.editedTimeline
 import kr.ac.baekseok.readytogo.domain.review.reviewPlan
 import kr.ac.baekseok.readytogo.domain.weather.WeatherForecast
-import kr.ac.baekseok.readytogo.ui.format.Particle
-import kr.ac.baekseok.readytogo.ui.format.withParticle
 import kr.ac.baekseok.readytogo.generation.PlanGeneration
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -47,9 +45,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import java.time.LocalDate
-import java.time.format.TextStyle
 import java.time.temporal.ChronoUnit
-import java.util.Locale
 
 /** 결과 화면의 상태. Repository가 실제 API처럼 시간이 걸리므로 로딩과 실패를 구분해 들고 있어야 한다. */
 sealed interface TripPlanUiState {
@@ -680,71 +676,6 @@ class TripPlanViewModel(
     }
 
     /**
-     * 서버에 보낼 사실 문장. 화면의 항목 제목도 이것이다 — AI 설명이 없어도(둘러보기·실패) 무엇이
-     * 문제인지는 보여야 한다. 화면 언어로 쓰고, 모델은 같은 언어로 답한다.
-     */
-    private fun reviewFact(issue: ReviewIssue, plan: TripPlan): String = when (issue) {
-        is ReviewIssue.LongDay -> string(
-            R.string.review_fact_long,
-            issue.dayNumber,
-            minutesText(issue.minutes),
-            minutesText(issue.limitMinutes),
-        )
-        is ReviewIssue.SameKind -> {
-            val target = mealRefText(ReviewIssue.MealRef(issue.dayNumber, issue.meal, issue.restaurantName))
-                .particle(Particle.SUBJECT)
-            // 조사는 마지막 이웃에만 붙는다("A, B와 같은 종류").
-            val neighbors = issue.neighbors.map(::mealRefText)
-            val last = neighbors.last().particle(Particle.AND)
-            if (neighbors.size == 1) {
-                string(R.string.review_fact_same_kind, target, last, issue.category)
-            } else {
-                string(R.string.review_fact_same_kind_both, target, neighbors.first(), last, issue.category)
-            }
-        }
-        is ReviewIssue.Closed -> {
-            val weekday = plan.dailyPlans.first { it.dayNumber == issue.dayNumber }.date.dayOfWeek
-                .getDisplayName(TextStyle.FULL, Locale.getDefault())
-            val name = issue.name.particle(Particle.TOPIC)
-            when (val meal = issue.meal) {
-                null -> string(R.string.review_fact_closed_place, issue.dayNumber, weekday, name)
-                else -> string(R.string.review_fact_closed_meal, issue.dayNumber, weekday, string(meal.labelRes), name)
-            }
-        }
-        is ReviewIssue.Rainy -> string(
-            R.string.review_fact_rainy,
-            issue.dayNumber,
-            issue.probability,
-            issue.outdoorNames.joinToString(", "),
-        )
-    }
-
-    /** "1일차 점심 라멘 하루카" */
-    private fun mealRefText(ref: ReviewIssue.MealRef): String =
-        string(R.string.review_meal_ref, ref.dayNumber, string(ref.meal.labelRes), ref.name)
-
-    /**
-     * 한국어 화면이면 받침에 맞는 조사를 붙인다. 영어 문장은 조사가 없어 이름 그대로 넘긴다 —
-     * 같은 인자를 두 언어 문자열이 함께 쓰기 때문에 여기서 가른다.
-     * 앱 안 언어 설정을 따라야 해서 기기 Locale이 아니라 리소스의 언어를 본다.
-     */
-    private fun String.particle(particle: Particle): String {
-        val language = getApplication<Application>().resources.configuration.locales[0].language
-        return if (language == Locale.KOREAN.language) withParticle(this, particle) else this
-    }
-
-    /** "3시간 20분". 화면의 durationText는 Composable이라 여기서 못 쓴다 — 같은 문자열 리소스를 쓴다. */
-    private fun minutesText(minutes: Int): String {
-        val hours = minutes / MINUTES_PER_HOUR
-        val rest = minutes % MINUTES_PER_HOUR
-        return when {
-            hours == 0 -> string(R.string.fmt_duration_m, rest)
-            rest == 0 -> string(R.string.fmt_duration_h, hours)
-            else -> string(R.string.fmt_duration_hm, hours, rest)
-        }
-    }
-
-    /**
      * 편집을 저장된 일정에 붙인다.
      *
      * **저장해 둔 일정일 때만 올린다.** 저장하지 않은 계획에 편집만 올려 둘 곳이 없다.
@@ -806,6 +737,10 @@ class TripPlanViewModel(
      * 스낵바 문구는 ViewModel이 만들어 화면으로 넘긴다. 번역된 글자를 여기서 집어야
      * 하는데 Composable이 아니라 stringResource를 못 쓴다 — Application Context로 읽는다.
      */
+    /** 검토 사실 문장. 매번 리소스를 새로 받아 앱 언어를 바꾼 직후에도 그 언어로 쓴다. */
+    private fun reviewFact(issue: ReviewIssue, plan: TripPlan): String =
+        ReviewFactWriter(getApplication<Application>().resources).fact(issue, plan)
+
     private fun string(resId: Int, vararg args: Any): String =
         getApplication<Application>().getString(resId, *args)
 
@@ -835,6 +770,5 @@ class TripPlanViewModel(
         /** 한 번에 묻는 문제 수. 서버의 MAX_ISSUES(functions/src/reviewIssues.ts)와 같다 — 넘으면 거절된다. */
         const val MAX_REVIEW_ISSUES = 8
 
-        const val MINUTES_PER_HOUR = 60
     }
 }

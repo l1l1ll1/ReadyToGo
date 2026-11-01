@@ -12,6 +12,10 @@
         <item quantity="one">%d adult</item>
         <item quantity="other">%d adults</item>
     </plurals>
+    <plurals name="people_count">
+        <item quantity="one">%d person</item>
+        <item quantity="other">%d people</item>
+    </plurals>
     <plurals name="rooms_count">
         <item quantity="one">%d room</item>
         <item quantity="other">%d rooms</item>

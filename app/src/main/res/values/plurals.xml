@@ -18,6 +18,10 @@
     <plurals name="adults_count">
         <item quantity="other">성인 %d명</item>
     </plurals>
+    <!-- 홈 히어로 칩(⑫). 성인 수지만 시안처럼 "N명"으로 짧게 쓴다. -->
+    <plurals name="people_count">
+        <item quantity="other">%d명</item>
+    </plurals>
     <plurals name="rooms_count">
         <item quantity="other">%d실</item>
     </plurals>

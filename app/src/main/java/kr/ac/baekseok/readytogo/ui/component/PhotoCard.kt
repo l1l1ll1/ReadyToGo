@@ -83,6 +83,11 @@ fun PhotoCard(
      * 사진이 도착하면 저절로 가려진다 — 이 쪽에서 사진 유무를 따로 보지 않는다.
      */
     decoration: (@Composable BoxScope.() -> Unit)? = null,
+    /**
+     * 글자를 [title] 대신 [overlay]에 직접 그리는 카드(홈 히어로). 사진이 얹히면 덮개를 켜야
+     * 흰 글자가 읽힌다 — 덮개는 원래 제목이 있을 때만 깔리므로 따로 알려 준다.
+     */
+    overlayHasText: Boolean = false,
     overlay: @Composable (BoxScope.() -> Unit)? = null,
 ) {
     val fill = colors ?: Tokens.placeholderGradient(key)
@@ -124,7 +129,7 @@ fun PhotoCard(
         // 지킬 글자가 없는데, 노을 그라데이션 위에 검은 덮개가 겹쳐 아래쪽이 탁해졌다.
         // 사진을 얹었으면 덮개를 켠다 — 사진이 밝으면 흰 글자가 묻힌다.
         // 배경 색을 직접 정한 카드라도 그 색은 이미 사진에 가려져 있다.
-        if ((scrim || photo != null) && (title.isNotEmpty() || subtitle != null)) {
+        if ((scrim || photo != null) && (title.isNotEmpty() || subtitle != null || overlayHasText)) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()

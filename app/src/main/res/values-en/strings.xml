@@ -42,11 +42,12 @@
     <string name="login_guest_note">You can build a plan while browsing, but it won\'t be saved.</string>
 
     <!-- 홈 -->
-    <string name="home_greeting_named">Where to, %1$s?</string>
-    <string name="home_greeting">Where to?</string>
+    <string name="home_greeting_named">Hi, %1$s</string>
+    <string name="home_greeting">Hi there</string>
+    <string name="home_title_no_trip">Where to?</string>
     <string name="home_guest_note">You\'re browsing. Sign in to save your plans.</string>
     <string name="home_create_trip">Plan a new trip</string>
-    <string name="home_upcoming">Upcoming trip</string>
+    <string name="home_upcoming">Next trip</string>
     <string name="home_recent">Recent plans</string>
     <string name="home_empty_guest_title">Sign in to save plans</string>
     <string name="home_empty_title">No plans yet</string>
@@ -423,6 +424,7 @@
     <string name="common_delete">Delete</string>
     <string name="common_save_failed">We couldn\'t save it.</string>
     <string name="fmt_date_range_days">%1$s – %2$s · %3$s</string>
+    <string name="fmt_date_range">%1$s – %2$s</string>
 
     <!-- ===== 여행 탭 ===== -->
     <string name="trips_empty_title">No saved trips</string>

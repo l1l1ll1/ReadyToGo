@@ -12,6 +12,10 @@
 | `settings.png` | 설정 — 계정·언어·알림·접근성 |
 | `plan-summary.png` | 결과 화면 요약 탭 |
 | `plan-timeline-photos.png` | 일정표 — 설정에서 "장소 사진 표시"를 켠 상태 |
+| `plan-review.png` | 요약 탭 — 일정 검토 카드를 펼친 상태(비 오는 날 실외 관광지) |
+| `timeline-weather.png` | 일정표 — 날짜 칩 날씨 아이콘과 갱신 시각·출처 줄 |
+| `map.png` | 지도 탭 — 숙소 → 일정표 순서 → 숙소 경로선 |
+| `text-edit.png` | 말로 일정 고치기 — "점심 라멘 말고"로 점심이 수프카레로 바뀐 직후 |
 | `en-input.png` | 영어 — 입력 화면 (금액이 달러로 환산된다) |
 | `en-plan-summary.png` | 영어 — 결과 화면 요약 탭 |
 | `en-trips.png` | 영어 — 여행 탭 |

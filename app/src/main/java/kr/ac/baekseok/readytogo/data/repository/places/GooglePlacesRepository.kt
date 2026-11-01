@@ -187,6 +187,7 @@ class GooglePlacesRepository(
             mapUrl = googleMapsUri?.toString() ?: "",
             suitableMeals = suitableMeals(),
             openDays = openDays(),
+            primaryType = primaryType,
         )
     }
 

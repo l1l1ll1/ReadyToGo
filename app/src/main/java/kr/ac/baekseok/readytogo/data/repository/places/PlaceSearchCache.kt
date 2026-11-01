@@ -142,6 +142,7 @@ private fun Restaurant.toJson() = JSONObject().apply {
     put("mapUrl", mapUrl)
     put("suitableMeals", JSONArray().apply { suitableMeals.forEach { put(it.name) } })
     openDays?.let { put("openDays", it.toJson()) }
+    primaryType?.let { put("primaryType", it) }
 }
 
 private fun JSONObject.toRestaurant() = Restaurant(
@@ -162,6 +163,8 @@ private fun JSONObject.toRestaurant() = Restaurant(
         (0 until array.length()).map { MealTime.valueOf(array.getString(it)) }.toSet()
     },
     openDays = readOpenDays(),
+    // 예전 캐시에는 없다. 없으면 null(모름) — 같은 종류 검사를 그 식당에서만 건너뛴다.
+    primaryType = if (has("primaryType")) getString("primaryType") else null,
 )
 
 private fun Attraction.toJson() = JSONObject().apply {

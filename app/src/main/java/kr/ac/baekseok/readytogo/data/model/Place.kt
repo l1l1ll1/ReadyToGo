@@ -94,6 +94,13 @@ data class Restaurant(
      * 빈 집합이 아니라 null로 둔다.
      */
     val openDays: Set<DayOfWeek>? = null,
+    /**
+     * Places의 본업 타입(ramen_restaurant…). null이면 모른다.
+     *
+     * 검토관이 "같은 종류 연속"을 이것으로 본다. [category]는 화면용 번역 이름이라 언어마다
+     * 달라서, "음식점" 같은 범용 이름을 언어와 무관하게 걸러낼 수 없다.
+     */
+    val primaryType: String? = null,
 ) : ScoredCandidate
 
 /**

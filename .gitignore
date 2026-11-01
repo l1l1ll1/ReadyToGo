@@ -25,6 +25,17 @@ local.properties
 # SHA-1 지문 등록으로 한다. 제외하면 받는 쪽에서 빌드 자체가 실패해서 손해만 크다.
 # (local.properties의 API 키는 반대다 — 서버에서 과금되는 비밀값이라 위에서 제외한다.)
 
+# 릴리스 서명 키와 그 비밀번호. 저장소가 공개라 절대 올리지 않는다.
+# 키를 잃으면 같은 서명으로 업데이트할 수 없으므로 저장소 밖 두 곳에 따로 보관한다.
+*.jks
+*.keystore
+keystore.properties
+
+# Firebase CLI가 남기는 것. 배포 캐시(.firebase/)와 디버그 로그에는 프로젝트 내부 정보가 섞인다.
+.firebase/
+firebase-debug*.log
+firestore-debug.log
+
 # OS
 .DS_Store
 Thumbs.db

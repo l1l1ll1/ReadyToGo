@@ -1,5 +1,6 @@
 package kr.ac.baekseok.readytogo.ui.plan
 
+import kr.ac.baekseok.readytogo.ui.format.nightsText
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.size
@@ -127,17 +128,107 @@ fun SummaryHeader(
         }
 
         PlanDensityLine(plan)
+    }
+}
 
-        val total = b.totalWon
-        val planned = plan.plannedSpendWon()
+/**
+ * 요약 맨 위 "총 예상 비용" 카드(design/mockup/summary). 큰 금액, 예산 대비 칩, 사용률 막대,
+ * 항공·숙소·식비·기타 내역.
+ *
+ * 예전에는 머리 카드 아래쪽에 "예산 사용 x / y (152%)" 한 줄로 있었다. 이 화면을 여는 사람이
+ * 가장 먼저 묻는 것이 "얼마 드나"라서 맨 위 카드로 올리고 금액을 가장 크게 둔다.
+ */
+@Composable
+fun CostCard(plan: TripPlan) {
+    val palette = LocalPalette.current
+    val spend = plan.plannedSpend()
+    val total = plan.budget.totalWon
+    val over = total != null && spend.total > total
+
+    Column(
+        verticalArrangement = Arrangement.spacedBy(Tokens.Space.md),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(Tokens.Radius.card)
+            .background(palette.Surface)
+            .padding(Tokens.Space.lg),
+    ) {
+        Text(
+            text = stringResource(R.string.summary_total_cost),
+            style = MaterialTheme.typography.bodyMedium,
+            color = palette.TextSecondary,
+        )
+        Text(text = money(spend.total), style = MaterialTheme.typography.displaySmall)
+
         if (total != null) {
-            DashedDivider(
-                color = LocalPalette.current.Divider,
-                modifier = Modifier.padding(vertical = Tokens.Space.sm),
+            // 예산 안이면 민트, 넘으면 주의(주황 글자 + 복숭아). 빨강은 삭제에만 쓴다.
+            Text(
+                text = if (over) {
+                    stringResource(R.string.summary_over_budget, money(spend.total - total))
+                } else {
+                    stringResource(R.string.summary_within_budget, money(total - spend.total))
+                },
+                style = MaterialTheme.typography.labelMedium,
+                color = if (over) palette.Warning else palette.PointDark,
+                modifier = Modifier
+                    .clip(Tokens.Radius.chip)
+                    .background(if (over) palette.WarningSurface else palette.PointLight)
+                    .padding(horizontal = Tokens.Space.md, vertical = Tokens.Space.sm),
             )
-            BudgetUsageBar(totalWon = total, plannedWon = planned)
-            TightMealBudgetNotice(plan)
+            val ratio = (spend.total.toFloat() / total).coerceIn(0f, 1f)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(Tokens.Space.sm)
+                    .clip(Tokens.Radius.chip)
+                    .background(palette.SurfaceMuted),
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(ratio)
+                        .height(Tokens.Space.sm)
+                        .clip(Tokens.Radius.chip)
+                        .background(if (over) palette.Warning else palette.Point),
+                )
+            }
         }
+
+        Column {
+            CostRow(stringResource(R.string.plan_section_flight), spend.flight)
+            DashedDivider()
+            CostRow(
+                label = if (spend.nights > 0) {
+                    stringResource(R.string.summary_row_lodging, nightsText(spend.nights))
+                } else {
+                    stringResource(R.string.plan_tab_lodging)
+                },
+                won = spend.lodging,
+            )
+            DashedDivider()
+            CostRow(stringResource(R.string.summary_row_meals, spend.mealCount), spend.meals)
+            DashedDivider()
+            CostRow(stringResource(R.string.plan_budget_other), spend.other)
+        }
+
+        if (total != null) TightMealBudgetNotice(plan)
+    }
+}
+
+@Composable
+private fun CostRow(label: String, won: Long) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = Tokens.Space.md),
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyLarge,
+            color = LocalPalette.current.TextSecondary,
+            modifier = Modifier.weight(1f),
+        )
+        Text(text = money(won), style = MaterialTheme.typography.titleSmall)
     }
 }
 
@@ -231,67 +322,6 @@ private fun TightMealBudgetNotice(plan: TripPlan) {
 @Composable
 private fun formatRoughWon(won: Long): String = money((won + 50) / 100 * 100)
 
-/**
- * 예산 사용률 바.
- *
- * 100%를 넘으면 막대를 꽉 채우고 색을 오류 색으로 바꾼다 — 막대가 칸을 넘어 그려지면
- * 레이아웃이 깨지고, 넘친 정도는 숫자로 읽는 게 정확하다.
- */
-@Composable
-private fun BudgetUsageBar(totalWon: Long, plannedWon: Long) {
-    val ratio = (plannedWon.toFloat() / totalWon).coerceAtLeast(0f)
-    val overBudget = ratio > 1f
-    // 예산 초과는 **코랄**이다. 붉은 Danger는 삭제·탈퇴처럼 되돌릴 수 없는 일에만 쓴다 —
-    // 예산을 넘은 건 잘못이 아니라 "눈에 걸려야 할 것"이다.
-    val color = if (overBudget) LocalPalette.current.Accent else LocalPalette.current.Point
-
-    Column(verticalArrangement = Arrangement.spacedBy(Tokens.Space.xs)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = stringResource(R.string.plan_budget_usage),
-                style = MaterialTheme.typography.labelMedium,
-                color = LocalPalette.current.TextSecondary,
-                modifier = Modifier.weight(1f),
-            )
-            Text(
-                text = stringResource(
-                    R.string.plan_budget_usage_value,
-                    money(plannedWon),
-                    money(totalWon),
-                    (ratio * 100).toInt(),
-                ),
-                style = MaterialTheme.typography.labelMedium,
-                color = color,
-                fontWeight = FontWeight.Bold,
-            )
-        }
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(Tokens.Space.sm)
-                .clip(Tokens.Radius.chip)
-                .background(LocalPalette.current.Divider),
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(ratio.coerceAtMost(1f))
-                    .height(Tokens.Space.sm)
-                    .clip(Tokens.Radius.chip)
-                    .background(color),
-            )
-        }
-
-        if (overBudget) {
-            Text(
-                text = stringResource(R.string.plan_budget_over),
-                style = MaterialTheme.typography.labelMedium,
-                color = color,
-            )
-        }
-    }
-}
-
 /** 일정 하이라이트 — 평점 높은 관광지 세 곳. 요약에서 "뭘 보러 가는지"가 바로 보이게 한다. */
 @Composable
 fun ItineraryHighlights(plan: TripPlan) {
@@ -364,7 +394,19 @@ fun ItineraryHighlights(plan: TripPlan) {
  * - 식사: 추천 쪽 가격의 합. 식당 가격은 상한 기준이라 실제보다 넉넉하게 잡힌다
  * - 현지 교통·입장료는 배분 몫을 그대로 더한다. 실제 값을 알 방법이 없다
  */
-private fun TripPlan.plannedSpendWon(): Long {
+/** 계획대로 가면 드는 돈, 항목별. 총액은 내역의 합이다 — 따로 계산하면 둘이 어긋난다. */
+private data class PlannedSpend(
+    val flight: Long,
+    val lodging: Long,
+    val nights: Int,
+    val meals: Long,
+    val mealCount: Int,
+    val other: Long,
+) {
+    val total: Long get() = flight + lodging + meals + other
+}
+
+private fun TripPlan.plannedSpend(): PlannedSpend {
     // 항공은 이미 인원 전체 총액이다(SerpApi에 인원을 넘겨 받는다). 다시 곱하면 안 된다.
     val flight = flights.minOfOrNull { it.priceWon } ?: 0L
 
@@ -378,7 +420,14 @@ private fun TripPlan.plannedSpendWon(): Long {
         day.meals.values.sumOf { it.qualityFirst.item.priceWon }
     } * condition.adults
 
-    return flight + lodgingTotal + meals + (budget.otherWon ?: 0L)
+    return PlannedSpend(
+        flight = flight,
+        lodging = lodgingTotal,
+        nights = nights,
+        meals = meals,
+        mealCount = dailyPlans.sumOf { it.meals.size },
+        other = budget.otherWon ?: 0L,
+    )
 }
 
 private const val HIGHLIGHT_COUNT = 3

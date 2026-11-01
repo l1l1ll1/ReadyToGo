@@ -1,5 +1,9 @@
 package kr.ac.baekseok.readytogo.ui.plan
 
+import androidx.compose.ui.semantics.Role
+import androidx.compose.material.icons.outlined.ErrorOutline
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,11 +15,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ExpandLess
 import androidx.compose.material.icons.outlined.ExpandMore
-import kr.ac.baekseok.readytogo.ui.component.DashedDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -64,31 +66,36 @@ fun ReviewCard(controls: ReviewControls) {
     val expanded = controls.expanded
 
     Column(
+        verticalArrangement = Arrangement.spacedBy(Tokens.Space.md),
         modifier = Modifier
             .fillMaxWidth()
             .clip(Tokens.Radius.card)
-            .background(palette.Surface),
+            .background(palette.Surface)
+            .padding(bottom = if (expanded) Tokens.Space.lg else Tokens.Space.none),
     ) {
+        // 머리(design/mockup/summary): 주의 아이콘 원 + "검토 N건" + 펼침 표시.
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(Tokens.Space.sm),
+            horizontalArrangement = Arrangement.spacedBy(Tokens.Space.md),
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable(onClick = controls.onToggle)
                 .padding(Tokens.Space.lg),
         ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = stringResource(R.string.review_card_title, controls.items.size),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = palette.Warning,
-                )
-                Text(
-                    text = stringResource(R.string.review_card_hint),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = palette.TextSecondary,
-                )
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .size(Tokens.Size.reviewIcon)
+                    .clip(CircleShape)
+                    .background(palette.WarningSurface),
+            ) {
+                Icon(Icons.Outlined.ErrorOutline, contentDescription = null, tint = palette.Warning)
             }
+            Text(
+                text = stringResource(R.string.review_card_title, controls.items.size),
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.weight(1f),
+            )
             Icon(
                 imageVector = if (expanded) Icons.Outlined.ExpandLess else Icons.Outlined.ExpandMore,
                 contentDescription = null,
@@ -99,45 +106,51 @@ fun ReviewCard(controls: ReviewControls) {
 
         if (expanded) {
             controls.items.forEach { item ->
-                DashedDivider(color = palette.Divider)
                 ReviewRow(item, controls.loading, onFix = { controls.onFix(item.issue) })
             }
         }
     }
 }
 
+/** 문제 하나 — 복숭아 카드에 주의 글자, 오른쪽 아래 흰 pill "고치기"(design/mockup/summary). */
 @Composable
 private fun ReviewRow(item: ReviewItemUi, loading: Boolean, onFix: () -> Unit) {
     val palette = LocalPalette.current
 
     Column(
-        verticalArrangement = Arrangement.spacedBy(Tokens.Space.xs),
+        verticalArrangement = Arrangement.spacedBy(Tokens.Space.sm),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = Tokens.Space.lg, end = Tokens.Space.sm, top = Tokens.Space.md),
+            .padding(horizontal = Tokens.Space.lg)
+            .clip(Tokens.Radius.image)
+            .background(palette.WarningSurface)
+            .padding(Tokens.Space.lg),
     ) {
-        Text(
-            text = item.fact,
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(end = Tokens.Space.sm),
-        )
+        Text(text = item.fact, style = MaterialTheme.typography.bodyLarge, color = palette.Warning)
         // 설명 자리는 답이 올 때까지 "불러오는 중"을 둔다. 비워 두면 답이 와서 줄이 생길 때 화면이 튄다.
         val why = item.why?.takeIf { it.isNotBlank() }
         when {
             why != null -> Text(
                 text = why,
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyMedium,
                 color = palette.TextSecondary,
-                modifier = Modifier.padding(end = Tokens.Space.sm),
             )
             loading -> Text(
                 text = stringResource(R.string.review_loading),
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyMedium,
                 color = palette.TextSecondary,
             )
         }
-        TextButton(onClick = onFix, modifier = Modifier.align(Alignment.End)) {
-            Text(stringResource(R.string.review_fix), color = palette.Point)
-        }
+        Text(
+            text = stringResource(R.string.review_fix),
+            style = MaterialTheme.typography.labelLarge,
+            color = palette.Warning,
+            modifier = Modifier
+                .align(Alignment.End)
+                .clip(Tokens.Radius.button)
+                .background(palette.Surface)
+                .clickable(role = Role.Button, onClick = onFix)
+                .padding(horizontal = Tokens.Space.lg, vertical = Tokens.Space.sm),
+        )
     }
 }

@@ -315,6 +315,12 @@
     <string name="plan_budget_meal_cap">식사 1끼 상한</string>
     <string name="plan_budget_meal_cap_adults">식사 1끼 상한 (1인 × %1$d명)</string>
     <string name="plan_budget_other">교통·입장료·예비비</string>
+    <!-- 요약 "총 예상 비용" 카드(⑫, design/mockup/summary) -->
+    <string name="summary_total_cost">총 예상 비용</string>
+    <string name="summary_within_budget">예산 내 · %1$s 남음</string>
+    <string name="summary_over_budget">예산 초과 · %1$s 넘음</string>
+    <string name="summary_row_lodging">숙소 · %1$s</string>
+    <string name="summary_row_meals">식비 · %1$d끼</string>
     <string name="plan_budget_flight_exceeds">항공료만으로 예산을 넘습니다. 예산을 올리거나 날짜를 바꿔보세요.</string>
 
     <!-- 목적별 배분 막대 -->

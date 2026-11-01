@@ -293,6 +293,11 @@
     <string name="plan_budget_meal_cap">Meal, cap per meal</string>
     <string name="plan_budget_meal_cap_adults">Meal, cap per meal (1 person × %1$d)</string>
     <string name="plan_budget_other">Transit, tickets, buffer</string>
+    <string name="summary_total_cost">Estimated total</string>
+    <string name="summary_within_budget">Within budget · %1$s left</string>
+    <string name="summary_over_budget">Over budget by %1$s</string>
+    <string name="summary_row_lodging">Stay · %1$s</string>
+    <string name="summary_row_meals">Meals · %1$d</string>
     <string name="plan_budget_flight_exceeds">The flight alone goes over your budget. Raise the budget or change the dates.</string>
 
     <!-- 목적별 배분 막대 -->

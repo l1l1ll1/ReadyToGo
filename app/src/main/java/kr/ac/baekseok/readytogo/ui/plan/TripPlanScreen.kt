@@ -558,11 +558,13 @@ private fun PlanTabContent(
 
     when (tab) {
         PlanTab.SUMMARY -> TabColumn {
-            item { SummaryHeader(plan, onEditDates) }
+            // 시안 순서: 총 예상 비용 → 검토 → 여행 정보(목적·밀도·기간 수정).
+            item { CostCard(plan) }
             // 머리 바로 아래 — 예산보다 먼저 봐야 한다. 쉬는 날 가는 곳은 예산과 상관없이 헛걸음이다.
             if (review.items.isNotEmpty()) {
                 item { ReviewCard(review) }
             }
+            item { SummaryHeader(plan, onEditDates) }
             item { SectionTitle(stringResource(R.string.plan_section_budget)) }
             item { BudgetBreakdown(plan) }
 

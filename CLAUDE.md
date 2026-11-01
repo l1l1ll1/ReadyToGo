@@ -64,7 +64,9 @@
 
 ⑩ **출시 준비** — 릴리스 SHA-1, Firebase Hosting 배포, GitHub.
 
-⑪ **다도시**
+⑪ **다도시** — 범위 제외(보류).
+
+⑫ **UI 개선** — 끝나면 README 스크린샷·데모 GIF·GitHub Release(APK)를 다시 만든다.
 
 각 단계를 시작하기 전에 계획을 보고하고 허가를 받는다.
 
@@ -266,7 +268,10 @@
   - 날짜 칩 아래 한 줄: D-7보다 멀면 "날씨는 출발 7일 전부터 표시돼요", 받았으면 "날씨 · N시간 전 갱신 · Open-Meteo"
     (1시간 안이면 "방금 갱신"). 여행이 끝났거나 못 받았으면 없음. 에뮬레이터 확인(한국어 화면만 — 영어 문구는 리소스만 넣음):
     shift 0 → "출발 7일 전부터", shift 53 → "방금 갱신", 4일차 고치기 → "근처에 실내 관광지가 없어요", 일정 변경 없음
-- **진행 중**: ⑩ 출시 준비(목적: 취업 포트폴리오용 GitHub 공개 저장소)
+- **⑩ 공개 완료** — https://github.com/l1l1ll1/ReadyToGo (공개 저장소). 스크린샷·GIF·Release는 UI 개선(⑫) 후 재작업
+  - 공개 직전: 히스토리 전체를 작성자 "Gyunghoon Chae <rudgus6109@gmail.com>"으로, 과거 파일의 학교 메일을 Gmail로
+    재작성(로컬 백업 브랜치 backup-before-rewrite — push하지 않음), 비밀값 재검사(Google 키는 google-services.json의
+    Firebase 클라이언트 키뿐 — 제한 걸어 둠)
   - 완료: 공개 전 정리(문의 메일 Gmail로, .gitignore에 서명 키·Firebase CLI 산출물, 커밋 작성자 "Gyunghoon Chae"),
     Cloud Console 키 제한(사용자), 개인정보처리방침 갱신(Claude·Open-Meteo·닉네임·편집 기록·호출 횟수), 정보 화면 출처,
     아이콘 64dp(핀이 원형 마스크 안), 릴리스 서명(키·비밀번호는 저장소 밖, local.properties의 RELEASE_KEYSTORE_PROPERTIES),
@@ -274,9 +279,8 @@
     (Google 로그인·저장된 일정·새 일정 생성(Places·SerpApi)·지도·말로 고치기·즐겨찾기 쓰기),
     README(한국어 + 영문 요약, Mermaid)·docs/(scoring, agent-pipeline, costs)·LICENSE(MIT)·NOTICE, 스크린샷 4장 새로 촬영
   - 중간에 찾은 것: 실내/실외 표가 세부 본업 타입(city_park, public_bath)을 몰라 새 데이터에서 비 규칙이 꺼졌다 → 표 보강
-  - 남음: 데모 mp4 → GIF 변환(사용자) 후 README 주석 해제, 마지막 비밀값 재검사 → 히스토리 작성자·학교 메일 재작성(⚠ 해시 변경)
-    → GitHub 저장소 생성(사용자) → 첫 push(⚠ 외부 공개) → Release에 APK
-- **다음**: ⑩ 마무리 후 없음(⑪은 범위 제외)
+- **진행 중**: 없음
+- **다음**: ⑫ UI 개선. 시작 전에 계획을 보고한다
 - **미확인**: 지도에 체크·끌어서 순서 바꾸기 반영(같은 toTimeline 경로라 될 것으로 보나 에뮬레이터에서 직접은 안 해 봄)
 - **보류**: 스토어 등록 시 Hosting 배포 필요 — 지금은 방침을 앱 안 WebView(assets의 hosting/privacy.html)로만 보여준다.
   firebase.json에 hosting 설정은 해 두었으니 `npx firebase deploy --only hosting` 뒤 PrivacyScreen의 PRIVACY_URL에 주소를 넣으면 된다.

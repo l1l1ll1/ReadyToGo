@@ -652,16 +652,18 @@ class TripPlanViewModel(
             minutesText(issue.minutes),
             minutesText(issue.limitMinutes),
         )
-        is ReviewIssue.SameKind -> string(
-            R.string.review_fact_same_kind,
-            issue.dayNumber,
-            string(issue.meal.labelRes),
-            issue.restaurantName.particle(Particle.SUBJECT),
-            issue.category,
-            issue.previousDay,
-            string(issue.previousMeal.labelRes),
-            issue.previousName.particle(Particle.AND),
-        )
+        is ReviewIssue.SameKind -> {
+            val target = mealRefText(ReviewIssue.MealRef(issue.dayNumber, issue.meal, issue.restaurantName))
+                .particle(Particle.SUBJECT)
+            // 조사는 마지막 이웃에만 붙는다("A, B와 같은 종류").
+            val neighbors = issue.neighbors.map(::mealRefText)
+            val last = neighbors.last().particle(Particle.AND)
+            if (neighbors.size == 1) {
+                string(R.string.review_fact_same_kind, target, last, issue.category)
+            } else {
+                string(R.string.review_fact_same_kind_both, target, neighbors.first(), last, issue.category)
+            }
+        }
         is ReviewIssue.Closed -> {
             val weekday = plan.dailyPlans.first { it.dayNumber == issue.dayNumber }.date.dayOfWeek
                 .getDisplayName(TextStyle.FULL, Locale.getDefault())
@@ -672,6 +674,10 @@ class TripPlanViewModel(
             }
         }
     }
+
+    /** "1일차 점심 라멘 하루카" */
+    private fun mealRefText(ref: ReviewIssue.MealRef): String =
+        string(R.string.review_meal_ref, ref.dayNumber, string(ref.meal.labelRes), ref.name)
 
     /**
      * 한국어 화면이면 받침에 맞는 조사를 붙인다. 영어 문장은 조사가 없어 이름 그대로 넘긴다 —

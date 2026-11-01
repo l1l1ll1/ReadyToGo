@@ -42,19 +42,29 @@ sealed interface ReviewIssue {
         override val id get() = "long-$dayNumber"
     }
 
-    /** 바로 앞 끼니(같은 날 점심, 또는 전날 저녁)와 같은 종류의 식당. */
+    /**
+     * 같은 종류 식당이 이어진다. **이어진 끼니 묶음 하나가 한 건이다.**
+     *
+     * 라멘 → 라멘 → 라멘이면 이웃 쌍은 둘이지만 원인은 가운데 한 곳이다. 쌍마다 한 건씩 띄우면
+     * 하나를 고쳤는데 두 건이 함께 사라져 "검토 2건"이 부풀려 보였다(에뮬레이터에서 봤다).
+     * 그래서 묶음의 두 번째 끼니를 바꿀 자리([dayNumber]·[meal])로 잡는다 — 셋이면 가운데라
+     * 한 번에 다 풀리고, 둘이면 뒤 끼니다. 넷 이상이면 남은 꼬리가 다시 검사에 걸린다.
+     *
+     * @param neighbors 바꿀 끼니의 앞(과 있으면 뒤) 끼니. 같은 묶음 안의 것만.
+     */
     data class SameKind(
         override val dayNumber: Int,
         val meal: MealTime,
         val restaurantName: String,
         /** 화면용 종류 이름(라멘 전문점). */
         val category: String,
-        val previousDay: Int,
-        val previousMeal: MealTime,
-        val previousName: String,
+        val neighbors: List<MealRef>,
     ) : ReviewIssue {
         override val id get() = "kind-$dayNumber-${meal.name}"
     }
+
+    /** 문장에 적을 끼니 하나. "1일차 점심 라멘 하루카" */
+    data class MealRef(val dayNumber: Int, val meal: MealTime, val name: String)
 
     /** 방문하는 날 쉬는 곳. 관광지면 [meal]이 null. */
     data class Closed(
@@ -117,7 +127,8 @@ private fun findLongDays(
 }
 
 /**
- * 점심·저녁을 날짜를 넘어 시간 순으로 잇고, 이웃한 두 끼니의 본업 타입이 같으면 뒤 끼니를 잡는다.
+ * 점심·저녁을 날짜를 넘어 시간 순으로 잇고, 본업 타입이 같은 끼니가 이어진 묶음마다 한 건을 낸다
+ * ([ReviewIssue.SameKind] 참고).
  *
  * - 아침은 보지 않는다. 카페·베이커리가 매일 겹치는 것은 정상이다.
  * - 범용 타입([GENERIC_MEAL_TYPES])은 겹쳐도 잡지 않는다. "음식점"끼리는 같은 음식이라는 뜻이 아니다.
@@ -138,20 +149,29 @@ private fun findSameKinds(timelines: Map<DayPlan, List<TimelineEntry>>): List<Re
         }
     }
 
-    return served.zipWithNext().mapNotNull { (previous, current) ->
-        val before = previous.restaurant ?: return@mapNotNull null
-        val now = current.restaurant ?: return@mapNotNull null
-        val type = now.primaryType ?: return@mapNotNull null
-        if (type != before.primaryType || type in GENERIC_MEAL_TYPES) return@mapNotNull null
+    // 앞 끼니와 같은 종류면 지금 묶음에 붙이고, 아니면 새 묶음을 연다.
+    val runs = mutableListOf<MutableList<Served>>()
+    for (current in served) {
+        val type = current.restaurant?.primaryType?.takeUnless { it in GENERIC_MEAL_TYPES }
+        val run = runs.lastOrNull()
+        val continues = type != null && run != null && run.last().restaurant?.primaryType == type
+        if (continues) run!!.add(current) else runs += mutableListOf(current)
+    }
+
+    return runs.filter { it.size >= 2 }.map { run ->
+        // 묶음에는 식당이 있는 끼니만 들어간다(타입이 있어야 이어 붙는다).
+        val target = run[1]
+        val chosen = target.restaurant!!
+        val neighbors = listOfNotNull(run[0], run.getOrNull(2)).map {
+            ReviewIssue.MealRef(it.dayNumber, it.meal, it.restaurant!!.name)
+        }
 
         ReviewIssue.SameKind(
-            dayNumber = current.dayNumber,
-            meal = current.meal,
-            restaurantName = now.name,
-            category = now.category,
-            previousDay = previous.dayNumber,
-            previousMeal = previous.meal,
-            previousName = before.name,
+            dayNumber = target.dayNumber,
+            meal = target.meal,
+            restaurantName = chosen.name,
+            category = chosen.category,
+            neighbors = neighbors,
         )
     }
 }

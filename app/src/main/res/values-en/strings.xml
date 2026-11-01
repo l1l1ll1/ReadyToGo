@@ -244,7 +244,9 @@
     <string name="review_fixed">Fixed.</string>
     <string name="review_fix_failed">Couldn\'t find an automatic fix. Please change it in the itinerary.</string>
     <string name="review_fact_long">Day %1$d takes %2$s of visits and travel, longer than the fullest day of this trip (%3$s).</string>
-    <string name="review_fact_same_kind">Day %1$d %2$s, %3$s (%4$s), is the same kind as the meal right before it: day %5$d %6$s, %7$s.</string>
+    <string name="review_meal_ref">Day %1$d %2$s, %3$s</string>
+    <string name="review_fact_same_kind">%1$s is the same kind (%3$s) as the meal right before it: %2$s.</string>
+    <string name="review_fact_same_kind_both">%1$s is the same kind (%4$s) as the meals before and after it: %2$s and %3$s.</string>
     <string name="review_fact_closed_place">%3$s on day %1$d (%2$s) is closed that day of the week.</string>
     <string name="review_fact_closed_meal">%4$s for %3$s on day %1$d (%2$s) is closed that day of the week.</string>
 

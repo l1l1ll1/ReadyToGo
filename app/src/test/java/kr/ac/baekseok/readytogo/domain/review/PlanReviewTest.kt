@@ -137,8 +137,41 @@ class PlanReviewTest {
 
         assertEquals(3, issue.dayNumber)
         assertEquals(MealTime.LUNCH, issue.meal)
-        assertEquals(2, issue.previousDay)
-        assertEquals(MealTime.DINNER, issue.previousMeal)
+        assertEquals(listOf(ReviewIssue.MealRef(2, MealTime.DINNER, "d2")), issue.neighbors)
+    }
+
+    @Test
+    fun `셋이 이어지면 가운데 한 건으로 묶고, 고치면 전부 풀린다`() {
+        // 1일차 저녁 → 2일차 점심 → 2일차 저녁이 전부 라멘. 원인은 가운데 2일차 점심 하나다.
+        val lunch2 = pair(restaurant("l2", "ramen_restaurant"), restaurant("l2b", "sushi_restaurant"))
+        val d2 = day(2, day2.attractions, meals(2, dinner = "ramen_restaurant") + (MealTime.LUNCH to lunch2))
+        val p = plan(day(1, day1.attractions, meals(1, dinner = "ramen_restaurant")), d2, day3, day4)
+
+        val issue = reviewPlan(p, TimelineEdits()).single() as ReviewIssue.SameKind
+
+        assertEquals(2, issue.dayNumber)
+        assertEquals(MealTime.LUNCH, issue.meal)
+        assertEquals(
+            listOf(ReviewIssue.MealRef(1, MealTime.DINNER, "d1"), ReviewIssue.MealRef(2, MealTime.DINNER, "d2")),
+            issue.neighbors,
+        )
+
+        val summary = summarizeDay(d2.editedTimeline(TimelineEdits(), PickedPlaces()), null)
+        val fixes = defaultFixes(issue, d2, TimelineEdits(), PickedPlaces(), summary)
+        val result = applyFirst(d2, TimelineEdits(), fixes, summary.keyByAlias, null, PickedPlaces())!!
+        assertTrue(reviewPlan(p, result.edits).isEmpty())
+    }
+
+    @Test
+    fun `넷이 이어져도 묶음 하나라 한 건이다`() {
+        val p = plan(
+            day(1, day1.attractions, meals(1, dinner = "ramen_restaurant")),
+            day(2, day2.attractions, meals(2, "ramen_restaurant", "ramen_restaurant")),
+            day(3, day3.attractions, meals(3, lunch = "ramen_restaurant")),
+            day4,
+        )
+
+        assertEquals(1, reviewPlan(p, TimelineEdits()).size)
     }
 
     @Test

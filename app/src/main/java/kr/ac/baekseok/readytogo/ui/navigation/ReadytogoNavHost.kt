@@ -1,5 +1,11 @@
 package kr.ac.baekseok.readytogo.ui.navigation
 
+import kr.ac.baekseok.readytogo.ui.theme.LocalReduceMotion
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -105,10 +111,35 @@ fun ReadytogoNavHost(
     OpenPlanFromNotification(navController, openPlanRequest, onOpenPlanHandled)
 
     MainScaffold(navController = navController) { scaffoldModifier ->
+        // 화면 전환(⑫): 새 화면은 오른쪽에서 밀려 들어오며 나타나고, 뒤로 가면 반대로. 탭끼리는 위치
+        // 관계가 없어 미끄러지면 어디로 갔는지 헷갈린다 — 그때는 fade만.
+        val reduce = LocalReduceMotion.current
+        val duration = if (reduce) 0 else Tokens.Motion.longMs
+        fun isTab(route: String?) = MainTab.entries.any { it.route == route }
         NavHost(
             navController = navController,
             startDestination = Routes.SPLASH,
             modifier = scaffoldModifier.fillMaxSize(),
+            enterTransition = {
+                if (isTab(initialState.destination.route) && isTab(targetState.destination.route)) {
+                    fadeIn(tween(duration))
+                } else {
+                    slideInHorizontally(tween(duration)) { it / SLIDE_FRACTION } + fadeIn(tween(duration))
+                }
+            },
+            exitTransition = {
+                if (isTab(initialState.destination.route) && isTab(targetState.destination.route)) {
+                    fadeOut(tween(duration))
+                } else {
+                    slideOutHorizontally(tween(duration)) { -it / SLIDE_FRACTION } + fadeOut(tween(duration))
+                }
+            },
+            popEnterTransition = {
+                slideInHorizontally(tween(duration)) { -it / SLIDE_FRACTION } + fadeIn(tween(duration))
+            },
+            popExitTransition = {
+                slideOutHorizontally(tween(duration)) { it / SLIDE_FRACTION } + fadeOut(tween(duration))
+            },
         ) {
             entryGraph(navController)
             tabGraph(navController)
@@ -479,3 +510,5 @@ private fun NavHostController.openPlan(condition: TripCondition) {
     currentBackStackEntry?.savedStateHandle?.set(KEY_CONDITION, condition)
     navigate(Routes.PLAN)
 }
+/** 미끄러지는 거리 = 화면 폭 / 이 값. 화면 전체를 밀면 300ms 안에 눈이 따라가지 못한다. */
+private const val SLIDE_FRACTION = 4

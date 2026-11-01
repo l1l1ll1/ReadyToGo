@@ -1,5 +1,12 @@
 package kr.ac.baekseok.readytogo.ui.plan
 
+import kr.ac.baekseok.readytogo.ui.theme.motionTween
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.AnimatedVisibility
+import kr.ac.baekseok.readytogo.ui.theme.pressClickable
 import androidx.compose.ui.semantics.Role
 import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.foundation.shape.CircleShape
@@ -64,14 +71,11 @@ data class ReviewControls(
 fun ReviewCard(controls: ReviewControls) {
     val palette = LocalPalette.current
     val expanded = controls.expanded
-
     Column(
-        verticalArrangement = Arrangement.spacedBy(Tokens.Space.md),
         modifier = Modifier
             .fillMaxWidth()
             .clip(Tokens.Radius.card)
-            .background(palette.Surface)
-            .padding(bottom = if (expanded) Tokens.Space.lg else Tokens.Space.none),
+            .background(palette.Surface),
     ) {
         // 머리(design/mockup/summary): 주의 아이콘 원 + "검토 N건" + 펼침 표시.
         Row(
@@ -104,9 +108,19 @@ fun ReviewCard(controls: ReviewControls) {
             )
         }
 
-        if (expanded) {
-            controls.items.forEach { item ->
-                ReviewRow(item, controls.loading, onFix = { controls.onFix(item.issue) })
+        // 펼침은 아래로 늘어나며(⑫). 한 번에 툭 나타나면 카드 아래 내용이 갑자기 밀려 내려간다.
+        AnimatedVisibility(
+            visible = expanded,
+            enter = expandVertically(motionTween(Tokens.Motion.mediumMs)) + fadeIn(motionTween(Tokens.Motion.mediumMs)),
+            exit = shrinkVertically(motionTween(Tokens.Motion.mediumMs)) + fadeOut(motionTween(Tokens.Motion.shortMs)),
+        ) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(Tokens.Space.md),
+                modifier = Modifier.padding(bottom = Tokens.Space.lg),
+            ) {
+                controls.items.forEach { item ->
+                    ReviewRow(item, controls.loading, onFix = { controls.onFix(item.issue) })
+                }
             }
         }
     }
@@ -149,7 +163,7 @@ private fun ReviewRow(item: ReviewItemUi, loading: Boolean, onFix: () -> Unit) {
                 .align(Alignment.End)
                 .clip(Tokens.Radius.button)
                 .background(palette.Surface)
-                .clickable(role = Role.Button, onClick = onFix)
+                .pressClickable(role = Role.Button, onClick = onFix)
                 .padding(horizontal = Tokens.Space.lg, vertical = Tokens.Space.sm),
         )
     }

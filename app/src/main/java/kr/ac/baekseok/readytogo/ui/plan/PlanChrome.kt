@@ -1,5 +1,15 @@
 package kr.ac.baekseok.readytogo.ui.plan
 
+import kr.ac.baekseok.readytogo.ui.theme.pressClickable
+import kr.ac.baekseok.readytogo.ui.theme.pressScale
+import kr.ac.baekseok.readytogo.ui.theme.motionTween
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.animateColorAsState
 import kr.ac.baekseok.readytogo.ui.component.FitText
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -107,7 +117,7 @@ fun RoundIconButton(icon: ImageVector, description: String, onClick: () -> Unit,
             .size(Tokens.Size.roundButton)
             .clip(CircleShape)
             .background(LocalPalette.current.Surface)
-            .clickable(role = Role.Button, onClickLabel = description, onClick = onClick),
+            .pressClickable(role = Role.Button, onClickLabel = description, onClick = onClick),
     ) {
         Icon(icon, contentDescription = description, tint = LocalPalette.current.TextPrimary)
     }
@@ -120,7 +130,7 @@ fun RoundIconButton(icon: ImageVector, description: String, onClick: () -> Unit,
 @Composable
 fun PlanSegmentedTabs(labels: List<String>, selectedIndex: Int, onSelect: (Int) -> Unit) {
     val palette = LocalPalette.current
-    Row(
+    BoxWithConstraints(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = Tokens.Space.screenHorizontal)
@@ -128,23 +138,44 @@ fun PlanSegmentedTabs(labels: List<String>, selectedIndex: Int, onSelect: (Int) 
             .background(palette.Surface)
             .padding(Tokens.Space.xs),
     ) {
-        labels.forEachIndexed { index, label ->
-            val selected = index == selectedIndex
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .weight(1f)
-                    .height(Tokens.Size.segmentHeight)
-                    .clip(Tokens.Radius.chip)
-                    .background(if (selected) palette.TextPrimary else palette.Surface)
-                    .clickable(role = Role.Tab) { onSelect(index) },
-            ) {
-                Text(
-                    text = label,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = if (selected) palette.Surface else palette.TextSecondary,
-                    maxLines = 1,
+        val slot = maxWidth / labels.size
+        // 남색 칸이 탭 사이를 미끄러진다(⑫). 하단 탭 바와 같은 방식 — 칸 하나를 옮긴다.
+        val pillOffset by animateDpAsState(
+            targetValue = slot * selectedIndex,
+            animationSpec = motionTween(Tokens.Motion.mediumMs),
+            label = "segmentPill",
+        )
+        Box(
+            modifier = Modifier
+                .offset(x = pillOffset)
+                .width(slot)
+                .height(Tokens.Size.segmentHeight)
+                .clip(Tokens.Radius.chip)
+                .background(palette.TextPrimary),
+        )
+        Row(modifier = Modifier.fillMaxWidth()) {
+            labels.forEachIndexed { index, label ->
+                val selected = index == selectedIndex
+                val interaction = remember { MutableInteractionSource() }
+                // 글자 색도 칸이 지나가는 동안 함께 바뀐다. 즉시 바꾸면 남색이 도착하기 전에 흰 글자가 흰 바탕에 묻힌다.
+                val textColor by animateColorAsState(
+                    targetValue = if (selected) palette.Surface else palette.TextSecondary,
+                    animationSpec = motionTween(Tokens.Motion.mediumMs),
+                    label = "segmentText",
                 )
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(Tokens.Size.segmentHeight)
+                        .clip(Tokens.Radius.chip)
+                        .pressScale(interaction)
+                        .clickable(interactionSource = interaction, indication = null, role = Role.Tab) {
+                            onSelect(index)
+                        },
+                ) {
+                    Text(text = label, style = MaterialTheme.typography.labelMedium, color = textColor, maxLines = 1)
+                }
             }
         }
     }
@@ -181,7 +212,7 @@ fun DayChipRow(
                     .height(Tokens.Size.dayChipHeight)
                     .clip(Tokens.Radius.card)
                     .background(if (selected) palette.TextPrimary else palette.Surface)
-                    .clickable(role = Role.Tab) { onSelect(dayNumber) },
+                    .pressClickable(role = Role.Tab) { onSelect(dayNumber) },
             ) {
                 Text(
                     text = stringResource(R.string.plan_day_chip, dayNumber),

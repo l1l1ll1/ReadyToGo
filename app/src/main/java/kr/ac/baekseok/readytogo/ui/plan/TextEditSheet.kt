@@ -1,5 +1,13 @@
 package kr.ac.baekseok.readytogo.ui.plan
 
+import kr.ac.baekseok.readytogo.ui.theme.LocalReduceMotion
+import androidx.compose.foundation.border
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.RepeatMode
+import kr.ac.baekseok.readytogo.ui.theme.pressClickable
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.Alignment
@@ -54,6 +62,21 @@ import kr.ac.baekseok.readytogo.ui.theme.Tokens
 @Composable
 fun AiEditButton(busy: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
     val palette = LocalPalette.current
+    // 응답을 기다리는 동안 테두리가 숨 쉬듯 밝아졌다 흐려진다(⑫). 진행 표시만 돌면 화면 구석의
+    // 작은 원이라 놓치기 쉽다. 애니메이션 제거가 켜져 있으면 테두리 없이 진행 표시만.
+    val pulsing = busy && !LocalReduceMotion.current
+    val ringAlpha = if (pulsing) {
+        val transition = rememberInfiniteTransition(label = "aiPulse")
+        val alpha by transition.animateFloat(
+            initialValue = PULSE_MIN_ALPHA,
+            targetValue = PULSE_MAX_ALPHA,
+            animationSpec = infiniteRepeatable(tween(Tokens.Motion.pulseMs), RepeatMode.Reverse),
+            label = "aiPulseAlpha",
+        )
+        alpha
+    } else {
+        0f
+    }
     FloatingActionButton(
         onClick = onClick,
         shape = CircleShape,
@@ -66,7 +89,9 @@ fun AiEditButton(busy: Boolean, onClick: () -> Unit, modifier: Modifier = Modifi
             focusedElevation = Tokens.Elevation.none,
             hoveredElevation = Tokens.Elevation.none,
         ),
-        modifier = modifier.size(Tokens.Size.aiButton),
+        modifier = modifier
+            .size(Tokens.Size.aiButton)
+            .border(Tokens.Size.pulseRing, palette.PointDark.copy(alpha = ringAlpha), CircleShape),
     ) {
         if (busy) {
             CircularProgressIndicator(
@@ -206,7 +231,7 @@ fun TextEditSheet(
                     .height(Tokens.Size.button)
                     .clip(Tokens.Radius.button)
                     .background(if (canSend) palette.TextPrimary else palette.Divider)
-                    .clickable(enabled = canSend, onClick = ::submit),
+                    .pressClickable(enabled = canSend, onClick = ::submit),
             ) {
                 Text(
                     text = stringResource(R.string.plan_text_edit_apply),
@@ -217,3 +242,7 @@ fun TextEditSheet(
         }
     }
 }
+
+// AI 버튼 대기 펄스의 테두리 진하기 범위.
+private const val PULSE_MIN_ALPHA = 0.15f
+private const val PULSE_MAX_ALPHA = 0.9f

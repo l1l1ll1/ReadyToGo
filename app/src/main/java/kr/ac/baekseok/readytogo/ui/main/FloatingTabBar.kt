@@ -1,5 +1,9 @@
 package kr.ac.baekseok.readytogo.ui.main
 
+import kr.ac.baekseok.readytogo.ui.theme.pressScale
+import kr.ac.baekseok.readytogo.ui.theme.motionTween
+import androidx.compose.runtime.getValue
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -66,10 +70,16 @@ fun FloatingTabBar(
     ) {
         val slot = maxWidth / tabs.size
 
+        // 선택 pill이 칸 사이를 미끄러진다(⑫). 위치만 애니메이션하면 되도록 pill을 하나만 둔다.
+        val pillOffset by animateDpAsState(
+            targetValue = slot * selectedIndex.coerceAtLeast(0),
+            animationSpec = motionTween(Tokens.Motion.mediumMs),
+            label = "tabPill",
+        )
         if (selectedIndex >= 0) {
             Box(
                 modifier = Modifier
-                    .offset(x = slot * selectedIndex)
+                    .offset(x = pillOffset)
                     .width(slot)
                     .fillMaxHeight()
                     .clip(Tokens.Radius.chip)
@@ -82,6 +92,7 @@ fun FloatingTabBar(
                 val selected = index == selectedIndex
                 val label = stringResource(tab.labelRes)
                 val tint = if (selected) palette.PointDark else palette.TextSecondary
+                val interaction = remember { MutableInteractionSource() }
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
@@ -89,9 +100,10 @@ fun FloatingTabBar(
                         .weight(1f)
                         .fillMaxHeight()
                         .clip(Tokens.Radius.chip)
+                        .pressScale(interaction)
                         .semantics { this.selected = selected }
                         .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
+                            interactionSource = interaction,
                             indication = null,
                             role = Role.Tab,
                         ) { if (!selected) onSelect(tab) },

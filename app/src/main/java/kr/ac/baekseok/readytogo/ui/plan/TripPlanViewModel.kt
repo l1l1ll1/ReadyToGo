@@ -1,5 +1,7 @@
 package kr.ac.baekseok.readytogo.ui.plan
 
+import kr.ac.baekseok.readytogo.ui.theme.Tokens
+import kotlinx.coroutines.delay
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
@@ -425,7 +427,9 @@ class TripPlanViewModel(
             return
         }
         _undoEdits.value = _edits.value
+        val before = _edits.value
         updateEdits { result.edits }
+        flashChanged(day, before, result.edits)
         _message.value = if (result.rejections.isEmpty()) {
             string(R.string.plan_text_edit_applied, result.appliedCount)
         } else {
@@ -554,6 +558,38 @@ class TripPlanViewModel(
         }
     }
 
+    // ---- 바뀐 항목 하이라이트(⑫) ----
+
+    /**
+     * 방금 말로 고치기·검토 고치기로 바뀐 일정 항목 키. 일정표가 잠깐 민트로 칠했다가 지운다 —
+     * 스낵바의 "1가지를 바꿨어요"만으로는 어느 줄이 바뀌었는지 찾아야 한다.
+     */
+    private val _highlightKeys = MutableStateFlow<Set<String>>(emptySet())
+    val highlightKeys: StateFlow<Set<String>> = _highlightKeys.asStateFlow()
+
+    private var flashJob: Job? = null
+
+    /** 그날 화면에서 장소가 바뀌었거나 자리가 옮겨진 항목만 고른다. 빠진 항목은 화면에 없어 칠할 수 없다. */
+    private fun flashChanged(day: DayPlan, before: TimelineEdits, after: TimelineEdits) {
+        val picked = _pickedPlaces.value
+        val old = day.editedTimeline(before, picked).map { it.item }
+        val new = day.editedTimeline(after, picked).map { it.item }
+        val oldPlace = old.associate { it.key to it.placeId }
+        val oldIndex = old.map { it.key }
+        val changed = new.mapIndexedNotNull { index, item ->
+            val moved = oldIndex.indexOf(item.key).let { it >= 0 && it != index }
+            item.key.takeIf { moved || oldPlace[item.key] != item.placeId }
+        }.toSet()
+        if (changed.isEmpty()) return
+
+        flashJob?.cancel()
+        _highlightKeys.value = changed
+        flashJob = viewModelScope.launch {
+            delay(Tokens.Motion.highlightMs.toLong())
+            _highlightKeys.value = emptySet()
+        }
+    }
+
     // ---- 일정 검토관(⑨-2) ----
     // _pickedPlaces보다 아래에 둔다. 위에 두면 combine이 아직 초기화되지 않은 흐름을 잡는다.
 
@@ -672,6 +708,7 @@ class TripPlanViewModel(
         }
         _undoEdits.value = edits
         updateEdits { result.edits }
+        flashChanged(day, edits, result.edits)
         _message.value = string(R.string.review_fixed)
     }
 

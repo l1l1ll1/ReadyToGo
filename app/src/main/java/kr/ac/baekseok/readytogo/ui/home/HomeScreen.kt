@@ -1,5 +1,6 @@
 package kr.ac.baekseok.readytogo.ui.home
 
+import kr.ac.baekseok.readytogo.ui.theme.pressClickable
 import kr.ac.baekseok.readytogo.ui.component.FitText
 import kr.ac.baekseok.readytogo.ui.format.nightsText
 import kr.ac.baekseok.readytogo.ui.component.DashedDivider
@@ -247,7 +248,7 @@ private fun Greeting(
                 modifier = Modifier
                     .clip(Tokens.Radius.button)
                     .background(LocalPalette.current.Point)
-                    .clickable(onClick = onCreateTrip)
+                    .pressClickable(onClick = onCreateTrip)
                     .padding(horizontal = Tokens.Space.md, vertical = Tokens.Space.sm),
             ) {
                 Icon(
@@ -353,7 +354,7 @@ private fun HeroTripCard(trip: SavedTrip, today: LocalDate, onClick: () -> Unit)
                 .size(Tokens.Size.heroArrow)
                 .clip(Tokens.Radius.card)
                 .background(LocalPalette.current.Surface)
-                .clickable(onClick = onClick),
+                .pressClickable(onClick = onClick),
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Outlined.ArrowForward,
@@ -391,7 +392,7 @@ private fun HomeReviewCard(review: HomeReview, city: String, onClick: () -> Unit
             .fillMaxWidth()
             .clip(Tokens.Radius.card)
             .background(palette.Surface)
-            .clickable(onClick = onClick)
+            .pressClickable(onClick = onClick)
             .padding(Tokens.Space.lg),
     ) {
         Row(
@@ -454,7 +455,7 @@ private fun RecentTripCard(
         modifier = modifier
             .clip(Tokens.Radius.card)
             .background(palette.Surface)
-            .clickable(onClick = onClick)
+            .pressClickable(onClick = onClick)
             .padding(Tokens.Space.md),
     ) {
         Box(

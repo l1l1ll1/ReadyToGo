@@ -1,5 +1,10 @@
 package kr.ac.baekseok.readytogo.ui.plan
 
+import kr.ac.baekseok.readytogo.ui.theme.motionTween
+import kr.ac.baekseok.readytogo.ui.theme.LocalReduceMotion
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -146,6 +151,8 @@ fun TimelineTab(
      * 고른 날짜 칩이 아니라 오늘이 보이므로, 화면 밖에서 날짜를 짐작하면 다른 날을 고치게 된다.
      */
     onShownDay: (Int) -> Unit = {},
+    /** 방금 바뀐 항목 키(⑫). 잠깐 민트로 칠한다. */
+    highlightKeys: Set<String> = emptySet(),
 ) {
     // 여행 중에는 오늘 하루만 보여준다. 길 위에서 필요한 것은 오늘 갈 곳이지 닷새치 목록이
     // 아니다. 다른 날이 궁금하면 "전체 보기"로 편다. 끄고 켜는 것은 이 화면 안에서만 산다 —
@@ -366,6 +373,7 @@ fun TimelineTab(
                                 null
                             },
                             dragging = isDragging,
+                            highlighted = entry.item.key in highlightKeys,
                             modifier = handle,
                         )
                     }
@@ -568,16 +576,31 @@ private fun TimelineRow(
     onToggleDone: (() -> Unit)? = null,
     /** 지금 끌리고 있는지. 들어 올린 티를 내려고 배경을 깐다. */
     dragging: Boolean = false,
+    /** 방금 말로 고치기·검토로 바뀐 항목. 잠깐 민트로 칠한다(⑫). */
+    highlighted: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
+    // 끌어 올린 줄·"지금 갈 곳"·방금 바뀐 줄에 같은 민트 면을 깐다. 셋이 동시에 일어나는 일은 드물고,
+    // 강조가 여러 색이면 어느 쪽이 중요한지 흐려진다. 색은 서서히 들어오고 빠진다.
+    val fill by animateColorAsState(
+        targetValue = if (dragging || isNext || highlighted) LocalPalette.current.PointLight else Color.Transparent,
+        animationSpec = motionTween(Tokens.Motion.mediumMs),
+        label = "rowFill",
+    )
+    // 끄는 동안 살짝 들어 올린다(1.03배) — 손가락 아래 항목이 목록 위에 떠 있다는 걸 보여준다.
+    val lift by animateFloatAsState(
+        targetValue = if (dragging && !LocalReduceMotion.current) Tokens.Motion.dragLiftScale else 1f,
+        animationSpec = motionTween(Tokens.Motion.shortMs),
+        label = "dragLift",
+    )
     Column(
         modifier = modifier
+            .graphicsLayer {
+                scaleX = lift
+                scaleY = lift
+            }
             .clip(Tokens.Radius.card)
-            // 끌어 올린 줄과 "지금 갈 곳"에 같은 면을 깐다. 둘이 동시에 일어나지 않아
-            // 색을 나눌 이유가 없고, 강조가 두 종류면 어느 쪽이 중요한지 흐려진다.
-            .background(
-                if (dragging || isNext) LocalPalette.current.PointLight else Color.Transparent,
-            ),
+            .background(fill),
     ) {
         // 항목 사이는 점선(design/mockup/timeline). 이동 시간은 점선 바로 아래 작은 줄로 남긴다 —
         // 시안의 시각(09:00) 대신 이 앱이 아는 것은 이동 시간이다.

@@ -1,5 +1,9 @@
 package kr.ac.baekseok.readytogo.ui.component
 
+import kr.ac.baekseok.readytogo.ui.theme.pressScale
+import androidx.compose.runtime.remember
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -93,15 +97,20 @@ fun PhotoCard(
     val fill = colors ?: Tokens.placeholderGradient(key)
     val photo = photoPlaceId?.let { rememberPlacePhoto(it) }
 
+    // 누르는 동안 카드 전체가 살짝 줄어든다(⑫). 길게 누르기(삭제)도 같은 눌림을 쓴다.
+    val interaction = remember { MutableInteractionSource() }
     Box(
         modifier = modifier
             .fillMaxWidth()
             .height(height)
+            .pressScale(interaction)
             .clip(shape)
             .background(Brush.linearGradient(fill))
             .then(
                 if (onClick != null || onLongClick != null) {
                     Modifier.combinedClickable(
+                        interactionSource = interaction,
+                        indication = LocalIndication.current,
                         onClick = { onClick?.invoke() },
                         onLongClick = onLongClick,
                     )

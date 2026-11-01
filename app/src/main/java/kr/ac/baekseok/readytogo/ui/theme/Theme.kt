@@ -41,7 +41,7 @@ fun ReadytogoTheme(content: @Composable () -> Unit) {
     val colorScheme = remember(palette, dark) { colorSchemeOf(palette, dark) }
     val typography = remember(settings.textScale) { Typography.scaledBy(settings.textScale) }
 
-    CompositionLocalProvider(LocalPalette provides palette) {
+    CompositionLocalProvider(LocalPalette provides palette, LocalReduceMotion provides rememberReduceMotion()) {
         MaterialTheme(
             colorScheme = colorScheme,
             typography = typography,

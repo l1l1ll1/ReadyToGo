@@ -1,5 +1,9 @@
 package kr.ac.baekseok.readytogo.ui.plan
 
+import kr.ac.baekseok.readytogo.ui.theme.motionTween
+import kr.ac.baekseok.readytogo.ui.theme.LocalReduceMotion
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Spacer
 import kr.ac.baekseok.readytogo.ui.format.daysText
 import kr.ac.baekseok.readytogo.ui.format.dateShort
@@ -162,6 +166,7 @@ fun TripPlanScreen(
     val reviewLoading by viewModel.reviewLoading.collectAsState()
     val reviewExpanded by viewModel.reviewExpanded.collectAsState()
     val weather by viewModel.weather.collectAsState()
+    val highlightKeys by viewModel.highlightKeys.collectAsState()
 
     LaunchedEffect(conditionChange) {
         val next = conditionChange ?: return@LaunchedEffect
@@ -200,6 +205,7 @@ fun TripPlanScreen(
             onSignIn = onSignIn,
         ),
         weather = weather,
+        highlightKeys = highlightKeys,
         review = ReviewControls(
             items = reviewItems,
             loading = reviewLoading,
@@ -243,6 +249,7 @@ private fun TripPlanContent(
     textEdit: TextEditControls = TextEditControls(),
     review: ReviewControls = ReviewControls(),
     weather: WeatherForecast = WeatherForecast(),
+    highlightKeys: Set<String> = emptySet(),
     onReorder: (Int, List<String>) -> Unit = { _, _ -> },
     onReorderCommit: () -> Unit = {},
     onPickMeal: (Int, String, String?) -> Unit = { _, _, _ -> },
@@ -326,8 +333,21 @@ private fun TripPlanContent(
         if (result == SnackbarResult.ActionPerformed) onSignIn()
     }
 
+    // 시트가 올라오면 뒤 화면이 살짝 줄어든다(⑫) — 딤과 함께 "시트가 앞에 있다"를 보여준다.
+    // 시트는 별도 창에 그려지므로 이 화면만 줄어든다.
+    val anySheetOpen = textEditSheetOpen || openedItem != null || dateSheetOpen
+    val backdropScale by animateFloatAsState(
+        targetValue = if (anySheetOpen && !LocalReduceMotion.current) Tokens.Motion.sheetBackdropScale else 1f,
+        animationSpec = motionTween(Tokens.Motion.longMs),
+        label = "sheetBackdrop",
+    )
     Scaffold(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .graphicsLayer {
+                scaleX = backdropScale
+                scaleY = backdropScale
+            },
         snackbarHost = { SnackbarHost(snackbarHostState) },
         // 말로 고치기는 "보고 있는 날"이 있는 일정표·지도 탭에서만 띄운다. 요약·항공·숙소에서는 고칠 날이 없다.
         floatingActionButton = {
@@ -412,6 +432,7 @@ private fun TripPlanContent(
                     review = review,
                     weather = weather,
                     onShownDay = { shownDayNumber = it },
+                    highlightKeys = highlightKeys,
                     onEditDates = if (canChangeDates) ({ dateSheetOpen = true }) else null,
                 )
             }
@@ -543,6 +564,7 @@ private fun PlanTabContent(
     onToggleDone: (Int, String) -> Unit,
     /** 일정표가 지금 보여주는 날. 말로 고치기 시트가 이 날을 고친다. */
     onShownDay: (Int) -> Unit,
+    highlightKeys: Set<String>,
     /** 요약 탭의 검토 카드. 문제가 없으면 카드가 없다. */
     review: ReviewControls,
     /** 날짜별 예보. 일정표 날짜 칩 아이콘에 쓴다. */
@@ -639,6 +661,7 @@ private fun PlanTabContent(
             onToggleDone = onToggleDone,
             weather = weather,
             onShownDay = onShownDay,
+            highlightKeys = highlightKeys,
             onToggleFavorite = onToggleFavorite,
         )
 

@@ -1,5 +1,13 @@
 package kr.ac.baekseok.readytogo.ui.plan
 
+import kr.ac.baekseok.readytogo.ui.component.FitText
+import kr.ac.baekseok.readytogo.ui.component.DashedDivider
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.semantics.Role
+import androidx.compose.material.icons.outlined.SwapHoriz
+import androidx.compose.material.icons.automirrored.outlined.ArrowForward
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import kr.ac.baekseok.readytogo.ui.theme.LocalReduceMotion
 import androidx.compose.foundation.border
 import androidx.compose.animation.core.tween
@@ -54,7 +62,7 @@ import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 
 /**
- * 결과 화면 오른쪽 아래의 "말로 고치기" 원형 버튼(⑫).
+ * 결과 화면 오른쪽 아래의 "AI 도우미" 원형 버튼(⑫).
  *
  * 예전에는 일정표 맨 위에 입력창이 늘 떠 있어 일정 첫 줄을 한 칸 밀어냈다. 버튼으로 접어 두고
  * 필요할 때 시트로 연다. 응답을 기다리는 동안에는 아이콘 대신 진행 표시가 돈다.
@@ -106,15 +114,16 @@ fun AiEditButton(busy: Boolean, onClick: () -> Unit, modifier: Modifier = Modifi
 }
 
 /**
- * 말로 고치기 시트(design/mockup/edit-sheet). 둥근 닫기, 큰 제목, "N일차 · 한 문장으로" 안내,
- * 흰 카드 안 입력("요청"), 저장 안 됨·되돌리기 안내, 남색 pill "적용하기".
+ * AI 도우미 시트(design/mockup/edit-sheet와 같게). 둥근 닫기 → 제목·안내 → 예시 칩 → 흰 카드
+ * (요청 입력 + 미리보기) → 저장 안 됨 안내 → 남색 pill "적용하기" → "직접 편집할게요".
  *
- * 시안의 예시 칩과 "미리보기 → 적용" 두 단계는 새 기능이라 넣지 않았다 — 보내면 바로 적용되고
- * 결과는 결과 화면의 스낵바(되돌리기 포함)로 알린다. 그래서 보내는 즉시 시트를 닫는다.
+ * **두 단계다.** 문장을 쓰고 미리보기를 받으면(함수 호출 1회) 카드 안에 "전 → 후"가 줄마다 보인다.
+ * "적용하기"는 그 결과를 쓴다 — 다시 부르지 않는다. 문장을 고치면 낡은 미리보기는 버린다.
+ * 적용하면 시트를 닫고 결과 화면 스낵바(되돌리기 포함)로 알린다.
  *
  * 규칙(로그인 필요, 200자 제한, 날짜를 바꾸면 비움)은 예전 일정표 위 입력창과 같다.
  */
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun TextEditSheet(
     dayNumber: Int,
@@ -124,12 +133,19 @@ fun TextEditSheet(
     val palette = LocalPalette.current
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var text by rememberSaveable(dayNumber) { mutableStateOf("") }
-    val canSend = controls.enabled && text.isNotBlank() && !controls.busy
+    // 지금 문장에 대한 미리보기만 쓴다. 다른 날·다른 문장의 것은 버린 것으로 본다.
+    val preview = controls.preview?.takeIf { it.dayNumber == dayNumber && it.sentence == text.trim() }
+    val canPreview = controls.enabled && text.isNotBlank() && !controls.busy && preview == null
+    val canApply = preview != null && preview.lines.isNotEmpty() && !controls.busy
 
-    fun submit() {
-        if (!canSend) return
-        controls.onSubmit(dayNumber, text)
-        onDismiss()
+    fun edit(value: String) {
+        if (value.length > MAX_LENGTH) return
+        text = value
+        if (controls.preview != null) controls.onClearPreview()
+    }
+
+    fun requestPreview() {
+        if (canPreview) controls.onPreview(dayNumber, text)
     }
 
     ModalBottomSheet(
@@ -168,44 +184,42 @@ fun TextEditSheet(
                     text = stringResource(R.string.plan_text_edit_sign_in_hint),
                     style = MaterialTheme.typography.bodyLarge,
                     color = palette.PointDark,
-                    modifier = Modifier.clickable(onClick = controls.onSignIn),
+                    modifier = Modifier.pressClickable(onClick = controls.onSignIn),
                 )
                 return@Column
             }
 
-            Column(
+            // 예시 칩 — 누르면 입력창에 채워진다(바로 보내지는 않는다. 고쳐 쓸 수 있게).
+            val chips = listOf(
+                stringResource(R.string.plan_text_edit_chip_1),
+                stringResource(R.string.plan_text_edit_chip_2),
+                stringResource(R.string.plan_text_edit_chip_3),
+            )
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(Tokens.Space.sm),
                 verticalArrangement = Arrangement.spacedBy(Tokens.Space.sm),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(Tokens.Radius.card)
-                    .background(palette.Surface)
-                    .padding(Tokens.Space.lg),
             ) {
-                Text(
-                    text = stringResource(R.string.plan_text_edit_request),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = palette.TextSecondary,
-                )
-                BasicTextField(
-                    value = text,
-                    onValueChange = { if (it.length <= MAX_LENGTH) text = it },
-                    textStyle = MaterialTheme.typography.titleMedium.copy(color = palette.TextPrimary),
-                    cursorBrush = SolidColor(palette.Point),
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
-                    keyboardActions = KeyboardActions(onSend = { submit() }),
-                    modifier = Modifier.fillMaxWidth(),
-                    decorationBox = { field ->
-                        if (text.isEmpty()) {
-                            Text(
-                                text = stringResource(R.string.plan_text_edit_hint),
-                                style = MaterialTheme.typography.titleMedium,
-                                color = palette.TextSecondary,
-                            )
-                        }
-                        field()
-                    },
-                )
+                chips.forEach { chip ->
+                    Text(
+                        text = chip,
+                        style = MaterialTheme.typography.labelLarge,
+                        modifier = Modifier
+                            .clip(Tokens.Radius.chip)
+                            .background(palette.Surface)
+                            .pressClickable(role = Role.Button) { edit(chip) }
+                            .padding(horizontal = Tokens.Space.lg, vertical = Tokens.Space.md),
+                    )
+                }
             }
+
+            RequestCard(
+                text = text,
+                onTextChange = ::edit,
+                canPreview = canPreview,
+                busy = controls.busy,
+                preview = preview,
+                onRequestPreview = ::requestPreview,
+            )
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -230,8 +244,11 @@ fun TextEditSheet(
                     .fillMaxWidth()
                     .height(Tokens.Size.button)
                     .clip(Tokens.Radius.button)
-                    .background(if (canSend) palette.TextPrimary else palette.Divider)
-                    .pressClickable(enabled = canSend, onClick = ::submit),
+                    .background(if (canApply) palette.TextPrimary else palette.Divider)
+                    .pressClickable(enabled = canApply) {
+                        controls.onApply()
+                        onDismiss()
+                    },
             ) {
                 Text(
                     text = stringResource(R.string.plan_text_edit_apply),
@@ -239,9 +256,128 @@ fun TextEditSheet(
                     color = palette.Surface,
                 )
             }
+
+            Text(
+                text = stringResource(R.string.plan_text_edit_manual),
+                style = MaterialTheme.typography.labelLarge.copy(textDecoration = TextDecoration.Underline),
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .pressClickable(role = Role.Button, onClick = onDismiss)
+                    .padding(Tokens.Space.sm),
+            )
         }
     }
 }
+
+/**
+ * 흰 카드 — "요청" 입력과, 받았으면 아래 점선 너머 "미리보기"(전 → 후 한 줄씩).
+ * 입력 오른쪽 화살표나 키보드 보내기로 미리보기를 받는다.
+ */
+@Composable
+private fun RequestCard(
+    text: String,
+    onTextChange: (String) -> Unit,
+    canPreview: Boolean,
+    busy: Boolean,
+    preview: TextEditPreview?,
+    onRequestPreview: () -> Unit,
+) {
+    val palette = LocalPalette.current
+    Column(
+        verticalArrangement = Arrangement.spacedBy(Tokens.Space.sm),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(Tokens.Radius.card)
+            .background(palette.Surface)
+            .padding(Tokens.Space.lg),
+    ) {
+        Text(
+            text = stringResource(R.string.plan_text_edit_request),
+            style = MaterialTheme.typography.labelMedium,
+            color = palette.TextSecondary,
+        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            BasicTextField(
+                value = text,
+                onValueChange = onTextChange,
+                textStyle = MaterialTheme.typography.titleMedium.copy(color = palette.TextPrimary),
+                cursorBrush = SolidColor(palette.Point),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
+                keyboardActions = KeyboardActions(onSend = { onRequestPreview() }),
+                modifier = Modifier.weight(1f),
+                decorationBox = { field ->
+                    if (text.isEmpty()) {
+                        Text(
+                            text = stringResource(R.string.plan_text_edit_hint),
+                            style = MaterialTheme.typography.titleMedium,
+                            color = palette.TextSecondary,
+                        )
+                    }
+                    field()
+                },
+            )
+            when {
+                busy -> CircularProgressIndicator(
+                    strokeWidth = Tokens.Size.loadingStroke,
+                    modifier = Modifier.size(Tokens.Size.icon),
+                )
+                canPreview -> RoundIconButton(
+                    icon = Icons.AutoMirrored.Outlined.ArrowForward,
+                    description = stringResource(R.string.plan_text_edit_preview_send),
+                    onClick = onRequestPreview,
+                )
+            }
+        }
+
+        if (busy || preview != null) {
+            DashedDivider(modifier = Modifier.padding(vertical = Tokens.Space.sm))
+            Text(
+                text = stringResource(R.string.plan_text_edit_preview),
+                style = MaterialTheme.typography.labelMedium,
+                color = palette.TextSecondary,
+            )
+            when {
+                busy -> Text(
+                    text = stringResource(R.string.plan_text_edit_preview_loading),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = palette.TextSecondary,
+                )
+                preview != null -> {
+                    preview.lines.forEach { PreviewRow(it) }
+                    preview.notice?.let {
+                        Text(text = it, style = MaterialTheme.typography.bodyMedium, color = palette.Warning)
+                    }
+                }
+            }
+        }
+    }
+}
+
+/** 미리보기 한 줄 — 민트 원 안 바꿈 아이콘 + "전 → 후". 말줄임 없이 한 줄(FitText). */
+@Composable
+private fun PreviewRow(line: PreviewLine) {
+    val palette = LocalPalette.current
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(Tokens.Space.md),
+    ) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .size(Tokens.Size.reviewIcon)
+                .clip(CircleShape)
+                .background(palette.PointLight),
+        ) {
+            Icon(Icons.Outlined.SwapHoriz, contentDescription = null, tint = palette.PointDark)
+        }
+        FitText(
+            text = "${line.before} → ${line.after}",
+            style = MaterialTheme.typography.titleSmall,
+            modifier = Modifier.weight(1f),
+        )
+    }
+}
+
 
 // AI 버튼 대기 펄스의 테두리 진하기 범위.
 private const val PULSE_MIN_ALPHA = 0.15f

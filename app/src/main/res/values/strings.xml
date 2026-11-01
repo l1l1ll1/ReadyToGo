@@ -240,15 +240,24 @@
     <string name="plan_save_removed">저장을 해제했습니다.</string>
     <string name="plan_save_failed">저장하지 못했습니다.</string>
     <string name="plan_item_removed">일정에서 뺐습니다.</string>
-    <!-- ⑨-1 말로 일정 고치기 -->
-    <string name="plan_text_edit_title">말로 일정 고치기</string>
+    <!-- ⑨-1 AI 도우미(예전 이름 "말로 일정 고치기", ⑫에서 바꿈) -->
+    <string name="plan_text_edit_title">AI 도우미</string>
+    <string name="plan_text_edit_chip_1">오후 하나 빼줘</string>
+    <string name="plan_text_edit_chip_2">저녁 숙소 근처로</string>
+    <string name="plan_text_edit_chip_3">비 와, 실내로 바꿔줘</string>
+    <string name="plan_text_edit_preview">미리보기</string>
+    <string name="plan_text_edit_preview_send">미리보기 받기</string>
+    <string name="plan_text_edit_preview_loading">바뀔 곳을 찾는 중…</string>
+    <string name="plan_text_edit_preview_removed">빼기</string>
+    <string name="plan_text_edit_preview_moved">순서 바꿈</string>
+    <string name="plan_text_edit_manual">직접 편집할게요</string>
     <string name="plan_text_edit_subtitle">%1$s · 바꾸고 싶은 걸 한 문장으로 적어 주세요</string>
     <string name="plan_text_edit_request">요청</string>
     <string name="plan_text_edit_note">요청 문장은 저장되지 않아요 · 되돌리기 가능</string>
     <string name="plan_text_edit_apply">적용하기</string>
     <string name="plan_text_edit_hint">예: 오후 하나 빼고 저녁은 숙소 근처로</string>
     <string name="plan_text_edit_send">고치기</string>
-    <string name="plan_text_edit_sign_in_hint">로그인하면 말로 일정을 고칠 수 있어요.</string>
+    <string name="plan_text_edit_sign_in_hint">로그인하면 AI 도우미를 쓸 수 있어요.</string>
     <string name="plan_text_edit_not_understood">무엇을 바꿀지 이해하지 못했어요. 예: "점심 다른 걸로", "오후 하나 빼줘"</string>
     <string name="plan_text_edit_applied">%1$d가지를 바꿨어요.</string>
     <string name="plan_text_edit_partly_applied">%1$d가지를 바꿨어요. 못 한 것: %2$s</string>

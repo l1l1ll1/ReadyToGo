@@ -224,14 +224,23 @@
     <string name="plan_save_failed">We couldn\'t save it.</string>
     <string name="plan_item_removed">Removed from the itinerary.</string>
     <!-- ⑨-1 Edit by text -->
-    <string name="plan_text_edit_title">Edit by sentence</string>
+    <string name="plan_text_edit_title">AI Assistant</string>
+    <string name="plan_text_edit_chip_1">Drop one afternoon stop</string>
+    <string name="plan_text_edit_chip_2">Dinner near the hotel</string>
+    <string name="plan_text_edit_chip_3">It\'s raining, go indoors</string>
+    <string name="plan_text_edit_preview">Preview</string>
+    <string name="plan_text_edit_preview_send">Get preview</string>
+    <string name="plan_text_edit_preview_loading">Finding what to change…</string>
+    <string name="plan_text_edit_preview_removed">Remove</string>
+    <string name="plan_text_edit_preview_moved">Reorder</string>
+    <string name="plan_text_edit_manual">I\'ll edit it myself</string>
     <string name="plan_text_edit_subtitle">%1$s · Say what to change in one sentence</string>
     <string name="plan_text_edit_request">Request</string>
     <string name="plan_text_edit_note">Your sentence isn\'t saved · You can undo</string>
     <string name="plan_text_edit_apply">Apply</string>
     <string name="plan_text_edit_hint">e.g. Drop one afternoon stop, dinner near the hotel</string>
     <string name="plan_text_edit_send">Apply</string>
-    <string name="plan_text_edit_sign_in_hint">Sign in to edit your plan by typing.</string>
+    <string name="plan_text_edit_sign_in_hint">Sign in to use the AI Assistant.</string>
     <string name="plan_text_edit_not_understood">I couldn\'t tell what to change. e.g. "Different lunch", "Remove one afternoon stop"</string>
     <string name="plan_text_edit_applied">Made %1$d change(s).</string>
     <string name="plan_text_edit_partly_applied">Made %1$d change(s). Skipped: %2$s</string>

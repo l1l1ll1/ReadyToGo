@@ -162,6 +162,7 @@ fun TripPlanScreen(
     val conditionChange by viewModel.conditionChange.collectAsState()
     val canEditByText by viewModel.canEditByText.collectAsState()
     val editingByText by viewModel.editingByText.collectAsState()
+    val textEditPreview by viewModel.textEditPreview.collectAsState()
     val reviewItems by viewModel.reviewItems.collectAsState()
     val reviewLoading by viewModel.reviewLoading.collectAsState()
     val reviewExpanded by viewModel.reviewExpanded.collectAsState()
@@ -201,7 +202,10 @@ fun TripPlanScreen(
         textEdit = TextEditControls(
             enabled = canEditByText,
             busy = editingByText,
-            onSubmit = viewModel::editByText,
+            preview = textEditPreview,
+            onPreview = viewModel::previewTextEdit,
+            onApply = viewModel::applyTextEditPreview,
+            onClearPreview = viewModel::clearTextEditPreview,
             onSignIn = onSignIn,
         ),
         weather = weather,
@@ -443,7 +447,11 @@ private fun TripPlanContent(
         TextEditSheet(
             dayNumber = if (selectedTab == PlanTab.MAP) mapDayNumber else shownDayNumber,
             controls = textEdit,
-            onDismiss = { textEditSheetOpen = false },
+            // 닫으면 낡은 미리보기를 버린다. 다시 열었을 때 다른 문장의 결과가 남아 있으면 헷갈린다.
+            onDismiss = {
+                textEditSheetOpen = false
+                textEdit.onClearPreview()
+            },
         )
     }
 

@@ -1,5 +1,7 @@
 package kr.ac.baekseok.readytogo.ui.plan
 
+import kr.ac.baekseok.readytogo.domain.plan.TimelineItem
+import kr.ac.baekseok.readytogo.domain.edit.ApplyResult
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 import kotlinx.coroutines.delay
 import android.app.Application
@@ -362,7 +364,7 @@ class TripPlanViewModel(
         _undoEdits.value = null
     }
 
-    /** 말로 고치기를 쓸 수 있는지. 함수가 로그인 토큰을 요구한다. */
+    /** AI 도우미를 쓸 수 있는지. 함수가 로그인 토큰을 요구한다. */
     val canEditByText: StateFlow<Boolean> = AppContainer.auth.authState.map { it.canSave }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(FLOW_TIMEOUT_MS), false)
 
@@ -371,12 +373,25 @@ class TripPlanViewModel(
     val editingByText: StateFlow<Boolean> = _editingByText.asStateFlow()
 
     /**
-     * 문장으로 그날 일정을 고친다(⑨-1).
-     *
-     * 함수는 명령만 돌려주고, 검증과 실행은 [applyCommands]가 손 편집과 같은 규칙으로 한다.
-     * 명령이 여러 개여도 저장은 한 번, 되돌리기도 한 번이다.
+     * AI 도우미 미리보기(⑨-1, ⑫부터 두 단계). 적용 전에 시트가 "전 → 후"를 보여준다.
+     * null이면 아직 미리보기가 없다(시트의 "적용하기"가 비활성).
      */
-    fun editByText(dayNumber: Int, sentence: String) {
+    private val _textEditPreview = MutableStateFlow<TextEditPreview?>(null)
+    val textEditPreview: StateFlow<TextEditPreview?> = _textEditPreview.asStateFlow()
+
+    /** 시트에서 문장을 고치면 이전 미리보기는 다른 문장의 것이라 버린다. 시트를 닫을 때도. */
+    fun clearTextEditPreview() {
+        _textEditPreview.value = null
+    }
+
+    /**
+     * 문장을 명령으로 바꿔 **적용하지 않고** 결과만 계산한다. 함수 호출은 여기서 한 번뿐이다 —
+     * "적용하기"는 이 결과를 다시 계산해 쓰고 호출을 내보내지 않는다.
+     *
+     * 검증과 실행은 [applyCommands]가 손 편집과 같은 규칙으로 한다(미리보기도 같은 경로로 계산해서
+     * 보여준 것과 적용되는 것이 같다).
+     */
+    fun previewTextEdit(dayNumber: Int, sentence: String) {
         val text = sentence.trim()
         if (text.isEmpty() || _editingByText.value) return
         val plan = (_uiState.value as? TripPlanUiState.Success)?.plan ?: return
@@ -385,56 +400,106 @@ class TripPlanViewModel(
 
         viewModelScope.launch {
             _editingByText.value = true
-            val before = _edits.value
-            val entries = day.toTimeline(
-                deletedKeys = before.deletedIn(dayNumber),
-                pickedMeals = before.pickedIn(dayNumber),
-                customOrder = before.orderIn(dayNumber),
-                pickedAttractions = before.pickedAttractionsIn(dayNumber),
-                picked = _pickedPlaces.value,
-            )
-            val summary = summarizeDay(entries, lodging)
+            _textEditPreview.value = null
+            val summary = summarizeDay(day.editedTimeline(_edits.value, _pickedPlaces.value), lodging)
 
             AppContainer.dayEditAssistant.interpret(text, summary)
                 .onSuccess { reply ->
                     // 비용 확인용. 문장은 남기지 않는다.
-                    Log.d(TAG, "editByText 명령 ${reply.commands} 토큰 in=${reply.inputTokens} out=${reply.outputTokens}")
-                    applyTextEdit(day, reply.commands, summary.keyByAlias, lodging)
+                    Log.d(TAG, "previewTextEdit 명령 ${reply.commands} 토큰 in=${reply.inputTokens} out=${reply.outputTokens}")
+                    _textEditPreview.value = buildPreview(day, text, reply.commands, summary.keyByAlias, lodging)
                 }
                 .onFailure { showWithoutUndo(string(textEditFailureRes(it))) }
             _editingByText.value = false
         }
     }
 
-    private fun applyTextEdit(
-        day: DayPlan,
-        commands: List<EditCommand>,
-        keyByAlias: Map<String, String>,
-        lodging: LatLng?,
-    ) {
-        if (commands.isEmpty()) {
-            showWithoutUndo(string(R.string.plan_text_edit_not_understood))
-            return
-        }
-        // 지금 편집 위에 얹는다. 보내기 전 값에 얹으면 기다리는 동안 손으로 고친 것이 사라진다.
+    /** 미리보기 그대로 적용한다. 호출 없음. 그 사이 손으로 고친 것 위에 얹으려고 지금 편집으로 다시 계산한다. */
+    fun applyTextEditPreview() {
+        val preview = _textEditPreview.value ?: return
+        if (preview.lines.isEmpty()) return
         val plan = (_uiState.value as? TripPlanUiState.Success)?.plan ?: return
-        val others = plan.attractionIdsOutside(day.dayNumber, _edits.value, _pickedPlaces.value)
-        val result = applyCommands(day, _edits.value, commands, keyByAlias, lodging, _pickedPlaces.value, others)
-        val skipped = result.rejections.joinToString(", ") { string(it.reason.labelRes()) }
+        val day = plan.dailyPlans.firstOrNull { it.dayNumber == preview.dayNumber } ?: return
+        val lodging = plan.lodging?.qualityFirst?.item?.location
+        val result = runCommands(plan, day, _edits.value, preview.commands, preview.keyByAlias, lodging)
+        _textEditPreview.value = null
 
         if (result.appliedCount == 0) {
-            showWithoutUndo(string(R.string.plan_text_edit_none_applied, skipped))
+            showWithoutUndo(string(R.string.plan_text_edit_none_applied, skippedText(result)))
             return
         }
-        _undoEdits.value = _edits.value
         val before = _edits.value
+        _undoEdits.value = before
         updateEdits { result.edits }
         flashChanged(day, before, result.edits)
         _message.value = if (result.rejections.isEmpty()) {
             string(R.string.plan_text_edit_applied, result.appliedCount)
         } else {
-            string(R.string.plan_text_edit_partly_applied, result.appliedCount, skipped)
+            string(R.string.plan_text_edit_partly_applied, result.appliedCount, skippedText(result))
         }
+    }
+
+    private fun runCommands(
+        plan: TripPlan,
+        day: DayPlan,
+        edits: TimelineEdits,
+        commands: List<EditCommand>,
+        keyByAlias: Map<String, String>,
+        lodging: LatLng?,
+    ): ApplyResult {
+        val others = plan.attractionIdsOutside(day.dayNumber, edits, _pickedPlaces.value)
+        return applyCommands(day, edits, commands, keyByAlias, lodging, _pickedPlaces.value, others)
+    }
+
+    private fun skippedText(result: ApplyResult) = result.rejections.joinToString(", ") { string(it.reason.labelRes()) }
+
+    /**
+     * 명령을 적용했을 때의 "전 → 후" 줄을 만든다. 실제로 바뀌는 항목만 — 거부된 명령은 줄이 없고
+     * [TextEditPreview.notice]로 이유를 알린다. 명령이 0개면 "이해하지 못했어요".
+     */
+    private fun buildPreview(
+        day: DayPlan,
+        sentence: String,
+        commands: List<EditCommand>,
+        keyByAlias: Map<String, String>,
+        lodging: LatLng?,
+    ): TextEditPreview {
+        val plan = (_uiState.value as TripPlanUiState.Success).plan
+        val empty = TextEditPreview(day.dayNumber, sentence, commands, keyByAlias, emptyList(), null)
+        if (commands.isEmpty()) return empty.copy(notice = string(R.string.plan_text_edit_not_understood))
+
+        val result = runCommands(plan, day, _edits.value, commands, keyByAlias, lodging)
+        if (result.appliedCount == 0) {
+            return empty.copy(notice = string(R.string.plan_text_edit_none_applied, skippedText(result)))
+        }
+
+        val picked = _pickedPlaces.value
+        val old = day.editedTimeline(_edits.value, picked).map { it.item }
+        val new = day.editedTimeline(result.edits, picked).map { it.item }
+        val newByKey = new.associateBy { it.key }
+        // 순서는 양쪽에 다 남은 항목끼리의 상대 순서로 비교한다. 위치 번호로 비교하면 하나를 뺐을 때
+        // 그 뒤 항목이 전부 한 칸씩 당겨져 "순서 바꿈"으로 잘못 찍힌다.
+        val keptOld = old.map { it.key }.filter { it in newByKey }
+        val keptNew = new.map { it.key }.filter { it in keptOld }
+        val lines = old.mapNotNull { before ->
+            val after = newByKey[before.key]
+            when {
+                after == null -> PreviewLine(before.label(), string(R.string.plan_text_edit_preview_removed))
+                after.placeId != before.placeId -> PreviewLine(before.label(), after.label())
+                keptOld.indexOf(before.key) != keptNew.indexOf(before.key) ->
+                    PreviewLine(before.label(), string(R.string.plan_text_edit_preview_moved))
+                else -> null
+            }
+        }
+        val notice = if (result.rejections.isEmpty()) null else string(R.string.plan_text_edit_partly_applied, result.appliedCount, skippedText(result))
+        return empty.copy(lines = lines, notice = notice)
+    }
+
+    /** 미리보기 줄에 쓰는 이름. 추천을 못 찾은 끼니는 이름이 없어 끼니 이름으로. */
+    private fun TimelineItem.label(): String = when (this) {
+        is TimelineItem.Visit -> attraction.name
+        is TimelineItem.Meal -> restaurant.name
+        is TimelineItem.NoMeal -> string(meal.labelRes)
     }
 
     /**

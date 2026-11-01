@@ -17,10 +17,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,8 +42,13 @@ data class ReviewItemUi(
 data class ReviewControls(
     val items: List<ReviewItemUi> = emptyList(),
     val loading: Boolean = false,
-    /** 펼쳤을 때. AI 호출은 여기서 한 번 나간다. */
-    val onExpand: () -> Unit = {},
+    /**
+     * 펼쳐 있는지. **카드 안이 아니라 ViewModel이 든다.** 문제가 0건이 되면 카드가 화면에서 빠지는데,
+     * 카드 안의 상태는 그때 함께 사라져 되돌리기로 문제가 돌아오면 접힌 채로 나왔다.
+     */
+    val expanded: Boolean = false,
+    /** 머리를 눌렀을 때. 펼치는 순간 AI 호출이 한 번 나간다(답 없는 문제만). */
+    val onToggle: () -> Unit = {},
     val onFix: (ReviewIssue) -> Unit = {},
 )
 
@@ -60,7 +61,7 @@ data class ReviewControls(
 @Composable
 fun ReviewCard(controls: ReviewControls) {
     val palette = LocalPalette.current
-    var expanded by rememberSaveable { mutableStateOf(false) }
+    val expanded = controls.expanded
 
     Column(
         modifier = Modifier
@@ -73,10 +74,7 @@ fun ReviewCard(controls: ReviewControls) {
             horizontalArrangement = Arrangement.spacedBy(Tokens.Space.sm),
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable {
-                    expanded = !expanded
-                    if (expanded) controls.onExpand()
-                }
+                .clickable(onClick = controls.onToggle)
                 .padding(Tokens.Space.lg),
         ) {
             Column(modifier = Modifier.weight(1f)) {

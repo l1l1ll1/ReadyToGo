@@ -580,12 +580,25 @@ class TripPlanViewModel(
     }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     /**
+     * 검토 카드가 펼쳐 있는지. 카드가 화면에서 빠졌다 돌아와도(0건 → 되돌리기) 유지되도록 여기서 든다.
+     * 탭을 옮겨 다녀와도 그대로다.
+     */
+    private val _reviewExpanded = MutableStateFlow(false)
+    val reviewExpanded: StateFlow<Boolean> = _reviewExpanded.asStateFlow()
+
+    fun toggleReview() {
+        val next = !_reviewExpanded.value
+        _reviewExpanded.value = next
+        if (next) expandReview()
+    }
+
+    /**
      * 카드를 펼쳤다. 아직 답이 없는 문제만 모아 **한 번** 묻는다.
      *
      * 둘러보기면 묻지 않는다 — 함수가 로그인 토큰을 요구한다. 카드에는 규칙 문장만 보이고
      * "고치기"는 규칙의 기본 수정으로 동작한다.
      */
-    fun expandReview() {
+    private fun expandReview() {
         if (!canEditByText.value || _reviewLoading.value) return
         val plan = (_uiState.value as? TripPlanUiState.Success)?.plan ?: return
         val pending = reviewIssues.value.filter { it !in _reviewAdvice.value }.take(MAX_REVIEW_ISSUES)

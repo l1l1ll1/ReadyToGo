@@ -155,6 +155,7 @@ fun TripPlanScreen(
     val editingByText by viewModel.editingByText.collectAsState()
     val reviewItems by viewModel.reviewItems.collectAsState()
     val reviewLoading by viewModel.reviewLoading.collectAsState()
+    val reviewExpanded by viewModel.reviewExpanded.collectAsState()
 
     LaunchedEffect(conditionChange) {
         val next = conditionChange ?: return@LaunchedEffect
@@ -195,7 +196,8 @@ fun TripPlanScreen(
         review = ReviewControls(
             items = reviewItems,
             loading = reviewLoading,
-            onExpand = viewModel::expandReview,
+            expanded = reviewExpanded,
+            onToggle = viewModel::toggleReview,
             onFix = viewModel::fixIssue,
         ),
         onReorder = viewModel::reorderDay,

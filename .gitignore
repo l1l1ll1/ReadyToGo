@@ -46,3 +46,6 @@ functions/node_modules/
 functions/lib/
 # 옛 functions.config() 로컬 값. 비밀값이 들어갈 수 있어 제외한다(비밀은 secrets:set으로 관리).
 .runtimeconfig.json
+
+# UI 개선 단계별 캡처(⑫). 확인용이라 저장소에는 올리지 않는다.
+design/progress/

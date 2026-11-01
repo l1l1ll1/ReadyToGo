@@ -151,7 +151,7 @@
     <string name="about_title">정보</string>
     <string name="about_version">앱 버전</string>
     <string name="about_data_sources">데이터 출처</string>
-    <string name="about_data_sources_body">도시·공항 목록: OurAirports (public domain), GeoNames (CC BY 4.0)\n장소·평점·가격대: Google Places API\n항공 가격: SerpApi (Google Flights)\n환율: open.er-api.com</string>
+    <string name="about_data_sources_body">도시·공항 목록: OurAirports (public domain), GeoNames (CC BY 4.0)\n장소·평점·가격대: Google Places API\n항공 가격: SerpApi (Google Flights)\n환율: open.er-api.com\n날씨: Open-Meteo (CC BY 4.0)\n일정 고치기·검토: Anthropic Claude</string>
     <string name="about_licenses">오픈소스 라이선스</string>
     <string name="about_licenses_note">라이선스 이름을 누르면 전문을 볼 수 있습니다.</string>
     <string name="about_privacy">개인정보 처리 방침</string>

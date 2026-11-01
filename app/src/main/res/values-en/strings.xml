@@ -142,7 +142,7 @@
     <string name="about_title">About</string>
     <string name="about_version">App version</string>
     <string name="about_data_sources">Data sources</string>
-    <string name="about_data_sources_body">Cities and airports: OurAirports (public domain), GeoNames (CC BY 4.0)\nPlaces, ratings, price levels: Google Places API\nFlight prices: SerpApi (Google Flights)\nExchange rates: open.er-api.com</string>
+    <string name="about_data_sources_body">Cities and airports: OurAirports (public domain), GeoNames (CC BY 4.0)\nPlaces, ratings, price levels: Google Places API\nFlight prices: SerpApi (Google Flights)\nExchange rates: open.er-api.com\nWeather: Open-Meteo (CC BY 4.0)\nItinerary edits and review: Anthropic Claude</string>
     <string name="about_licenses">Open source licenses</string>
     <string name="about_licenses_note">Tap a license name to read the full text.</string>
     <string name="about_privacy">Privacy policy</string>

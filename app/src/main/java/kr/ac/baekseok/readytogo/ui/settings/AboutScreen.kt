@@ -115,6 +115,8 @@ private val LIBRARIES = listOf(
     Library("maps-compose", APACHE_2, APACHE_2_URL),
     Library("Firebase Android SDK (Auth · Firestore)", APACHE_2, APACHE_2_URL),
     Library("Google Identity (googleid)", APACHE_2, APACHE_2_URL),
+    Library("Coil (coil-compose · OkHttp)", APACHE_2, APACHE_2_URL),
+    Library("Reorderable (sh.calvin.reorderable)", APACHE_2, APACHE_2_URL),
     Library("Google Maps SDK for Android", R.string.about_google_terms, GOOGLE_TERMS_URL),
     Library("Google Places SDK for Android", R.string.about_google_terms, GOOGLE_TERMS_URL),
     // 라이브러리가 아니라 데이터지만 CC BY 4.0이라 출처를 밝혀야 한다. 일정표에도 한 줄 적는다.

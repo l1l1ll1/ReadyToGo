@@ -128,10 +128,13 @@ class GooglePlacesRepository(
 
             val types = PurposeAttractionTypes.typesFor(condition.purposes)
             // 목적을 바꾸면 찾는 타입이 달라지므로 키에 타입을 넣는다.
-            val cacheKey = cache.keyOf("attraction", center, CITY_RADIUS_M, types)
+            // 뺀 유형도 넣는다("-hotel") — 빼는 목록이 바뀌면 그 전에 받아 둔 결과(호텔이 섞인)를
+            // 7일 동안 계속 쓰게 된다.
+            val excluded = LODGING_PRIMARY_TYPES
+            val cacheKey = cache.keyOf("attraction", center, CITY_RADIUS_M, types + excluded.map { "-$it" })
             cache.readAttractions(cacheKey)?.let { return@runCatching it }
 
-            val attractions = searchNearby(center, types, CITY_RADIUS_M)
+            val attractions = searchNearby(center, types, CITY_RADIUS_M, excluded)
                 .mapNotNull { it.toAttraction() }
             cache.writeAttractions(cacheKey, attractions)
             attractions
@@ -139,7 +142,8 @@ class GooglePlacesRepository(
 
     /**
      * @param excludedPrimaryTypes 본업이 이 유형인 장소는 아예 받지 않는다.
-     *        식당 검색에만 쓴다 — 관광지 검색에서 `tourist_attraction`을 빼면 안 되기 때문이다.
+     *        식당 검색은 [NON_EATERY_PRIMARY_TYPES]를, 관광지 검색은 숙박([LODGING_PRIMARY_TYPES])만 뺀다
+     *        — 관광지 검색에서 `tourist_attraction`까지 빼면 안 되기 때문이다.
      */
     private suspend fun searchNearby(
         center: LatLng,
@@ -332,6 +336,19 @@ class GooglePlacesRepository(
         const val RESTAURANT_TYPE_SUFFIX = "_restaurant"
 
         /**
+         * 숙박 시설의 본업 유형. 식당·관광지 검색 둘 다에서 뺀다.
+         *
+         * 관광지 검색에도 호텔이 걸려든다 — 스파·정원이 딸린 호텔은 `spa`·`garden`이 붙어
+         * 휴양 검색에 매칭된다. 삿포로 2일차에 호텔 두 곳이 관광지 자리를 차지했다.
+         * 숙소는 숙소 탭이 따로 고르므로 관광지로 보여줄 이유가 없다.
+         *
+         * 식당 검색에서 이미 실측으로 통과한 이름만 쓴다. 표에 없는 이름을 보내면 요청 전체가 거부된다.
+         */
+        val LODGING_PRIMARY_TYPES = listOf(
+            "hotel", "lodging", "resort_hotel", "motel", "hostel", "inn", "guest_house",
+        )
+
+        /**
          * 식당 검색에서 **요청 단계에** 빼는 유형.
          *
          * Places의 `includedTypes`는 primaryType이 아니라 types 배열 전체로 매칭한다.
@@ -344,7 +361,7 @@ class GooglePlacesRepository(
          */
         val NON_EATERY_PRIMARY_TYPES = listOf(
             // 숙박 — 안에 식당이 있어서 가장 많이 걸려들었다.
-            "hotel", "lodging", "resort_hotel", "motel", "hostel", "inn", "guest_house",
+            *LODGING_PRIMARY_TYPES.toTypedArray(),
             // 쇼핑 — 백화점·쇼핑몰의 식당가가 통째로 걸린다.
             "department_store", "shopping_mall", "store", "book_store", "clothing_store",
             "gift_shop", "convenience_store", "supermarket", "grocery_store", "market",

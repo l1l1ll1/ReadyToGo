@@ -19,15 +19,18 @@ enum class Shelter { INDOOR, OUTDOOR, UNKNOWN }
  */
 object IndoorOutdoor {
 
+    // 본업 타입은 상위 타입(park)이 아니라 세부 타입(city_park)으로 오는 일이 많다. 세부 타입을 빠뜨리면
+    // 본업이 "표에 없는 구체적 타입"이 되어 판정이 보류된다(삿포로: 나카지마 공원 = city_park,
+    // 찜질방 = public_bath). 새 데이터에서 실제로 나온 본업 타입을 보고 채운다.
     private val INDOOR = setOf(
-        "museum", "art_gallery", "aquarium", "shopping_mall", "department_store", "movie_theater",
-        "performing_arts_theater", "bowling_alley", "amusement_center", "casino", "spa", "planetarium",
-        "library",
+        "museum", "art_gallery", "aquarium", "shopping_mall", "department_store", "discount_store",
+        "movie_theater", "performing_arts_theater", "bowling_alley", "amusement_center", "casino", "spa",
+        "public_bath", "planetarium", "library",
     )
 
     private val OUTDOOR = setOf(
-        "park", "national_park", "zoo", "beach", "hiking_area", "garden", "botanical_garden",
-        "amusement_park", "water_park", "ski_resort", "marina",
+        "park", "city_park", "state_park", "national_park", "dog_park", "zoo", "beach", "hiking_area",
+        "garden", "botanical_garden", "amusement_park", "water_park", "ski_resort", "marina",
     )
 
     /** 아무것도 알려주지 않는 타입. 본업이 이것이면 부가 타입을 본다. */

@@ -40,6 +40,12 @@ class PlaceSwapTest {
     }
 
     @Test
+    fun `세부 본업 타입도 판정한다 - city_park는 실외, public_bath는 실내`() {
+        assertEquals(Shelter.OUTDOOR, IndoorOutdoor.of(place("nakajima", 0.0, "city_park", listOf("park"))))
+        assertEquals(Shelter.INDOOR, IndoorOutdoor.of(place("bath", 0.0, "public_bath", listOf("spa"))))
+    }
+
+    @Test
     fun `구체적인 본업이 표에 없으면 부가 타입이 있어도 보류`() {
         // 절에 딸린 정원 때문에 park가 붙어 있어도 절은 실외로 보지 않는다.
         assertEquals(Shelter.UNKNOWN, IndoorOutdoor.of(place("t", 0.0, "buddhist_temple", listOf("park"))))

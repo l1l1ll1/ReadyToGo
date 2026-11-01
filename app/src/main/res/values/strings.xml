@@ -242,6 +242,10 @@
     <string name="plan_item_removed">일정에서 뺐습니다.</string>
     <!-- ⑨-1 말로 일정 고치기 -->
     <string name="plan_text_edit_title">말로 일정 고치기</string>
+    <string name="plan_text_edit_subtitle">%1$s · 바꾸고 싶은 걸 한 문장으로 적어 주세요</string>
+    <string name="plan_text_edit_request">요청</string>
+    <string name="plan_text_edit_note">요청 문장은 저장되지 않아요 · 되돌리기 가능</string>
+    <string name="plan_text_edit_apply">적용하기</string>
     <string name="plan_text_edit_hint">예: 오후 하나 빼고 저녁은 숙소 근처로</string>
     <string name="plan_text_edit_send">고치기</string>
     <string name="plan_text_edit_sign_in_hint">로그인하면 말로 일정을 고칠 수 있어요.</string>

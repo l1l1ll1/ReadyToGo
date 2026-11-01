@@ -1,5 +1,21 @@
 package kr.ac.baekseok.readytogo.ui.plan
 
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.Alignment
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -65,10 +81,13 @@ fun AiEditButton(busy: Boolean, onClick: () -> Unit, modifier: Modifier = Modifi
 }
 
 /**
- * 말로 고치기 시트. 안의 입력창은 예전 일정표 위의 것([TextEditBar])을 그대로 쓴다 —
- * 보내기·로그인 안내·글자 수 제한 규칙이 한곳에 있어야 어긋나지 않는다.
+ * 말로 고치기 시트(design/mockup/edit-sheet). 둥근 닫기, 큰 제목, "N일차 · 한 문장으로" 안내,
+ * 흰 카드 안 입력("요청"), 저장 안 됨·되돌리기 안내, 남색 pill "적용하기".
  *
- * 보내면 시트를 닫는다. 결과는 결과 화면의 스낵바(되돌리기 포함)로 알리는데, 시트가 덮고 있으면 안 보인다.
+ * 시안의 예시 칩과 "미리보기 → 적용" 두 단계는 새 기능이라 넣지 않았다 — 보내면 바로 적용되고
+ * 결과는 결과 화면의 스낵바(되돌리기 포함)로 알린다. 그래서 보내는 즉시 시트를 닫는다.
+ *
+ * 규칙(로그인 필요, 200자 제한, 날짜를 바꾸면 비움)은 예전 일정표 위 입력창과 같다.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,55 +98,122 @@ fun TextEditSheet(
 ) {
     val palette = LocalPalette.current
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var text by rememberSaveable(dayNumber) { mutableStateOf("") }
+    val canSend = controls.enabled && text.isNotBlank() && !controls.busy
+
+    fun submit() {
+        if (!canSend) return
+        controls.onSubmit(dayNumber, text)
+        onDismiss()
+    }
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
         shape = Tokens.Radius.sheet,
         containerColor = palette.Background,
-        // 손잡이 대신 둥근 닫기 버튼(design/mockup/edit-sheet). 손잡이는 끌어 내리는 법을 알아야 쓴다.
+        // 손잡이 대신 둥근 닫기 버튼(시안). 손잡이는 끌어 내리는 법을 알아야 쓴다.
         dragHandle = null,
     ) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(Tokens.Space.sm),
+            verticalArrangement = Arrangement.spacedBy(Tokens.Space.lg),
             modifier = Modifier
                 .fillMaxWidth()
                 .navigationBarsPadding()
-                .padding(top = Tokens.Space.xl, bottom = Tokens.Space.xl),
+                .imePadding()
+                .padding(horizontal = Tokens.Space.screenHorizontal, vertical = Tokens.Space.xl),
         ) {
-            IconButton(
-                onClick = onDismiss,
-                modifier = Modifier
-                    .padding(horizontal = Tokens.Space.screenHorizontal)
-                    .clip(CircleShape)
-                    .background(palette.Surface),
-            ) {
-                Icon(Icons.Outlined.ExpandMore, contentDescription = stringResource(R.string.common_close))
-            }
-            Column(
-                verticalArrangement = Arrangement.spacedBy(Tokens.Space.xs),
-                modifier = Modifier.padding(
-                    start = Tokens.Space.screenHorizontal,
-                    end = Tokens.Space.screenHorizontal,
-                    top = Tokens.Space.md,
-                ),
-            ) {
+            RoundIconButton(Icons.Outlined.ExpandMore, stringResource(R.string.common_close), onDismiss)
+
+            Column(verticalArrangement = Arrangement.spacedBy(Tokens.Space.xs)) {
                 Text(stringResource(R.string.plan_text_edit_title), style = MaterialTheme.typography.headlineSmall)
                 Text(
-                    text = stringResource(R.string.plan_day_tab, dayNumber),
+                    text = stringResource(
+                        R.string.plan_text_edit_subtitle,
+                        stringResource(R.string.plan_day_tab, dayNumber),
+                    ),
                     style = MaterialTheme.typography.bodyMedium,
                     color = palette.TextSecondary,
                 )
             }
-            TextEditBar(
-                dayNumber = dayNumber,
-                controls = controls.copy(
-                    onSubmit = { day, sentence ->
-                        controls.onSubmit(day, sentence)
-                        onDismiss()
+
+            if (!controls.enabled) {
+                // 둘러보기: 입력 대신 로그인 안내. 다 쓴 뒤에야 안 된다는 것을 알게 하지 않는다.
+                Text(
+                    text = stringResource(R.string.plan_text_edit_sign_in_hint),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = palette.PointDark,
+                    modifier = Modifier.clickable(onClick = controls.onSignIn),
+                )
+                return@Column
+            }
+
+            Column(
+                verticalArrangement = Arrangement.spacedBy(Tokens.Space.sm),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(Tokens.Radius.card)
+                    .background(palette.Surface)
+                    .padding(Tokens.Space.lg),
+            ) {
+                Text(
+                    text = stringResource(R.string.plan_text_edit_request),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = palette.TextSecondary,
+                )
+                BasicTextField(
+                    value = text,
+                    onValueChange = { if (it.length <= MAX_LENGTH) text = it },
+                    textStyle = MaterialTheme.typography.titleMedium.copy(color = palette.TextPrimary),
+                    cursorBrush = SolidColor(palette.Point),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
+                    keyboardActions = KeyboardActions(onSend = { submit() }),
+                    modifier = Modifier.fillMaxWidth(),
+                    decorationBox = { field ->
+                        if (text.isEmpty()) {
+                            Text(
+                                text = stringResource(R.string.plan_text_edit_hint),
+                                style = MaterialTheme.typography.titleMedium,
+                                color = palette.TextSecondary,
+                            )
+                        }
+                        field()
                     },
-                ),
-            )
+                )
+            }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(Tokens.Space.sm),
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Info,
+                    contentDescription = null,
+                    tint = palette.TextSecondary,
+                    modifier = Modifier.size(Tokens.Size.inlineIcon),
+                )
+                Text(
+                    text = stringResource(R.string.plan_text_edit_note),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = palette.TextSecondary,
+                )
+            }
+
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(Tokens.Size.button)
+                    .clip(Tokens.Radius.button)
+                    .background(if (canSend) palette.TextPrimary else palette.Divider)
+                    .clickable(enabled = canSend, onClick = ::submit),
+            ) {
+                Text(
+                    text = stringResource(R.string.plan_text_edit_apply),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = palette.Surface,
+                )
+            }
         }
     }
 }

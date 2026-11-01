@@ -141,6 +141,16 @@ object Tokens {
         /** 홈 검토 카드 왼쪽 아이콘 원. */
         val reviewIcon = 48.dp
 
+        /** 결과 화면 위 흰 원 버튼(뒤로·공유·저장)과 시트 닫기 버튼. */
+        val roundButton = 44.dp
+
+        /** 결과 화면 탭 묶음 한 칸 높이. */
+        val segmentHeight = 40.dp
+
+        /** 일정표 날짜 칩. 글자 + 날씨 아이콘 두 줄이 들어가는 크기(design/mockup/timeline). */
+        val dayChipWidth = 64.dp
+        val dayChipHeight = 56.dp
+
         /** 빈 목록 자리에 옅게 까는 아이콘 심볼. 글자보다 커지면 주인공이 바뀐다. */
         val emptyStateSymbol = 96.dp
 

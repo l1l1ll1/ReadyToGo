@@ -163,30 +163,21 @@ fun TimelineTab(
         // 오늘만 보는 중에는 날짜 칩을 감춘다. 칩이 남아 있으면 눌러서 다른 날로 갈 수 있어
         // "오늘만"이라는 말과 어긋난다.
         if (!todayOnly) {
-            ScrollableTabRow(
-                selectedTabIndex = ((day?.dayNumber ?: 1) - 1).coerceAtLeast(0),
-                edgePadding = 0.dp,
-                // 바탕과 같은 색. 기본값(흰색)이면 민트그레이 화면 위에 흰 띠가 따로 뜬다.
-                containerColor = LocalPalette.current.Background,
-            ) {
-                plan.dailyPlans.forEach { candidate ->
-                    Tab(
-                        selected = candidate.dayNumber == day?.dayNumber,
-                        onClick = { onSelectDay(candidate.dayNumber) },
-                        text = {
-                            DayChipLabel(candidate.dayNumber, weather.days[candidate.date])
-                        },
-                    )
-                }
-            }
+            DayChipRow(
+                dayNumbers = plan.dailyPlans.map { it.dayNumber },
+                selectedDay = day?.dayNumber,
+                weatherOf = { number -> plan.dailyPlans.firstOrNull { it.dayNumber == number }?.let { weather.days[it.date] } },
+                onSelect = onSelectDay,
+            )
             weatherNotice(weather)?.let { notice ->
                 Text(
                     text = notice,
                     style = MaterialTheme.typography.labelSmall,
                     color = LocalPalette.current.TextSecondary,
-                    modifier = Modifier
-                        .align(Alignment.End)
-                        .padding(horizontal = Tokens.Space.lg, vertical = Tokens.Space.xs),
+                    modifier = Modifier.padding(
+                        horizontal = Tokens.Space.screenHorizontal,
+                        vertical = Tokens.Space.sm,
+                    ),
                 )
             }
         }
@@ -884,44 +875,6 @@ private fun TimelineItem.toFavoritePlace(cityName: String): FavoritePlace? = whe
     is TimelineItem.Meal -> restaurant.toFavorite(cityName)
     // 담을 장소가 없다. 호출부가 이 항목에는 하트를 그리지 않는다.
     is TimelineItem.NoMeal -> null
-}
-
-/**
- * 날짜 칩 글자. 예보가 있는 날만 작은 아이콘이 붙는다.
- *
- * 아이콘만으로는 "비"인지 "눈"인지 읽어 주지 못하므로 화면 낭독용 설명에 날씨와 강수확률을 넣는다.
- */
-@Composable
-private fun DayChipLabel(dayNumber: Int, weather: DailyWeather?) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(Tokens.Space.xs),
-    ) {
-        Text(stringResource(R.string.plan_day_tab, dayNumber))
-        if (weather != null) {
-            val label = stringResource(weather.sky.labelRes())
-            Icon(
-                imageVector = weather.sky.icon(),
-                contentDescription = weather.precipitationProbability?.let { "$label $it%" } ?: label,
-                tint = LocalPalette.current.TextSecondary,
-                modifier = Modifier.size(Tokens.Size.inlineIcon),
-            )
-        }
-    }
-}
-
-private fun Sky.icon(): ImageVector = when (this) {
-    Sky.CLEAR -> Icons.Outlined.WbSunny
-    Sky.CLOUDY -> Icons.Outlined.Cloud
-    Sky.RAIN -> Icons.Outlined.WaterDrop
-    Sky.SNOW -> Icons.Outlined.AcUnit
-}
-
-private fun Sky.labelRes(): Int = when (this) {
-    Sky.CLEAR -> R.string.weather_clear
-    Sky.CLOUDY -> R.string.weather_cloudy
-    Sky.RAIN -> R.string.weather_rain
-    Sky.SNOW -> R.string.weather_snow
 }
 
 /**

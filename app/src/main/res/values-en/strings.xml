@@ -275,6 +275,7 @@
     <string name="plan_lodging_not_found">No stay found</string>
     <string name="plan_map_empty">Nothing to show on the map</string>
     <string name="plan_day_tab">Day %1$d</string>
+    <string name="plan_day_chip">D%1$d</string>
 
     <!-- 요약 헤더 -->
     <string name="plan_density_attractions">%1$s attractions a day</string>

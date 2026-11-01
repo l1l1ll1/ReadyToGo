@@ -1,5 +1,8 @@
 package kr.ac.baekseok.readytogo.ui.plan
 
+import androidx.compose.foundation.layout.Spacer
+import kr.ac.baekseok.readytogo.ui.format.daysText
+import kr.ac.baekseok.readytogo.ui.format.dateShort
 import android.content.Intent
 import android.net.Uri
 import androidx.annotation.StringRes
@@ -334,49 +337,26 @@ private fun TripPlanContent(
             }
         },
         topBar = {
-            Column {
-                TopAppBar(
-                    title = { Text(stringResource(R.string.plan_title)) },
-                    // 바탕과 같은 색. 기본값(흰색)이면 민트그레이 화면 위에 흰 띠가 뜬다.
-                    colors = TopAppBarDefaults.topAppBarColors(containerColor = LocalPalette.current.Background),
-                    navigationIcon = {
-                        TextButton(onClick = onBack) { Text(stringResource(R.string.common_back)) }
-                    },
-                    actions = {
-                        // 계획이 완성되기 전에는 공유할 내용도 저장할 내용도 없다.
-                        if (uiState is TripPlanUiState.Success) {
-                            IconButton(onClick = { shareTripRequested = true }) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Share,
-                                    contentDescription = stringResource(R.string.share_trip),
-                                )
-                            }
-                            TextButton(onClick = onToggleSaved) {
-                                Text(
-                                    stringResource(
-                                        if (saved) R.string.plan_unsave else R.string.plan_save,
-                                    ),
-                                )
-                            }
-                        }
-                    },
+            Column(verticalArrangement = Arrangement.spacedBy(Tokens.Space.sm)) {
+                // 제목은 여행 이름("삿포로 4일")과 기간·인원(design/mockup). 계획이 오기 전에는 "여행 계획".
+                val plan = (uiState as? TripPlanUiState.Success)?.plan
+                PlanTopBar(
+                    title = plan?.let { planTitle(it) } ?: stringResource(R.string.plan_title),
+                    subtitle = plan?.let { planSubtitle(it) },
+                    saved = saved,
+                    actionsVisible = plan != null,
+                    onBack = onBack,
+                    onShare = { shareTripRequested = true },
+                    onToggleSaved = onToggleSaved,
                 )
 
-                if (uiState is TripPlanUiState.Success) {
-                    // 탭 다섯 개가 좁은 화면에서 글자가 잘리므로 스크롤되는 탭 줄을 쓴다.
-                    ScrollableTabRow(
-                        selectedTabIndex = selectedTab.ordinal,
-                        edgePadding = 0.dp,
-                        containerColor = LocalPalette.current.Background,
-                    ) {
-                        PlanTab.entries.forEach { tab ->
-                            Tab(
-                                selected = tab == selectedTab,
-                                onClick = { selectedTab = tab },
-                                text = { Text(stringResource(tab.labelRes)) },
-                            )
-                        }
-                    }
+                if (plan != null) {
+                    PlanSegmentedTabs(
+                        labels = PlanTab.entries.map { stringResource(it.labelRes) },
+                        selectedIndex = selectedTab.ordinal,
+                        onSelect = { selectedTab = PlanTab.entries[it] },
+                    )
+                    Spacer(Modifier.height(Tokens.Space.xs))
                 }
             }
         },
@@ -699,21 +679,14 @@ private fun MapTab(
         ?: plan.dailyPlans.firstOrNull()
 
     Column(modifier = Modifier.fillMaxSize()) {
-        ScrollableTabRow(
-            selectedTabIndex = (day?.dayNumber ?: 1) - 1,
-            edgePadding = 0.dp,
-            containerColor = LocalPalette.current.Background,
-        ) {
-            plan.dailyPlans.forEach { candidate ->
-                Tab(
-                    selected = candidate.dayNumber == day?.dayNumber,
-                    onClick = { onSelectDay(candidate.dayNumber) },
-                    text = {
-                        Text(stringResource(R.string.plan_day_tab, candidate.dayNumber))
-                    },
-                )
-            }
-        }
+        // 일정표와 같은 날짜 칩. 지도에는 날씨가 필요 없어 아이콘 없이.
+        DayChipRow(
+            dayNumbers = plan.dailyPlans.map { it.dayNumber },
+            selectedDay = day?.dayNumber,
+            weatherOf = { null },
+            onSelect = onSelectDay,
+        )
+        Spacer(Modifier.height(Tokens.Space.sm))
 
         if (day == null) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -1385,4 +1358,22 @@ private val TimelineItem.favoriteKind: FavoriteKind
 private fun dayCenterOf(plan: TripPlan?, dayNumber: Int): LatLng? {
     val day = plan?.dailyPlans?.firstOrNull { it.dayNumber == dayNumber } ?: return null
     return medianCenter(day.attractions.map { it.location })
+}
+
+/** 결과 화면 제목. 저장할 때 붙는 이름과 같은 꼴("삿포로 4일") — 같은 여행을 두 이름으로 부르지 않는다. */
+@Composable
+private fun planTitle(plan: TripPlan): String = stringResource(
+    R.string.plan_saved_title,
+    plan.condition.destination?.shortName.orEmpty(),
+    daysText(plan.dailyPlans.size),
+)
+
+/** 제목 아래 "12.24 – 12.27 · 3명". */
+@Composable
+private fun planSubtitle(plan: TripPlan): String? {
+    val start = plan.condition.departureDate ?: return null
+    val end = plan.condition.returnDate ?: return null
+    val dates = stringResource(R.string.fmt_date_range, dateShort(start), dateShort(end))
+    val people = pluralStringResource(R.plurals.people_count, plan.condition.adults, plan.condition.adults)
+    return "$dates · $people"
 }

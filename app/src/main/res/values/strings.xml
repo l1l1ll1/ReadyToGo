@@ -295,6 +295,8 @@
     <string name="plan_lodging_not_found">숙소를 찾지 못했습니다</string>
     <string name="plan_map_empty">표시할 일정이 없습니다</string>
     <string name="plan_day_tab">%1$d일차</string>
+    <!-- 날짜 칩(⑫, design/mockup/timeline). 칩이 좁아 "일차" 대신 "일". -->
+    <string name="plan_day_chip">%1$d일</string>
 
     <!-- 요약 헤더 -->
     <string name="plan_density_attractions">하루 관광지 %1$s곳</string>

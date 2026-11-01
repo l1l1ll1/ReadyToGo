@@ -8,6 +8,7 @@ import kr.ac.baekseok.readytogo.domain.edit.ApplyResult
 import kr.ac.baekseok.readytogo.domain.edit.DaySummary
 import kr.ac.baekseok.readytogo.domain.edit.EditCommand
 import kr.ac.baekseok.readytogo.domain.edit.MealBasis
+import kr.ac.baekseok.readytogo.domain.edit.PlaceBasis
 import kr.ac.baekseok.readytogo.domain.edit.applyCommands
 import kr.ac.baekseok.readytogo.domain.plan.TimelineItem
 
@@ -47,7 +48,15 @@ fun defaultFixes(
             listOf(listOf(EditCommand.SwapMeal(issue.meal, MealBasis.EXCLUDE_SAME_KIND)))
 
         is ReviewIssue.Closed -> when (val meal = issue.meal) {
-            null -> listOfNotNull(aliasByKey[issue.itemKey]?.let { listOf(EditCommand.Remove(it)) })
+            // 관광지는 빼기 전에 교체를 먼저 해 본다. 빼면 그날이 비지만, 바꾸면 하루 모양이 그대로다.
+            // 근처 → 실내 → 빼기 순. 예비 후보에서 쉬는 곳은 빠진다(pickPlaceFor의 visitDay).
+            null -> aliasByKey[issue.itemKey]?.let { alias ->
+                listOf(
+                    listOf(EditCommand.SwapPlace(alias, PlaceBasis.NEAR_PREV)),
+                    listOf(EditCommand.SwapPlace(alias, PlaceBasis.INDOOR)),
+                    listOf(EditCommand.Remove(alias)),
+                )
+            }.orEmpty()
             // 쉬는 집은 교체 후보에서 빠지므로(pickMealFor의 visitDay) 어느 기준이든 연 곳으로 바뀐다.
             // 동선을 덜 흔드는 기준부터 시도한다.
             else -> CLOSED_MEAL_BASES.map { listOf(EditCommand.SwapMeal(meal, it)) }
@@ -63,9 +72,10 @@ fun applyFirst(
     keyByAlias: Map<String, String>,
     lodging: LatLng?,
     picked: PickedPlaces,
+    otherDaysAttractionIds: Set<String> = emptySet(),
 ): ApplyResult? =
     alternatives.asSequence()
-        .map { applyCommands(day, edits, it, keyByAlias, lodging, picked) }
+        .map { applyCommands(day, edits, it, keyByAlias, lodging, picked, otherDaysAttractionIds) }
         .firstOrNull { it.appliedCount > 0 }
 
 private val CLOSED_MEAL_BASES = listOf(

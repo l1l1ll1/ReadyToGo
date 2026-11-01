@@ -9,7 +9,6 @@ import kr.ac.baekseok.readytogo.data.model.MealTime
  * id는 실제 키가 아니라 [DaySummary]의 **별칭**(a1, m_lunch)이다. 별칭을 키로 바꾸는 일은
  * [applyCommands]가 한다 — 해석을 한 곳에 둬야 "없는 id" 거부도 한 곳에서 한다.
  *
- * 관광지 교체(swap_place)는 없다. 계획에 관광지 예비 후보가 없어 ⑨-2로 미뤘다.
  */
 sealed interface EditCommand {
     data class Remove(val id: String) : EditCommand
@@ -19,6 +18,21 @@ sealed interface EditCommand {
 
     /** [id]를 [afterId] 바로 뒤로. 같은 날 안에서만. */
     data class Move(val id: String, val afterId: String) : EditCommand
+
+    /**
+     * 관광지 [id]를 그날 예비 후보로 바꾼다. 끼니와 같이 기준만 받고, 고르는 것은 점수다.
+     * "더 싼 곳"은 없다 — 관광지는 가격 정보가 없다.
+     */
+    data class SwapPlace(val id: String, val basis: PlaceBasis) : EditCommand
+}
+
+/** 관광지를 바꿀 때 기준. 이름은 서버 도구 정의(functions/src/tools.ts)와 같다. */
+enum class PlaceBasis(val wireName: String) {
+    /** 실내(IndoorOutdoor 표). 비 오는 날 쓴다. */
+    INDOOR("indoor"),
+
+    /** 지금 관광지보다 바로 앞 일정에 가까운 곳. */
+    NEAR_PREV("near_prev"),
 }
 
 /** 끼니를 바꿀 때 "무엇보다 나은 곳"을 찾을지. 이름은 서버 도구 정의(functions/src/tools.ts)와 같다. */
@@ -65,6 +79,11 @@ private fun Map<*, *>.toCommand(): EditCommand? {
             val meal = MealTime.entries.firstOrNull { it.name.equals(text("meal"), ignoreCase = true) }
             val basis = MealBasis.entries.firstOrNull { it.wireName == text("basis") }
             if (meal == null || basis == null) null else EditCommand.SwapMeal(meal, basis)
+        }
+        "swap_place" -> {
+            val id = text("id") ?: return null
+            val basis = PlaceBasis.entries.firstOrNull { it.wireName == text("basis") } ?: return null
+            EditCommand.SwapPlace(id, basis)
         }
         else -> null
     }

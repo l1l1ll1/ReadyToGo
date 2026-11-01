@@ -88,6 +88,11 @@ data class DayPlan(
     /** 방문 순서대로 정렬된 관광지. 그날 식당의 동선 점수 기준점이기도 하다. */
     val attractions: List<Attraction>,
     val meals: Map<MealTime, RecommendationPair<Restaurant>>,
+    /**
+     * 관광지 예비 후보(점수 순). 관광지 교체가 여기서 고른다.
+     * 저장하지 않는다 — 열 때 계획을 다시 만들며 함께 계산된다([alternativesByDay] 참고).
+     */
+    val alternatives: List<Attraction> = emptyList(),
 )
 
 /**

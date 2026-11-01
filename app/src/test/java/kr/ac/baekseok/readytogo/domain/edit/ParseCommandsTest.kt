@@ -38,7 +38,8 @@ class ParseCommandsTest {
     fun `모르는 op, 빠진 필드, 틀린 enum은 그것만 버린다`() {
         val parsed = parseCommands(
             response(
-                mapOf("op" to "swap_place", "id" to "a1", "basis" to "indoor"),
+                mapOf("op" to "teleport", "id" to "a1"),
+                mapOf("op" to "swap_place", "id" to "a1", "basis" to "cheaper"),
                 mapOf("op" to "move", "id" to "a1"),
                 mapOf("op" to "swap_meal", "meal" to "brunch", "basis" to "cheaper"),
                 mapOf("op" to "swap_meal", "meal" to "lunch", "basis" to "tastier"),
@@ -56,5 +57,20 @@ class ParseCommandsTest {
         assertTrue(parseCommands(null).isEmpty())
         assertTrue(parseCommands(mapOf("commands" to "remove a1")).isEmpty())
         assertTrue(parseCommands(listOf(mapOf("op" to "remove", "id" to "a1"))).isEmpty())
+    }
+
+    @Test
+    fun `관광지 교체는 id와 기준을 읽는다`() {
+        val parsed = parseCommands(
+            response(
+                mapOf("op" to "swap_place", "id" to "a1", "basis" to "indoor"),
+                mapOf("op" to "swap_place", "id" to "a2", "basis" to "near_prev"),
+            ),
+        )
+
+        assertEquals(
+            listOf(EditCommand.SwapPlace("a1", PlaceBasis.INDOOR), EditCommand.SwapPlace("a2", PlaceBasis.NEAR_PREV)),
+            parsed,
+        )
     }
 }

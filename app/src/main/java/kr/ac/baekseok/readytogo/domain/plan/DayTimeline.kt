@@ -134,7 +134,11 @@ fun DayPlan.toTimeline(
     val visits = attractions.map { attraction ->
         val slot = TimelineItem.Visit(attraction)
         // 바꿔 끼운 곳이 있으면 자리는 두고 안에 든 장소만 갈아 끼운다.
-        val replacement = pickedAttractions[slot.key]?.let { picked.attractions[it] }
+        // 즐겨찾기에서 받아 온 곳을 먼저, 없으면 그날 예비 후보(관광지 교체)에서 찾는다.
+        // 둘 다 없으면(캐시가 바뀌어 후보가 사라짐) 원래 관광지로 둔다.
+        val replacement = pickedAttractions[slot.key]?.let { id ->
+            picked.attractions[id] ?: alternatives.firstOrNull { it.id == id }
+        }
         if (replacement == null) slot else slot.copy(attraction = replacement)
     }
 

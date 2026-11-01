@@ -233,7 +233,7 @@
     <string name="plan_text_edit_reject_unknown">item not in the plan</string>
     <string name="plan_text_edit_reject_meal_fixed">meals can\'t be removed or moved</string>
     <string name="plan_text_edit_reject_position">can\'t move there</string>
-    <string name="plan_text_edit_reject_no_candidate">no other restaurant fits</string>
+    <string name="plan_text_edit_reject_no_candidate">no other place fits</string>
     <string name="plan_text_edit_sign_in">Please sign in.</string>
     <string name="plan_text_edit_too_many">Too many requests. Try again in a minute.</string>
     <string name="plan_text_edit_unavailable">Can\'t process this right now. Please try again shortly.</string>

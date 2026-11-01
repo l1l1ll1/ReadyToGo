@@ -20,6 +20,7 @@ import kr.ac.baekseok.readytogo.data.repository.DayEditException
 import kr.ac.baekseok.readytogo.domain.edit.EditCommand
 import kr.ac.baekseok.readytogo.domain.edit.RejectReason
 import kr.ac.baekseok.readytogo.domain.edit.applyCommands
+import kr.ac.baekseok.readytogo.domain.edit.attractionIdsOutside
 import kr.ac.baekseok.readytogo.domain.edit.summarizeDay
 import kr.ac.baekseok.readytogo.domain.plan.toTimeline
 import kr.ac.baekseok.readytogo.data.repository.ReviewQuestion
@@ -416,7 +417,9 @@ class TripPlanViewModel(
             return
         }
         // 지금 편집 위에 얹는다. 보내기 전 값에 얹으면 기다리는 동안 손으로 고친 것이 사라진다.
-        val result = applyCommands(day, _edits.value, commands, keyByAlias, lodging, _pickedPlaces.value)
+        val plan = (_uiState.value as? TripPlanUiState.Success)?.plan ?: return
+        val others = plan.attractionIdsOutside(day.dayNumber, _edits.value, _pickedPlaces.value)
+        val result = applyCommands(day, _edits.value, commands, keyByAlias, lodging, _pickedPlaces.value, others)
         val skipped = result.rejections.joinToString(", ") { string(it.reason.labelRes()) }
 
         if (result.appliedCount == 0) {
@@ -642,8 +645,10 @@ class TripPlanViewModel(
         val summary = summarizeDay(day.editedTimeline(edits, picked), lodging)
 
         val advice = _reviewAdvice.value[issue]?.takeIf { it.commands.isNotEmpty() }
-        val result = advice?.let { applyFirst(day, edits, listOf(it.commands), it.keyByAlias, lodging, picked) }
-            ?: applyFirst(day, edits, defaultFixes(issue, day, edits, picked, summary), summary.keyByAlias, lodging, picked)
+        // 다른 날에 이미 있는 관광지로는 바꾸지 않는다.
+        val others = plan.attractionIdsOutside(day.dayNumber, edits, picked)
+        val result = advice?.let { applyFirst(day, edits, listOf(it.commands), it.keyByAlias, lodging, picked, others) }
+            ?: applyFirst(day, edits, defaultFixes(issue, day, edits, picked, summary), summary.keyByAlias, lodging, picked, others)
 
         if (result == null) {
             showWithoutUndo(string(R.string.review_fix_failed))

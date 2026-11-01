@@ -119,6 +119,9 @@ class TripPlanner(
         // null이면 검색할 위치가 없다는 뜻이고, 그 경우 4단계는 그냥 건너뛴다.
         val dayCenters = dayCentersOf(condition, dailyAttractions, plannedAttractions).orEmpty()
 
+        // 관광지 교체용 예비 후보. 이미 받은 검색 결과에서 고르므로 호출이 늘지 않는다.
+        val alternatives = alternativesByDay(attractions, dailyAttractions, condition.purposes)
+
         val dailyPlans = dailyAttractions.mapIndexed { index, dayAttractions ->
             DayPlan(
                 date = startDate.plusDays(index.toLong()),
@@ -143,6 +146,7 @@ class TripPlanner(
                         }
                     },
                 ),
+                alternatives = alternatives.getOrNull(index).orEmpty(),
             )
         }
 

@@ -7,7 +7,8 @@
  * **날짜 인자가 없다.** 앱이 일정표 탭에서 보고 있는 하루만 보내므로 날짜는 앱이 채운다.
  * 다른 날을 가리키는 명령이 애초에 나올 수 없다.
  *
- * 관광지 교체(swap_place)는 ⑨-2로 미뤘다 — 계획에 관광지 예비 후보가 없다.
+ * 관광지 교체(swap_place)는 앱이 날마다 들고 있는 예비 후보(상위 5곳)에서 고른다.
+ * "더 싼 곳"은 없다 — 관광지는 가격 정보가 없다.
  */
 import type Anthropic from "@anthropic-ai/sdk";
 
@@ -18,6 +19,7 @@ export const MEAL_BASES = [
   "cheaper",
   "exclude_same_kind",
 ] as const;
+export const PLACE_BASES = ["indoor", "near_prev"] as const;
 
 // strict: 모델이 enum 밖의 값이나 빠진 필드를 보내지 못하게 한다.
 // 그래도 앱이 다시 검사한다(없는 id 같은 것은 스키마로 막을 수 없다).
@@ -67,6 +69,23 @@ export const TOOLS: Anthropic.Tool[] = [
       additionalProperties: false,
     },
   },
+  {
+    name: "swap_place",
+    description:
+      "관광지 하나를 같은 날 다른 관광지로 바꾼다. 장소는 고르지 말고 기준만 정한다. " +
+      "indoor=실내(비 오는 날), near_prev=바로 앞 일정에 더 가까운 곳. " +
+      "끼니는 swap_meal로 바꾼다.",
+    strict: true,
+    input_schema: {
+      type: "object",
+      properties: {
+        id: {type: "string", description: "바꿀 관광지의 id. 예: a2"},
+        basis: {type: "string", enum: [...PLACE_BASES]},
+      },
+      required: ["id", "basis"],
+      additionalProperties: false,
+    },
+  },
 ];
 
 // 마지막 문장은 사고(thinking)를 끈 모델이 도구 호출을 본문 글로 써 버리는 일을 막는다
@@ -87,12 +106,12 @@ export const SYSTEM_PROMPT = [
 // ---- 일정 검토(reviewIssues) ----
 
 /**
- * 검토용 도구. **위 세 도구에 issue_id만 덧붙여 만든다** — 정의를 두 벌 두면 한쪽만 고쳐져 어긋난다.
+ * 검토용 도구. **위 편집 도구(TOOLS)에 issue_id만 덧붙여 만든다** — 정의를 두 벌 두면 한쪽만 고쳐져 어긋난다.
  *
  * issue_id는 그 요청의 문제 id만 enum으로 허용한다(strict). 없는 문제에 명령을 붙일 수 없다.
  * 요청마다 도구가 달라지지만, 이 길이에서는 프롬프트 캐시가 걸리지 않아 잃는 것이 없다.
  * @param {string[]} issueIds 이번 요청의 문제 id
- * @return {Anthropic.Tool[]} explain + 편집 도구 세 개
+ * @return {Anthropic.Tool[]} explain + 편집 도구 전부
  */
 export function reviewTools(issueIds: string[]): Anthropic.Tool[] {
   const issueId = {
@@ -145,6 +164,7 @@ export const REVIEW_SYSTEM_PROMPT = [
     "영업시간·거리·가격 등 목록에 없는 사실을 지어내지 않는다.",
   "id는 그 문제가 속한 날의 일정 목록에 있는 것만 쓴다. 날마다 id가 따로 매겨진다.",
   "끼니(m_로 시작)는 빼거나 옮길 수 없고 swap_meal로만 바꾼다. " +
+    "관광지 문제는 빼기(remove)보다 바꾸기(swap_place)를 먼저 고려한다 — 하루가 비지 않는다. " +
     "식당은 고르지 말고 기준만 정한다.",
   "When you use a tool, you may say a brief sentence first. " +
     "Do not include internal or system XML tags in your response.",

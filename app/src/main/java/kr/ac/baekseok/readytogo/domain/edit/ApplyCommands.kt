@@ -4,6 +4,7 @@ import kr.ac.baekseok.readytogo.data.model.DayPlan
 import kr.ac.baekseok.readytogo.data.model.LatLng
 import kr.ac.baekseok.readytogo.data.model.PickedPlaces
 import kr.ac.baekseok.readytogo.data.model.TimelineEdits
+import kr.ac.baekseok.readytogo.data.model.TripPlan
 import kr.ac.baekseok.readytogo.domain.plan.TimelineEntry
 import kr.ac.baekseok.readytogo.domain.plan.TimelineItem
 import kr.ac.baekseok.readytogo.domain.plan.moveAfter
@@ -20,7 +21,7 @@ enum class RejectReason {
     /** 자기 뒤로 옮기기, 또는 첫 끼니보다 앞으로 가는 순서. */
     BAD_POSITION,
 
-    /** 기준에 맞는 다른 식당이 없다. */
+    /** 기준에 맞는 다른 식당·관광지가 없다. */
     NO_CANDIDATE,
 }
 
@@ -40,6 +41,9 @@ data class ApplyResult(
  *
  * 편집 방식은 손으로 할 때와 같다(TripPlanViewModel의 deleteTimelineItem, pickMeal, reorderDay).
  * 여기서는 [TimelineEdits]만 바꾸고 저장·되돌리기는 ViewModel이 한 번에 한다.
+ *
+ * @param otherDaysAttractionIds 다른 날 화면에 있는 관광지. 관광지 교체가 같은 곳을 또 넣지 않게 뺀다
+ *        ([attractionIdsOutside]로 만든다). 그날 것은 여기서 직접 센다.
  */
 fun applyCommands(
     day: DayPlan,
@@ -48,6 +52,7 @@ fun applyCommands(
     keyByAlias: Map<String, String>,
     lodging: LatLng?,
     picked: PickedPlaces = PickedPlaces(),
+    otherDaysAttractionIds: Set<String> = emptySet(),
 ): ApplyResult {
     var current = edits
     var applied = 0
@@ -61,7 +66,7 @@ fun applyCommands(
             pickedAttractions = current.pickedAttractionsIn(day.dayNumber),
             picked = picked,
         )
-        val step = Step(day, current, entries, keyByAlias, lodging)
+        val step = Step(day, current, entries, keyByAlias, lodging, otherDaysAttractionIds)
         when (val outcome = step.apply(command)) {
             is Outcome.Applied -> {
                 current = outcome.edits
@@ -85,6 +90,7 @@ private class Step(
     val entries: List<TimelineEntry>,
     val keyByAlias: Map<String, String>,
     val lodging: LatLng?,
+    val otherDaysAttractionIds: Set<String>,
 ) {
     private val dayNumber get() = day.dayNumber
 
@@ -92,6 +98,31 @@ private class Step(
         is EditCommand.Remove -> remove(command)
         is EditCommand.Move -> move(command)
         is EditCommand.SwapMeal -> swapMeal(command)
+        is EditCommand.SwapPlace -> swapPlace(command)
+    }
+
+    private fun swapPlace(command: EditCommand.SwapPlace): Outcome {
+        val item = visible(command.id) ?: return Outcome.Rejected(RejectReason.UNKNOWN_ITEM)
+        // 끼니는 swap_meal로 바꾼다. 관광지 후보로 끼니 자리를 채울 수는 없다.
+        if (item !is TimelineItem.Visit) return Outcome.Rejected(RejectReason.MEAL_FIXED)
+
+        val index = entries.indexOfFirst { it.item.key == item.key }
+        val previous = entries.take(index).lastOrNull { it.item.location != null }?.item?.location ?: lodging
+        val taken = otherDaysAttractionIds +
+            entries.mapNotNull { (it.item as? TimelineItem.Visit)?.attraction?.id }
+
+        val chosen = pickPlaceFor(
+            basis = command.basis,
+            current = item.attraction,
+            alternatives = day.alternatives,
+            previous = previous,
+            takenIds = taken,
+            visitDay = day.date.dayOfWeek,
+        ) ?: return Outcome.Rejected(RejectReason.NO_CANDIDATE)
+
+        // 즐겨찾기 끼우기와 같은 기록(자리 키 → 장소 id)이라 저장 형식이 늘지 않는다.
+        val next = edits.pickedAttractionsIn(dayNumber) + (item.key to chosen.id)
+        return Outcome.Applied(edits.copy(pickedAttractions = edits.pickedAttractions + (dayNumber to next)))
     }
 
     private fun remove(command: EditCommand.Remove): Outcome {
@@ -155,3 +186,22 @@ private class Step(
         return entries.firstOrNull { it.item.key == key }?.item
     }
 }
+
+/**
+ * [dayNumber]가 아닌 날들의 화면에 있는 관광지 id. 관광지 교체가 다른 날에 이미 있는 곳을 고르지 않게 한다.
+ * 바꿔 끼운 곳까지 반영해야 하므로 원래 배치가 아니라 편집된 타임라인을 본다.
+ */
+fun TripPlan.attractionIdsOutside(dayNumber: Int, edits: TimelineEdits, picked: PickedPlaces): Set<String> =
+    dailyPlans
+        .filter { it.dayNumber != dayNumber }
+        .flatMap { day ->
+            day.toTimeline(
+                deletedKeys = edits.deletedIn(day.dayNumber),
+                pickedMeals = edits.pickedIn(day.dayNumber),
+                customOrder = edits.orderIn(day.dayNumber),
+                pickedAttractions = edits.pickedAttractionsIn(day.dayNumber),
+                picked = picked,
+            )
+        }
+        .mapNotNull { (it.item as? TimelineItem.Visit)?.attraction?.id }
+        .toSet()

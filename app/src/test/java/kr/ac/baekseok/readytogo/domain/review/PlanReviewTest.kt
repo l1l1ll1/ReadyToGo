@@ -231,6 +231,23 @@ class PlanReviewTest {
     }
 
     @Test
+    fun `쉬는 관광지의 기본 수정은 빼기 전에 예비 후보로 바꾸기`() {
+        val closedMonday = everyDay - DayOfWeek.MONDAY
+        val d2 = day(2, listOf(attraction("b1", 35.61, closedMonday), attraction("b2", 35.62), attraction("b3", 35.63)), meals(2))
+            .copy(alternatives = listOf(attraction("spare", 35.605)))
+        val p = plan(day1, d2, day3, day4)
+        val issue = reviewPlan(p, TimelineEdits()).single()
+        val summary = summarizeDay(d2.editedTimeline(TimelineEdits(), PickedPlaces()), null)
+
+        val fixes = defaultFixes(issue, d2, TimelineEdits(), PickedPlaces(), summary)
+        val result = applyFirst(d2, TimelineEdits(), fixes, summary.keyByAlias, null, PickedPlaces())!!
+
+        assertEquals(mapOf("visit-b1" to "spare"), result.edits.pickedAttractionsIn(2))
+        assertTrue(result.edits.deletedIn(2).isEmpty())
+        assertTrue(reviewPlan(p, result.edits).isEmpty())
+    }
+
+    @Test
     fun `이미 뺀 곳에는 경고하지 않는다`() {
         val d2 = day(2, listOf(attraction("b1", 35.61, everyDay - DayOfWeek.MONDAY), attraction("b2", 35.62), attraction("b3", 35.63)), meals(2))
         val edits = TimelineEdits(deleted = mapOf(2 to setOf("visit-b1")))

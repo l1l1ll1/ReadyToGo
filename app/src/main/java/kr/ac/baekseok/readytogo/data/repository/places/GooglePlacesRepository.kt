@@ -234,6 +234,7 @@ class GooglePlacesRepository(
             // 식당과 같은 필드다. 상세 시트에서 지도 앱으로 넘기는 데 쓴다.
             mapUrl = googleMapsUri?.toString().orEmpty(),
             openDays = openDays(),
+            primaryType = primaryType,
         )
     }
 

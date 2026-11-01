@@ -180,6 +180,7 @@ private fun Attraction.toJson() = JSONObject().apply {
     put("types", JSONArray().apply { types.forEach { put(it) } })
     put("mapUrl", mapUrl)
     openDays?.let { put("openDays", it.toJson()) }
+    primaryType?.let { put("primaryType", it) }
 }
 
 private fun JSONObject.toAttraction() = Attraction(
@@ -197,6 +198,7 @@ private fun JSONObject.toAttraction() = Attraction(
     // 예전 캐시에는 없던 필드다. optString으로 읽어 캐시를 버리지 않게 한다.
     mapUrl = optString("mapUrl"),
     openDays = readOpenDays(),
+    primaryType = if (has("primaryType")) getString("primaryType") else null,
 )
 
 private fun Set<DayOfWeek>.toJson() = JSONArray().apply { forEach { put(it.name) } }

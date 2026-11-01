@@ -135,6 +135,8 @@ data class Attraction(
     val mapUrl: String = "",
     /** 문을 여는 요일. null이면 모른다([Restaurant.openDays]와 같은 규칙). */
     val openDays: Set<DayOfWeek>? = null,
+    /** Places 본업 타입. 실내·실외 판정에 쓴다(IndoorOutdoor). null이면 모른다(예전 캐시). */
+    val primaryType: String? = null,
 )
 
 /** 영업 요일을 알고 [day]가 빠져 있으면 휴무. 모르면 휴무가 아니다(검사하지 않는다). */

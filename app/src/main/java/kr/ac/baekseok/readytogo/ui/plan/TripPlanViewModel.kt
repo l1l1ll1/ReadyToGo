@@ -30,6 +30,7 @@ import kr.ac.baekseok.readytogo.domain.review.applyFirst
 import kr.ac.baekseok.readytogo.domain.review.defaultFixes
 import kr.ac.baekseok.readytogo.domain.review.editedTimeline
 import kr.ac.baekseok.readytogo.domain.review.reviewPlan
+import kr.ac.baekseok.readytogo.domain.weather.DailyWeather
 import kr.ac.baekseok.readytogo.ui.format.Particle
 import kr.ac.baekseok.readytogo.ui.format.withParticle
 import kr.ac.baekseok.readytogo.generation.PlanGeneration
@@ -179,6 +180,7 @@ class TripPlanViewModel(
                     onSuccess = { TripPlanUiState.Success(it) },
                     onFailure = { TripPlanUiState.Failure(it.message ?: string(R.string.plan_create_failed)) },
                 )
+                state.result.getOrNull()?.let(::loadWeather)
             }
         }
     }
@@ -559,12 +561,27 @@ class TripPlanViewModel(
     // _pickedPlaces보다 아래에 둔다. 위에 두면 combine이 아직 초기화되지 않은 흐름을 잡는다.
 
     /**
+     * 날짜별 예보(⑨-3). D-7 안의 날만 들어 있다. 날짜 칩 아이콘과 비 규칙이 함께 쓴다.
+     * 계획이 도착한 뒤 한 번 받는다 — 실패하면 비어 있고 화면은 그대로다.
+     */
+    private val _weather = MutableStateFlow<Map<LocalDate, DailyWeather>>(emptyMap())
+    val weather: StateFlow<Map<LocalDate, DailyWeather>> = _weather.asStateFlow()
+
+    private fun loadWeather(plan: TripPlan) {
+        val location = plan.condition.destination?.location ?: return
+        viewModelScope.launch {
+            _weather.value = AppContainer.weather.dailyForecast(location, plan.dailyPlans.map { it.date })
+        }
+    }
+
+    /**
      * 규칙이 찾은 문제. **계획·편집이 바뀔 때마다 다시 잰다**(규칙만, AI 호출 없음).
      * 생성 직후 1회와 편집 저장 뒤 재검사가 이것 하나로 된다. 비어 있으면 카드가 없다.
      */
-    val reviewIssues: StateFlow<List<ReviewIssue>> = combine(_uiState, _edits, _pickedPlaces) { state, edits, picked ->
-        (state as? TripPlanUiState.Success)?.plan?.let { reviewPlan(it, edits, picked) }.orEmpty()
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+    val reviewIssues: StateFlow<List<ReviewIssue>> =
+        combine(_uiState, _edits, _pickedPlaces, _weather) { state, edits, picked, weather ->
+            (state as? TripPlanUiState.Success)?.plan?.let { reviewPlan(it, edits, picked, weather) }.orEmpty()
+        }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     /**
      * AI 답. **문제 id가 아니라 문제 전체로 찾는다** — 같은 날 같은 끼니라도 식당이 바뀌면
@@ -691,6 +708,12 @@ class TripPlanViewModel(
                 else -> string(R.string.review_fact_closed_meal, issue.dayNumber, weekday, string(meal.labelRes), name)
             }
         }
+        is ReviewIssue.Rainy -> string(
+            R.string.review_fact_rainy,
+            issue.dayNumber,
+            issue.probability,
+            issue.outdoorNames.joinToString(", "),
+        )
     }
 
     /** "1일차 점심 라멘 하루카" */

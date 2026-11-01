@@ -98,6 +98,7 @@ import kr.ac.baekseok.readytogo.ui.theme.LocalPalette
 import kr.ac.baekseok.readytogo.ui.theme.ReadytogoTheme
 import kr.ac.baekseok.readytogo.ui.theme.Tokens
 import java.time.LocalDate
+import kr.ac.baekseok.readytogo.domain.weather.DailyWeather
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.Locale
@@ -156,6 +157,7 @@ fun TripPlanScreen(
     val reviewItems by viewModel.reviewItems.collectAsState()
     val reviewLoading by viewModel.reviewLoading.collectAsState()
     val reviewExpanded by viewModel.reviewExpanded.collectAsState()
+    val weather by viewModel.weather.collectAsState()
 
     LaunchedEffect(conditionChange) {
         val next = conditionChange ?: return@LaunchedEffect
@@ -193,6 +195,7 @@ fun TripPlanScreen(
             onSubmit = viewModel::editByText,
             onSignIn = onSignIn,
         ),
+        weather = weather,
         review = ReviewControls(
             items = reviewItems,
             loading = reviewLoading,
@@ -235,6 +238,7 @@ private fun TripPlanContent(
     onToggleDone: (Int, String) -> Unit = { _, _ -> },
     textEdit: TextEditControls = TextEditControls(),
     review: ReviewControls = ReviewControls(),
+    weather: Map<LocalDate, DailyWeather> = emptyMap(),
     onReorder: (Int, List<String>) -> Unit = { _, _ -> },
     onReorderCommit: () -> Unit = {},
     onPickMeal: (Int, String, String?) -> Unit = { _, _, _ -> },
@@ -411,6 +415,7 @@ private fun TripPlanContent(
                     onToggleDone = onToggleDone,
                     textEdit = textEdit,
                     review = review,
+                    weather = weather,
                     onEditDates = if (canChangeDates) ({ dateSheetOpen = true }) else null,
                 )
             }
@@ -535,6 +540,8 @@ private fun PlanTabContent(
     textEdit: TextEditControls,
     /** 요약 탭의 검토 카드. 문제가 없으면 카드가 없다. */
     review: ReviewControls,
+    /** 날짜별 예보. 일정표 날짜 칩 아이콘에 쓴다. */
+    weather: Map<LocalDate, DailyWeather>,
     /** 요약 머리의 기간을 눌렀을 때. null이면 바꿀 수 없는 일정이다. */
     onEditDates: (() -> Unit)?,
 ) {
@@ -624,6 +631,7 @@ private fun PlanTabContent(
             onDelete = onDeleteItem,
             onToggleDone = onToggleDone,
             textEdit = textEdit,
+            weather = weather,
             onToggleFavorite = onToggleFavorite,
         )
 

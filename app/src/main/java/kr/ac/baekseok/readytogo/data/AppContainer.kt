@@ -17,6 +17,8 @@ import kr.ac.baekseok.readytogo.data.repository.DayEditAssistant
 import kr.ac.baekseok.readytogo.data.repository.firebase.FunctionsDayEditAssistant
 import kr.ac.baekseok.readytogo.data.repository.firebase.FunctionsPlanReviewer
 import kr.ac.baekseok.readytogo.data.repository.PlanReviewer
+import kr.ac.baekseok.readytogo.data.repository.WeatherRepository
+import kr.ac.baekseok.readytogo.data.repository.weather.OpenMeteoWeatherRepository
 import kr.ac.baekseok.readytogo.data.repository.SavedTripRepository
 import kr.ac.baekseok.readytogo.data.repository.UserProfileRepository
 import kr.ac.baekseok.readytogo.data.repository.firebase.FirestoreUserProfileRepository
@@ -145,6 +147,9 @@ object AppContainer {
 
     /** 일정 검토관(⑨-2). 문제는 앱 규칙이 찾고, 이것은 설명과 고칠 명령만 붙인다. 로그인 사용자만. */
     val planReviewer: PlanReviewer by lazy { FunctionsPlanReviewer() }
+
+    /** 일별 날씨(⑨-3). Open-Meteo를 앱이 직접 부른다 — 키가 없어 함수를 거칠 이유가 없다. */
+    val weather: WeatherRepository by lazy { OpenMeteoWeatherRepository(appContext) }
 
     /** 닉네임처럼 계정에 딸린 값. 이름·이메일은 Google이 주지만 닉네임은 우리가 저장한다. */
     val userProfile: UserProfileRepository by lazy {

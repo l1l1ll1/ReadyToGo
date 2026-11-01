@@ -47,6 +47,12 @@ fun defaultFixes(
         is ReviewIssue.SameKind ->
             listOf(listOf(EditCommand.SwapMeal(issue.meal, MealBasis.EXCLUDE_SAME_KIND)))
 
+        // 실외 곳을 한 번에 전부 실내 후보로. 실내 후보가 모자라면 바뀐 만큼만 바뀌고,
+        // 남은 실외 곳은 다시 검사해 같은 문제로 남는다.
+        is ReviewIssue.Rainy -> listOf(
+            issue.outdoorKeys.mapNotNull { aliasByKey[it] }.map { EditCommand.SwapPlace(it, PlaceBasis.INDOOR) },
+        ).filter { it.isNotEmpty() }
+
         is ReviewIssue.Closed -> when (val meal = issue.meal) {
             // 관광지는 빼기 전에 교체를 먼저 해 본다. 빼면 그날이 비지만, 바꾸면 하루 모양이 그대로다.
             // 근처 → 실내 → 빼기 순. 예비 후보에서 쉬는 곳은 빠진다(pickPlaceFor의 visitDay).

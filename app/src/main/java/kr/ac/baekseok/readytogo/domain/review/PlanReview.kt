@@ -11,6 +11,11 @@ import kr.ac.baekseok.readytogo.domain.plan.TimelineEntry
 import kr.ac.baekseok.readytogo.domain.plan.TimelineItem
 import kr.ac.baekseok.readytogo.domain.plan.toTimeline
 import kr.ac.baekseok.readytogo.domain.purpose.PurposeProfiles
+import kr.ac.baekseok.readytogo.domain.purpose.IndoorOutdoor
+import kr.ac.baekseok.readytogo.domain.purpose.Shelter
+import kr.ac.baekseok.readytogo.domain.weather.DailyWeather
+import kr.ac.baekseok.readytogo.domain.weather.RAINY_PROBABILITY
+import java.time.LocalDate
 
 /**
  * 일정 검토관(⑨-2)이 찾은 문제 하나.
@@ -66,6 +71,19 @@ sealed interface ReviewIssue {
     /** 문장에 적을 끼니 하나. "1일차 점심 라멘 하루카" */
     data class MealRef(val dayNumber: Int, val meal: MealTime, val name: String)
 
+    /**
+     * 비(또는 눈) 올 확률이 높은 날인데 실외 관광지가 있다. **그날 한 건**이고 실외 곳을 모두 든다.
+     * 실내·실외 판정을 미룬 곳(사찰 등)은 넣지 않는다([IndoorOutdoor]).
+     */
+    data class Rainy(
+        override val dayNumber: Int,
+        val probability: Int,
+        val outdoorKeys: List<String>,
+        val outdoorNames: List<String>,
+    ) : ReviewIssue {
+        override val id get() = "rain-$dayNumber"
+    }
+
     /** 방문하는 날 쉬는 곳. 관광지면 [meal]이 null. */
     data class Closed(
         override val dayNumber: Int,
@@ -87,12 +105,30 @@ fun reviewPlan(
     plan: TripPlan,
     edits: TimelineEdits,
     picked: PickedPlaces = PickedPlaces(),
+    /** 날짜별 예보. D-7 밖이거나 못 받았으면 비어 있고, 그때 비 규칙은 건너뛴다. */
+    weather: Map<LocalDate, DailyWeather> = emptyMap(),
 ): List<ReviewIssue> {
     val timelines = plan.dailyPlans.associateWith { it.editedTimeline(edits, picked) }
     val longDays = findLongDays(plan, timelines)
     val sameKinds = findSameKinds(timelines)
     val closed = findClosed(timelines)
-    return (longDays + sameKinds + closed).sortedBy { it.dayNumber }
+    val rainy = findRainy(timelines, weather)
+    return (longDays + sameKinds + closed + rainy).sortedBy { it.dayNumber }
+}
+
+/** 강수확률이 [RAINY_PROBABILITY]% 이상인 날의 실외 관광지. */
+private fun findRainy(
+    timelines: Map<DayPlan, List<TimelineEntry>>,
+    weather: Map<LocalDate, DailyWeather>,
+): List<ReviewIssue> = timelines.mapNotNull { (day, entries) ->
+    val probability = weather[day.date]?.precipitationProbability ?: return@mapNotNull null
+    if (probability < RAINY_PROBABILITY) return@mapNotNull null
+
+    val outdoor = entries.mapNotNull { it.item as? TimelineItem.Visit }
+        .filter { IndoorOutdoor.of(it.attraction) == Shelter.OUTDOOR }
+    if (outdoor.isEmpty()) return@mapNotNull null
+
+    ReviewIssue.Rainy(day.dayNumber, probability, outdoor.map { it.key }, outdoor.map { it.attraction.name })
 }
 
 /** 화면에 보이는 그날 타임라인. 검사와 기본 수정이 같은 것을 봐야 한다. */

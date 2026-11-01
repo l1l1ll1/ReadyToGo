@@ -23,6 +23,13 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AcUnit
+import androidx.compose.material.icons.outlined.Cloud
+import androidx.compose.material.icons.outlined.WaterDrop
+import androidx.compose.material.icons.outlined.WbSunny
+import kr.ac.baekseok.readytogo.domain.weather.DailyWeather
+import kr.ac.baekseok.readytogo.domain.weather.Sky
+import java.time.LocalDate
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.DirectionsBus
@@ -124,6 +131,8 @@ fun TimelineTab(
     onToggleDone: (Int, String) -> Unit,
     /** 말로 고치기 입력창. 보고 있는 날에 적용된다. */
     textEdit: TextEditControls = TextEditControls(),
+    /** 날짜별 예보(D-7 안의 날만). 있는 날의 칩에 아이콘이 붙는다. */
+    weather: Map<LocalDate, DailyWeather> = emptyMap(),
 ) {
     // 여행 중에는 오늘 하루만 보여준다. 길 위에서 필요한 것은 오늘 갈 곳이지 닷새치 목록이
     // 아니다. 다른 날이 궁금하면 "전체 보기"로 편다. 끄고 켜는 것은 이 화면 안에서만 산다 —
@@ -156,10 +165,21 @@ fun TimelineTab(
                         selected = candidate.dayNumber == day?.dayNumber,
                         onClick = { onSelectDay(candidate.dayNumber) },
                         text = {
-                            Text(stringResource(R.string.plan_day_tab, candidate.dayNumber))
+                            DayChipLabel(candidate.dayNumber, weather[candidate.date])
                         },
                     )
                 }
+            }
+            // Open-Meteo는 CC BY 4.0이라 출처를 밝혀야 한다. 날씨를 보여줄 때만 적는다.
+            if (weather.isNotEmpty()) {
+                Text(
+                    text = stringResource(R.string.weather_attribution),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = LocalPalette.current.TextSecondary,
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(horizontal = Tokens.Space.lg, vertical = Tokens.Space.xs),
+                )
             }
         }
 
@@ -839,4 +859,42 @@ private fun TimelineItem.toFavoritePlace(cityName: String): FavoritePlace? = whe
     is TimelineItem.Meal -> restaurant.toFavorite(cityName)
     // 담을 장소가 없다. 호출부가 이 항목에는 하트를 그리지 않는다.
     is TimelineItem.NoMeal -> null
+}
+
+/**
+ * 날짜 칩 글자. 예보가 있는 날만 작은 아이콘이 붙는다.
+ *
+ * 아이콘만으로는 "비"인지 "눈"인지 읽어 주지 못하므로 화면 낭독용 설명에 날씨와 강수확률을 넣는다.
+ */
+@Composable
+private fun DayChipLabel(dayNumber: Int, weather: DailyWeather?) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(Tokens.Space.xs),
+    ) {
+        Text(stringResource(R.string.plan_day_tab, dayNumber))
+        if (weather != null) {
+            val label = stringResource(weather.sky.labelRes())
+            Icon(
+                imageVector = weather.sky.icon(),
+                contentDescription = weather.precipitationProbability?.let { "$label $it%" } ?: label,
+                tint = LocalPalette.current.TextSecondary,
+                modifier = Modifier.size(Tokens.Size.inlineIcon),
+            )
+        }
+    }
+}
+
+private fun Sky.icon(): ImageVector = when (this) {
+    Sky.CLEAR -> Icons.Outlined.WbSunny
+    Sky.CLOUDY -> Icons.Outlined.Cloud
+    Sky.RAIN -> Icons.Outlined.WaterDrop
+    Sky.SNOW -> Icons.Outlined.AcUnit
+}
+
+private fun Sky.labelRes(): Int = when (this) {
+    Sky.CLEAR -> R.string.weather_clear
+    Sky.CLOUDY -> R.string.weather_cloudy
+    Sky.RAIN -> R.string.weather_rain
+    Sky.SNOW -> R.string.weather_snow
 }

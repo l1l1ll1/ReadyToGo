@@ -249,6 +249,12 @@
     <string name="review_fact_same_kind_both">%1$s is the same kind (%4$s) as the meals before and after it: %2$s and %3$s.</string>
     <string name="review_fact_closed_place">%3$s on day %1$d (%2$s) is closed that day of the week.</string>
     <string name="review_fact_closed_meal">%4$s for %3$s on day %1$d (%2$s) is closed that day of the week.</string>
+    <string name="review_fact_rainy">Day %1$d has a %2$d%% chance of rain or snow, with outdoor stops: %3$s.</string>
+    <string name="weather_attribution">Weather: Open-Meteo</string>
+    <string name="weather_clear">Clear</string>
+    <string name="weather_cloudy">Cloudy</string>
+    <string name="weather_rain">Rain</string>
+    <string name="weather_snow">Snow</string>
 
     <!-- 섹션 제목 -->
     <string name="plan_section_budget">Budget breakdown</string>
@@ -455,6 +461,7 @@
 
     <!-- ===== 정보 ===== -->
     <string name="about_license_apache">Apache License 2.0</string>
+    <string name="about_license_cc_by">CC BY 4.0</string>
     <string name="about_google_terms">Google APIs Terms of Service</string>
 
     <!-- ===== Repository가 화면으로 올려 보내는 문구 ===== -->

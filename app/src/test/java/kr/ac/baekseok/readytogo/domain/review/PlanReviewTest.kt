@@ -16,6 +16,8 @@ import kr.ac.baekseok.readytogo.data.model.TripPlan
 import kr.ac.baekseok.readytogo.domain.edit.EditCommand
 import kr.ac.baekseok.readytogo.domain.edit.summarizeDay
 import kr.ac.baekseok.readytogo.domain.plan.TimelineItem
+import kr.ac.baekseok.readytogo.domain.weather.DailyWeather
+import kr.ac.baekseok.readytogo.domain.weather.Sky
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -33,10 +35,11 @@ class PlanReviewTest {
     private val start = LocalDate.of(2026, 11, 1) // 일요일
     private val everyDay = DayOfWeek.entries.toSet()
 
-    private fun attraction(id: String, lat: Double, openDays: Set<DayOfWeek>? = null) = Attraction(
-        id = id, name = id, rating = 4.0, location = LatLng(lat, 139.7),
-        stayMinutes = 90, address = "", openDays = openDays,
-    )
+    private fun attraction(id: String, lat: Double, openDays: Set<DayOfWeek>? = null, primary: String? = null) =
+        Attraction(
+            id = id, name = id, rating = 4.0, location = LatLng(lat, 139.7),
+            stayMinutes = 90, address = "", openDays = openDays, primaryType = primary,
+        )
 
     private fun restaurant(id: String, type: String?, openDays: Set<DayOfWeek>? = null, lat: Double = 35.6) =
         Restaurant(
@@ -286,5 +289,48 @@ class PlanReviewTest {
         val entries = d1.editedTimeline(TimelineEdits(), PickedPlaces())
         assertTrue(entries.any { it.item is TimelineItem.NoMeal })
         assertTrue(reviewPlan(plan(d1, day2, day3, day4), TimelineEdits()).isEmpty())
+    }
+
+    // ---- (d) 비 오는 날 실외 ----
+
+    private fun rainOn(day: Int, probability: Int) =
+        mapOf(start.plusDays(day - 1L) to DailyWeather(start.plusDays(day - 1L), probability, Sky.RAIN))
+
+    private val rainyDay2 = day(
+        2,
+        listOf(attraction("park", 35.61, primary = "park"), attraction("temple", 35.62, primary = "buddhist_temple"), attraction("zoo", 35.63, primary = "zoo")),
+        meals(2),
+    ).copy(alternatives = listOf(attraction("museum", 35.615, primary = "museum"), attraction("mall", 35.625, primary = "shopping_mall")))
+
+    @Test
+    fun `강수확률 60 이상인 날의 실외 관광지를 한 건으로 잡는다 - 보류 타입은 빼고`() {
+        val issue = reviewPlan(plan(day1, rainyDay2, day3, day4), TimelineEdits(), weather = rainOn(2, 60)).single()
+            as ReviewIssue.Rainy
+
+        assertEquals(2, issue.dayNumber)
+        assertEquals(listOf("visit-park", "visit-zoo"), issue.outdoorKeys)
+    }
+
+    @Test
+    fun `59면 잡지 않고, 날씨가 없거나 실외가 없어도 잡지 않는다`() {
+        val p = plan(day1, rainyDay2, day3, day4)
+        assertTrue(reviewPlan(p, TimelineEdits(), weather = rainOn(2, 59)).isEmpty())
+        assertTrue(reviewPlan(p, TimelineEdits()).isEmpty())
+        // 3일차는 영업시간·타입을 모르는 곳뿐이다.
+        assertTrue(reviewPlan(p, TimelineEdits(), weather = rainOn(3, 90)).isEmpty())
+    }
+
+    @Test
+    fun `비 오는 날의 기본 수정은 실외 곳을 전부 실내 후보로`() {
+        val p = plan(day1, rainyDay2, day3, day4)
+        val weather = rainOn(2, 80)
+        val issue = reviewPlan(p, TimelineEdits(), weather = weather).single()
+        val summary = summarizeDay(rainyDay2.editedTimeline(TimelineEdits(), PickedPlaces()), null)
+
+        val fixes = defaultFixes(issue, rainyDay2, TimelineEdits(), PickedPlaces(), summary)
+        val result = applyFirst(rainyDay2, TimelineEdits(), fixes, summary.keyByAlias, null, PickedPlaces())!!
+
+        assertEquals(mapOf("visit-park" to "museum", "visit-zoo" to "mall"), result.edits.pickedAttractionsIn(2))
+        assertTrue(reviewPlan(p, result.edits, weather = weather).isEmpty())
     }
 }

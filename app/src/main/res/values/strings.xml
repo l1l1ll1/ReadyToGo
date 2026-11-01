@@ -268,6 +268,12 @@
     <string name="review_fact_same_kind_both">%1$s 앞뒤 끼니인 %2$s, %3$s 같은 종류(%4$s)예요.</string>
     <string name="review_fact_closed_place">%1$d일차(%2$s)에 가는 %3$s 그 요일에 쉬어요.</string>
     <string name="review_fact_closed_meal">%1$d일차(%2$s) %3$s %4$s 그 요일에 쉬어요.</string>
+    <string name="review_fact_rainy">%1$d일차 강수확률이 %2$d%%인데 실외 관광지가 있어요: %3$s.</string>
+    <string name="weather_attribution">날씨: Open-Meteo</string>
+    <string name="weather_clear">맑음</string>
+    <string name="weather_cloudy">흐림</string>
+    <string name="weather_rain">비</string>
+    <string name="weather_snow">눈</string>
 
     <!-- 섹션 제목 -->
     <string name="plan_section_budget">예산 분해</string>
@@ -484,6 +490,7 @@
 
     <!-- ===== 정보 ===== -->
     <string name="about_license_apache">Apache License 2.0</string>
+    <string name="about_license_cc_by">CC BY 4.0</string>
     <string name="about_google_terms">Google API 서비스 약관</string>
 
     <!-- ===== Repository가 화면으로 올려 보내는 문구 ===== -->

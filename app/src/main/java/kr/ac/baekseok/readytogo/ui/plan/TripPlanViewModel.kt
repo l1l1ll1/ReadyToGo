@@ -694,7 +694,8 @@ class TripPlanViewModel(
     /** 카드에 그릴 줄. 사실 문장(규칙)과 AI 설명을 문제마다 붙인다. */
     val reviewItems: StateFlow<List<ReviewItemUi>> = combine(reviewIssues, _reviewAdvice) { issues, advice ->
         val plan = (_uiState.value as? TripPlanUiState.Success)?.plan ?: return@combine emptyList()
-        issues.map { ReviewItemUi(it, reviewFact(it, plan), advice[it]?.why) }
+        val writer = ReviewFactWriter(getApplication<Application>().resources)
+        issues.map { ReviewItemUi(it, writer.title(it, plan), advice[it]?.why, writer.detail(it, plan)) }
     }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     /**

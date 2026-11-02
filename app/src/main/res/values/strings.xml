@@ -285,6 +285,7 @@
     <string name="review_fix_failed">자동으로 고칠 방법을 찾지 못했어요. 일정표에서 직접 바꿔 주세요.</string>
     <string name="review_fix_no_indoor">근처에 실내 관광지가 없어요. 일정표에서 직접 바꿔 주세요.</string>
     <string name="review_fact_long">%1$d일차는 머무는 시간과 이동을 합쳐 %2$s예요. 이번 일정에서 가장 꽉 찬 날(%3$s)보다 길어요.</string>
+    <string name="review_title_long">%1$d일차가 길어요</string>
     <string name="review_fact_long_leg">가장 긴 이동은 %1$s → %2$s 구간(%3$skm · %4$s)이에요.</string>
     <string name="review_meal_ref">%1$d일차 %2$s %3$s</string>
     <string name="review_fact_same_kind">%1$s 바로 앞 끼니인 %2$s 같은 종류(%3$s)예요.</string>
@@ -504,8 +505,8 @@
     <!-- ===== 지도 ===== -->
     <string name="map_title">%1$d일차 동선</string>
     <string name="map_empty">이 날은 지도에 표시할 장소가 없습니다</string>
-    <string name="map_legend_title">마커 색</string>
-    <string name="map_legend_attraction">관광지 (방문 순서)</string>
+    <string name="map_legend_title">마커 색 · 번호는 방문 순서</string>
+    <string name="map_legend_attraction">관광지</string>
     <string name="map_legend_lodging">숙소</string>
     <string name="map_legend_restaurant">식당</string>
     <string name="map_legend_airport">공항</string>

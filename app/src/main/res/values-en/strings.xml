@@ -265,6 +265,7 @@
     <string name="review_fix_failed">Couldn\'t find an automatic fix. Please change it in the itinerary.</string>
     <string name="review_fix_no_indoor">No indoor place nearby. Please change it in the itinerary.</string>
     <string name="review_fact_long">Day %1$d takes %2$s of visits and travel, longer than the fullest day of this trip (%3$s).</string>
+    <string name="review_title_long">Day %1$d runs long</string>
     <string name="review_fact_long_leg">The longest leg is %1$s → %2$s (%3$s km, %4$s).</string>
     <string name="review_meal_ref">Day %1$d %2$s, %3$s</string>
     <string name="review_fact_same_kind">%1$s is the same kind (%3$s) as the meal right before it: %2$s.</string>
@@ -473,8 +474,8 @@
     <!-- ===== 지도 ===== -->
     <string name="map_title">Day %1$d route</string>
     <string name="map_empty">No places to show on the map for this day</string>
-    <string name="map_legend_title">Marker colors</string>
-    <string name="map_legend_attraction">Attractions (in order)</string>
+    <string name="map_legend_title">Colors · numbers show order</string>
+    <string name="map_legend_attraction">Attractions</string>
     <string name="map_legend_lodging">Stay</string>
     <string name="map_legend_restaurant">Restaurant</string>
     <string name="map_legend_airport">Airport</string>

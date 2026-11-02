@@ -19,6 +19,24 @@ import java.util.Locale
  */
 class ReviewFactWriter(private val resources: Resources) {
 
+    /**
+     * 카드 항목의 제목. 하루 길이만 한 줄로 줄인다 — 길이·기준·가장 긴 구간까지 다 실은 사실 문장은
+     * 제목으로 쓰면 다섯 줄이 됐다. 나머지는 사실 문장이 곧 제목이다(누가·어디서가 제목에 있어야 한다).
+     */
+    fun title(issue: ReviewIssue, plan: TripPlan): String = when (issue) {
+        is ReviewIssue.LongDay -> resources.getString(R.string.review_title_long, issue.dayNumber)
+        else -> fact(issue, plan)
+    }
+
+    /**
+     * 제목을 줄인 문제에서 AI 설명이 없을 때(둘러보기·실패) 대신 보일 설명. 줄이지 않은 문제는 null —
+     * 제목에 이미 다 있다. AI에는 언제나 [fact] 전체가 가므로 AI 설명에도 원인 구간이 들어간다.
+     */
+    fun detail(issue: ReviewIssue, plan: TripPlan): String? = when (issue) {
+        is ReviewIssue.LongDay -> fact(issue, plan)
+        else -> null
+    }
+
     fun fact(issue: ReviewIssue, plan: TripPlan): String = when (issue) {
         is ReviewIssue.LongDay -> {
             val length = resources.getString(

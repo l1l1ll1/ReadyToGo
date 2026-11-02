@@ -38,13 +38,15 @@ import kr.ac.baekseok.readytogo.ui.theme.Tokens
 /**
  * 검토 카드 한 줄에 필요한 것.
  *
- * @param fact 규칙이 쓴 사실 문장. AI가 없어도(둘러보기·실패) 무엇이 문제인지는 이것으로 보인다.
+ * @param fact 항목 제목. 규칙이 쓴 사실 문장(하루 길이는 한 줄로 줄인 것). AI가 없어도 무엇이 문제인지는 보인다.
  * @param why AI 설명. 아직 묻지 않았거나 빈 답이면 null.
+ * @param detail AI 설명이 없을 때 대신 보일 규칙 설명. 제목을 줄인 문제(하루 길이)만 있다.
  */
 data class ReviewItemUi(
     val issue: ReviewIssue,
     val fact: String,
     val why: String?,
+    val detail: String? = null,
 )
 
 /** 요약 탭 검토 카드의 상태와 동작. 화면 함수 인자가 늘지 않게 묶는다([TextEditControls]와 같은 방식). */
@@ -151,6 +153,12 @@ private fun ReviewRow(item: ReviewItemUi, loading: Boolean, onFix: () -> Unit) {
             )
             loading -> Text(
                 text = stringResource(R.string.review_loading),
+                style = MaterialTheme.typography.bodyMedium,
+                color = palette.TextSecondary,
+            )
+            // 제목을 줄인 문제는 AI 답이 없으면(둘러보기·실패) 규칙 설명으로 원인을 대신 보인다.
+            item.detail != null -> Text(
+                text = item.detail,
                 style = MaterialTheme.typography.bodyMedium,
                 color = palette.TextSecondary,
             )

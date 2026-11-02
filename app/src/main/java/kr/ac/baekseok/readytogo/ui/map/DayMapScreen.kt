@@ -27,7 +27,10 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
+import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.maps.android.compose.MapProperties
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
@@ -221,6 +224,7 @@ private fun DayMap(spots: List<MapSpot>, route: List<AppLatLng>) {
             cameraPositionState = cameraPositionState,
             // 범례가 마커를 가리던 문제(1일차 식당 두 곳이 범례 밑에 숨었다).
             contentPadding = PaddingValues(bottom = legendSpace),
+            properties = HIDE_POI_PROPERTIES,
         ) {
             // 두 점 이상이어야 선이 된다. 숙소가 있으면 관광지 한 곳뿐인 도착일에도 왕복 선이 생긴다.
             if (route.size >= 2) {
@@ -233,9 +237,9 @@ private fun DayMap(spots: List<MapSpot>, route: List<AppLatLng>) {
                     state = MarkerState(position = spot.displayPosition.toGms()),
                     title = spot.title,
                     snippet = spot.snippet,
-                    // 관광지는 방문 순서 번호를 마커 안에 쓴다. 범례에 "방문 순서"라 적어 놓고 번호가 없으면
-                    // 선만 보고 순서를 짐작해야 했다. 끼니·숙소·공항은 순서가 정해진 자리라 기본 핀 그대로.
-                    icon = spot.number?.let { numberedPin(it, density) }
+                    // 관광지·식당은 그날 일정표 순서 번호를 마커 안에 쓴다. 선만으로는 어느 쪽으로 도는지 알 수 없다.
+                    // 숙소·공항은 하루의 시작·끝이라 번호 없이 기본 핀. 색은 종류별 그대로 둔다.
+                    icon = spot.number?.let { numberedPin(it, spot.kind.pinColor, density) }
                         ?: BitmapDescriptorFactory.defaultMarker(spot.kind.markerHue),
                     alpha = if (spot.done) DONE_MARKER_ALPHA else 1f,
                 )
@@ -267,6 +271,17 @@ private fun DayMap(spots: List<MapSpot>, route: List<AppLatLng>) {
         )
     }
 }
+
+/**
+ * 구글 지도 기본 장소(POI)의 이름·아이콘을 숨긴다. 시계탑처럼 우리 마커와 같은 자리에 기본 아이콘이
+ * 있으면 겹쳐서 번호가 안 읽혔다(흐리게 한 체크 마커는 특히). 공원 녹지 같은 바탕은 남긴다 —
+ * 지형까지 지우면 어디가 어디인지 알기 어렵다. 역·노선(transit)도 이동 판단에 쓰여 그대로 둔다.
+ */
+private val HIDE_POI_PROPERTIES = MapProperties(
+    mapStyleOptions = MapStyleOptions(
+        """[{"featureType":"poi","elementType":"labels","stylers":[{"visibility":"off"}]}]""",
+    ),
+)
 
 /** 범례 카드와 지도 가장자리 사이 여백. 지도 아래쪽을 비울 때도 같은 값을 더한다. */
 private val LEGEND_MARGIN = 12.dp
@@ -329,7 +344,7 @@ internal data class MapSpot(
     val snippet: String,
     val kind: SpotKind,
     val displayPosition: AppLatLng = position,
-    /** 관광지의 그날 방문 순서(1부터). 일정표 순서를 따르므로 끌어서 바꾸면 번호도 바뀐다. 다른 지점은 null. */
+    /** 그날 일정표 순서(1부터, 아침이 1). 끌어서 바꾸면 번호도 바뀐다. 숙소·공항은 null. */
     val number: Int? = null,
     /** 여행 중 모드에서 체크한 곳. 흐리게 찍는다. */
     val done: Boolean = false,
@@ -345,13 +360,13 @@ private const val PIN_TEXT_DP = 14f
 private const val PIN_STROKE_DP = 2f
 
 /**
- * 번호를 쓴 관광지 핀. 기본 핀은 색만 바꿀 수 있어서 직접 그린다 — 원 머리 + 아래로 뾰족한 꼬리.
+ * 번호를 쓴 핀(관광지·식당). 기본 핀은 색만 바꿀 수 있어서 직접 그린다 — 원 머리 + 아래로 뾰족한 꼬리.
  *
- * 하루 관광지가 많아야 4~5곳이라 그때그때 그려도 되지만, 화면이 다시 그려질 때마다 비트맵을
- * 새로 만들지 않도록 (번호, 밀도)로 캐시한다. 흐리게는 Marker의 alpha가 맡아 비트맵은 하나다.
+ * 하루 지점이 많아야 7~8곳이라 그때그때 그려도 되지만, 화면이 다시 그려질 때마다 비트맵을
+ * 새로 만들지 않도록 (번호, 색, 밀도)로 캐시한다. 흐리게는 Marker의 alpha가 맡아 비트맵은 하나다.
  */
-private fun numberedPin(number: Int, density: Float): BitmapDescriptor =
-    pinCache.getOrPut(number to density) {
+private fun numberedPin(number: Int, pinColor: Color, density: Float): BitmapDescriptor =
+    pinCache.getOrPut(Triple(number, pinColor, density)) {
         val width = (PIN_WIDTH_DP * density).toInt()
         val height = (PIN_HEIGHT_DP * density).toInt()
         val stroke = PIN_STROKE_DP * density
@@ -369,7 +384,7 @@ private fun numberedPin(number: Int, density: Float): BitmapDescriptor =
             lineTo(cx + radius * PIN_TAIL_RATIO, cy + radius * PIN_TAIL_RATIO)
             close()
         }
-        val fill = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = MARKER_RED.toArgb() }
+        val fill = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = pinColor.toArgb() }
         val border = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             style = Paint.Style.STROKE
             strokeWidth = stroke
@@ -379,7 +394,8 @@ private fun numberedPin(number: Int, density: Float): BitmapDescriptor =
         canvas.drawPath(path, border)
 
         val text = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = android.graphics.Color.WHITE
+            // 밝은 바탕(식당 주황)에 흰 글자는 안 읽힌다. 바탕 밝기로 글자색을 고른다.
+            color = if (pinColor.luminance() > PIN_LIGHT_LUMINANCE) PIN_DARK_TEXT.toArgb() else android.graphics.Color.WHITE
             textSize = PIN_TEXT_DP * density
             typeface = Typeface.DEFAULT_BOLD
             textAlign = Paint.Align.CENTER
@@ -394,7 +410,11 @@ private fun numberedPin(number: Int, density: Float): BitmapDescriptor =
 /** 꼬리가 원에서 갈라지는 위치(반지름 대비). 0.7이면 원 아래쪽 옆구리에서 꼬리가 시작된다. */
 private const val PIN_TAIL_RATIO = 0.7f
 
-private val pinCache = mutableMapOf<Pair<Int, Float>, BitmapDescriptor>()
+/** 이보다 밝은 바탕이면 글자를 어둡게. 식당 주황(약 0.5)은 넘고 관광지 빨강(약 0.15)은 안 넘는다. */
+private const val PIN_LIGHT_LUMINANCE = 0.4f
+private val PIN_DARK_TEXT = Color(0xFF3E2723)
+
+private val pinCache = mutableMapOf<Triple<Int, Color, Float>, BitmapDescriptor>()
 
 /**
  * 겹치는 마커를 작은 원으로 펼친다.
@@ -487,11 +507,12 @@ private const val SPREAD_RADIUS_RATIO = 0.6
 /** 위도 1도의 거리(km). 경도는 여기에 cos(위도)를 곱한다. */
 private const val KM_PER_DEGREE = 111.32
 
-internal enum class SpotKind(val markerHue: Float) {
-    ATTRACTION(BitmapDescriptorFactory.HUE_RED),
-    LODGING(BitmapDescriptorFactory.HUE_AZURE),
-    RESTAURANT(BitmapDescriptorFactory.HUE_ORANGE),
-    AIRPORT(BitmapDescriptorFactory.HUE_VIOLET),
+/** @param pinColor 번호 핀을 칠할 색. 범례 색과 같은 값이라 범례와 마커가 어긋나지 않는다. */
+internal enum class SpotKind(val markerHue: Float, val pinColor: Color) {
+    ATTRACTION(BitmapDescriptorFactory.HUE_RED, MARKER_RED),
+    LODGING(BitmapDescriptorFactory.HUE_AZURE, MARKER_AZURE),
+    RESTAURANT(BitmapDescriptorFactory.HUE_ORANGE, MARKER_ORANGE),
+    AIRPORT(BitmapDescriptorFactory.HUE_VIOLET, MARKER_VIOLET),
 }
 
 private fun AppLatLng.toGms() = GmsLatLng(latitude, longitude)
@@ -507,30 +528,34 @@ private fun List<TimelineItem>.toMapSpots(
     texts: MapSpotTexts,
     doneKeys: Set<String>,
 ): List<MapSpot> {
-    var visitNumber = 0
+    // 끼니와 관광지를 한 줄로 센다. 추천 못 찾은 끼니는 지도에 찍을 곳이 없어 번호도 건너뛴다 —
+    // 세면 지도에 "3" 없이 2 → 4가 되어 빠뜨린 것처럼 보인다.
+    var number = 0
     val itemSpots = mapNotNull { item ->
         when (item) {
             is TimelineItem.Visit -> {
-                visitNumber++
+                number++
                 val attraction = item.attraction
                 MapSpot(
                     position = attraction.location,
-                    title = "$visitNumber. ${attraction.name}",
+                    title = "$number. ${attraction.name}",
                     snippet = texts.attractionSnippet
                         .format(attraction.stayMinutes, attraction.rating.toString()),
                     kind = SpotKind.ATTRACTION,
-                    number = visitNumber,
+                    number = number,
                     done = item.key in doneKeys,
                 )
             }
             is TimelineItem.Meal -> {
+                number++
                 val restaurant = item.restaurant
                 MapSpot(
                     position = restaurant.location,
-                    title = "${texts.mealLabels[item.meal]} · ${restaurant.name}",
+                    title = "$number. ${texts.mealLabels[item.meal]} · ${restaurant.name}",
                     snippet = texts.restaurantSnippet
                         .format(restaurant.category, texts.money(restaurant.priceWon)),
                     kind = SpotKind.RESTAURANT,
+                    number = number,
                     done = item.key in doneKeys,
                 )
             }

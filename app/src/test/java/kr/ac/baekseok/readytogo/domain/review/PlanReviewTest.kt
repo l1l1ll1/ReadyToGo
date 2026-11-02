@@ -99,6 +99,9 @@ class PlanReviewTest {
         val long = issues.single() as ReviewIssue.LongDay
         assertEquals(2, long.dayNumber)
         assertTrue(long.minutes > long.limitMinutes)
+        // 원인 구간: 그날의 이동 중 가장 긴 것이 함께 실린다(AI가 "왜"를 말할 근거).
+        val legs = day2.editedTimeline(edits, picked).mapNotNull { it.travelFromPrevious?.minutes }
+        assertEquals(legs.max(), long.longestLeg!!.minutes)
     }
 
     @Test

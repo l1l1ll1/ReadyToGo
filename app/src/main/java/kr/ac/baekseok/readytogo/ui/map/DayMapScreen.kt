@@ -27,6 +27,13 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.Typeface
+import com.google.android.gms.maps.model.BitmapDescriptor
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -113,6 +120,8 @@ fun DayMapContent(
     ends: DayEnds = DayEnds(lodging?.location, lodging?.location),
     /** 계획의 공항. 이날 선의 시작이나 끝일 때만 마커를 찍는다. */
     airport: AirportStop? = null,
+    /** 여행 중 모드에서 "했음"으로 체크한 항목 키. 마커만 흐리게 하고 번호와 선은 그대로 둔다. */
+    doneKeys: Set<String> = emptySet(),
 ) {
     val texts = rememberMapSpotTexts()
 
@@ -130,10 +139,10 @@ fun DayMapContent(
     }
     // 공항은 이날 선이 거기서 시작하거나 끝날 때만 찍는다. 중간 날에 찍으면 가지도 않는 곳이 보인다.
     val airportToday = airport?.takeIf { it.location == ends.start || it.location == ends.end }
-    val spots = remember(items, lodging, airportToday, texts) {
+    val spots = remember(items, lodging, airportToday, texts, doneKeys) {
         // 공항은 펼치기에서 뺀다. 수십 km 떨어진 점이 끼면 겹침 기준(일정 폭의 비율)이 커져
         // 시내의 멀쩡한 마커까지 밀어낸다.
-        items.toMapSpots(lodging, texts).spreadOverlapping() +
+        items.toMapSpots(lodging, texts, doneKeys).spreadOverlapping() +
             listOfNotNull(airportToday?.toMapSpot(texts))
     }
     val route = remember(items, ends) {
@@ -178,6 +187,7 @@ private fun EmptyMapNotice() {
 @Composable
 private fun DayMap(spots: List<MapSpot>, route: List<AppLatLng>) {
     val cameraPositionState = rememberCameraPositionState()
+    val density = LocalDensity.current.density
 
     // 범례 카드의 실제 높이. 지도 아래쪽을 이만큼 비워 두면 카메라가 그 위 영역에만 장소를 담는다.
     // 고정값으로 두지 않는 이유: 글자 크기 설정(접근성)과 언어에 따라 카드 높이가 달라진다.
@@ -223,7 +233,11 @@ private fun DayMap(spots: List<MapSpot>, route: List<AppLatLng>) {
                     state = MarkerState(position = spot.displayPosition.toGms()),
                     title = spot.title,
                     snippet = spot.snippet,
-                    icon = BitmapDescriptorFactory.defaultMarker(spot.kind.markerHue),
+                    // 관광지는 방문 순서 번호를 마커 안에 쓴다. 범례에 "방문 순서"라 적어 놓고 번호가 없으면
+                    // 선만 보고 순서를 짐작해야 했다. 끼니·숙소·공항은 순서가 정해진 자리라 기본 핀 그대로.
+                    icon = spot.number?.let { numberedPin(it, density) }
+                        ?: BitmapDescriptorFactory.defaultMarker(spot.kind.markerHue),
+                    alpha = if (spot.done) DONE_MARKER_ALPHA else 1f,
                 )
             }
         }
@@ -315,7 +329,72 @@ internal data class MapSpot(
     val snippet: String,
     val kind: SpotKind,
     val displayPosition: AppLatLng = position,
+    /** 관광지의 그날 방문 순서(1부터). 일정표 순서를 따르므로 끌어서 바꾸면 번호도 바뀐다. 다른 지점은 null. */
+    val number: Int? = null,
+    /** 여행 중 모드에서 체크한 곳. 흐리게 찍는다. */
+    val done: Boolean = false,
 )
+
+/** 체크한 곳의 마커 투명도. 지워진 듯 사라지면 안 되고, 아직 갈 곳과는 한눈에 갈려야 한다. */
+private const val DONE_MARKER_ALPHA = 0.5f
+
+/** 번호 핀의 크기(dp). 기본 핀과 비슷하게 맞춰 섞여 있어도 튀지 않게 한다. */
+private const val PIN_WIDTH_DP = 30f
+private const val PIN_HEIGHT_DP = 40f
+private const val PIN_TEXT_DP = 14f
+private const val PIN_STROKE_DP = 2f
+
+/**
+ * 번호를 쓴 관광지 핀. 기본 핀은 색만 바꿀 수 있어서 직접 그린다 — 원 머리 + 아래로 뾰족한 꼬리.
+ *
+ * 하루 관광지가 많아야 4~5곳이라 그때그때 그려도 되지만, 화면이 다시 그려질 때마다 비트맵을
+ * 새로 만들지 않도록 (번호, 밀도)로 캐시한다. 흐리게는 Marker의 alpha가 맡아 비트맵은 하나다.
+ */
+private fun numberedPin(number: Int, density: Float): BitmapDescriptor =
+    pinCache.getOrPut(number to density) {
+        val width = (PIN_WIDTH_DP * density).toInt()
+        val height = (PIN_HEIGHT_DP * density).toInt()
+        val stroke = PIN_STROKE_DP * density
+        val radius = width / 2f - stroke
+        val cx = width / 2f
+        val cy = radius + stroke
+
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        // 머리 원과 꼬리 삼각형을 한 경로로 — 따로 칠하면 이음매에 테두리 선이 비친다.
+        val path = Path().apply {
+            addCircle(cx, cy, radius, Path.Direction.CW)
+            moveTo(cx - radius * PIN_TAIL_RATIO, cy + radius * PIN_TAIL_RATIO)
+            lineTo(cx, height - stroke)
+            lineTo(cx + radius * PIN_TAIL_RATIO, cy + radius * PIN_TAIL_RATIO)
+            close()
+        }
+        val fill = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = MARKER_RED.toArgb() }
+        val border = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            style = Paint.Style.STROKE
+            strokeWidth = stroke
+            color = android.graphics.Color.WHITE
+        }
+        canvas.drawPath(path, fill)
+        canvas.drawPath(path, border)
+
+        val text = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = android.graphics.Color.WHITE
+            textSize = PIN_TEXT_DP * density
+            typeface = Typeface.DEFAULT_BOLD
+            textAlign = Paint.Align.CENTER
+        }
+        // 글자 높이의 가운데를 원 중심에 맞춘다(기준선은 글자 아래쪽이라 그대로 두면 위로 뜬다).
+        val baseline = cy - (text.descent() + text.ascent()) / 2
+        canvas.drawText(number.toString(), cx, baseline, text)
+
+        BitmapDescriptorFactory.fromBitmap(bitmap)
+    }
+
+/** 꼬리가 원에서 갈라지는 위치(반지름 대비). 0.7이면 원 아래쪽 옆구리에서 꼬리가 시작된다. */
+private const val PIN_TAIL_RATIO = 0.7f
+
+private val pinCache = mutableMapOf<Pair<Int, Float>, BitmapDescriptor>()
 
 /**
  * 겹치는 마커를 작은 원으로 펼친다.
@@ -423,7 +502,11 @@ private fun AppLatLng.toGms() = GmsLatLng(latitude, longitude)
  * 식당은 지금 일정표에 보이는 곳(고른 곳, 없으면 추천)만 찍는다. 두 선택지를 다 찍으면
  * 한 끼에 마커가 둘씩 생겨 동선이 묻힌다. 관광지 번호는 일정표에 나오는 차례를 따른다.
  */
-private fun List<TimelineItem>.toMapSpots(lodging: Lodging?, texts: MapSpotTexts): List<MapSpot> {
+private fun List<TimelineItem>.toMapSpots(
+    lodging: Lodging?,
+    texts: MapSpotTexts,
+    doneKeys: Set<String>,
+): List<MapSpot> {
     var visitNumber = 0
     val itemSpots = mapNotNull { item ->
         when (item) {
@@ -436,6 +519,8 @@ private fun List<TimelineItem>.toMapSpots(lodging: Lodging?, texts: MapSpotTexts
                     snippet = texts.attractionSnippet
                         .format(attraction.stayMinutes, attraction.rating.toString()),
                     kind = SpotKind.ATTRACTION,
+                    number = visitNumber,
+                    done = item.key in doneKeys,
                 )
             }
             is TimelineItem.Meal -> {
@@ -446,6 +531,7 @@ private fun List<TimelineItem>.toMapSpots(lodging: Lodging?, texts: MapSpotTexts
                     snippet = texts.restaurantSnippet
                         .format(restaurant.category, texts.money(restaurant.priceWon)),
                     kind = SpotKind.RESTAURANT,
+                    done = item.key in doneKeys,
                 )
             }
             // 장소가 아니라 찍을 좌표가 없다.

@@ -20,12 +20,27 @@ import java.util.Locale
 class ReviewFactWriter(private val resources: Resources) {
 
     fun fact(issue: ReviewIssue, plan: TripPlan): String = when (issue) {
-        is ReviewIssue.LongDay -> resources.getString(
-            R.string.review_fact_long,
-            issue.dayNumber,
-            minutesText(issue.minutes),
-            minutesText(issue.limitMinutes),
-        )
+        is ReviewIssue.LongDay -> {
+            val length = resources.getString(
+                R.string.review_fact_long,
+                issue.dayNumber,
+                minutesText(issue.minutes),
+                minutesText(issue.limitMinutes),
+            )
+            // 가장 긴 구간을 덧붙인다. AI는 이 문장만 보고 설명하므로, 여기 없으면 원인을 말할 수 없다.
+            fun legText(leg: ReviewIssue.Leg, nameLimit: Int?) = resources.getString(
+                R.string.review_fact_long_leg,
+                leg.fromName.clip(nameLimit),
+                leg.toName.clip(nameLimit),
+                "%.1f".format(leg.distanceKm),
+                minutesText(leg.minutes),
+            )
+            val leg = issue.longestLeg ?: return length
+            val full = "$length ${legText(leg, null)}"
+            // 서버(reviewIssues)는 사실 문장이 MAX_FACT_LENGTH를 넘으면 요청 전체를 거절한다.
+            // 긴 영문·한자 상호 둘이 겹칠 때만 이름을 줄인다 — 구간을 통째로 빼면 원인이 사라진다.
+            if (full.length <= MAX_FACT_LENGTH) full else "$length ${legText(leg, CLIPPED_NAME_LENGTH)}"
+        }
         is ReviewIssue.SameKind -> {
             val target = mealRefText(ReviewIssue.MealRef(issue.dayNumber, issue.meal, issue.restaurantName))
                 .particle(Particle.SUBJECT)
@@ -81,7 +96,16 @@ class ReviewFactWriter(private val resources: Resources) {
         }
     }
 
+    private fun String.clip(limit: Int?): String =
+        if (limit == null || length <= limit) this else take(limit) + "…"
+
     private companion object {
         const val MINUTES_PER_HOUR = 60
+
+        /** functions/src/reviewIssues.ts의 MAX_FACT_LENGTH와 같은 값. 바꾸면 둘 다 바꾼다. */
+        const val MAX_FACT_LENGTH = 200
+
+        /** 넘칠 때 이름 하나에 남길 글자 수. 기본 문장 약 100자 + 이름 둘이 200 안에 든다. */
+        const val CLIPPED_NAME_LENGTH = 20
     }
 }

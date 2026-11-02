@@ -678,6 +678,7 @@ private fun PlanTabContent(
             edits = edits,
             pickedPlaces = pickedPlaces,
             selectedDayNumber = mapDayNumber,
+            todayDayNumber = todayDayNumber,
             onSelectDay = onSelectMapDay,
         )
     }
@@ -706,6 +707,8 @@ private fun MapTab(
     edits: TimelineEdits,
     pickedPlaces: PickedPlaces,
     selectedDayNumber: Int,
+    /** 오늘이 몇 일차인지. 여행 중이 아니면 null — 체크는 오늘에만 붙으므로 흐리게 할 곳도 없다. */
+    todayDayNumber: Int?,
     onSelectDay: (Int) -> Unit,
 ) {
     val day = plan.dailyPlans.firstOrNull { it.dayNumber == selectedDayNumber }
@@ -739,6 +742,9 @@ private fun MapTab(
                 // 도착일은 공항에서 시작, 출국일은 공항에서 끝. 끼니 식당을 고른 기준과 같은 규칙이다.
                 ends = plan.endsOf(day),
                 airport = plan.airport,
+                // 일정표와 같은 규칙: 체크는 오늘 하루에만 보인다. 지난 체크가 다른 날 지도에 남으면
+                // "오늘 어디까지 했나"가 흐려진다.
+                doneKeys = if (day.dayNumber == todayDayNumber) edits.doneIn(day.dayNumber) else emptySet(),
             )
         }
     }

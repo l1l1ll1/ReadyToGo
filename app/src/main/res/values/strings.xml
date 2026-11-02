@@ -285,6 +285,7 @@
     <string name="review_fix_failed">자동으로 고칠 방법을 찾지 못했어요. 일정표에서 직접 바꿔 주세요.</string>
     <string name="review_fix_no_indoor">근처에 실내 관광지가 없어요. 일정표에서 직접 바꿔 주세요.</string>
     <string name="review_fact_long">%1$d일차는 머무는 시간과 이동을 합쳐 %2$s예요. 이번 일정에서 가장 꽉 찬 날(%3$s)보다 길어요.</string>
+    <string name="review_fact_long_leg">가장 긴 이동은 %1$s → %2$s 구간(%3$skm · %4$s)이에요.</string>
     <string name="review_meal_ref">%1$d일차 %2$s %3$s</string>
     <string name="review_fact_same_kind">%1$s 바로 앞 끼니인 %2$s 같은 종류(%3$s)예요.</string>
     <string name="review_fact_same_kind_both">%1$s 앞뒤 끼니인 %2$s, %3$s 같은 종류(%4$s)예요.</string>

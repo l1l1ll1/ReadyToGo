@@ -43,9 +43,18 @@ sealed interface ReviewIssue {
         override val dayNumber: Int,
         val minutes: Int,
         val limitMinutes: Int,
+        /**
+         * 그날 가장 긴 이동 구간. 사실 문장에 넣어 AI가 "왜 길어졌는지"를 말하게 한다 —
+         * 길이만 주면 모델은 "가장 꽉 찬 날보다 길어요"를 되풀이할 수밖에 없었다(에뮬레이터에서 봤다).
+         * 체류는 모두 같은 값이라 길이를 가르는 것은 이동이고, 그중 가장 긴 구간이 대개 원인이다.
+         */
+        val longestLeg: Leg?,
     ) : ReviewIssue {
         override val id get() = "long-$dayNumber"
     }
+
+    /** 이동 한 구간. 이름은 화면에 보이는 장소·식당 이름이다. */
+    data class Leg(val fromName: String, val toName: String, val minutes: Int, val distanceKm: Double)
 
     /**
      * 같은 종류 식당이 이어진다. **이어진 끼니 묶음 하나가 한 건이다.**
@@ -158,8 +167,26 @@ private fun findLongDays(
 
     return timelines.mapNotNull { (day, entries) ->
         val minutes = entries.totalMinutes()
-        if (minutes > limit) ReviewIssue.LongDay(day.dayNumber, minutes, limit) else null
+        if (minutes > limit) ReviewIssue.LongDay(day.dayNumber, minutes, limit, entries.longestLeg()) else null
     }
+}
+
+/** 시간이 가장 긴 이동 구간. 같으면 앞 구간. 이동이 없는 날(항목 하나)은 null. */
+private fun List<TimelineEntry>.longestLeg(): ReviewIssue.Leg? =
+    zipWithNext()
+        .mapNotNull { (from, to) ->
+            val leg = to.travelFromPrevious ?: return@mapNotNull null
+            val fromName = from.item.placeName() ?: return@mapNotNull null
+            val toName = to.item.placeName() ?: return@mapNotNull null
+            ReviewIssue.Leg(fromName, toName, leg.minutes, leg.distanceKm)
+        }
+        .maxByOrNull { it.minutes }
+
+/** 문장에 쓸 이름. 추천 못 찾은 끼니는 장소가 없어 구간도 없다. */
+private fun TimelineItem.placeName(): String? = when (this) {
+    is TimelineItem.Visit -> attraction.name
+    is TimelineItem.Meal -> restaurant.name
+    is TimelineItem.NoMeal -> null
 }
 
 /**

@@ -12,9 +12,9 @@
 |---|---|---|
 | ![로그인](docs/screenshots/login.png) | ![홈](docs/screenshots/home.png) | ![요약](docs/screenshots/plan-review.png) |
 
-| 일정표 + 날씨 | 지도 | 말로 일정 고치기 |
+| 일정표 + 날씨 | 지도 (방문 순서 번호) | AI 도우미 미리보기 |
 |---|---|---|
-| ![일정표](docs/screenshots/timeline-weather.png) | ![지도](docs/screenshots/map.png) | ![말로 고치기](docs/screenshots/text-edit.png) |
+| ![일정표](docs/screenshots/timeline-weather.png) | ![지도](docs/screenshots/map.png) | ![AI 도우미](docs/screenshots/ai-helper.png) |
 
 ---
 

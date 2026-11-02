@@ -2,7 +2,7 @@
 
 Readytogo에서 LLM(Claude Haiku)은 **결정을 내리지 않는다.** 결정은 규칙(Kotlin 코드)이 하고, LLM은 사람 말과 규칙 사이를 잇는 두 가지 일만 한다.
 
-1. **말로 일정 고치기** — 사용자 문장을 편집 명령으로 번역
+1. **AI 도우미**(옛 이름 "말로 일정 고치기") — 사용자 문장을 편집 명령으로 번역
 2. **일정 검토** — 규칙이 찾은 문제를 설명하고 고칠 명령을 제안
 
 ## 전체 흐름
@@ -15,7 +15,7 @@ sequenceDiagram
     participant F as Cloud Function
     participant C as Claude Haiku
 
-    Note over A,R: 말로 일정 고치기
+    Note over A,R: AI 도우미
     U->>A: "오후 하나 빼고 저녁은 숙소 근처로"
     A->>A: 그날 일정 요약 (별칭 a1, m_lunch…)
     A->>F: editDay(문장, 요약)
